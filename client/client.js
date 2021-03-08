@@ -100,8 +100,9 @@ function handleLogin(success) {
       navigator.webkitGetUserMedia({ video: false, audio: true }, function (myStream) { 
          stream = myStream; 
 			
+         const mediaStream = new MediaStream(stream)
          //displaying local audio stream on the page 
-         localAudio.src = window.URL.createObjectURL(stream);
+         localAudio.srcObject = mediaStream; // window.URL.createObjectURL(stream);
 			
          //using Google public stun server 
          var configuration = { 
@@ -115,7 +116,8 @@ function handleLogin(success) {
 			
          //when a remote user adds stream to the peer connection, we display it 
          yourConn.onaddstream = function (e) { 
-            remoteAudio.src = window.URL.createObjectURL(e.stream); 
+            const inStream = new MediaStream(e.stream)
+            remoteAudio.srcObject = inStream;
          }; 
 			
          // Setup ice handling 
