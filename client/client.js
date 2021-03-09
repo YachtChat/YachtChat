@@ -96,8 +96,7 @@ function handleLogin(success) {
       //Starting a peer connection 
       //********************** 
 		
-      //getting local audio stream 
-      navigator.webkitGetUserMedia({ video: false, audio: true }, function (myStream) { 
+      navigator.mediaDevices.getUserMedia({ video: false, audio: true }).then(function (myStream) { 
          stream = myStream; 
 			
          const mediaStream = new MediaStream(stream)
@@ -116,7 +115,7 @@ function handleLogin(success) {
 			
          //when a remote user adds stream to the peer connection, we display it 
          yourConn.onaddstream = function (e) { 
-            const inStream = new MediaStream(e.stream)
+            const inStream = new MediaStream(e.stream);
             remoteAudio.srcObject = inStream;
          }; 
 			
@@ -130,7 +129,7 @@ function handleLogin(success) {
             } 
          }; 
 			
-      }, function (error) { 
+      }).error(function (error) { 
          console.log(error); 
       }); 
 		
