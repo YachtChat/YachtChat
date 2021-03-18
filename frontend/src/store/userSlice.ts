@@ -8,8 +8,8 @@ interface UserState {
 }
 
 const initialState: UserState = {
-    activeUser: {name: "name", coordinate: {x: 3, y: 4}, radius: 4},
-    otherUsers: []
+    activeUser: {name: "name", coordinate: {x: 0, y: 0}, radius: 4},
+    otherUsers: [{name: "name1", coordinate: {x: 100, y: 100}, radius: 3}, {name: "name2", coordinate: {x: 500, y: 500}, radius: 5}]
 };
 
 export const userSlice = createSlice({

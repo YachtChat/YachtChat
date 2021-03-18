@@ -12,4 +12,8 @@
   display: block;
   background-color: blue;
   user-select: none;
+
+  &#activeUser {
+    background-color: aqua;
+  }
 }
