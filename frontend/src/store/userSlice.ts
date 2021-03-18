@@ -7,7 +7,7 @@ interface UserState {
     otherUsers: User[]
 }
 
-const streams: { [key: string]: MediaStream } = {}
+const streams: { [key: string]: MediaStream } = {};
 
 const initialState: UserState = {
     activeUser: {name: "name", coordinate: {x: 0, y: 0}, radius: 4},
@@ -19,10 +19,10 @@ const initialState: UserState = {
 };
 
 export const userSlice = createSlice({
-    name: 'counter',
+    name: 'user',
     initialState,
     reducers: {
-        move: (state, action: PayloadAction<UserCoordinates>)=> {
+        move: (state, action: PayloadAction<UserCoordinates>) => {
             state.activeUser.coordinate.x = action.payload.x;
             state.activeUser.coordinate.y = action.payload.y;
         },
@@ -34,11 +34,14 @@ export const userSlice = createSlice({
         },
         setName: (state, action: PayloadAction<string>) => {
             state.activeUser.name = action.payload
+        },
+        addUser: (state, action: PayloadAction<User>) => {
+            state.otherUsers.push(action.payload)
         }
     },
 });
 
-export const { move, changeRadius, saveStream, setName } = userSlice.actions;
+export const { move, changeRadius, saveStream, addUser, setName } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => dispatch => {
     dispatch(move(coordinates))
