@@ -1,11 +1,12 @@
-import * as https from "https"
+const fs = require('fs');
+var https = require('https');
 //require our websocket library 
 var WebSocketServer = require('ws').Server; 
 
 var privateKey = fs.readFileSync('/etc/letsencrypt/live/call.tristanratz.com/privkey.pem', 'utf8');
 var certificate = fs.readFileSync('/etc/letsencrypt/live/call.tristanratz.com/cert.pem', 'utf8');
 var credentials = {key: privateKey, cert: certificate};
-const server = https.createServer(credentials,app);
+const server = https.createServer(credentials);
 
 //creating a websocket server at port 9090 
 var wss = new WebSocketServer({ server }); 
