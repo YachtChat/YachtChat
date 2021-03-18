@@ -1,16 +1,21 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk, RootState } from './store';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {AppThunk, RootState} from './store';
 import {User, UserCoordinates} from "./models";
-import React from "react";
 
 interface UserState {
     activeUser: User
     otherUsers: User[]
 }
 
+const streams: { [key: string]: MediaStream } = {}
+
 const initialState: UserState = {
     activeUser: {name: "name", coordinate: {x: 0, y: 0}, radius: 4},
-    otherUsers: [{name: "name1", coordinate: {x: 100, y: 100}, radius: 3}, {name: "name2", coordinate: {x: 500, y: 500}, radius: 5}]
+    otherUsers: [{name: "name1", coordinate: {x: 100, y: 100}, radius: 3}, {
+        name: "name2",
+        coordinate: {x: 500, y: 500},
+        radius: 5
+    }]
 };
 
 export const userSlice = createSlice({
@@ -24,7 +29,7 @@ export const userSlice = createSlice({
         changeRadius: (state, action: PayloadAction<number>) => {
             state.activeUser.radius = action.payload;
         },
-        saveStream: (state, action: PayloadAction<any>) => {
+        saveStream: (state, action: PayloadAction<string>) => {
             state.activeUser.userStream = action.payload
         }
     },
@@ -42,10 +47,12 @@ export const submitRadius = (radius: number): AppThunk => dispatch => {
 
 export const requestUserMedia = (): AppThunk => dispatch => {
     navigator.mediaDevices.getUserMedia({video: true}).then(e => {
-        dispatch(saveStream(e))
+        streams[e.id] = e
+        dispatch(saveStream(e.id))
     })
 };
 
 export const getUser = (state: RootState) => state.userState.activeUser;
+export const getStream = (id: string) => streams[id]
 
 export default userSlice.reducer;

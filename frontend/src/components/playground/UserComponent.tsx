@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {User} from "../../store/models";
+import {getStream} from "../../store/userSlice";
 
 interface Props{
     user: User
@@ -17,8 +18,8 @@ export class UserComponent extends Component<Props> {
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        if (this.myRef.current && !this.myRef.current.srcObject) {
-            this.myRef.current.srcObject = this.props.user.userStream
+        if (!!this.props.user.userStream && this.myRef.current && !this.myRef.current.srcObject) {
+            this.myRef.current.srcObject = getStream(this.props.user.userStream)
         }
     }
 
