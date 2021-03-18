@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from './store';
 import {User, UserCoordinates} from "./models";
+import React from "react";
 
 interface UserState {
     activeUser: User
@@ -23,10 +24,13 @@ export const userSlice = createSlice({
         changeRadius: (state, action: PayloadAction<number>) => {
             state.activeUser.radius = action.payload;
         },
+        saveStream: (state, action: PayloadAction<any>) => {
+            state.activeUser.userStream = action.payload
+        }
     },
 });
 
-export const { move, changeRadius } = userSlice.actions;
+export const { move, changeRadius, saveStream } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => dispatch => {
     dispatch(move(coordinates))
@@ -34,6 +38,12 @@ export const submitMovement = (coordinates: UserCoordinates): AppThunk => dispat
 
 export const submitRadius = (radius: number): AppThunk => dispatch => {
     dispatch(changeRadius(radius))
+};
+
+export const requestUserMedia = (): AppThunk => dispatch => {
+    navigator.mediaDevices.getUserMedia({video: true}).then(e => {
+        dispatch(saveStream(e))
+    })
 };
 
 export const getUser = (state: RootState) => state.userState.activeUser;

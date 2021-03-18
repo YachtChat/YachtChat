@@ -4,13 +4,14 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import UserComponent from "./UserComponent";
 import './style.scss';
-import {submitMovement} from "../../store/userSlice";
+import {requestUserMedia, submitMovement} from "../../store/userSlice";
 
 
 interface Props{
     activeUser: User
     otherUsers: User[]
     move: (userCoordinates: UserCoordinates) => void
+    requestUserMedia: () => void
 }
 
 interface State {
@@ -45,6 +46,10 @@ export class Playground extends Component<Props, State> {
         }
     }
 
+    componentDidMount() {
+        this.props.requestUserMedia()
+    }
+
     render() {
         return(
             <div className="Playground" onMouseMove={this.moveMouse.bind(this)} onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}>
@@ -62,6 +67,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     move: (userCoordinates: UserCoordinates) => dispatch(submitMovement(userCoordinates)),
+    requestUserMedia: () => dispatch(requestUserMedia())
 })
 
 export default connect(mapStateToProps,  mapDispatchToProps)(Playground)

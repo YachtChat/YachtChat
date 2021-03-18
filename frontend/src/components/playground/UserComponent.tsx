@@ -7,6 +7,20 @@ interface Props{
 }
 
 export class UserComponent extends Component<Props> {
+    private myRef: React.RefObject<HTMLVideoElement>;
+
+
+    constructor(props: Props) {
+        super(props);
+
+        this.myRef = React.createRef();
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
+        if (this.myRef.current && !this.myRef.current.srcObject) {
+            this.myRef.current.srcObject = this.props.user.userStream
+        }
+    }
 
     render() {
         const user = this.props.user
@@ -17,6 +31,9 @@ export class UserComponent extends Component<Props> {
         return(
             <div id={(!!this.props.onMouseDown) ? "activeUser" : ""} className="User" style={userStyle} onMouseDown={(!!this.props.onMouseDown) ? this.props.onMouseDown : () => {}}>
                 {user.name}
+                {!!this.props.user.userStream &&
+                    <video autoPlay ref={this.myRef} />
+                }
             </div>
         )
     }
