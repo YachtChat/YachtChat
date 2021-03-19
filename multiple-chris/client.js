@@ -98,9 +98,9 @@ function connect() {
                 setUsername();
                 break;
             case "offer":
-                // handleOffer(msg);
+                // handleOsffer(msg);
                 log(`offer: ${msg}`);
-                break;
+                break;f
             case "answer":
                 // handleAnswer(msg);
                 log(`answer: ${msg}`);
