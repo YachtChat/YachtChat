@@ -221,7 +221,7 @@ wsServer.on('request', function(request) {
       switch(msg.type) {
         // Username change
         case "login":
-          changeUsername(user, msg)
+          loginUser(user, msg)
           break;
         // Public, textual message
         case "message":
@@ -259,7 +259,7 @@ wsServer.on('request', function(request) {
 });
 
 // case "username"
-function changeUsername(user, message){
+function loginUser(user, message){
   // update the user object 
   user.name = message.name
         
@@ -295,9 +295,9 @@ function forwardMessage(user, message){
 
 // case "postion"
 function updatePosition(user, message){
-  var x = message.position.x 
-  var y = message.position.y 
-  var r = x = message.position.radius 
+  let x = message.position.x;
+  let y = message.position.y;
+  let r = x = message.position.range;
   user.position = new Position(x,y,r)
   sendUserListToAll();
 }
