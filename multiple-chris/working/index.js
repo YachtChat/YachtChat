@@ -10,7 +10,7 @@ app.get('/', function(req, res){
 
 const options = {
     key: fs.readFileSync("/etc/letsencrypt/live/www.alphabibber.com/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/www.alphabibber.com/fullchain.pem")
+    cert: fs.readFileSync("/etc/letsencrypt/live/www.alphabibber.com/cert.pem")
 };
 
 const io = require('socket.io')(https);
