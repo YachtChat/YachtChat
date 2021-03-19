@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 import UserComponent from "./UserComponent";
 import './style.scss';
 import {submitMovement} from "../../store/userSlice";
+import NavigationBar from "../navigationbar/NavigationBar";
 
 
 interface Props{
@@ -47,9 +48,12 @@ export class Playground extends Component<Props, State> {
 
     render() {
         return(
-            <div className="Playground" onMouseMove={this.moveMouse.bind(this)} onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}>
+            <div>
+                <NavigationBar/>
+                <div className="Playground" onMouseMove={this.moveMouse.bind(this)} onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}>
                 {this.props.otherUsers.map(user => <UserComponent user={user}/>)}
                 <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)} />
+                </div>
             </div>
         )
     }
