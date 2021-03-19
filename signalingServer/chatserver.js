@@ -159,7 +159,7 @@ webServer.listen(6503, function() {
 
 // Create the WebSocket server by converting the HTTPS server into one.
 
-var wsServer = new WebSocketServer({
+const wsServer = new WebSocketServer({
   httpServer: webServer,
   autoAcceptConnections: false
 });
@@ -173,18 +173,18 @@ if (!wsServer) {
 // WebSocket protocol.
 
 wsServer.on('request', function(request) {
-  var connection = request.accept("json", request.origin);
+  let connection = request.accept("json", request.origin);
 
   // Add the new connection to our list of connections.
 
   log("Connection accepted from " + connection.remoteAddress + ".");
-  var user = new User(nextID, connection, new Position(-1, -1, -1))
+  let user = new User(nextID, connection, new Position(-1, -1, -1))
   userArray.push(user)
   nextID++;
 
   // Send the new client its token; it send back a "username" message to
   // tell us what username they want to use.
-  var msg = {
+  let msg = {
     type: "id",
     id: user.id
   };
@@ -239,23 +239,11 @@ wsServer.on('request', function(request) {
   // or has been disconnected.
   connection.on('close', function(reason, description) {
     // First, remove the connection from the list of connections.
-    connectionArray = connectionArray.filter(function(el, idx, ar) {
-      return el.connected;
-    });
+    userArray = userArray.filter(user => user.getConnection().connected);
 
     // Now send the updated user list. Again, please don't do this in a
     // real application. Your users won't like you very much.
     sendUserListToAll();
-
-    // Build and output log output for close information.
-
-    var logMessage = "Connection closed: " + connection.remoteAddress + " (" +
-                     reason;
-    if (description !== null && description.length !== 0) {
-      logMessage += ": " + description;
-    }
-    logMessage += ")";
-    log(logMessage);
   });
 });
 
