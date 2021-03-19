@@ -33,7 +33,7 @@ function startLocalStream() {
 }
 
 function connectSocketToSignaling() {
-    const socket = io.connect('https://www.alphabibber.com:3000', { secure: true });
+    const socket = io.connect('wss://www.alphabibber.com:3000', { secure: true });
     socket.on('connect', () => {
         localUserId = socket.id;
         console.log('localUser', localUserId);
