@@ -30,7 +30,7 @@ jobs:
           host: www.alphabibber.com
           private-key: ${{ secrets.KEY }}
       - name: Stop chatserver
-        run: killall node
+        run: sudo killall node
       - name: change directory to Git_directory
         run: cd /home/git_environment/NotZoom/
       - name: pull form Git
