@@ -31,6 +31,8 @@ jobs:
           private-key: ${{ secrets.KEY }}
       - name: sudo
         run: sudo -s
+      - name: whoami
+        run: whoami
       - name: Stop chatserver
         run: killall node #sudo killall node
       - name: change directory to Git_directory
