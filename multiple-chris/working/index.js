@@ -1,13 +1,26 @@
 const express = require('express');
 const server = express();
-const http = require('http').Server(server);
-const io = require('socket.io')(http);
+const https = require('https').Server(server);
+
+const fs = require('fs');
+
+const options = {
+    key: fs.readFileSync("/etc/letsencrypt/live/www.alphabibber.com/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/www.alphabibber.com/fullchain.pem")
+};
 
 server.use(express.static('public'));
+https.createServer(options, function (req, res) {
+    res.writeHead(200);
+    res.end("hello world\n");
+}).listen(3000);
 
-http.listen(3000, () => {
-    console.log('Server started at: 3000');
-});
+const io = require('socket.io')(https);
+
+
+// http.listen(3000, () => {
+//     console.log('Server started at: 3000');
+// });
 
 server.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html');
