@@ -244,6 +244,16 @@ wsServer.on('request', function(request) {
     // Now send the updated user list. Again, please don't do this in a
     // real application. Your users won't like you very much.
     sendUserListToAll();
+
+    // Build and output log output for close information.
+
+    var logMessage = "Connection closed: " + connection.remoteAddress + " (" +
+                     reason;
+    if (description !== null && description.length !== 0) {
+      logMessage += ": " + description;
+    }
+    logMessage += ")";
+    log(logMessage);
   });
 });
 
