@@ -88,6 +88,7 @@ function makeUserListMessage() {
 function sendUserListToAll() {
   var userListMsg = makeUserListMessage();
   var userListMsgStr = JSON.stringify(userListMsg);
+  console.log(userListMsgStr)
   var i;
   for (i=0; i<userArray.length; i++) {
     userArray[i].getConnection().sendUTF(userListMsgStr);
@@ -159,7 +160,7 @@ webServer.listen(6503, function() {
 
 // Create the WebSocket server by converting the HTTPS server into one.
 
-var wsServer = new WebSocketServer({
+let wsServer = new WebSocketServer({
   httpServer: webServer,
   autoAcceptConnections: false
 });
@@ -173,18 +174,18 @@ if (!wsServer) {
 // WebSocket protocol.
 
 wsServer.on('request', function(request) {
-  var connection = request.accept("json", request.origin);
+  let connection = request.accept("json", request.origin);
 
   // Add the new connection to our list of connections.
 
   log("Connection accepted from " + connection.remoteAddress + ".");
-  var user = new User(nextID, connection, new Position(-1, -1, -1))
+  let user = new User(nextID, connection, new Position(-1, -1, -1))
   userArray.push(user)
   nextID++;
 
   // Send the new client its token; it send back a "username" message to
   // tell us what username they want to use.
-  var msg = {
+  let msg = {
     type: "id",
     id: user.id
   };
@@ -220,7 +221,7 @@ wsServer.on('request', function(request) {
       switch(msg.type) {
         // Username change
         case "login":
-          changeUsername(user, msg)
+          loginUser(user, msg)
           break;
         // Public, textual message
         case "message":
@@ -239,9 +240,7 @@ wsServer.on('request', function(request) {
   // or has been disconnected.
   connection.on('close', function(reason, description) {
     // First, remove the connection from the list of connections.
-    connectionArray = connectionArray.filter(function(el, idx, ar) {
-      return el.connected;
-    });
+    userArray = userArray.filter(user => user.getConnection().connected);
 
     // Now send the updated user list. Again, please don't do this in a
     // real application. Your users won't like you very much.
@@ -260,7 +259,7 @@ wsServer.on('request', function(request) {
 });
 
 // case "username"
-function changeUsername(user, message){
+function loginUser(user, message){
   // update the user object 
   user.name = message.name
         
@@ -296,9 +295,9 @@ function forwardMessage(user, message){
 
 // case "postion"
 function updatePosition(user, message){
-  var x = message.position.x 
-  var y = message.position.y 
-  var r = x = message.position.radius 
+  let x = message.position.x;
+  let y = message.position.y;
+  let r = message.position.range;
   user.position = new Position(x,y,r)
   sendUserListToAll();
 }

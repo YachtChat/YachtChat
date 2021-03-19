@@ -24,16 +24,20 @@ export class UserComponent extends Component<Props> {
     }
 
     render() {
+        if (this.props.user.name === null)
+            return (<div/>);
         const user = this.props.user
         const userStyle = {
-            left: user.coordinate.x-25,
-            top: user.coordinate.y-25
+            left: user.position.x - 50,
+            top: user.position.y - 50
         }
-        return(
-            <div id={(!!this.props.onMouseDown) ? "activeUser" : ""} className="User" style={userStyle} onMouseDown={(!!this.props.onMouseDown) ? this.props.onMouseDown : () => {}}>
+        return (
+            <div id={(!!this.props.onMouseDown) ? "activeUser" : ""} className="User" style={userStyle}
+                 onMouseDown={(!!this.props.onMouseDown) ? this.props.onMouseDown : () => {
+                 }}>
                 {user.name}
                 {!!this.props.user.userStream &&
-                    <video autoPlay ref={this.myRef} />
+                <video autoPlay ref={this.myRef}/>
                 }
             </div>
         )

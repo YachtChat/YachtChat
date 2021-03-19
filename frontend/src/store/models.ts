@@ -1,7 +1,7 @@
 export interface User {
     id: number
     name: string
-    coordinate: UserCoordinates
+    position: UserCoordinates
     userStream?: string
 }
 export interface UserCoordinates {
