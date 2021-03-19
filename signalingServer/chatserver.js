@@ -34,8 +34,8 @@ var WebSocketServer = require('websocket').server;
 // Pathnames of the SSL key and certificate files to use for
 // HTTPS connections.
 
-const keyFilePath = "/etc/pki/tls/private/mdn-samples.mozilla.org.key";
-const certFilePath = "/etc/pki/tls/certs/mdn-samples.mozilla.org.crt";
+const keyFilePath = "/etc/letsencrypt/live/www.alphabibber.com/privkey.pem";
+const certFilePath = "/etc/letsencrypt/live/www.alphabibber.com/fullchain.pem";
 
 // Used for managing the text chat user list.
 
@@ -273,7 +273,7 @@ wsServer.on('request', function(request) {
 
       switch(msg.type) {
         // Public, textual message
-        case "message":v
+        case "message":
           msg.name = connect.username;
           msg.text = msg.text.replace(/(<([^>]+)>)/ig, "");
           break;
