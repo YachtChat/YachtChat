@@ -1,9 +1,10 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {User, UserCoordinates} from "./models";
-import {requestUserMedia} from "./userSlice";
+import {handlePositionUpdate, requestUserMedia, setName, updateUsers} from "./userSlice";
 
 interface WebSocketState {
+    id: number
     connected: boolean
     loggedIn: boolean
 }
@@ -12,6 +13,7 @@ let socket: WebSocket | null = null;
 let rtcConnection: RTCPeerConnection | null = null;
 
 const initialState: WebSocketState = {
+    id: -1,
     connected: false,
     loggedIn: false
 };
@@ -32,16 +34,17 @@ export const webSocketSlice = createSlice({
         disconnect: (state) => {
             state.connected = false
         },
-        addUser: (state, action: PayloadAction<User>) => {
-
+        saveID: (state, action: PayloadAction<number>) => {
+            state.id = action.payload
         }
     },
 });
 
-export const {connect, disconnect, login, logout, addUser} = webSocketSlice.actions;
+export const {connect, disconnect, login, logout, saveID} = webSocketSlice.actions;
 
-export const connectToServer = (coordinates: UserCoordinates): AppThunk => dispatch => {
-    socket = new WebSocket('wss://call.tristanratz.com:9090');
+export const connectToServer = (): AppThunk => dispatch => {
+    //socket = new WebSocket('wss://call.tristanratz.com:9090');
+    socket = new WebSocket('wss://www.alphabibber.com:6503');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");
@@ -58,8 +61,17 @@ export const connectToServer = (coordinates: UserCoordinates): AppThunk => dispa
         var data = JSON.parse(msg.data);
 
         switch (data.type) {
+            case "id":
+                dispatch(saveID(data.id))
+                break;
+            case "userlist":
+                dispatch(updateUsers(data.users))
+                break;
             case "login":
-                handleLogin(data.success);
+                dispatch(handleLogin(data.name, data.success));
+                break;
+            case "position":
+                dispatch(handlePositionUpdate(data));
                 break;
             //when somebody wants to call us
             case "offer":
@@ -72,9 +84,6 @@ export const connectToServer = (coordinates: UserCoordinates): AppThunk => dispa
             case "candidate":
                 handleCandidate(data.candidate);
                 break;
-            case "leave":
-                dispatch(handleLeaveChat(data.name));
-                break;
             default:
                 break;
         }
@@ -82,23 +91,32 @@ export const connectToServer = (coordinates: UserCoordinates): AppThunk => dispa
 
 };
 
-export const send = (message: { [key: string]: any }, toUser?: User) => {
+export const send = (message: { [key: string]: any }, target?: User): AppThunk => (dispatch, getState) => {
     //attach the other peer username to our messages
-    if (toUser) {
-        message["name"] = toUser.name;
+    const msgObj = {
+        ...message,
+        id: getState().webSocket.id,
+        target: (!!target) ? target.id : undefined,
     }
 
     if (socket !== null)
-        socket.send(JSON.stringify(message));
+        socket.send(JSON.stringify(msgObj));
 }
 
-export const requestLogin = (name: string) => {
+export const requestLogin = (name: string): AppThunk => (dispatch) => {
     if (name.length > 0) {
-        send({
-            "type": "login",
-            "name": name
-        });
+        dispatch(send({
+            type: "login",
+            name: name,
+        }));
     }
+}
+
+export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) => {
+    dispatch(send({
+        type: "position",
+        position,
+    }));
 }
 
 export const handleCandidate = (candidate: any) => {
@@ -106,8 +124,8 @@ export const handleCandidate = (candidate: any) => {
 }
 
 
-export const handleLogin = (success: boolean): AppThunk => dispatch => {
-    if (success === false) {
+export const handleLogin = (success: boolean, name: string): AppThunk => dispatch => {
+    if (!success) {
         alert("Ooops...try a different username");
     } else {
         //**********************
@@ -115,24 +133,26 @@ export const handleLogin = (success: boolean): AppThunk => dispatch => {
         //**********************
 
         dispatch(login())
-        dispatch(requestUserMedia())
+        dispatch(setName(name))
+        dispatch(requestUserMedia((stream: MediaStream) => {
 
-        navigator.mediaDevices.getUserMedia({video: false, audio: true}).then(function (myStream) {
-
-            const configuration = {
-                "iceServers": [{"url": "stun:stun2.1.google.com:19302"}]
+            let configuration = {
+                "iceServers": [{"urls": "stun:stun2.1.google.com:19302"}]
             }
 
             rtcConnection = new RTCPeerConnection(configuration)
 
             // setup stream listening
-            rtcConnection.addStream(stream);
+
+            stream.getTracks().forEach(track =>
+                rtcConnection?.addTrack(track, stream)
+            )
 
             //when a remote user adds stream to the peer connection, we display it
-            rtcConnection.onaddstream = (e) => {
-                const inStream = new MediaStream(e.stream);
-                remoteAudio.srcObject = inStream;
-            };
+            // rtcConnection.onaddstream = (e) => {
+            //     const inStream = new MediaStream(e.stream);
+            //     remoteAudio.srcObject = inStream;
+            // };
 
             // Setup ice handling
             rtcConnection.onicecandidate = function (event) {
@@ -144,20 +164,67 @@ export const handleLogin = (success: boolean): AppThunk => dispatch => {
                 }
             };
 
-        }).error(function (error) {
-            console.log(error);
+        }))
+    }
+}
+
+//when somebody sends us an offer
+const handleOffer = (offer: any, name: string) => {
+    const connectedUser = name;
+    // dispatch add user
+
+    if (!rtcConnection)
+        return
+    rtcConnection.setRemoteDescription(new RTCSessionDescription(offer));
+
+    //create an answer to an offer
+    rtcConnection.createAnswer().then((answer: any) => {
+        if (!rtcConnection)
+            return
+        rtcConnection!.setLocalDescription(answer);
+
+        send({
+            type: "answer",
+            answer: answer
         });
 
-    }
+    });
+
+}
+
+export const sendUsername = (name: string): AppThunk => dispatch => {
+    dispatch(send({type: "username", name: name}))
 }
 
 export const leaveChat = (): AppThunk => dispatch => {
     dispatch(logout())
+    dispatch(send({type: "leave"}))
     rtcConnection?.close()
 }
 
-export const handleLeaveChat = (name: string): AppThunk => dispatch => {
-    // dispatch user rausschmeißen
+//when we got an answer from a remote user
+function handleAnswer(answer: any) {
+    if (rtcConnection)
+        rtcConnection.setRemoteDescription(new RTCSessionDescription(answer));
+}
+
+function createOffer(callToUsername: string) {
+    if (callToUsername.length > 0) {
+        const connectedUser = callToUsername;
+
+        if (!rtcConnection)
+            return
+
+        // create an offer
+        rtcConnection.createOffer().then(function (offer) {
+            send({
+                type: "offer",
+                offer: offer
+            });
+
+            rtcConnection!.setLocalDescription(offer);
+        });
+    }
 }
 
 export const getUser = (state: RootState) => state.userState.activeUser;

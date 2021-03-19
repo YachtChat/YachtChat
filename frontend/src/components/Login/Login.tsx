@@ -1,13 +1,14 @@
 import React, {Component} from "react";
 import './style.scss';
 import {User} from "../../store/models";
-import {submitNameChange} from "../../store/userSlice";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
+import {connectToServer, requestLogin} from "../../store/connectionSlice";
 
 interface Props {
     activeUser: User
     setName: (name: string) => void
+    connect: () => void
 }
 
 interface State {
@@ -32,15 +33,20 @@ export class Login extends Component<Props, State> {
         event.preventDefault();
     }
 
+    componentDidMount() {
+        this.props.connect()
+    }
+
     render() {
-        return(
+        return (
 
             <div className="login-box">
                 <h2>Alphabibber Master App. Please sign in</h2>
 
                 <form>
                     <div className="user-box">
-                        <input type="text" value={this.state.value} onChange={this.handleChange.bind(this)} />
+                        <input type="text" value={this.state.value}
+                           onChange={this.handleChange.bind(this)}/>
                             <label>Username</label>
                     </div>
                     <a href="#" onClick={this.handleSubmit.bind(this)}>
@@ -64,7 +70,8 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    setName: (name: string) => dispatch(submitNameChange(name)),
+    setName: (name: string) => dispatch(requestLogin(name)),
+    connect: () => dispatch(connectToServer())
 })
 
 export default connect(mapStateToProps,  mapDispatchToProps)(Login)

@@ -4,14 +4,13 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import UserComponent from "./UserComponent";
 import './style.scss';
-import {requestUserMedia, submitMovement} from "../../store/userSlice";
+import {submitMovement} from "../../store/userSlice";
 
 
 interface Props{
     activeUser: User
     otherUsers: User[]
     move: (userCoordinates: UserCoordinates) => void
-    requestUserMedia: () => void
 }
 
 interface State {
@@ -42,12 +41,8 @@ export class Playground extends Component<Props, State> {
 
     moveMouse(e: React.MouseEvent) {
         if (this.state.dragActive) {
-            this.props.move({x:e.pageX, y: e.pageY})
+            this.props.move({x: e.pageX, y: e.pageY, range: this.props.activeUser.coordinate.range})
         }
-    }
-
-    componentDidMount() {
-        this.props.requestUserMedia()
     }
 
     render() {
@@ -67,7 +62,6 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     move: (userCoordinates: UserCoordinates) => dispatch(submitMovement(userCoordinates)),
-    requestUserMedia: () => dispatch(requestUserMedia())
 })
 
 export default connect(mapStateToProps,  mapDispatchToProps)(Playground)

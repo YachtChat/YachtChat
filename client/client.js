@@ -90,7 +90,7 @@ callBtn.addEventListener("click", function () {
       }, function (error) { 
          alert("Error when creating an offer"); 
       }); 
-   } 
+   }
 });
  
 //when somebody sends us an offer 
