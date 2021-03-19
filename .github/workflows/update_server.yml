@@ -20,16 +20,25 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
+      - name: ls -a via ssh
+        uses: tarunjangra/ssh-remote-cmd@v1
         with:
-          key: ${{ secrets.KEY }}
-          name: id_rsa # optional
-          known_hosts: www.alphabibber.com
+          command: |
+            pwd
+            ls -a
+          host: www.alphabibber.com
+          user: root
+          key: ${{ secrets.KEY}}
+      #-  name: Install SSH key
+      #  uses: shimataro/ssh-key-action@v2
+      #  with:
+      #    key: ${{ secrets.KEY }}
+      #    name: id_rsa # optional
+      #    known_hosts: www.alphabibber.com
           #config: ${{ secrets.CONFIG }} # ssh_config; optional
           #if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
-      - name: rsync over ssh
-        run: pwd
+      #- name: rsync over ssh
+      #  run: pwd
       
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       #- uses: actions/checkout@v2
