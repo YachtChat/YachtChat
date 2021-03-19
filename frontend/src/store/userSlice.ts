@@ -11,7 +11,7 @@ interface UserState {
 const streams: { [key: string]: MediaStream } = {};
 
 const initialState: UserState = {
-    activeUser: {id: -1, name: "name", position: {x: 200, y: 200, range: 1}},
+    activeUser: {id: -1, name: "name", position: {x: 200, y: 200, range: 30}},
     otherUsers: []
 };
 
@@ -41,16 +41,19 @@ export const userSlice = createSlice({
             if (!!user)
                 user.position = action.payload.position
         }, updateUsers: (state, action: PayloadAction<User[]>) => {
-            state.otherUsers = action.payload.filter(u => u.id !== state.activeUser.id && u.name === null)
+            state.otherUsers = action.payload.filter(u => u.id !== state.activeUser.id && u.name !== null)
         }
     },
 });
 
 export const {move, changeRadius, saveStream, addUser, setName, handlePositionUpdate, updateUsers} = userSlice.actions;
 
-export const submitMovement = (coordinates: UserCoordinates): AppThunk => dispatch => {
-    dispatch(sendPosition(coordinates))
-    dispatch(move(coordinates))
+export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {
+    if (getState().userState.activeUser.position !== coordinates) {
+        console.log(coordinates)
+        dispatch(sendPosition(coordinates))
+        dispatch(move(coordinates))
+    }
 };
 
 export const submitRadius = (radius: number): AppThunk => dispatch => {
