@@ -24,12 +24,19 @@ jobs:
       - uses: actions/checkout@v2
 
       # Connect to alphabibber Server and test some bash command
-      - name: executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
+      - name: Setup SSH
+        uses: MrSquaare/ssh-setup-action@v1
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            whoami
+          host: www.alphabibber.com
+          private-key: ${{ secrets.KEY }}
+      - name: Clone repository
+        run: whoami
+    #  - name: executing remote ssh commands using ssh key
+    #    uses: appleboy/ssh-action@master
+    #    with:
+    #      host: ${{ secrets.HOST }}
+    #      username: ${{ secrets.USERNAME }}
+    #      key: ${{ secrets.KEY }}
+    #      port: ${{ secrets.PORT }}
+    #      script: |
+    #        whoami
