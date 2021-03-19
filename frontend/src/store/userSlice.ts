@@ -31,11 +31,14 @@ export const userSlice = createSlice({
         },
         saveStream: (state, action: PayloadAction<string>) => {
             state.activeUser.userStream = action.payload
+        },
+        setName: (state, action: PayloadAction<string>) => {
+            state.activeUser.name = action.payload
         }
     },
 });
 
-export const { move, changeRadius, saveStream } = userSlice.actions;
+export const { move, changeRadius, saveStream, setName } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => dispatch => {
     dispatch(move(coordinates))
@@ -50,6 +53,10 @@ export const requestUserMedia = (): AppThunk => dispatch => {
         streams[e.id] = e
         dispatch(saveStream(e.id))
     })
+};
+
+export const submitNameChange = (name: string): AppThunk => dispatch => {
+    dispatch(setName(name))
 };
 
 export const getUser = (state: RootState) => state.userState.activeUser;
