@@ -1,0 +1,12 @@
+/*$sidebar-bg-color: red;*/
+
+
+@import '~react-pro-sidebar/dist/scss/styles.scss';
+
+#sidebar {
+  opacity: 0.2;
+
+  &:hover {
+    opacity: 1.0;
+  }
+}
