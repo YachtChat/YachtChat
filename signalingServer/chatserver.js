@@ -88,6 +88,7 @@ function makeUserListMessage() {
 function sendUserListToAll() {
   var userListMsg = makeUserListMessage();
   var userListMsgStr = JSON.stringify(userListMsg);
+  console.log(userListMsgStr)
   var i;
   for (i=0; i<userArray.length; i++) {
     userArray[i].getConnection().sendUTF(userListMsgStr);
