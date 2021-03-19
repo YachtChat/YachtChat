@@ -29,18 +29,14 @@ jobs:
         with:
           host: www.alphabibber.com
           private-key: ${{ secrets.KEY }}
-      - name: sudo
-        run: sudo -s
-      - name: whoami
-        run: whoami
-      - name: Stop chatserver
-        run: killall node #sudo killall node
+      #- name: Stop chatserver
+      #  run: killall node #sudo killall node
       - name: change directory to Git_directory
         run: cd /home/git_environment/NotZoom/
       - name: pull form Git
-        run: git pull #sudo git pull
+        run: sudo git pull
       - name: Start chatserver
-        run: node chatserver.js #sudo node chatserver.js
+        run: sudo node chatserver.js
     #  - name: executing remote ssh commands using ssh key
     #    uses: appleboy/ssh-action@master
     #    with:
