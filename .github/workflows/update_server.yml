@@ -24,8 +24,9 @@ jobs:
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
-            pwd
-            ls -a
+            cd /home/git_environment/NotZoom/
+            sudo git pull
+            sudo /usr/bin/nohup sudo node ./signalingServer/chatserver.js
           host: www.alphabibber.com
           user: danilo_walenta
           key: ${{ secrets.KEY}}
