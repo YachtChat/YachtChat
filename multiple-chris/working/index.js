@@ -16,7 +16,7 @@ const options = {
 };
 
 
-https.createServer(options, app).listen(3000, () => {
+const server = https.createServer(options, app).listen(3000, () => {
     console.log('Server started at: 3000');
 });
 
