@@ -219,7 +219,7 @@ wsServer.on('request', function(request) {
 
       switch(msg.type) {
         // Username change
-        case "username":
+        case "login":
           changeUsername(user, msg)
           break;
         // Public, textual message
