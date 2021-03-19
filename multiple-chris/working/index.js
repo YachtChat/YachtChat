@@ -1,8 +1,8 @@
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
-
 const app = express();
+
 app.use(express.static('public'));
 app.get('/', function(req, res){
     console.log("ready to send index");
@@ -20,7 +20,7 @@ const server = https.createServer(options, app).listen(3000, () => {
     console.log('Server started at: 3000');
 });
 
-const io = require('socket.io').listen(server);
+let io = require('socket.io').listen(server);
 
 
 // http.listen(3000, () => {
