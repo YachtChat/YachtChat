@@ -15,12 +15,12 @@ const options = {
     cert: fs.readFileSync("/etc/letsencrypt/live/www.alphabibber.com/fullchain.pem")
 };
 
-const io = require('socket.io')(https);
 
 https.createServer(options, app).listen(3000, () => {
     console.log('Server started at: 3000');
 });
 
+const io = require('socket.io')(https);
 
 
 // http.listen(3000, () => {
