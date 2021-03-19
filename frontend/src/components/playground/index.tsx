@@ -41,7 +41,7 @@ export class Playground extends Component<Props, State> {
 
     moveMouse(e: React.MouseEvent) {
         if (this.state.dragActive) {
-            this.props.move({x: e.pageX, y: e.pageY, range: this.props.activeUser.coordinate.range})
+            this.props.move({x: e.pageX, y: e.pageY, range: this.props.activeUser.position.range})
         }
     }
 

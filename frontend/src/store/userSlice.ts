@@ -11,7 +11,7 @@ interface UserState {
 const streams: { [key: string]: MediaStream } = {};
 
 const initialState: UserState = {
-    activeUser: {id: -1, name: "name", coordinate: {x: 200, y: 200, range: 1}},
+    activeUser: {id: -1, name: "name", position: {x: 200, y: 200, range: 1}},
     otherUsers: []
 };
 
@@ -20,26 +20,28 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         move: (state, action: PayloadAction<UserCoordinates>) => {
-            state.activeUser.coordinate.x = action.payload.x;
-            state.activeUser.coordinate.y = action.payload.y;
+            state.activeUser.position.x = action.payload.x;
+            state.activeUser.position.y = action.payload.y;
         },
         changeRadius: (state, action: PayloadAction<number>) => {
-            state.activeUser.coordinate.range = action.payload;
+            state.activeUser.position.range = action.payload;
         },
         saveStream: (state, action: PayloadAction<string>) => {
             state.activeUser.userStream = action.payload
         },
-        setName: (state, action: PayloadAction<string>) => {
-            state.activeUser.name = action.payload
+        setName: (state, action: PayloadAction<any>) => {
+            if (action.payload.id)
+                state.activeUser.id = action.payload.id
+            state.activeUser.name = action.payload.name
         },
         addUser: (state, action: PayloadAction<User>) => {
             state.otherUsers.push(action.payload)
         }, handlePositionUpdate: (state, action: PayloadAction<any>) => {
             const user = state.otherUsers.find(u => u.id === action.payload.id)
             if (!!user)
-                user.coordinate = action.payload.position
+                user.position = action.payload.position
         }, updateUsers: (state, action: PayloadAction<User[]>) => {
-            state.otherUsers = action.payload
+            state.otherUsers = action.payload.filter(u => u.id !== state.activeUser.id)
         }
     },
 });

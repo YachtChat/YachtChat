@@ -42,9 +42,9 @@ export const webSocketSlice = createSlice({
 
 export const {connect, disconnect, login, logout, saveID} = webSocketSlice.actions;
 
-export const connectToServer = (): AppThunk => dispatch => {
+export const connectToServer = (): AppThunk => (dispatch, getState) => {
     //socket = new WebSocket('wss://call.tristanratz.com:9090');
-    socket = new WebSocket('wss://www.alphabibber.com:6503');
+    socket = new WebSocket('wss://www.alphabibber.com:6503', 'json');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");
@@ -124,7 +124,7 @@ export const handleCandidate = (candidate: any) => {
 }
 
 
-export const handleLogin = (success: boolean, name: string): AppThunk => dispatch => {
+export const handleLogin = (success: boolean, name: string): AppThunk => (dispatch, getState) => {
     if (!success) {
         alert("Ooops...try a different username");
     } else {
@@ -133,7 +133,7 @@ export const handleLogin = (success: boolean, name: string): AppThunk => dispatc
         //**********************
 
         dispatch(login())
-        dispatch(setName(name))
+        dispatch(setName({name, id: getState().webSocket.id}))
         dispatch(requestUserMedia((stream: MediaStream) => {
 
             let configuration = {

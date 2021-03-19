@@ -9,15 +9,6 @@ $color: #0cf;
   width: 5vw
 }
 
-/*#loginBox {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}*/
-
 .login-box{
   position: absolute;
   top: 50%;
@@ -35,8 +26,10 @@ $color: #0cf;
   }
 }
 
-.login-box .user-box {
-  position: relative;
+.login-box {
+  .user-box {
+    position: relative;
+  }
 }
 
 .login-box .user-box input {
