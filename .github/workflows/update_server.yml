@@ -27,7 +27,7 @@ jobs:
             pwd
             ls -a
           host: www.alphabibber.com
-          user: danilo_walenta
+          user: marc_brede_nz
           key: ${{ secrets.KEY}}
       #-  name: Install SSH key
       #  uses: shimataro/ssh-key-action@v2
