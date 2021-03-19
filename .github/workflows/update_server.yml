@@ -20,27 +20,38 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.KEY }}
+          name: id_rsa # optional
+          known_hosts: www.alphabibber.com
+          #config: ${{ secrets.CONFIG }} # ssh_config; optional
+          #if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+      - name: rsync over ssh
+        run: pwd
+      
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      #- uses: actions/checkout@v2
 
       # Connect to alphabibber Server and test some bash command
-      - name: Setup SSH
-        uses: MrSquaare/ssh-setup-action@v1
-        with:
-          host: www.alphabibber.com
-          private-key: ${{ secrets.KEY }}
+      #- name: Setup SSH
+      #  uses: MrSquaare/ssh-setup-action@v1
+      #  with:
+      #    host: www.alphabibber.com
+      #    private-key: ${{ secrets.KEY }}
       #- name: Stop chatserver
       #  run: killall node #sudo killall node
-      - name: ls
-        run: pwd
+      #- name: ls
+      #  run: pwd
       #- name: change directory to Git_directory
       #  run: cd /home/git_environment/NotZoom/
-      - name: pull form Git
-        run: sudo git pull
-      - name: npm
-        run: cd ./signalingServer/ && sudo npm install && cd -
-      - name: Start chatserver
-        run: sudo /usr/bin/nohup sudo node ./signalingServer/chatserver.js
+      #- name: pull form Git
+      #  run: sudo git pull
+      #- name: npm
+      #  run: cd ./signalingServer/ && sudo npm install && cd -
+      #- name: Start chatserver
+      #  run: sudo /usr/bin/nohup sudo node ./signalingServer/chatserver.js
     #  - name: executing remote ssh commands using ssh key
     #    uses: appleboy/ssh-action@master
     #    with:
