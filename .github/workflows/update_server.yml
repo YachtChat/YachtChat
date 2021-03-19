@@ -29,8 +29,10 @@ jobs:
         with:
           host: www.alphabibber.com
           private-key: ${{ secrets.KEY }}
-      - name: Clone repository
+      - name: Get_informationabout_user
         run: whoami
+      - name: Get_informationabout_ip
+        run: ifconfig
     #  - name: executing remote ssh commands using ssh key
     #    uses: appleboy/ssh-action@master
     #    with:
