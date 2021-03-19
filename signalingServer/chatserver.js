@@ -297,7 +297,7 @@ function forwardMessage(user, message){
 function updatePosition(user, message){
   let x = message.position.x;
   let y = message.position.y;
-  let r = x = message.position.range;
+  let r = message.position.range;
   user.position = new Position(x,y,r)
   sendUserListToAll();
 }
