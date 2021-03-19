@@ -38,7 +38,7 @@ jobs:
       - name: pull form Git
         run: sudo git pull
       - name: Start chatserver
-        run: sudo node chatserver.js
+        run: sudo node /signalingServer/chatserver.js
     #  - name: executing remote ssh commands using ssh key
     #    uses: appleboy/ssh-action@master
     #    with:
