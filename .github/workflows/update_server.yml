@@ -20,31 +20,14 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      # Connect to alphabibber Server and test some bash command
-      - name: Setup SSH
-        uses: MrSquaare/ssh-setup-action@v1
+      - name: connect via ssh and deplay
+        uses: tarunjangra/ssh-remote-cmd@v1
         with:
-          host: www.alphabibber.com
-          private-key: ${{ secrets.KEY }}
-      #- name: Stop chatserver
-      #  run: killall node #sudo killall node
-      - name: ls
-        run: ls
-      #- name: change directory to Git_directory
-      #  run: cd /home/git_environment/NotZoom/
-      - name: pull form Git
-        run: sudo git pull
-      - name: Start chatserver
-        run: sudo node /signalingServer/chatserver.js
-    #  - name: executing remote ssh commands using ssh key
-    #    uses: appleboy/ssh-action@master
-    #    with:
-    #      host: ${{ secrets.HOST }}
-    #      username: ${{ secrets.USERNAME }}
-    #      key: ${{ secrets.KEY }}
-    #      port: ${{ secrets.PORT }}
-    #      script: |
-    #        whoami
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo git pull
+            sudo killall node
+            sudo /usr/bin/nohup sudo node ./signalingServer/chatserver.js &
+          host: www.alphabibber.com #${{ secrets.HOST}}
+          user: danilo_walenta #${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
