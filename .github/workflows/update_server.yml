@@ -40,7 +40,7 @@ jobs:
       - name: npm
         run: cd ./signalingServer/ && sudo npm install && cd -
       - name: Start chatserver
-        run: sudo node ./signalingServer/chatserver.js &
+        run: sudo /usr/bin/nohup sudo node ./signalingServer/chatserver.js &
     #  - name: executing remote ssh commands using ssh key
     #    uses: appleboy/ssh-action@master
     #    with:
