@@ -23,13 +23,15 @@
 //
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/publicdomain/zero/1.0/
+import { Position, User } from "./user.js"
+import http from "http"
+import https from "https"
+import fs from "fs"
+import { server } from "websocket"
 
 "use strict";
 
-var http = require('http');
-var https = require('https');
-var fs = require('fs');
-var WebSocketServer = require('websocket').server;
+var WebSocketServer = server;
 
 // Pathnames of the SSL key and certificate files to use for
 // HTTPS connections.
@@ -39,7 +41,7 @@ const certFilePath = "/etc/letsencrypt/live/www.alphabibber.com/fullchain.pem";
 
 // Used for managing the text chat user list.
 
-var connectionArray = [];
+var userArray = [];
 var nextID = Date.now();
 var appendToMakeUnique = 1;
 
@@ -51,59 +53,17 @@ function log(text) {
   console.log("[" + time.toLocaleTimeString() + "] " + text);
 }
 
-// If you want to implement support for blocking specific origins, this is
-// where you do it. Just return false to refuse WebSocket connections given
-// the specified origin.
-function originIsAllowed(origin) {
-  return true;    // We will accept all connections
-}
-
-// Scans the list of users and see if the specified name is unique. If it is,
-// return true. Otherwise, returns false. We want all users to have unique
-// names.
-function isUsernameUnique(name) {
-  var isUnique = true;
-  var i;
-
-  for (i=0; i<connectionArray.length; i++) {
-    if (connectionArray[i].username === name) {
-      isUnique = false;
-      break;
-    }
-  }
-  return isUnique;
-}
-
-// Sends a message (which is already stringified JSON) to a single
-// user, given their username. We use this for the WebRTC signaling,
-// and we could use it for private text messaging.
-function sendToOneUser(target, msgString) {
-  var isUnique = true;
-  var i;
-
-  for (i=0; i<connectionArray.length; i++) {
-    if (connectionArray[i].username === target) {
-      connectionArray[i].sendUTF(msgString);
-      break;
-    }
-  }
-}
-
 // Scan the list of connections and return the one for the specified
 // clientID. Each login gets an ID that doesn't change during the session,
 // so it can be tracked across username changes.
-function getConnectionForID(id) {
-  var connect = null;
-  var i;
-
-  for (i=0; i<connectionArray.length; i++) {
-    if (connectionArray[i].clientID === id) {
-      connect = connectionArray[i];
-      break;
+function getUserById(id){
+  var user = undefined
+  for (var i=0; i<userArray.length; i++){
+    if(userArray[i].id == id){
+      user = userArray[i]
     }
   }
-
-  return connect;
+  return user
 }
 
 // Builds a message object of type "userlist" which contains the names of
@@ -115,13 +75,9 @@ function makeUserListMessage() {
     users: []
   };
   var i;
-
-  // Add the users to the list
-
-  for (i=0; i<connectionArray.length; i++) {
-    userListMsg.users.push(connectionArray[i].username);
+  for (i=0; i<userArray.length; i++) {
+    userListMsg.users.push(userArray[i].getRep());
   }
-
   return userListMsg;
 }
 
@@ -133,9 +89,8 @@ function sendUserListToAll() {
   var userListMsg = makeUserListMessage();
   var userListMsgStr = JSON.stringify(userListMsg);
   var i;
-
-  for (i=0; i<connectionArray.length; i++) {
-    connectionArray[i].sendUTF(userListMsgStr);
+  for (i=0; i<userArray.length; i++) {
+    userArray[i].getConnection().sendUTF(userListMsgStr);
   }
 }
 
@@ -218,30 +173,20 @@ if (!wsServer) {
 // WebSocket protocol.
 
 wsServer.on('request', function(request) {
-  if (!originIsAllowed(request.origin)) {
-    request.reject();
-    log("Connection from " + request.origin + " rejected.");
-    return;
-  }
-
-  // Accept the request and get a connection.
-
   var connection = request.accept("json", request.origin);
 
   // Add the new connection to our list of connections.
 
   log("Connection accepted from " + connection.remoteAddress + ".");
-  connectionArray.push(connection);
-
-  connection.clientID = nextID;
+  var user = new User(nextID, connection, new Position(-1, -1, -1))
+  userArray.push(user)
   nextID++;
 
   // Send the new client its token; it send back a "username" message to
   // tell us what username they want to use.
-
   var msg = {
     type: "id",
-    id: connection.clientID
+    id: user.id
   };
   connection.sendUTF(JSON.stringify(msg));
 
@@ -252,7 +197,7 @@ wsServer.on('request', function(request) {
 
   connection.on('message', function(message) {
     if (message.type === 'utf8') {
-      log("Received Message: " + message.utf8Data);
+      log("Recceived Message: " + message.utf8Data);
 
       // Process incoming data.
 
@@ -263,7 +208,8 @@ wsServer.on('request', function(request) {
         console.log("Message is not of type json")
         return
       }
-      var connect = getConnectionForID(msg.id);
+      // user that send the request
+      var user = getUserById(msg.id);
 
       // Take a look at the incoming object and act on it based
       // on its type. Unknown message types are passed through,
@@ -272,73 +218,23 @@ wsServer.on('request', function(request) {
       // by that name.
 
       switch(msg.type) {
-        // Public, textual message
-        case "message":
-          msg.name = connect.username;
-          msg.text = msg.text.replace(/(<([^>]+)>)/ig, "");
-          break;
-
         // Username change
         case "username":
-          var nameChanged = false;
-          var origName = msg.name;
-
-          // Ensure the name is unique by appending a number to it
-          // if it's not; keep trying that until it works.
-          while (!isUsernameUnique(msg.name)) {
-            msg.name = origName + appendToMakeUnique;
-            appendToMakeUnique++;
-            nameChanged = true;
-          }
-
-          // If the name had to be changed, we send a "rejectusername"
-          // message back to the user so they know their name has been
-          // altered by the server.
-          if (nameChanged) {
-            var changeMsg = {
-              id: msg.id,
-              type: "rejectusername",
-              name: msg.name
-            };
-            connect.sendUTF(JSON.stringify(changeMsg));
-          }
-
-          // Set this connection's final username and send out the
-          // updated user list to all users. Yeah, we're sending a full
-          // list instead of just updating. It's horribly inefficient
-          // but this is a demo. Don't do this in a real app.
-          connect.username = msg.name;
-          sendUserListToAll();
-          sendToClients = false;  // We already sent the proper responses
+          changeUsername(user, msg)
+          break;
+        // Public, textual message
+        case "message":
+          forwardMessage(user, msg)
+          break;
+        case "position":
+          updatePosition(user, msg)
           break;
         default:
           console.log("This message is not of known type")
           return
       }
-
-      // Convert the revised message back to JSON and send it out
-      // to the specified client or all clients, as appropriate. We
-      // pass through any messages not specifically handled
-      // in the select block above. This allows the clients to
-      // exchange signaling and other control objects unimpeded.
-
-      if (sendToClients) {
-        var msgString = JSON.stringify(msg);
-        var i;
-
-        // If the message specifies a target username, only send the
-        // message to them. Otherwise, send it to every user.
-        if (msg.target && msg.target !== undefined && msg.target.length !== 0) {
-          sendToOneUser(msg.target, msgString);
-        } else {
-          for (i=0; i<connectionArray.length; i++) {
-            connectionArray[i].sendUTF(msgString);
-          }
-        }
-      }
     }
   });
-
   // Handle the WebSocket "close" event; this means a user has logged off
   // or has been disconnected.
   connection.on('close', function(reason, description) {
@@ -362,3 +258,48 @@ wsServer.on('request', function(request) {
     log(logMessage);
   });
 });
+
+// case "username"
+function changeUsername(user, message){
+  // update the user object 
+  user.name = message.name
+        
+  // let user know that it was successful
+  var changeMsg = {
+    success: true,
+    type: "login",
+    name: user.name
+  };
+  user.connection.sendUTF(JSON.stringify(changeMsg))
+
+  // let all user know
+  sendUserListToAll();
+}
+
+// case "message"
+function forwardMessage(user, message){
+  message.text = message.text.replace(/(<([^>]+)>)/ig, "");
+  var msgString = JSON.stringify(message);
+  var target = undefined
+  if (message.target) {
+    target = getUserById(message.target)
+  }
+  if (message.target) {
+    target.getConnection().sendUTF(msgString);
+  } else {
+    for (var i=0; i<userArray.length; i++) {
+      userArray[i].getConnection().sendUTF(msgString);
+    }
+  }
+
+}
+
+// case "postion"
+function updatePosition(user, message){
+  var x = message.position.x 
+  var y = message.position.y 
+  var r = x = message.position.radius 
+  user.position = new Position(x,y,r)
+  sendUserListToAll();
+}
+
