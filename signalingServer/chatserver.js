@@ -160,7 +160,7 @@ webServer.listen(6503, function() {
 
 // Create the WebSocket server by converting the HTTPS server into one.
 
-const wsServer = new WebSocketServer({
+let wsServer = new WebSocketServer({
   httpServer: webServer,
   autoAcceptConnections: false
 });
