@@ -20,7 +20,7 @@ https.createServer(options, app).listen(3000, () => {
     console.log('Server started at: 3000');
 });
 
-const io = require('socket.io')(https);
+const io = require('socket.io').listen(server);
 
 
 // http.listen(3000, () => {
