@@ -31,6 +31,8 @@ jobs:
           private-key: ${{ secrets.KEY }}
       #- name: Stop chatserver
       #  run: killall node #sudo killall node
+      - name: ls
+        run: ls
       - name: change directory to Git_directory
         run: cd /home/git_environment/NotZoom/
       - name: pull form Git
