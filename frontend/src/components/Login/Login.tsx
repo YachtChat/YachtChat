@@ -35,13 +35,21 @@ export class Login extends Component<Props, State> {
     render() {
         return(
 
-            <div id="loginPage">
-                <h1>Alphabibber Master App. Please sign in</h1>
+            <div className="login-box">
+                <h2>Alphabibber Master App. Please sign in</h2>
 
-                <form onSubmit={this.handleSubmit.bind(this)}>
-                    <label>Your Name: </label>
-                    <input type="text" id="usernameInput" placeholder="Name" value={this.state.value} onChange={this.handleChange.bind(this)} />
-                    <input type="submit" value="Submit" id="submitBtn" />
+                <form>
+                    <div className="user-box">
+                        <input type="text" value={this.state.value} onChange={this.handleChange.bind(this)} />
+                            <label>Username</label>
+                    </div>
+                    <a href="#" onClick={this.handleSubmit.bind(this)}>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        Submit
+                    </a>
                 </form>
 
 
