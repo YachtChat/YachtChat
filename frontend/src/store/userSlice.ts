@@ -41,7 +41,7 @@ export const userSlice = createSlice({
             if (!!user)
                 user.position = action.payload.position
         }, updateUsers: (state, action: PayloadAction<User[]>) => {
-            state.otherUsers = action.payload.filter(u => u.id !== state.activeUser.id)
+            state.otherUsers = action.payload.filter(u => u.id !== state.activeUser.id && u.name === null)
         }
     },
 });
