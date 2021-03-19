@@ -29,7 +29,6 @@ export class Login extends Component<Props, State> {
 
     handleSubmit(event: any) {
         this.props.setName(this.state.value)
-        alert('A name was submitted: ' + this.state.value);
         event.preventDefault();
     }
 
