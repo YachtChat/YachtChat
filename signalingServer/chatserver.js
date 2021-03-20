@@ -180,7 +180,7 @@ wsServer.on('request', function(request) {
 
 function login(id, name){
   users.get(id).name = name;
-  connections.get(id).sendUTF(JSON.stringify({"type": "login", "sucess": true}));
+  connections.get(id).sendUTF(JSON.stringify({"type": "login", "success": true}));
 }
 
 function join(id){
