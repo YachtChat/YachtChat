@@ -4,6 +4,7 @@ import Playground from "./components/playground";
 import Login from "./components/Login/Login";
 import {RootState} from "./store/store";
 import {connect} from "react-redux";
+import Landingpage from "./components/Landingpage/Landingpage";
 
 interface Props {
     loggedIn: boolean
@@ -17,7 +18,7 @@ export class App extends Component<Props> {
                 <Login/>
                 }
                 {this.props.loggedIn &&
-                <Playground/>
+                <Landingpage/>
                 }
             </div>
         );
