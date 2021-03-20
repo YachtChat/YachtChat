@@ -11,3 +11,21 @@
     opacity: 1.0;
   }
 }
+
+.range-slider{
+  transform: rotate(270deg);
+  height: 150px;
+}
+
+.range-value {
+  font-size: 15px;
+}
+
+.slider-parent {
+  display: flex;              /* establish flex container */
+  flex-direction: column;     /* stack flex items vertically */
+  justify-content: center;    /* center items vertically, in this case */
+  align-items: center;        /* center items horizontally, in this case */
+  height: 200px;
+  width: 100%
+}
