@@ -4,6 +4,8 @@ import {User} from "../../store/models";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {connectToServer, requestLogin} from "../../store/connectionSlice";
+import {Link} from "react-router-dom";
+import Landingpage from "../Landingpage/Landingpage";
 
 interface Props {
     activeUser: User
@@ -31,6 +33,7 @@ export class Login extends Component<Props, State> {
     handleSubmit(event: any) {
         this.props.setName(this.state.value)
         event.preventDefault();
+
     }
 
     componentDidMount() {
