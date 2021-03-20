@@ -26,15 +26,15 @@ export class RangeSlider extends Component<Props, State> {
     }
 
     handleChangeRange(event: any) {
-        this.setState({value: event.target.value});
-        this.props.changeRadius(this.state.value) //letzte Änderung der Range wird nicht erfasst
+        this.setState({value: event.target.value})
+        this.props.changeRadius(event.target.value)
     }
 
     render() {
         return (
             <div className="slider-parent">
-                <input type="range" className="range-slider" min={1} max={10}
-                       step={1} value={this.state.value} onChange={this.handleChangeRange.bind(this)}/>
+                <input type="range" className="range-slider" min={10} max={100}
+                       step={10} value={this.state.value} onChange={this.handleChangeRange.bind(this)}/>
                 <div className="range-value">
                     Range: {this.state.value}
                 </div>

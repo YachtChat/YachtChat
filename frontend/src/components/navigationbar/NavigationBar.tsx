@@ -5,7 +5,7 @@ import {RootState} from "../../store/store";
 import {submitNameChange} from "../../store/userSlice";
 import {connect} from "react-redux";
 import { ProSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
-import { FaSignature, FaCog, FaBars, FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
+import { FaSignature, FaCog, FaBars, FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash, FaPowerOff } from 'react-icons/fa';
 import RangeSlider from "./RangeSlider";
 
 interface Props {
@@ -112,6 +112,7 @@ export class NavigationBar extends Component<Props, State> {
                     <MenuItem icon={this.icons.videoIcon} onClick={this.handleVideoIcon.bind(this)}>Video</MenuItem>
                     <MenuItem icon={this.icons.micIcon} onClick={this.handleAudioIcon.bind(this)}>Mic</MenuItem>
                     <MenuItem icon={<FaCog />}>Settings</MenuItem>
+                    <MenuItem icon={<FaPowerOff />}>Log Out</MenuItem>
                 </Menu>
                 <RangeSlider />
             </ProSidebar>
