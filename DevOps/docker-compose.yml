@@ -16,6 +16,7 @@ services:
     image: jrcs/letsencrypt-nginx-proxy-companion
     working_dir: /
     environment:
+      - NGINX_PROXY_CONTAINER=devops_nginx-proxy_1
       - DEFAULT_EMAIL=ole.sen@gmx.de
     volumes:
       - certs:/etc/nginx/certs
@@ -26,7 +27,7 @@ services:
   nginx-proxyed-container:
     build:
       context: ../
-      dockerfile: ./Dockerfile_nginx
+      dockerfile: DevOps/Dockerfile_nginx
     working_dir: /
     environment:
       - VIRTUAL_HOST="www.alphabibber.com alphabibber.com"

@@ -12,5 +12,3 @@ VOLUME /data
 
 WORKDIR /src
 COPY --from=build-deps /src/build /usr/share/nginx/html
-
-COPY ./setup/nginx /etc/nginx/
