@@ -5,6 +5,7 @@ import Login from "./components/Login/Login";
 import {RootState} from "./store/store";
 import {connect} from "react-redux";
 import Landingpage from "./components/Landingpage/Landingpage";
+import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 
 interface Props {
     loggedIn: boolean
@@ -13,6 +14,7 @@ interface Props {
 export class App extends Component<Props> {
     render() {
         return (
+            <Router>
             <div className="App">
                 {!this.props.loggedIn &&
                 <Login/>
@@ -21,6 +23,7 @@ export class App extends Component<Props> {
                 <Landingpage/>
                 }
             </div>
+            </Router>
         );
     }
 
