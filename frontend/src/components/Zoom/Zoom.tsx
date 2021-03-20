@@ -14,6 +14,7 @@ interface Props {
 interface State {
     height: number
     width: number
+    max: {clientHeight: number, clientWidth: number}
     current: {clientHeight: number, clientWidth: number}
 }
 
@@ -26,6 +27,7 @@ export class Zoom extends Component<Props, State> {
         this.state = {
             height: 100,
             width: 100,
+            max: {clientHeight: window.innerHeight, clientWidth: window.innerWidth},
             current: {clientHeight: window.innerHeight / 3, clientWidth: window.innerWidth / 3}
         }
 
@@ -45,12 +47,14 @@ export class Zoom extends Component<Props, State> {
 
     // Event handler callback for zoom in
     handleZoomIn(){
-
-        // Increase dimension(Zooming)
-        this.setState({
-            height : this.state.height + 10,
-            width : this.state.width + 10
-        })
+        if(this.state.height +30 <= this.state.max.clientHeight &&
+            this.state.width +30 <= this.state.max.clientWidth) {
+            // Increase dimension(Zooming)
+            this.setState({
+                height: this.state.height + 30,
+                width: this.state.width + 30
+            })
+        }
     }
 
     // Event handler callback zoom out
@@ -58,17 +62,15 @@ export class Zoom extends Component<Props, State> {
 
         // Decrease dimension(Outzooming)
         this.setState({
-            height : this.state.height - 10,
-            width : this.state.width - 10
+            height : this.state.height - 30,
+            width : this.state.width - 30
         })
     }
 
     onWheel(event: any){
-        if(event.deltaY < 0 || event.deltaX < 0){
-            this.setState({
-                height : this.state.height - 10,
-                width : this.state.width - 10
-            })}
+        if(event.deltaY < 0 || event.deltaX < 0) {
+            this.handleZoomOut()
+        }
 
         if(event.deltaY > 0 || event.deltaX > 0){
             this.handleZoomIn()
@@ -82,9 +84,9 @@ export class Zoom extends Component<Props, State> {
                 {/* Assign reference to DOM element     */}
                 <img style={imgStyle} src=
                     'https://media.geeksforgeeks.org/wp-content/uploads/20200923125643/download.png' alt='gfg' />
-                <div>
-                    <button className="btn" onClick={this.handleZoomIn}>Zoom In</button>
-                    <button className="btn1" onClick={this.handleZoomOut}>Zoom Out</button>
+                <div className="btn">
+                    <button onClick={this.handleZoomIn}>+</button>
+                    <button onClick={this.handleZoomOut}>-</button>
                 </div>
             </div>
         )

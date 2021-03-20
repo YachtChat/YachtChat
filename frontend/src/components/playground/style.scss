@@ -1,3 +1,10 @@
+.btn {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  bottom: 1px;
+  right: 1px
+}
 
 .contentWrapper {
   width: 100%;

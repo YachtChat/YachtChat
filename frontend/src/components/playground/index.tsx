@@ -4,14 +4,16 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import UserComponent from "./UserComponent";
 import './style.scss';
-import {getUsers, submitMovement} from "../../store/userSlice";
+import {submitMovement, getUsers, changeScaling} from "../../store/userSlice";
 import NavigationBar from "../navigationbar/NavigationBar";
 
 
-interface Props{
+interface Props {
     activeUser: User
     otherUsers: User[]
     move: (userCoordinates: UserCoordinates) => void
+    sizeMultiplier: number
+    changeSizeMultiplier: (size: number) => void
 }
 
 interface State {
@@ -24,7 +26,7 @@ export class Playground extends Component<Props, State> {
         super(props);
 
         this.state = {
-            dragActive: false
+            dragActive: false,
         }
     }
 
@@ -34,7 +36,7 @@ export class Playground extends Component<Props, State> {
         })
     }
 
-    dragEnd () {
+    dragEnd() {
         this.setState({
             dragActive: false
         })
@@ -42,17 +44,41 @@ export class Playground extends Component<Props, State> {
 
     moveMouse(e: React.MouseEvent) {
         if (this.state.dragActive) {
-            this.props.move({x: e.pageX, y: e.pageY, range: this.props.activeUser.position.range})
+            const scaling = this.props.sizeMultiplier
+            this.props.move({x: e.pageX * 1/scaling, y: e.pageY * 1/scaling, range: this.props.activeUser.position.range})
         }
     }
 
+    // Event handler callback for zoom in
+    handleZoomIn() {
+
+        if (this.props.sizeMultiplier <= 2.0) {
+            this.props.changeSizeMultiplier(this.props.sizeMultiplier + 0.1) //ab 1,2 kommt eine milliardstel Stelle dazu
+        }
+    }
+
+    // Event handler callback zoom out
+    handleZoomOut() {
+        //alert("" + this.props.sizeMultiplier)
+
+        if (this.props.sizeMultiplier >= 0.5) {
+            this.props.changeSizeMultiplier(this.props.sizeMultiplier - 0.1) //ab 1,2 kommt eine milliardstel Stelle dazu
+        }
+
+    }
+
     render() {
-        return(
+        return (
             <div className={"contentWrapper"}>
                 <NavigationBar/>
-                <div className="Playground" onMouseMove={this.moveMouse.bind(this)} onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}>
+                <div className="Playground" onMouseMove={this.moveMouse.bind(this)}
+                     onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}>
                     {this.props.otherUsers.map(user => <UserComponent key={user.id} user={user}/>)}
-                <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)} />
+                    <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)}/>
+                </div>
+                <div className="btn">
+                    <button onClick={this.handleZoomIn.bind(this)}>+</button>
+                    <button onClick={this.handleZoomOut.bind(this)}>-</button>
                 </div>
             </div>
         )
@@ -62,10 +88,13 @@ export class Playground extends Component<Props, State> {
 const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
     otherUsers: getUsers(state),
+    sizeMultiplier: state.userState.scalingFactor
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     move: (userCoordinates: UserCoordinates) => dispatch(submitMovement(userCoordinates)),
+    changeSizeMultiplier: (scale: number) => dispatch(changeScaling(scale))
 })
 
-export default connect(mapStateToProps,  mapDispatchToProps)(Playground)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Playground)

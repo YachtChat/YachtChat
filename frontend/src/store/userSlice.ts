@@ -6,11 +6,13 @@ import {sendPosition} from "./connectionSlice";
 interface UserState {
     activeUser: User
     otherUsers: { [key: number]: User }
+    scalingFactor: number
 }
 
 const initialState: UserState = {
     activeUser: {id: -1, name: "name", position: {x: 200, y: 200, range: 0.3}},
-    otherUsers: {}
+    otherUsers: {},
+    scalingFactor: 1.0
 };
 
 export const userSlice = createSlice({
@@ -63,6 +65,9 @@ export const userSlice = createSlice({
             // action.payload.filter(u => u.id !== state.activeUser.id && u.name !== null).forEach(u => {
             //     state.otherUsers[u.id] = u
             // })
+        },
+        changeScaling: (state, action: PayloadAction<number>) => {
+            state.scalingFactor = action.payload
         }
     },
 });
@@ -76,7 +81,8 @@ export const {
     handlePositionUpdate,
     setUsers,
     removeUser,
-    setUserId
+    setUserId,
+    changeScaling
 } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {

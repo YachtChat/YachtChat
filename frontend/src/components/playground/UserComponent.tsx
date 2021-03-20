@@ -1,10 +1,15 @@
 import React, {Component} from "react";
 import {User} from "../../store/models";
 import {getStream} from "../../store/connectionSlice";
+import {RootState} from "../../store/store";
+import {getUsers} from "../../store/userSlice";
+import {connect} from "react-redux";
+import {Playground} from "./index";
 
 interface Props {
     user: User
     onMouseDown?: (e: React.MouseEvent) => void
+    sizeMultiplier: number
 }
 
 export class UserComponent extends Component<Props> {
@@ -27,22 +32,25 @@ export class UserComponent extends Component<Props> {
         if (this.props.user.name === null)
             return (<div/>);
         const user = this.props.user
-        const userSize = 100
+        const userSize = 100 * this.props.sizeMultiplier
+        const x = user.position.x * this.props.sizeMultiplier
+        const y = user.position.y * this.props.sizeMultiplier
+
         const userStyle = {
             width: userSize,
             height: userSize,
-            left: user.position.x - userSize / 2,
-            top: user.position.y - userSize / 2
+            left: x - userSize / 2,
+            top: y - userSize / 2
         }
         // range in pixels
         const maxRange = 300
-        const rangeInPx = 2 * maxRange * user.position.range + userSize
+        const rangeInPx = 2 * maxRange * user.position.range * this.props.sizeMultiplier + userSize
 
         const rangeStyle = {
             width: rangeInPx,
             height: rangeInPx,
-            left: user.position.x - rangeInPx / 2,
-            top: user.position.y - rangeInPx / 2
+            left: x - rangeInPx / 2,
+            top: y - rangeInPx / 2
         }
 
         return (
@@ -61,4 +69,8 @@ export class UserComponent extends Component<Props> {
     }
 }
 
-export default (UserComponent)
+const mapStateToProps = (state: RootState) => ({
+    sizeMultiplier: state.userState.scalingFactor
+})
+
+export default connect(mapStateToProps)(UserComponent)

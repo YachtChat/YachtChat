@@ -1,11 +1,7 @@
 .btn {
   position: fixed;
-  top: 100px;
-  left: 100px
-}
-
-.btn1 {
-  position: fixed;
-  top: 150px;
-  left: 100px
+  display: flex;
+  flex-direction: column;
+  bottom: 1px;
+  right: 1px
 }
