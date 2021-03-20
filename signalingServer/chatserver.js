@@ -190,8 +190,8 @@ function join(id){
   connections.get(id).sendUTF(JSON.stringify({"type": "join", "users": users}));
   connections.forEach(function (connection, target) {
     // don't send the new user to the new user
-    if (target !== id) {
-      connection.sendUTF(JSON.stringify({"type": "new_user", "users": users.get(id)}));
+    if (target !== id){
+      connection.sendUTF(JSON.stringify({"type": "new_user", "user": users.get(id)}));
     }
   });
 }
