@@ -26,7 +26,7 @@ export class Playground extends Component<Props, State> {
         super(props);
 
         this.state = {
-            dragActive: false,
+            dragActive: false
         }
     }
 
@@ -53,16 +53,15 @@ export class Playground extends Component<Props, State> {
     handleZoomIn() {
 
         if (this.props.sizeMultiplier <= 2.0) {
-            this.props.changeSizeMultiplier(this.props.sizeMultiplier + 0.1) //ab 1,2 kommt eine milliardstel Stelle dazu
+            this.props.changeSizeMultiplier(this.props.sizeMultiplier + 0.1)
         }
     }
 
     // Event handler callback zoom out
     handleZoomOut() {
-        //alert("" + this.props.sizeMultiplier)
 
         if (this.props.sizeMultiplier >= 0.5) {
-            this.props.changeSizeMultiplier(this.props.sizeMultiplier - 0.1) //ab 1,2 kommt eine milliardstel Stelle dazu
+            this.props.changeSizeMultiplier(this.props.sizeMultiplier - 0.1)
         }
 
     }
