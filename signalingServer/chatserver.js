@@ -187,7 +187,7 @@ function join(id){
   // give the user a initial position
   users.get(id).position = {x: 200, y:200, range: 0.2};
   // send to the user that logged on
-  connections.get(id).sendUTF(JSON.stringify({"type": "join", "users": users}));
+  connections.get(id).sendUTF(JSON.stringify({"type": "join", "users": Object.fromEntries(users)}));
   connections.forEach(function (connection, target) {
     // don't send the new user to the new user
     if (target !== id){
