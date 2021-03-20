@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {User, UserCoordinates} from "./models";
-import {send, sendPosition} from "./connectionSlice";
+import {sendPosition} from "./connectionSlice";
 
 interface UserState {
     activeUser: User
@@ -10,7 +10,7 @@ interface UserState {
 
 const initialState: UserState = {
     activeUser: {id: -1, name: "name", position: {x: 200, y: 200, range: 30}},
-    otherUsers: []
+    otherUsers: {}
 };
 
 export const userSlice = createSlice({
@@ -48,10 +48,11 @@ export const userSlice = createSlice({
                 return
             state.otherUsers[action.payload.id].position = action.payload.position
         },
-        setUsers: (state, action: PayloadAction<User[]>) => {
-            action.payload.filter(u => u.id !== state.activeUser.id && u.name !== null).forEach(u => {
-                state.otherUsers[u.id] = u
-            })
+        setUsers: (state, action: PayloadAction<{ [key: number]: User }>) => {
+            state.otherUsers = action.payload
+            // action.payload.filter(u => u.id !== state.activeUser.id && u.name !== null).forEach(u => {
+            //     state.otherUsers[u.id] = u
+            // })
         }
     },
 });
