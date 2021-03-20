@@ -30,9 +30,11 @@ export const userSlice = createSlice({
             else
                 state.otherUsers[action.payload].userStream = true
         },
+        setUserId: (state, action: PayloadAction<number>) => {
+            state.activeUser.id = action.payload
+        },
         setName: (state, action: PayloadAction<any>) => {
             if (action.payload.id)
-                state.activeUser.id = action.payload.id
             state.activeUser.name = action.payload.name
         },
         addUser: (state, action: PayloadAction<User>) => {
@@ -62,7 +64,8 @@ export const {
     setName,
     handlePositionUpdate,
     setUsers,
-    removeUser
+    removeUser,
+    setUserId
 } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {

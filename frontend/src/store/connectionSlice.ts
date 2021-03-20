@@ -3,7 +3,7 @@ import {AppThunk, RootState} from './store';
 import {User, UserCoordinates} from "./models";
 import {
     handlePositionUpdate,
-    setName,
+    setUserId,
     setUsers,
     addUser,
     removeUser,
@@ -242,7 +242,7 @@ export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) 
         //**********************
 
         dispatch(login())
-        dispatch(setName({name, id: getState().webSocket.id}))
+        dispatch(setUserId(getState().webSocket.id))
         dispatch(requestUserMediaAndJoin())
     }
 }
