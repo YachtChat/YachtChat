@@ -4,7 +4,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import UserComponent from "./UserComponent";
 import './style.scss';
-import {submitMovement} from "../../store/userSlice";
+import {submitMovement, getUsers} from "../../store/userSlice";
 import NavigationBar from "../navigationbar/NavigationBar";
 
 
@@ -61,7 +61,7 @@ export class Playground extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
-    otherUsers: state.userState.otherUsers,
+    otherUsers: getUsers(state),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

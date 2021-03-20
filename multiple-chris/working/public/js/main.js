@@ -27,6 +27,7 @@ function gotIceCandidate(fromId, candidate) {
 
 
 function startLocalStream() {
+
     navigator.mediaDevices.getUserMedia(mediaStreamConstraints)
         .then(getUserMediaSuccess)
         .then(connectSocketToSignaling).catch(handleError);
@@ -45,13 +46,13 @@ function connectSocketToSignaling() {
                 clients.forEach((userId) => {
                     if (!connections[userId]) {
                         connections[userId] = new RTCPeerConnection(mediaStreamConstraints);
-                        connections[userId].onicecandidate = () => {
-                            if (event.candidate) {
+                        connections[userId].onicecandidate = (event) => {
+                            if (event ) {
                                 console.log(socket.id, ' Send candidate to ', userId);
                                 socket.emit('signaling', { type: 'candidate', candidate: event.candidate, toId: userId });
                             }
                         };
-                        connections[userId].onaddstream = () => {
+                        connections[userId].onaddstream = (event) => {
                             gotRemoteStream(event, userId);
                         };
                         connections[userId].addStream(localStream);

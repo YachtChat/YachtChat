@@ -2,7 +2,7 @@ export interface User {
     id: number
     name: string
     position: UserCoordinates
-    userStream?: string
+    userStream?: boolean
 }
 export interface UserCoordinates {
     x: number

@@ -28,7 +28,10 @@ let io = require('socket.io').listen(server);
 // });
 
 io.on('connection', function (socket) {
-    io.sockets.emit('user-joined', { clients:  Object.keys(io.sockets.clients().sockets), count: io.engine.clientsCount, joinedUserId: socket.id});
+    io.sockets.emit('user-joined', { 
+        clients:  Object.keys(io.sockets.clients().sockets), 
+        count: io.engine.clientsCount, joinedUserId: socket.id
+    });
     socket.on('signaling', function(data) {
         io.to(data.toId).emit('signaling', { fromId: socket.id, ...data });
     });
