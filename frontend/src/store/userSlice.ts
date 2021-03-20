@@ -92,8 +92,9 @@ export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispa
     }
 };
 
-export const submitRadius = (radius: number): AppThunk => dispatch => {
+export const submitRadius = (radius: number): AppThunk => (dispatch, getState) => {
     dispatch(changeRadius(radius))
+    dispatch(sendPosition(getState().userState.activeUser.position))
 };
 
 
