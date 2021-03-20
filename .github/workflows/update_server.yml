@@ -26,9 +26,8 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo git pull
-            sudo killall node
-            sudo /usr/bin/nohup sudo node ./signalingServer/chatserver.js &
-            exit
+            sudo pm2 stop signalingServer
+            sudo pm2 start --name signalingServer ./signalingServer/chatserver.js
           host: www.alphabibber.com #${{ secrets.HOST}}
           user: danilo_walenta #${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
