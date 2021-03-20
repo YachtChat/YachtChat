@@ -53,7 +53,7 @@ export class UserComponent extends Component<Props> {
                      }}>
                     {user.name}
                     {!!this.props.user.userStream &&
-                    <video autoPlay ref={this.myRef}/>
+                    <video autoPlay muted={!!this.props.onMouseDown} ref={this.myRef}/>
                     }
                 </div>
             </div>

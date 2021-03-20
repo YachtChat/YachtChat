@@ -16,12 +16,17 @@ const streams: { [key: string]: MediaStream } = {};
 
 const offerOptions = {
     offerToReceiveVideo: true,
+    offerToReceiveAudio: true
 };
 
 const rtcConfiguration = {
     "iceServers": [{"urls": "stun:stun2.1.google.com:19302"}]
 }
 
+const mediaConstrains = {
+    video: true,
+    audio: true
+}
 
 const initialState: WebSocketState = {
     id: -1,
@@ -138,13 +143,13 @@ export const handleRTCEvents = (joinedUserId: number, count: number):AppThunk =>
     if (Array.isArray(clients) && clients.length > 0) {
         clients.forEach((userId) => {
             if (!rtcConnections[userId]) {
-                rtcConnections[userId] = new RTCPeerConnection({});
+                rtcConnections[userId] = new RTCPeerConnection(rtcConfiguration);
                 rtcConnections[userId].onicecandidate = (event) => {
                     if (event.candidate) {
                         console.log(localClient, ' Send candidate to ', userId);
                         dispatch(send({
                             type: "signaling",
-                            target: userId ,
+                            target: userId,
                             signal_type: 'candidate',
                             candidate: event.candidate
                         }));
@@ -269,7 +274,7 @@ export const leaveChat = (): AppThunk => dispatch => {
 }
 
 export const requestUserMediaAndJoin = (): AppThunk => (dispatch,getState) => {
-    navigator.mediaDevices.getUserMedia({video: true}).then((e) => {
+    navigator.mediaDevices.getUserMedia(mediaConstrains).then((e) => {
         const localClient = getState().webSocket.id
         streams[localClient] = e
         dispatch(gotRemoteStream(localClient))
