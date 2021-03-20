@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {User} from "../../store/models";
-import {getStream} from "../../store/userSlice";
+import {getStream} from "../../store/connectionSlice";
 
 interface Props {
     user: User
@@ -18,8 +18,8 @@ export class UserComponent extends Component<Props> {
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        if (!!this.props.user.userStream && this.myRef.current && !this.myRef.current.srcObject) {
-            this.myRef.current.srcObject = getStream(this.props.user.userStream)
+        if (this.props.user.userStream && this.myRef.current && !this.myRef.current.srcObject) {
+            this.myRef.current.srcObject = getStream(this.props.user.id)
         }
     }
 
@@ -36,7 +36,7 @@ export class UserComponent extends Component<Props> {
         }
         // range in pixels
         const maxRange = 300
-        const rangeInPx = 2 * maxRange * user.position.range / 100 + userSize
+        const rangeInPx = 2 * maxRange * user.position.range + userSize
 
         const rangeStyle = {
             width: rangeInPx,
