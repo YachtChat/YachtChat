@@ -1,7 +1,7 @@
 import http from "http"
 import https from "https"
 import fs from "fs"
-import { server } from "websocket"
+import {server} from "websocket"
 
 "use strict";
 const keyFilePath = "/etc/letsencrypt/live/www.alphabibber.com/privkey.pem";
@@ -187,8 +187,8 @@ function join(id){
   // give the user a initial position
   users.get(id).position = {x: 200, y:200, range: 0.2};
   // send to the user that logged on
-  connections.get(id).sendUTF(JSON.stringify({"type": "join", "users": [... users]}));
-  connections.forEach(function(connection, target){
+  connections.get(id).sendUTF(JSON.stringify({"type": "join", "users": users}));
+  connections.forEach(function (connection, target) {
     // don't send the new user to the new user
     if (target !== id){
       connection.sendUTF(JSON.stringify({"type": "new_user", "user": users.get(id)}));
