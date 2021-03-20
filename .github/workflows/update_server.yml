@@ -28,6 +28,7 @@ jobs:
             sudo git pull
             sudo killall node
             sudo /usr/bin/nohup sudo node ./signalingServer/chatserver.js &
+            exit
           host: www.alphabibber.com #${{ secrets.HOST}}
           user: danilo_walenta #${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
