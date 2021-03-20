@@ -11,32 +11,25 @@ interface Props {
     changeRadius: (range: number) => void
 }
 
-interface State {
-    value: number
-}
 
-
-export class RangeSlider extends Component<Props, State> {
+export class RangeSlider extends Component<Props> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            value: this.props.activeUser.position.range
-        }
     }
 
     handleChangeRange(event: any) {
-        this.setState({value: event.target.value})
         this.props.changeRadius(event.target.value)
     }
 
     render() {
         return (
             <div className="slider-parent">
-                <input type="range" className="range-slider" min={10} max={100}
-                       step={10} value={this.state.value} onChange={this.handleChangeRange.bind(this)}/>
+                <input type="range" className="range-slider" min={0.1} max={1}
+                       step={0.1} value={this.props.activeUser.position.range}
+                       onChange={this.handleChangeRange.bind(this)}/>
                 <div className="range-value">
-                    Range: {this.state.value}
+                    Range: {this.props.activeUser.position.range * 100}%
                 </div>
             </div>
         )

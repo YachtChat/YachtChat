@@ -1,14 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {User, UserCoordinates} from "./models";
-import {
-    handlePositionUpdate,
-    setUserId,
-    setUsers,
-    addUser,
-    removeUser,
-    gotRemoteStream
-} from "./userSlice";
+import {addUser, gotRemoteStream, handlePositionUpdate, removeUser, setUserId, setUsers} from "./userSlice";
 
 interface WebSocketState {
     id: number
@@ -62,7 +55,7 @@ export const {connect, disconnect, login, logout, saveID} = webSocketSlice.actio
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
     //socket = new WebSocket('wss://call.tristanratz.com:9090');
-    socket = new WebSocket('wss://www.alphabibber.com:6503', 'json');
+    socket = new WebSocket('ws://localhost:6503', 'json');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");
@@ -75,8 +68,10 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
     };
 
     socket.onmessage = function (msg) {
-        console.log("Got message", msg.data);
         var data = JSON.parse(msg.data);
+        //if (data.type !== "position_change")
+        //    console.log("Got message", msg.data);
+        const loggedIn = getState().webSocket.loggedIn
 
         switch (data.type) {
             case "id":
@@ -87,19 +82,32 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                 break;
             case "join":
                 dispatch(setUsers(data.users));
+                const count = Object.keys(getState().userState.otherUsers).length + 1;
+                console.log(`Case: new_user, Count: ${count}`);
+                dispatch(handleRTCEvents(getState().userState.activeUser.id, count));
                 break;
             case "new_user":
-                dispatch(addUser(data.user));
+                if (loggedIn) {
+                    dispatch(addUser(data.user));
+                    const count = Object.keys(getState().userState.otherUsers).length + 1;
+                    console.log(`Case: new_user, Count: ${count}`);
+                    dispatch(handleRTCEvents(data.user.id, count));
+                }
                 break;
             case "user_left":
-                dispatch(removeUser(data.id))
+                if (loggedIn)
+                    dispatch(removeUser(data.id))
                 break;
             case "position_change":
-                dispatch(handlePositionUpdate(data));
+                if (loggedIn)
+                    dispatch(handlePositionUpdate(data));
                 break;
             case "signaling":
+                if (!loggedIn)
+                    break;
                 const fromId: number = data.source;
                 if (fromId !== getState().webSocket.id) {
+                    console.log(data.signal_type)
                     switch (data.signal_type) {
                         case "candidate":
                             dispatch(handleCandidate(data.candidate, fromId))
@@ -146,6 +154,7 @@ export const handleRTCEvents = (joinedUserId: number, count: number):AppThunk =>
                 rtcConnections[userId].onaddstream = (event: any) => {
                     streams[userId] = event.stream
                     dispatch(gotRemoteStream(userId));
+                    console.log("I HAVE A STREAM")
                 };
                 // @ts-ignore
                 rtcConnections[userId].addStream(streams[localClient]);
@@ -173,7 +182,6 @@ export const send = (message: { [key: string]: any }, target?: User): AppThunk =
     const msgObj = {
         ...message,
         id: getState().webSocket.id,
-        target: (!!target) ? target.id : undefined,
     }
 
     if (socket !== null)
@@ -191,18 +199,19 @@ export const requestLogin = (name: string): AppThunk => (dispatch) => {
 
 export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) => {
     dispatch(send({
-        type: "position",
+        type: "position_change",
         position,
     }));
 }
 
 export const handleCandidate = (candidate: any, fromId: number): AppThunk => (dispatch: any, getState: any) => {
-    rtcConnections[fromId].addIceCandidate(new RTCIceCandidate(candidate));
+    rtcConnections[fromId].addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e.stack));
 }
 
 export const handleSdp = (description: any, fromId: number): AppThunk => (dispatch: any, getState: any) => {
-    console.log("Start handleSdp");
-    if (description) {
+    console.log("Start handleSdp with description:");
+    console.dir(description);
+    if (!!description) {
         const clientId: number = getState().webSocket.id;
 
         console.log(clientId, ' Receive sdp from ', fromId);
@@ -217,7 +226,7 @@ export const handleSdp = (description: any, fromId: number): AppThunk => (dispat
                                 // This replaces the socket.emit function
                                 dispatch(send({
                                     type: "signaling",
-                                    signaling_type: "sdp",
+                                    signal_type: "sdp",
                                     target: fromId,
                                     description: rtcConnections[fromId].localDescription
                                 }));
@@ -226,9 +235,10 @@ export const handleSdp = (description: any, fromId: number): AppThunk => (dispat
                     // .catch(handleError);
                 }
             })
-            // .catch(handleError);
+        // .catch(handleError);
+    } else {
+        console.error("Description was not set")
     }
-    console.error("Description was not set")
 }
 
 

@@ -9,7 +9,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-    activeUser: {id: -1, name: "name", position: {x: 200, y: 200, range: 30}},
+    activeUser: {id: -1, name: "name", position: {x: 200, y: 200, range: 0.3}},
     otherUsers: {}
 };
 
@@ -49,7 +49,17 @@ export const userSlice = createSlice({
             state.otherUsers[action.payload.id].position = action.payload.position
         },
         setUsers: (state, action: PayloadAction<{ [key: number]: User }>) => {
-            state.otherUsers = action.payload
+            const otherUsers: { [key: number]: User } = {}
+
+            Object.keys(action.payload).forEach(k => {
+                const id = Number(k)
+                if (id === state.activeUser.id) {
+                    state.activeUser.position = action.payload[id].position
+                } else if (action.payload[id].name && action.payload[id].position) {
+                    otherUsers[id] = action.payload[id]
+                }
+            })
+            state.otherUsers = otherUsers
             // action.payload.filter(u => u.id !== state.activeUser.id && u.name !== null).forEach(u => {
             //     state.otherUsers[u.id] = u
             // })
@@ -71,7 +81,6 @@ export const {
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {
     if (getState().userState.activeUser.position !== coordinates) {
-        console.log(coordinates)
         dispatch(sendPosition(coordinates))
         dispatch(move(coordinates))
     }

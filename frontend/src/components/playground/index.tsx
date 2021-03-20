@@ -4,7 +4,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import UserComponent from "./UserComponent";
 import './style.scss';
-import {submitMovement, getUsers} from "../../store/userSlice";
+import {getUsers, submitMovement} from "../../store/userSlice";
 import NavigationBar from "../navigationbar/NavigationBar";
 
 
@@ -51,7 +51,7 @@ export class Playground extends Component<Props, State> {
             <div className={"contentWrapper"}>
                 <NavigationBar/>
                 <div className="Playground" onMouseMove={this.moveMouse.bind(this)} onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}>
-                {this.props.otherUsers.map(user => <UserComponent user={user}/>)}
+                    {this.props.otherUsers.map(user => <UserComponent key={user.id} user={user}/>)}
                 <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)} />
                 </div>
             </div>

@@ -101,7 +101,7 @@ wsServer.on('request', function(request) {
   nextID++;
 
   // answer the user that just connected
-  connections.get(user.id).sendUTF(JSON.stringify({"id": user.id}));
+  connections.get(user.id).sendUTF(JSON.stringify({"type": "id", "id": user.id}));
 
   // all the other communication with the client will be handled with "connection.on("message", ...)
   connection.on('message', function(message) {
