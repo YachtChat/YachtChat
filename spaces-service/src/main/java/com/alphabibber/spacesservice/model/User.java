@@ -17,7 +17,36 @@ public class User {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "space", nullable = true)
-    private String space;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="space")
+    private Space space;
 
+
+    protected User() {
+
+    }
+
+    public User(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Space getSpace() {
+        return space;
+    }
+
+    public void setSpace(Space space) {
+        this.space = space;
+    }
 }

@@ -21,4 +21,13 @@ public class SpaceService {
         return spaceRepository.findAll();
     }
 
+    public Space getSpaceById(String id) {
+        return spaceRepository.findById(id).orElse(null);
+    }
+
+    public void deleteSpaceById(String id) {
+        Space spaceToDelete = spaceRepository.getOne(id);
+        spaceRepository.delete(spaceToDelete);
+    }
+
 }
