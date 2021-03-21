@@ -8,12 +8,14 @@ interface WebSocketState {
     id: number
     connected: boolean
     loggedIn: boolean
+    muted: boolean
+    video: boolean
 }
 
 let socket: WebSocket | null = null;
 
 let rtcConnections: { [key: number]: RTCPeerConnection } = {};
-const streams: { [key: string]: MediaStream } = {};
+let streams: { [key: string]: MediaStream } = {};
 
 const offerOptions = {
     offerToReceiveVideo: true,
@@ -28,7 +30,9 @@ const mediaConstrains = {
 const initialState: WebSocketState = {
     id: -1,
     connected: false,
-    loggedIn: false
+    loggedIn: false,
+    muted: false,
+    video: true
 };
 
 export const webSocketSlice = createSlice({
@@ -49,15 +53,21 @@ export const webSocketSlice = createSlice({
         },
         saveID: (state, action: PayloadAction<number>) => {
             state.id = action.payload
+        },
+        toggleMute: (state) => {
+            state.muted = !state.muted
+        },
+        toggleVideo: (state) => {
+            state.video = !state.video
         }
     },
 });
 
-export const {connect, disconnect, login, logout, saveID} = webSocketSlice.actions;
+export const {connect, disconnect, login, logout, saveID, toggleMute, toggleVideo} = webSocketSlice.actions;
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
-    //socket = new WebSocket('wss://call.tristanratz.com:9090');
-    socket = new WebSocket('wss://backend.alphabibber.com', 'json');
+    socket = new WebSocket('ws://localhost:6503', 'json');
+    //socket = new WebSocket('wss://backend.alphabibber.com', 'json');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");
@@ -131,7 +141,7 @@ export const handleError = (error: string): AppThunk => (dispatch, getState) => 
 
 }
 
-export const handleRTCEvents = (joinedUserId: number, count: number):AppThunk => (dispatch, getState) => {
+export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk => (dispatch, getState) => {
     // get client ids
     const clients = Object.keys(getState().userState.otherUsers).map(k => Number(k))
     const localClient: number = getState().webSocket.id
@@ -172,7 +182,7 @@ export const handleRTCEvents = (joinedUserId: number, count: number):AppThunk =>
                 rtcConnections[joinedUserId].setLocalDescription(description).then(() => {
                     console.log(localClient, ' Send offer to ', joinedUserId);
                     dispatch(send({
-                        type:'signaling',
+                        type: 'signaling',
                         target: joinedUserId,
                         description: rtcConnections[joinedUserId].localDescription,
                         signal_type: 'sdp'
@@ -181,6 +191,16 @@ export const handleRTCEvents = (joinedUserId: number, count: number):AppThunk =>
             });
         }
     }
+}
+
+export const mute = (): AppThunk => (dispatch, getState) => {
+    dispatch(toggleMute())
+    streams[getState().userState.activeUser.id].getAudioTracks()[0].enabled = !getState().webSocket.muted
+}
+
+export const displayVideo = (): AppThunk => (dispatch, getState) => {
+    dispatch(toggleVideo())
+    streams[getState().userState.activeUser.id].getVideoTracks()[0].enabled = getState().webSocket.video
 }
 
 export const send = (message: { [key: string]: any }, target?: User): AppThunk => (dispatch, getState) => {
@@ -192,6 +212,13 @@ export const send = (message: { [key: string]: any }, target?: User): AppThunk =
 
     if (socket !== null)
         socket.send(JSON.stringify(msgObj));
+}
+
+export const sendLogout = (): AppThunk => (dispatch) => {
+    dispatch(send({type: "leave"}))
+    dispatch(logout())
+    streams = {}
+    rtcConnections = {}
 }
 
 export const requestLogin = (name: string): AppThunk => (dispatch) => {
@@ -263,6 +290,21 @@ export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) 
     }
 }
 
+export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
+    // const localClient = getState().webSocket.id
+    // streams[localClient].getAudioTracks().forEach(track => {
+    //     const r = rtcConnections[id].addTrack(track, streams[localClient]);
+    //     r.replaceTrack(track).
+    // })
+}
+
+export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
+    // const localClient = getState().webSocket.id
+    // streams[localClient].getAudioTracks().forEach(track => {
+    //     rtcConnections[id].removeTrack();
+    // })
+}
+
 export const sendUsername = (name: string): AppThunk => dispatch => {
     dispatch(send({type: "login", name: name}))
 }
@@ -274,7 +316,7 @@ export const leaveChat = (): AppThunk => dispatch => {
     // rtcConnection?.close()
 }
 
-export const requestUserMediaAndJoin = (): AppThunk => (dispatch,getState) => {
+export const requestUserMediaAndJoin = (): AppThunk => (dispatch, getState) => {
     navigator.mediaDevices.getUserMedia(mediaConstrains).then((e) => {
         const localClient = getState().webSocket.id
         streams[localClient] = e
