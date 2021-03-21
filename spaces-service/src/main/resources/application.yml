@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: spaces-service
+  datasource:
+    url: "${DEV_DB:jdbc:h2:mem:testdb}"
+    driver-class-name: org.h2.Driver
+    username: "${DB_USER:sa}"
+    password: "${DB_PASSWORD:}"
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
