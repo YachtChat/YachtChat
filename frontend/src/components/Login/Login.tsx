@@ -51,9 +51,14 @@ export class Login extends Component<Props, State> {
 
                 <form>
                     <div className="user-box">
-                        <input type="text" value={this.state.value} onKeyDown={this.handleKeySubmit.bind(this)}
-                           onChange={this.handleChange.bind(this)}/>
+                        <input type="text" value={this.state.value}
+                               onKeyDown={this.handleKeySubmit.bind(this)}
+                               onChange={this.handleChange.bind(this)} autoFocus/>
                             <label>Username</label>
+                    </div>
+                    <div className="user-box">
+                        <input type="password"/>
+                        <label>Password</label>
                     </div>
                     <button onClick={this.handleSubmit.bind(this)}>
                         <span></span>
