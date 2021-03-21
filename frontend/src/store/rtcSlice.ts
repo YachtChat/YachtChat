@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {send} from "./connectionSlice";
 import {rtcConfiguration} from "./stunServerConfig";
-import {getUserID, gotRemoteStream} from "./userSlice";
+import {getUser, getUserID, gotRemoteStream} from "./userSlice";
 import {handleError} from "./errorSlice";
 
 interface RTCState {
@@ -143,7 +143,7 @@ export const handleSdp = (description: any, fromId: number): AppThunk => (dispat
     console.log("Start handleSdp with description:");
     console.dir(description);
     if (!!description) {
-        const clientId: number = getState().webSocket.id;
+        const clientId: number = getUserID(getState());
 
         console.log(clientId, ' Receive sdp from ', fromId);
         rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))

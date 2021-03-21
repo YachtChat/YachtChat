@@ -1,0 +1,16 @@
+version: "2"
+services:
+  nginx-proxyed-container:
+    ports:
+    - 3000:3000
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    network_mode: bridge
+
+  signaling_server:
+    build:
+      context: ./signalingServer
+      dockerfile: ./Dockerfile
+    network_mode: bridge
+
