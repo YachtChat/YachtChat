@@ -1,0 +1,52 @@
+version: "3.3"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    network_mode: bridge
+
+  letsencrypt-nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes_from:
+      - nginx-proxy
+    environment:
+      - DEFAULT_EMAIL=ole.sen@gmx.de
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: bridge
+
+  nginx-proxyed-container:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    environment:
+      - VIRTUAL_HOST=www.alphabibber.com
+      - LETSENCRYPT_HOST=www.alphabibber.com
+    network_mode: bridge
+
+  signaling_server:
+    build:
+      context: .
+      dockerfile: ./signalingServer/Dockerfile
+    ports:
+      - 6503:6503
+    environment:
+      - VIRTUAL_HOST=backend.alphabibber.com
+      - LETSENCRYPT_HOST=backend.alphabibber.com
+      - VIRTUAL_PORT=6503
+    network_mode: bridge
+
+volumes:
+  certs: { }
+  vhost: { }
+  html: { }
