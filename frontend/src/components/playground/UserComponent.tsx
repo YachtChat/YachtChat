@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import {User} from "../../store/models";
-import {getStream} from "../../store/connectionSlice";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
+import {getStream} from "../../store/rtcSlice";
 
 interface Props {
     user: User

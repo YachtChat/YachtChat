@@ -103,6 +103,7 @@ export const submitNameChange = (name: string): AppThunk => dispatch => {
 };
 
 export const getUser = (state: RootState) => state.userState.activeUser;
+export const getUserID = (state: RootState) => state.userState.activeUser.id;
 export const getUserById = (state: RootState, id: number) => state.userState.otherUsers[id];
 export const getUsers = (state: RootState) => Object.keys(state.userState.otherUsers).map(
     id => state.userState.otherUsers[Number(id)]

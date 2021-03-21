@@ -1,11 +1,13 @@
 import {Action, configureStore, ThunkAction} from '@reduxjs/toolkit';
 import userReducer from './userSlice';
 import webSocketSlice from "./connectionSlice";
+import rtcSlice from "./rtcSlice";
 
 export const store = configureStore({
   reducer: {
     userState: userReducer,
-    webSocket: webSocketSlice
+    webSocket: webSocketSlice,
+    rtc: rtcSlice
   },
 });
 

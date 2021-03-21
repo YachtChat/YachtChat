@@ -16,7 +16,8 @@ import {
     FaVideoSlash
 } from 'react-icons/fa';
 import RangeSlider from "./RangeSlider";
-import {displayVideo, mute, sendLogout} from "../../store/connectionSlice";
+import {sendLogout} from "../../store/connectionSlice";
+import {displayVideo, mute} from "../../store/rtcSlice";
 
 interface Props {
     activeUser: User
@@ -104,8 +105,8 @@ export class NavigationBar extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
-    video: state.webSocket.video,
-    muted: state.webSocket.muted
+    video: state.rtc.video,
+    muted: state.rtc.muted
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
