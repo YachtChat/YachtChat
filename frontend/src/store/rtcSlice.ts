@@ -16,6 +16,7 @@ const initialState: RTCState = {
 };
 
 let rtcConnections: { [key: string]: RTCPeerConnection } = {};
+let rtpSender: { [key: string]: RTCRtpSender[] } = {};
 let streams: { [key: string]: MediaStream } = {};
 
 const offerOptions = {
@@ -69,18 +70,22 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
 }
 
 export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
-    // const localClient = getState().webSocket.id
-    // streams[localClient].getAudioTracks().forEach(track => {
-    //     const r = rtcConnections[id].addTrack(track, streams[localClient]);
-    //     r.replaceTrack(track).
-    // })
+    const localClient = getUserID(getState())
+    console.log("SEND ALL")
+    rtpSender[id].forEach(rtp => {
+        if (rtp.track && rtp.track.kind === 'audio') {
+            rtp.track.enabled = true
+        }
+    })
 }
 
 export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
-    // const localClient = getState().webSocket.id
-    // streams[localClient].getAudioTracks().forEach(track => {
-    //     rtcConnections[id].removeTrack();
-    // })
+    const localClient = getUserID(getState())
+    rtpSender[id].forEach(rtp => {
+        if (rtp.track && rtp.track.kind === 'audio') {
+            rtp.track.enabled = false
+        }
+    })
 }
 
 export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk => (dispatch, getState) => {
@@ -113,8 +118,9 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
                     console.log("I HAVE A TRACK");
                 }
 
-                streams[localClient].getTracks().forEach(track => {
-                    rtcConnections[userId].addTrack(track, streams[localClient]);
+                rtpSender[userId] = []
+                streams[localClient].getTracks().forEach((track, idx) => {
+                    rtpSender[userId][idx] = rtcConnections[userId].addTrack(track.clone(), streams[localClient])
                 })
             }
         });

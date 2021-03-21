@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {User, UserCoordinates} from "./models";
 import {sendPosition} from "./connectionSlice";
+import {sendAudio, unsendAudio} from "./rtcSlice";
 
 interface UserState {
     activeUser: User
@@ -102,25 +103,27 @@ export const handlePositionUpdate = (object: { id: number, position: UserCoordin
     dispatch(move(object))
     const currentRange = maxRange * user.position.range
 
-    let users = []
+    let users: User[] = []
 
     if (user.id === object.id)
         users = getUsers(getState())
     else
         users.push(getUserById(getState(), object.id))
 
+    // if (getUser(getState()).position === user.position)
     users.forEach(u => {
         const dist = Math.sqrt(
             Math.pow(((u.position.x) - (user.position.x)), 2) +
             Math.pow(((u.position.y) - (user.position.y)), 2)
         )
         if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
+            dispatch(sendAudio(u.id))
             dispatch(setUser({...u, inProximity: true}))
         } else if (dist > (currentRange + userProportion / 2) && !!u.inProximity) {
+            dispatch(unsendAudio(u.id))
             dispatch(setUser({...u, inProximity: false}))
         }
     })
-
 }
 
 export const submitRadius = (radius: number): AppThunk => (dispatch, getState) => {
