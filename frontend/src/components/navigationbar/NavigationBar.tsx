@@ -42,15 +42,18 @@ export class NavigationBar extends Component<Props, State> {
         }
     }
 
+    // function that changes the state of value, used in the username input
     handleChange(event: any) {
         this.setState({value: event.target.value});
     }
 
+    // function that sets the username after the login is submitted
     handleSubmit(event: any) {
         this.props.setName(this.state.value)
         event.preventDefault();
     }
 
+    // function that switches the state of the navigationbar bar (collapsed/not collapsed)
     handleCollapse(event: any){
         if (this.state.collapsed){
             this.setState({
@@ -64,6 +67,8 @@ export class NavigationBar extends Component<Props, State> {
         }
     }
 
+    // function that switches the state from the video (on/off)
+    // and adjusts the icon to this state
     handleVideoIcon(event: any){
         if (this.state.video){
             this.setState({
@@ -79,6 +84,8 @@ export class NavigationBar extends Component<Props, State> {
         }
     }
 
+    // function that switches the state from the audio (on/off)
+    // and adjusts the icon to this state
     handleAudioIcon(event: any){
         if (this.state.audio){
             this.setState({
@@ -97,7 +104,7 @@ export class NavigationBar extends Component<Props, State> {
     render() {
         return(
 
-            <ProSidebar id="sidebar" collapsed={this.state.collapsed}> {/* collapse prop is for big/small sidebar*/}
+            <ProSidebar id="sidebar" collapsed={this.state.collapsed}>
                 <Menu iconShape="circle">
                     <MenuItem icon={<FaBars />} onClick={this.handleCollapse.bind(this)}>Dashboard</MenuItem>
                     <SubMenu title="Rename" icon={<FaSignature />}>

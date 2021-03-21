@@ -24,24 +24,28 @@ export class Playground extends Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-
         this.state = {
             dragActive: false
         }
     }
 
+    // function that sets the state of dragActive on true
+    // if the mouse is clicked on the active user
     dragStart(event: React.MouseEvent) {
         this.setState({
             dragActive: true
         })
     }
 
+    // function that sets the state of dragActive on false
+    // if the mouse left the playground or is not holded anymore
     dragEnd() {
         this.setState({
             dragActive: false
         })
     }
 
+    // function that moves the active user if the mouse
     moveMouse(e: React.MouseEvent) {
         if (this.state.dragActive) {
             const scaling = this.props.sizeMultiplier
@@ -51,7 +55,6 @@ export class Playground extends Component<Props, State> {
 
     // function handleZoomIn increases the sizeMultiplier
     handleZoomIn() {
-
         if (this.props.sizeMultiplier <= 2.0) {
             this.props.changeSizeMultiplier(this.props.sizeMultiplier + 0.1)
         }
@@ -59,7 +62,6 @@ export class Playground extends Component<Props, State> {
 
     // function handleZoomOut decreases the sizeMultiplier
     handleZoomOut() {
-
         if (this.props.sizeMultiplier >= 0.5) {
             this.props.changeSizeMultiplier(this.props.sizeMultiplier - 0.1)
         }
