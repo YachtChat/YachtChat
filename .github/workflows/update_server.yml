@@ -26,9 +26,9 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo git pull
-            sudo docker-compose build nginx-proxyed-container signaling_server
-            sudo docker-compose up --no-deps -d nginx-proxyed-container signaling_server
-#            sudo docker-compose up --build -d
+            sudo mvn -f ./spaces-service/pom.xml package -DskipTests
+            sudo docker-compose build nginx-proxyed-container signaling_server spaces-service
+            sudo docker-compose up --no-deps -d nginx-proxyed-container signaling_server spaces-service
           host: www.chat.alphabibber.com #${{ secrets.HOST}}
           user: danilo_walenta #${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
