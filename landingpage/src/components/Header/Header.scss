@@ -1,0 +1,28 @@
+.Header {
+  paddingRight: 79px;
+  paddingLeft: 118px;
+  background-color: dimgrey;
+
+
+
+}
+
+.Logo{
+  fontFamily: Work Sans, sans-serif;
+  fontWeight: 600;
+  color: white;
+  textAlign: left;
+
+}
+
+.MenuButton{
+  fontFamily: Open Sans, sans-serif;
+  fontWeight: 700;
+  size: 18px;
+  marginLeft: 38px;
+}
+
+.ToolBar{
+  display: flex;
+  justifyContent: space-between;
+}
