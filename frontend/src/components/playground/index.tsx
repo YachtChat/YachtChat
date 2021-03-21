@@ -49,7 +49,7 @@ export class Playground extends Component<Props, State> {
         }
     }
 
-    // Event handler callback for zoom in
+    // function handleZoomIn increases the sizeMultiplier
     handleZoomIn() {
 
         if (this.props.sizeMultiplier <= 2.0) {
@@ -57,7 +57,7 @@ export class Playground extends Component<Props, State> {
         }
     }
 
-    // Event handler callback zoom out
+    // function handleZoomOut decreases the sizeMultiplier
     handleZoomOut() {
 
         if (this.props.sizeMultiplier >= 0.5) {
@@ -65,13 +65,24 @@ export class Playground extends Component<Props, State> {
         }
 
     }
+    // calls handleZoomOut if user scrolls down/ handleZoomIn if user scrolls up
+    onWheel(event: any){
+        if(event.deltaY < 0 || event.deltaX < 0) {
+            this.handleZoomOut()
+        }
+
+        if(event.deltaY > 0 || event.deltaX > 0){
+            this.handleZoomIn()
+        }
+    }
 
     render() {
         return (
             <div className={"contentWrapper"}>
                 <NavigationBar/>
                 <div className="Playground" onMouseMove={this.moveMouse.bind(this)}
-                     onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}>
+                     onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}
+                     onWheel={this.onWheel.bind(this)}>
                     {this.props.otherUsers.map(user => <UserComponent key={user.id} user={user}/>)}
                     <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)}/>
                 </div>
