@@ -205,7 +205,7 @@ function positionChange(id, x, y, range){
 
 function signaling(id, target, message){
   const obj = {"type": "signaling", "source": id};
-  const combinedObj = {...obj, ...message}
+  const combinedObj = {...obj, ...message};
   connections.get(target).sendUTF(JSON.stringify(combinedObj));
 }
 
