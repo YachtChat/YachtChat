@@ -13,7 +13,9 @@ import {
     FaPowerOff,
     FaSignature,
     FaVideo,
-    FaVideoSlash
+    FaVideoSlash,
+    FaPlusCircle,
+    FaSignOutAlt
 } from 'react-icons/fa';
 import RangeSlider from "./RangeSlider";
 import {sendLogout} from "../../store/connectionSlice";
@@ -94,6 +96,8 @@ export class NavigationBar extends Component<Props, State> {
                     </SubMenu>
                     <MenuItem icon={videoIcon} onClick={this.props.toggleVideo}>Video</MenuItem>
                     <MenuItem icon={micIcon} onClick={this.props.toggleAudio}>Mic</MenuItem>
+                    <MenuItem icon={<FaPlusCircle/>}>Add User</MenuItem>
+                    <MenuItem icon={<FaSignOutAlt/>}>Leave Room</MenuItem>
                     <MenuItem icon={<FaCog/>}>Settings</MenuItem>
                     <MenuItem icon={<FaPowerOff/>} onClick={this.props.logout}>Log Out</MenuItem>
                 </Menu>
