@@ -3,6 +3,7 @@ export interface User {
     name: string
     position: UserCoordinates
     userStream?: boolean
+    inProximity?: boolean
 }
 export interface UserCoordinates {
     x: number

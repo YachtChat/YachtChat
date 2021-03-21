@@ -3,6 +3,7 @@ import {User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getStream} from "../../store/rtcSlice";
+import {maxRange, userProportion} from "../../store/userSlice";
 
 interface Props {
     user: User
@@ -31,7 +32,7 @@ export class UserComponent extends Component<Props> {
         if (this.props.user.name === null)
             return (<div/>);
         const user = this.props.user
-        const userSize = 100 * this.props.sizeMultiplier
+        const userSize = userProportion * this.props.sizeMultiplier
         const x = user.position.x * this.props.sizeMultiplier
         const y = user.position.y * this.props.sizeMultiplier
 
@@ -39,17 +40,18 @@ export class UserComponent extends Component<Props> {
             width: userSize,
             height: userSize,
             left: x - userSize / 2,
-            top: y - userSize / 2
+            top: y - userSize / 2,
+            opacity: (user.inProximity) ? 1 : 0.5
         }
         // range in pixels
-        const maxRange = 300
         const rangeInPx = 2 * maxRange * user.position.range * this.props.sizeMultiplier + userSize
 
         const rangeStyle = {
             width: rangeInPx,
             height: rangeInPx,
             left: x - rangeInPx / 2,
-            top: y - rangeInPx / 2
+            top: y - rangeInPx / 2,
+            opacity: (user.inProximity) ? 1 : 0.5
         }
 
         return (

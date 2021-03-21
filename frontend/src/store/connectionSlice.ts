@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
-import {addUser, getUserID, handlePositionUpdate, removeUser, setUserId, setUsers} from "./userSlice";
+import {getUserID, handlePositionUpdate, removeUser, setUser, setUserId, setUsers} from "./userSlice";
 import {handleError} from "./errorSlice";
 import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
 
@@ -78,7 +78,7 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                 break;
             case "new_user":
                 if (loggedIn) {
-                    dispatch(addUser(data.user));
+                    dispatch(setUser(data.user));
                     const count = Object.keys(getState().userState.otherUsers).length + 1;
                     dispatch(handleRTCEvents(data.user.id, count));
                 }
@@ -88,7 +88,7 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                     dispatch(removeUser(data.id))
                 break;
             case "position_change":
-                if (loggedIn)
+                if (loggedIn && data.id !== getUserID(getState()))
                     dispatch(handlePositionUpdate(data));
                 break;
             case "signaling":

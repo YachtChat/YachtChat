@@ -26,6 +26,7 @@
     border-radius: 50%;
     background: radial-gradient(circle, rgba(9, 121, 9, .4) 1%, rgba(255, 255, 255, 0) 70%);
     border: solid 1px rgba(255, 0, 0, .2);
+    transition: 0.2s opacity;
   }
 
   .activeUser {
@@ -45,6 +46,7 @@
     display: block;
     user-select: none;
     overflow: hidden;
+    transition: 0.2s opacity;
 
     video {
       position: absolute;
