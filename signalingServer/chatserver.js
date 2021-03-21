@@ -197,9 +197,7 @@ function join(id){
 }
 
 function positionChange(id, x, y, range){
-  users.get(id).position.x = x;
-  users.get(id).position.y = y;
-  users.get(id).position.range = range;
+  users.get(id).position = {x: x, y: y, range: range};
   connections.forEach(function (connection, _){
     connection.sendUTF(JSON.stringify({"type": "position_change", "id": id, "position": users.get(id).position}));
   });
