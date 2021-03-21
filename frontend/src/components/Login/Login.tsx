@@ -33,6 +33,12 @@ export class Login extends Component<Props, State> {
         event.preventDefault();
     }
 
+    handleKeySubmit(event: React.KeyboardEvent) {
+        if(event.key == "13") {
+            this.props.setName(this.state.value)
+        }
+    }
+
     componentDidMount() {
         this.props.connect()
     }
@@ -45,7 +51,7 @@ export class Login extends Component<Props, State> {
 
                 <form>
                     <div className="user-box">
-                        <input type="text" value={this.state.value}
+                        <input type="text" value={this.state.value} onKeyDown={this.handleKeySubmit.bind(this)}
                            onChange={this.handleChange.bind(this)}/>
                             <label>Username</label>
                     </div>
