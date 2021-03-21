@@ -107,7 +107,6 @@ wsServer.on('request', function(request) {
   connection.on('message', function(message) {
     if (message.type === 'utf8') {
       // log the mesage that the server received from the client
-      log("Recceived Message: " + message.utf8Data);
 
       try{
         message = JSON.parse(message.utf8Data);
