@@ -1,4 +1,4 @@
-FROM node:latest as build-deps
+FROM node:alpine as build-deps
 WORKDIR /src
 COPY . /src
 RUN yarn
