@@ -24,7 +24,7 @@ const offerOptions = {
 };
 
 const mediaConstrains = {
-    video: {width: 320, height: 320, facingMode: "user", frameRate: 1.0},
+    video: {width: 320, height: 320, facingMode: "user"},
     audio: true
 }
 
