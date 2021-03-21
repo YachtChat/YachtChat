@@ -123,6 +123,9 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
             rtcConnections[joinedUserId].createOffer(offerOptions).then((description) => {
                 rtcConnections[joinedUserId].setLocalDescription(description).then(() => {
                     console.log(localClient, ' Send offer to ', joinedUserId);
+                    setTimeout(() => {
+                        console.log('hello');
+                    }, 1000);
                     dispatch(send({
                         type: 'signaling',
                         target: joinedUserId,
