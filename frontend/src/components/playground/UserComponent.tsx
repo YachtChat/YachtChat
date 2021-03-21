@@ -11,8 +11,8 @@ interface Props {
 }
 
 export class UserComponent extends Component<Props> {
-    private myRef: React.RefObject<HTMLVideoElement>;
 
+    private myRef: React.RefObject<HTMLVideoElement>;
 
     constructor(props: Props) {
         super(props);

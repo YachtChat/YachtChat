@@ -31,7 +31,6 @@ export class NavigationBar extends Component<Props, State> {
         micOffIcon: <FaMicrophoneSlash />,
     };
 
-
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -103,7 +102,6 @@ export class NavigationBar extends Component<Props, State> {
 
     render() {
         return(
-
             <ProSidebar id="sidebar" collapsed={this.state.collapsed}>
                 <Menu iconShape="circle">
                     <MenuItem icon={<FaBars />} onClick={this.handleCollapse.bind(this)}>Dashboard</MenuItem>

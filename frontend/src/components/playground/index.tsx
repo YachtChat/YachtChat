@@ -7,7 +7,6 @@ import './style.scss';
 import {submitMovement, getUsers, changeScaling} from "../../store/userSlice";
 import NavigationBar from "../navigationbar/NavigationBar";
 
-
 interface Props {
     activeUser: User
     otherUsers: User[]
