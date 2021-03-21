@@ -2,7 +2,7 @@ FROM node:latest
 
 WORKDIR /usr/src/app
 
-COPY ../DevOps .
+COPY . .
 RUN npm install
 
 EXPOSE 6503
