@@ -10,6 +10,7 @@ interface Props {
     onMouseDown?: (e: React.MouseEvent) => void
     onTouchStart?: (e: React.TouchEvent) => void
     sizeMultiplier: number
+    muted: boolean
 }
 
 export class UserComponent extends Component<Props> {
@@ -41,7 +42,7 @@ export class UserComponent extends Component<Props> {
             height: userSize,
             left: x - userSize / 2,
             top: y - userSize / 2,
-            opacity: (user.inProximity) ? 1 : 0.5
+            opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5
         }
         // range in pixels
         const rangeInPx = 2 * maxRange * user.position.range * this.props.sizeMultiplier + userSize
@@ -51,7 +52,7 @@ export class UserComponent extends Component<Props> {
             height: rangeInPx,
             left: x - rangeInPx / 2,
             top: y - rangeInPx / 2,
-            opacity: (user.inProximity) ? 1 : 0.5
+            opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5
         }
 
         return (
@@ -71,7 +72,8 @@ export class UserComponent extends Component<Props> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    sizeMultiplier: state.userState.scalingFactor
+    sizeMultiplier: state.userState.scalingFactor,
+    muted: state.rtc.muted
 })
 
 export default connect(mapStateToProps)(UserComponent)
