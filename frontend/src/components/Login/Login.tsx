@@ -49,13 +49,13 @@ export class Login extends Component<Props, State> {
                            onChange={this.handleChange.bind(this)}/>
                             <label>Username</label>
                     </div>
-                    <a href="#" onClick={this.handleSubmit.bind(this)}>
+                    <button onClick={this.handleSubmit.bind(this)}>
                         <span></span>
                         <span></span>
                         <span></span>
                         <span></span>
                         Submit
-                    </a>
+                    </button>
                 </form>
 
 
