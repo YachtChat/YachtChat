@@ -44,6 +44,16 @@ services:
       - VIRTUAL_PORT=6503
     network_mode: bridge
 
+  spaces-service:
+    build:
+      context: ./spaces-service
+      dockerfile: ./Dockerfile
+    environment:
+      - VIRTUAL_HOST=spaces.chat.alphabibber.com
+      - LETSENCRYPT_HOST=spaces.chat.alphabibber.com
+      - VIRTUAL_PORT=8080
+    network_mode: bridge
+
 volumes:
   certs: { }
   vhost: { }
