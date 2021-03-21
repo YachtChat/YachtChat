@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {User, UserCoordinates} from "./models";
 import {addUser, gotRemoteStream, handlePositionUpdate, removeUser, setUserId, setUsers} from "./userSlice";
+import {rtcConfiguration} from "./stunServerConfig";
 
 interface WebSocketState {
     id: number
@@ -18,10 +19,6 @@ const offerOptions = {
     offerToReceiveVideo: true,
     offerToReceiveAudio: true
 };
-
-const rtcConfiguration = {
-    "iceServers": [{"urls": "stun:stun2.1.google.com:19302"}]
-}
 
 const mediaConstrains = {
     video: true,
