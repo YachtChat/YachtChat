@@ -26,8 +26,7 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo git pull
-            sudo pm2 stop signalingServer
-            sudo pm2 start --name signalingServer ./signalingServer/chatserver.js
+            sudo docker-compose up --build -d
           host: www.alphabibber.com #${{ secrets.HOST}}
           user: danilo_walenta #${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}

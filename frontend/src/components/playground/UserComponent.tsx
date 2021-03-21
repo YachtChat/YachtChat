@@ -2,9 +2,7 @@ import React, {Component} from "react";
 import {User} from "../../store/models";
 import {getStream} from "../../store/connectionSlice";
 import {RootState} from "../../store/store";
-import {getUsers} from "../../store/userSlice";
 import {connect} from "react-redux";
-import {Playground} from "./index";
 
 interface Props {
     user: User
