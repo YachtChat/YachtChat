@@ -1,4 +1,4 @@
-version: "3.3"
+version: "2"
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
@@ -27,8 +27,8 @@ services:
 
   nginx-proxyed-container:
     build:
-      context: .
-      dockerfile: ./frontend/Dockerfile
+      context: ./frontend
+      dockerfile: ./Dockerfile
     environment:
       - VIRTUAL_HOST=www.alphabibber.com
       - LETSENCRYPT_HOST=www.alphabibber.com
@@ -36,10 +36,8 @@ services:
 
   signaling_server:
     build:
-      context: .
-      dockerfile: ./signalingServer/Dockerfile
-    ports:
-      - 6503:6503
+      context: ./signalingServer
+      dockerfile: ./Dockerfile
     environment:
       - VIRTUAL_HOST=backend.alphabibber.com
       - LETSENCRYPT_HOST=backend.alphabibber.com
