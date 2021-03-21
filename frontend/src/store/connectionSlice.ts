@@ -57,7 +57,7 @@ export const {connect, disconnect, login, logout, saveID} = webSocketSlice.actio
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
     //socket = new WebSocket('wss://call.tristanratz.com:9090');
-    socket = new WebSocket('wss://www.alphabibber.com:6503', 'json');
+    socket = new WebSocket('wss://backend.alphabibber.com', 'json');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");
