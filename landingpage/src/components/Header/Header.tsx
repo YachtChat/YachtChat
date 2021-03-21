@@ -11,7 +11,7 @@ import {
 import {Link as RouterLink} from "react-router-dom";
 
 const displayDesktop = () => {
-    return <Toolbar className="ToolBar">{notzoomLogo} {getMenuButtons()}</Toolbar>;
+    return (<Toolbar className="ToolBar">{notzoomLogo} {getMenuButtons()}</Toolbar>);
 };
 
 const getMenuButtons = () => {
