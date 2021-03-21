@@ -6,6 +6,7 @@ import UserComponent from "./UserComponent";
 import './style.scss';
 import {submitMovement, getUsers, changeScaling} from "../../store/userSlice";
 import NavigationBar from "../navigationbar/NavigationBar";
+import {displayVideo, mute} from "../../store/rtcSlice";
 
 interface Props {
     activeUser: User
@@ -13,6 +14,10 @@ interface Props {
     move: (userCoordinates: UserCoordinates) => void
     sizeMultiplier: number
     changeSizeMultiplier: (size: number) => void
+    toggleAudio: () => void
+    toggleVideo: () => void
+    video: boolean
+    muted: boolean
 }
 
 interface State {
@@ -56,7 +61,7 @@ export class Playground extends Component<Props, State> {
     moveMouse(e: React.MouseEvent) {
         if (this.state.dragActive) {
             const scaling = this.props.sizeMultiplier
-            this.props.move({x: e.pageX * 1/scaling, y: e.pageY * 1/scaling, range: this.props.activeUser.position.range})
+            this.props.move({x: e.pageX / scaling, y: e.pageY /scaling, range: this.props.activeUser.position.range})
         }
     }
 
@@ -95,6 +100,16 @@ export class Playground extends Component<Props, State> {
         }
     }
 
+    handleKeyStream(event: React.KeyboardEvent) {
+        if(event.key == "77") { //"m"
+            this.props.toggleAudio()
+        }
+        if(event.key == "67") { //"c"
+            this.props.toggleVideo()
+        }
+    }
+
+
     render() {
         return (
             <div className={"contentWrapper"}>
@@ -102,7 +117,7 @@ export class Playground extends Component<Props, State> {
                 <div className="Playground" onMouseMove={this.moveMouse.bind(this)}
                      onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}
                      onWheel={this.onWheel.bind(this)} onTouchMove={this.moveTouch.bind(this)}
-                     onTouchEnd={this.dragEnd.bind(this)}>
+                     onTouchEnd={this.dragEnd.bind(this)} onKeyDown={this.handleKeyStream.bind(this)}>
                     {this.props.otherUsers.map(user => <UserComponent key={user.id} user={user}/>)}
                     <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)}
                         onTouchStart={this.dragStartTouch.bind(this)}/>
@@ -119,12 +134,16 @@ export class Playground extends Component<Props, State> {
 const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
     otherUsers: getUsers(state),
-    sizeMultiplier: state.userState.scalingFactor
+    sizeMultiplier: state.userState.scalingFactor,
+    video: state.rtc.video,
+    muted: state.rtc.muted
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     move: (userCoordinates: UserCoordinates) => dispatch(submitMovement(userCoordinates)),
-    changeSizeMultiplier: (scale: number) => dispatch(changeScaling(scale))
+    changeSizeMultiplier: (scale: number) => dispatch(changeScaling(scale)),
+    toggleAudio: () => dispatch(mute()),
+    toggleVideo: () => dispatch(displayVideo())
 })
 
 

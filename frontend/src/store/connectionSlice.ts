@@ -1,32 +1,24 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppThunk, RootState} from './store';
+import {createSlice} from '@reduxjs/toolkit';
+import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
-import {addUser, gotRemoteStream, handlePositionUpdate, removeUser, setUserId, setUsers} from "./userSlice";
-import {rtcConfiguration} from "./stunServerConfig";
+import {addUser, getUserID, handlePositionUpdate, removeUser, setUserId, setUsers} from "./userSlice";
+import {handleError} from "./errorSlice";
+import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
+
+let websocket_url: string | undefined = process.env.REACT_APP_WEBSOCKET_URL;
+
+if (process.env.NODE_ENV == "development"){
+    websocket_url = process.env.REACT_APP_WEBSOCKET_URL_LOCAL;
+}
 
 interface WebSocketState {
-    id: number
     connected: boolean
     loggedIn: boolean
 }
 
 let socket: WebSocket | null = null;
 
-let rtcConnections: { [key: number]: RTCPeerConnection } = {};
-const streams: { [key: string]: MediaStream } = {};
-
-const offerOptions = {
-    offerToReceiveVideo: true,
-    offerToReceiveAudio: true
-};
-
-const mediaConstrains = {
-    video: true,
-    audio: true
-}
-
 const initialState: WebSocketState = {
-    id: -1,
     connected: false,
     loggedIn: false
 };
@@ -47,17 +39,14 @@ export const webSocketSlice = createSlice({
         disconnect: (state) => {
             state.connected = false
         },
-        saveID: (state, action: PayloadAction<number>) => {
-            state.id = action.payload
-        }
     },
 });
 
-export const {connect, disconnect, login, logout, saveID} = webSocketSlice.actions;
+export const {connect, disconnect, login, logout} = webSocketSlice.actions;
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
-    //socket = new WebSocket('wss://call.tristanratz.com:9090');
-    socket = new WebSocket('wss://backend.alphabibber.com', 'json');
+    //socket = new WebSocket('wss://call.tristanratz.com:9090')
+    socket = new WebSocket(<string>websocket_url, 'json');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");
@@ -77,7 +66,7 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
 
         switch (data.type) {
             case "id":
-                dispatch(saveID(data.id))
+                dispatch(setUserId(data.id))
                 break;
             case "login":
                 dispatch(handleLogin(data.success));
@@ -85,14 +74,12 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
             case "join":
                 dispatch(setUsers(data.users));
                 const count = Object.keys(getState().userState.otherUsers).length + 1;
-                console.log(`Case: new_user, Count: ${count}`);
-                dispatch(handleRTCEvents(getState().userState.activeUser.id, count));
+                dispatch(handleRTCEvents(getUserID(getState()), count));
                 break;
             case "new_user":
                 if (loggedIn) {
                     dispatch(addUser(data.user));
                     const count = Object.keys(getState().userState.otherUsers).length + 1;
-                    console.log(`Case: new_user, Count: ${count}`);
                     dispatch(handleRTCEvents(data.user.id, count));
                 }
                 break;
@@ -108,8 +95,7 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                 if (!loggedIn)
                     break;
                 const fromId: number = data.source;
-                if (fromId !== getState().webSocket.id) {
-                    console.log(data.signal_type)
+                if (fromId !== getUserID(getState())) {
                     switch (data.signal_type) {
                         case "candidate":
                             dispatch(handleCandidate(data.candidate, fromId))
@@ -122,72 +108,19 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                     }
                 }
                 break;
+            default:
+                dispatch(handleError("Unknown server event"))
+                break
         }
     };
 
 };
 
-export const handleError = (error: string): AppThunk => (dispatch, getState) => {
-
-}
-
-export const handleRTCEvents = (joinedUserId: number, count: number):AppThunk => (dispatch, getState) => {
-    // get client ids
-    const clients = Object.keys(getState().userState.otherUsers).map(k => Number(k))
-    const localClient: number = getState().webSocket.id
-    clients.push(localClient)
-
-    if (Array.isArray(clients) && clients.length > 0) {
-        clients.forEach((userId) => {
-            if (!rtcConnections[userId]) {
-                rtcConnections[userId] = new RTCPeerConnection(rtcConfiguration);
-                rtcConnections[userId].onicecandidate = (event) => {
-                    if (event.candidate) {
-                        console.log(localClient, ' Send candidate to ', userId);
-                        dispatch(send({
-                            type: "signaling",
-                            target: userId,
-                            signal_type: 'candidate',
-                            candidate: event.candidate
-                        }));
-                    }
-                };
-
-                rtcConnections[userId].ontrack = (event: RTCTrackEvent) => {
-                    console.log(`On track event handler of ${localClient} triggered with streams:`);
-                    console.dir(event.streams);
-                    streams[userId] = event.streams[0]
-                    dispatch(gotRemoteStream(userId));
-                    console.log("I HAVE A TRACK");
-                }
-
-                streams[localClient].getTracks().forEach(track => {
-                    rtcConnections[userId].addTrack(track, streams[localClient]);
-                })
-            }
-        });
-
-        if (count >= 2) {
-            rtcConnections[joinedUserId].createOffer(offerOptions).then((description) => {
-                rtcConnections[joinedUserId].setLocalDescription(description).then(() => {
-                    console.log(localClient, ' Send offer to ', joinedUserId);
-                    dispatch(send({
-                        type:'signaling',
-                        target: joinedUserId,
-                        description: rtcConnections[joinedUserId].localDescription,
-                        signal_type: 'sdp'
-                    }));
-                }).catch(handleError);
-            });
-        }
-    }
-}
-
 export const send = (message: { [key: string]: any }, target?: User): AppThunk => (dispatch, getState) => {
     //attach the other peer username to our messages
     const msgObj = {
         ...message,
-        id: getState().webSocket.id,
+        id: getUserID(getState()),
     }
 
     if (socket !== null)
@@ -203,50 +136,18 @@ export const requestLogin = (name: string): AppThunk => (dispatch) => {
     }
 }
 
+export const sendLogout = (): AppThunk => (dispatch) => {
+    dispatch(send({type: "leave"}))
+    dispatch(logout())
+    destroySession()
+}
+
 export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) => {
     dispatch(send({
         type: "position_change",
         position,
     }));
 }
-
-export const handleCandidate = (candidate: any, fromId: number): AppThunk => (dispatch: any, getState: any) => {
-    rtcConnections[fromId].addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e.stack));
-}
-
-export const handleSdp = (description: any, fromId: number): AppThunk => (dispatch: any, getState: any) => {
-    console.log("Start handleSdp with description:");
-    console.dir(description);
-    if (!!description) {
-        const clientId: number = getState().webSocket.id;
-
-        console.log(clientId, ' Receive sdp from ', fromId);
-        rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))
-            .then(() => {
-                if (description.type === 'offer') {
-                    rtcConnections[fromId].createAnswer()
-                        .then((desc) => {
-                            rtcConnections[fromId].setLocalDescription(desc).then(() => {
-                                console.log(clientId, ' Send answer to ', fromId);
-
-                                // This replaces the socket.emit function
-                                dispatch(send({
-                                    type: "signaling",
-                                    signal_type: "sdp",
-                                    target: fromId,
-                                    description: rtcConnections[fromId].localDescription
-                                }));
-                            });
-                        })
-                    // .catch(handleError);
-                }
-            })
-        // .catch(handleError);
-    } else {
-        console.error("Description was not set")
-    }
-}
-
 
 export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) => {
     if (!success) {
@@ -258,7 +159,6 @@ export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) 
         //**********************
 
         dispatch(login())
-        dispatch(setUserId(getState().webSocket.id))
         dispatch(requestUserMediaAndJoin())
     }
 }
@@ -266,29 +166,5 @@ export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) 
 export const sendUsername = (name: string): AppThunk => dispatch => {
     dispatch(send({type: "login", name: name}))
 }
-
-export const leaveChat = (): AppThunk => dispatch => {
-    dispatch(logout())
-    dispatch(send({type: "leave"}))
-    // TODO: close connections
-    // rtcConnection?.close()
-}
-
-export const requestUserMediaAndJoin = (): AppThunk => (dispatch,getState) => {
-    navigator.mediaDevices.getUserMedia(mediaConstrains).then((e) => {
-        const localClient = getState().webSocket.id
-        streams[localClient] = e
-        dispatch(gotRemoteStream(localClient))
-    }).then(() =>
-        dispatch(send({
-            type: "join"
-        }))
-    )
-}
-
-export const getRtcConnection = (state: RootState, id: number) => {
-    return rtcConnections[id];
-}
-export const getStream = (id: number) => streams[id]
 
 export default webSocketSlice.reducer;

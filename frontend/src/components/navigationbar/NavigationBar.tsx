@@ -4,40 +4,52 @@ import {User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {submitNameChange} from "../../store/userSlice";
 import {connect} from "react-redux";
-import { ProSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
-import { FaSignature, FaCog, FaBars, FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash, FaPowerOff } from 'react-icons/fa';
+import {Menu, MenuItem, ProSidebar, SubMenu} from 'react-pro-sidebar';
+import {
+    FaBars,
+    FaCog,
+    FaMicrophone,
+    FaMicrophoneSlash,
+    FaPowerOff,
+    FaSignature,
+    FaVideo,
+    FaVideoSlash,
+    FaPlusCircle,
+    FaSignOutAlt
+} from 'react-icons/fa';
 import RangeSlider from "./RangeSlider";
+import {sendLogout} from "../../store/connectionSlice";
+import {displayVideo, mute} from "../../store/rtcSlice";
 
 interface Props {
     activeUser: User
     setName: (name: string) => void
+    logout: () => void
+    toggleAudio: () => void
+    toggleVideo: () => void
+    video: boolean
+    muted: boolean
 }
 
 interface State {
     value: string
     collapsed: boolean
-    video: boolean
-    audio: boolean
 }
 
 export class NavigationBar extends Component<Props, State> {
 
     icons = {
-        videoIcon: <FaVideo />,
-        videoOnIcon: <FaVideo />,
-        videoOffIcon: <FaVideoSlash />,
-        micIcon: <FaMicrophone />,
-        micOnIcon: <FaMicrophone />,
-        micOffIcon: <FaMicrophoneSlash />,
+        videoOnIcon: <FaVideo/>,
+        videoOffIcon: <FaVideoSlash/>,
+        micOnIcon: <FaMicrophone/>,
+        micOffIcon: <FaMicrophoneSlash/>,
     };
 
     constructor(props: Props) {
         super(props);
         this.state = {
             value: "",
-            collapsed: true,
-            video: true,
-            audio: true
+            collapsed: true
         }
     }
 
@@ -53,73 +65,43 @@ export class NavigationBar extends Component<Props, State> {
     }
 
     // function that switches the state of the navigationbar bar (collapsed/not collapsed)
-    handleCollapse(event: any){
-        if (this.state.collapsed){
+    handleCollapse(event: any) {
+        if (this.state.collapsed) {
             this.setState({
                 collapsed: false
             })
-        }
-        else if (!this.state.collapsed){
+        } else if (!this.state.collapsed) {
             this.setState({
                 collapsed: true
             })
         }
     }
 
-    // function that switches the state from the video (on/off)
-    // and adjusts the icon to this state
-    handleVideoIcon(event: any){
-        if (this.state.video){
-            this.setState({
-                video: false
-            })
-            this.icons.videoIcon = this.icons.videoOffIcon
-        }
-        else if (!this.state.video){
-            this.setState({
-                video: true
-            })
-            this.icons.videoIcon = this.icons.videoOnIcon
-        }
-    }
-
-    // function that switches the state from the audio (on/off)
-    // and adjusts the icon to this state
-    handleAudioIcon(event: any){
-        if (this.state.audio){
-            this.setState({
-                audio: false
-            })
-            this.icons.micIcon = this.icons.micOffIcon
-        }
-        else if (!this.state.audio){
-            this.setState({
-                audio: true
-            })
-            this.icons.micIcon = this.icons.micOnIcon
-        }
-    }
 
     render() {
-        return(
+        const micIcon = (this.props.muted) ? this.icons.micOffIcon : this.icons.micOnIcon
+        const videoIcon = (this.props.video) ? this.icons.videoOnIcon : this.icons.videoOffIcon
+        return (
             <ProSidebar id="sidebar" collapsed={this.state.collapsed}>
                 <Menu iconShape="circle">
-                    <MenuItem icon={<FaBars />} onClick={this.handleCollapse.bind(this)}>Dashboard</MenuItem>
-                    <SubMenu title="Rename" icon={<FaSignature />}>
+                    <MenuItem icon={<FaBars/>} onClick={this.handleCollapse.bind(this)}>Dashboard</MenuItem>
+                    <SubMenu title="Rename" icon={<FaSignature/>}>
                         <MenuItem>
-                            <input type="text" value={this.state.value} onChange={this.handleChange.bind(this)} />
-                        <br />
+                            <input type="text" value={this.state.value} onChange={this.handleChange.bind(this)}/>
+                            <br/>
                             <button onClick={this.handleSubmit.bind(this)}>
                                 Submit
                             </button>
                         </MenuItem>
                     </SubMenu>
-                    <MenuItem icon={this.icons.videoIcon} onClick={this.handleVideoIcon.bind(this)}>Video</MenuItem>
-                    <MenuItem icon={this.icons.micIcon} onClick={this.handleAudioIcon.bind(this)}>Mic</MenuItem>
-                    <MenuItem icon={<FaCog />}>Settings</MenuItem>
-                    <MenuItem icon={<FaPowerOff />}>Log Out</MenuItem>
+                    <MenuItem icon={videoIcon} onClick={this.props.toggleVideo}>Video</MenuItem>
+                    <MenuItem icon={micIcon} onClick={this.props.toggleAudio}>Mic</MenuItem>
+                    <MenuItem icon={<FaPlusCircle/>}>Add User</MenuItem>
+                    <MenuItem icon={<FaSignOutAlt/>}>Leave Room</MenuItem>
+                    <MenuItem icon={<FaCog/>}>Settings</MenuItem>
+                    <MenuItem icon={<FaPowerOff/>} onClick={this.props.logout}>Log Out</MenuItem>
                 </Menu>
-                <RangeSlider />
+                <RangeSlider/>
             </ProSidebar>
         )
     }
@@ -127,10 +109,15 @@ export class NavigationBar extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
+    video: state.rtc.video,
+    muted: state.rtc.muted
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     setName: (name: string) => dispatch(submitNameChange(name)),
+    toggleAudio: () => dispatch(mute()),
+    toggleVideo: () => dispatch(displayVideo()),
+    logout: () => dispatch(sendLogout())
 })
 
-export default connect(mapStateToProps,  mapDispatchToProps)(NavigationBar)
+export default connect(mapStateToProps, mapDispatchToProps)(NavigationBar)

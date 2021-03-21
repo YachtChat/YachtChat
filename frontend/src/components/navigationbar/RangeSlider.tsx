@@ -14,10 +14,6 @@ interface Props {
 
 export class RangeSlider extends Component<Props> {
 
-    constructor(props: Props) {
-        super(props);
-    }
-
     handleChangeRange(event: any) {
         this.props.changeRadius(event.target.value)
     }
