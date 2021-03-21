@@ -152,14 +152,18 @@ export const handleRTCEvents = (joinedUserId: number, count: number):AppThunk =>
                         }));
                     }
                 };
-                // @ts-ignore
-                rtcConnections[userId].onaddstream = (event: any) => {
-                    streams[userId] = event.stream
+
+                rtcConnections[userId].ontrack = (event: RTCTrackEvent) => {
+                    console.log(`On track event handler of ${localClient} triggered with streams:`);
+                    console.dir(event.streams);
+                    streams[userId] = event.streams[0]
                     dispatch(gotRemoteStream(userId));
-                    console.log("I HAVE A STREAM")
-                };
-                // @ts-ignore
-                rtcConnections[userId].addStream(streams[localClient]);
+                    console.log("I HAVE A TRACK");
+                }
+
+                streams[localClient].getTracks().forEach(track => {
+                    rtcConnections[userId].addTrack(track, streams[localClient]);
+                })
             }
         });
 
