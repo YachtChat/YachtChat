@@ -36,6 +36,14 @@ export class Playground extends Component<Props, State> {
         })
     }
 
+    // function that sets the state of dragActive on true
+    // if the mouse is clicked on the active user
+    dragStartTouch(event: React.TouchEvent) {
+        this.setState({
+            dragActive: true
+        })
+    }
+
     // function that sets the state of dragActive on false
     // if the mouse left the playground or is not holded anymore
     dragEnd() {
@@ -49,6 +57,15 @@ export class Playground extends Component<Props, State> {
         if (this.state.dragActive) {
             const scaling = this.props.sizeMultiplier
             this.props.move({x: e.pageX * 1/scaling, y: e.pageY * 1/scaling, range: this.props.activeUser.position.range})
+        }
+    }
+
+    // function that moves the active user if the mouse
+    moveTouch(e: React.TouchEvent) {
+        if (this.state.dragActive) {
+            const scaling = this.props.sizeMultiplier
+            alert("moveTouch triggered")
+            //this.props.move({x: e. * 1/scaling, y: e.pageY * 1/scaling, range: this.props.activeUser.position.range})
         }
     }
 
@@ -66,6 +83,7 @@ export class Playground extends Component<Props, State> {
         }
 
     }
+
     // calls handleZoomOut if user scrolls down/ handleZoomIn if user scrolls up
     onWheel(event: any){
         if(event.deltaY < 0 || event.deltaX < 0) {
@@ -83,9 +101,11 @@ export class Playground extends Component<Props, State> {
                 <NavigationBar/>
                 <div className="Playground" onMouseMove={this.moveMouse.bind(this)}
                      onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}
-                     onWheel={this.onWheel.bind(this)}>
+                     onWheel={this.onWheel.bind(this)} onTouchMove={this.moveTouch.bind(this)}
+                     onTouchEnd={this.dragEnd.bind(this)}>
                     {this.props.otherUsers.map(user => <UserComponent key={user.id} user={user}/>)}
-                    <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)}/>
+                    <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)}
+                        onTouchStart={this.dragStartTouch.bind(this)}/>
                 </div>
                 <div className="btn">
                     <button onClick={this.handleZoomIn.bind(this)}>+</button>

@@ -7,6 +7,7 @@ import {connect} from "react-redux";
 interface Props {
     user: User
     onMouseDown?: (e: React.MouseEvent) => void
+    onTouchStart?: (e: React.TouchEvent) => void
     sizeMultiplier: number
 }
 
