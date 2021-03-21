@@ -6,7 +6,7 @@ RUN yarn build .
 
 # Second stage - start webserver
 
-FROM nginx:alpine
+FROM nginx:latest
 
 WORKDIR /src
 COPY --from=build-deps /src/build /usr/share/nginx/html
