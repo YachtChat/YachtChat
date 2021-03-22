@@ -15,7 +15,7 @@ services:
   dev_letsencrypt-nginx-proxy-companion:
     image: jrcs/letsencrypt-nginx-proxy-companion
     volumes_from:
-      - nginx-proxy
+      - dev_nginx-proxy
     environment:
       - DEFAULT_EMAIL=ole.sen@gmx.de
     volumes:
@@ -36,7 +36,7 @@ services:
         - LETSENCRYPT_HOST=www.dev.chat.alphabibber.com
         - VIRTUAL_PORT=3000
       network_mode: bridge
-      
+
 volumes:
   certs: { }
   vhost: { }
