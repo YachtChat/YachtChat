@@ -4,4 +4,4 @@ WORKDIR /home/frontend
 
 EXPOSE 3000
 
-CMD yarn $$ yarn run start
+CMD yarn && yarn run start
