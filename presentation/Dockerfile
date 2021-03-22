@@ -2,4 +2,4 @@ FROM nginx:alpine
 
 WORKDIR /src
 
-COPY presentation.html /var/www/html/
+COPY presentation.html /usr/share/nginx/html
