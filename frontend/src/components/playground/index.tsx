@@ -7,6 +7,7 @@ import './style.scss';
 import {submitMovement, getUsers, changeScaling} from "../../store/userSlice";
 import NavigationBar from "../navigationbar/NavigationBar";
 import {displayVideo, mute} from "../../store/rtcSlice";
+import Room from "../Room/Room";
 
 interface Props {
     activeUser: User
@@ -121,6 +122,10 @@ export class Playground extends Component<Props, State> {
                     {this.props.otherUsers.map(user => <UserComponent key={user.id} user={user}/>)}
                     <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)}
                         onTouchStart={this.dragStartTouch.bind(this)}/>
+                    <div className="roomgrid">
+                        <Room roomName="Thinktank"/>
+                        <Room roomName="Kitchen"/>
+                    </div>
                 </div>
                 <div className="btn">
                     <button onClick={this.handleZoomIn.bind(this)}>+</button>
