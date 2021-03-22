@@ -34,5 +34,5 @@ services:
       environment:
         - VIRTUAL_HOST=www.dev.chat.alphabibber.com
         - LETSENCRYPT_HOST=www.dev.chat.alphabibber.com
-        - VIRTUAL_PORT = 3000
+        - VIRTUAL_PORT=3000
       network_mode: bridge
