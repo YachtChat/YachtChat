@@ -1,0 +1,10 @@
+FROM node:alpine
+
+WORKDIR /home/signalingServer
+ARG VIRTUAL_PORT
+
+RUN npm install -g nodemon
+
+EXPOSE ${VIRTUAL_PORT}
+
+CMD PORT=${VIRTUAL_PORT} nodemon chatserver.js 

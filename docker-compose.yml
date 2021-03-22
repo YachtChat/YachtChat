@@ -30,8 +30,10 @@ services:
       context: ./frontend
       dockerfile: ./Dockerfile
     environment:
-      - VIRTUAL_HOST=www.chat.alphabibber.com
-      - LETSENCRYPT_HOST=www.chat.alphabibber.com
+      - VIRTUAL_HOST={URL}
+      - LETSENCRYPT_HOST={URL}
+      - REACT_APP_SIGNAL_URL={URL_SIGNAL}
+      - REACT_APP_SIGNAL_PORT={SIGNAL_PORT}
     network_mode: bridge
 
   signaling_server:
@@ -39,9 +41,9 @@ services:
       context: ./signalingServer
       dockerfile: ./Dockerfile
     environment:
-      - VIRTUAL_HOST=backend.chat.alphabibber.com
-      - LETSENCRYPT_HOST=backend.chat.alphabibber.com
-      - VIRTUAL_PORT=6503
+      - VIRTUAL_HOST={URL_SIGNAL}
+      - LETSENCRYPT_HOST={URL_SIGNAL}
+      - VIRTUAL_PORT={SIGNAL_PORT}
     network_mode: bridge
 
   spaces-service:
@@ -49,25 +51,42 @@ services:
       context: ./spaces-service
       dockerfile: ./Dockerfile
     environment:
-      - VIRTUAL_HOST=spaces.chat.alphabibber.com
-      - LETSENCRYPT_HOST=spaces.chat.alphabibber.com
-      - VIRTUAL_PORT=8080
+      - VIRTUAL_HOST={URL_SPACES}
+      - LETSENCRYPT_HOST={URL_SPACES}
+      - VIRTUAL_PORT={SPACES_PORT}
     network_mode: bridge
 
-# Runing our dev servers
-  
+# =================== DEV ===================
+
   dev_frontend:
-      build:
-        context: ./frontend
-        dockerfile: ./Dockerfile_dev
-      volumes:
-        - /home/git_environment/DevNotZoom/frontend:/home/frontend
-        # -  /Users/marc/Development/DockerTests/frontend:/home/frontend
-      environment:
-        - VIRTUAL_HOST=www.dev.chat.alphabibber.com
-        - LETSENCRYPT_HOST=www.dev.chat.alphabibber.com
-        - VIRTUAL_PORT=3000
-      network_mode: bridge
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile_dev
+    ports: 
+      - "3000:3000"
+    volumes:
+      - /home/git_environment/DevNotZoom/frontend:/home/frontend
+      #-  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
+    environment:
+      - VIRTUAL_HOST=${DEV_URL}
+      - LETSENCRYPT_HOST=${DEV_URL}
+      - VIRTUAL_PORT=3000
+      - REACT_APP_SOCKET_URL=${URL_SIGNAL}
+      - REACT_APP_SOCKET_PORT=${SIGNAL_PORT}
+    network_mode: bridge
+  
+  dev_signaling_server:
+    build:
+      context: ./signalingServer
+      dockerfile: ./Dockerfile_dev
+    volumes:
+      - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
+      #-  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
+    environment:
+      - VIRTUAL_HOST=${DEV_URL_SIGNAL}
+      - LETSENCRYPT_HOST=${DEV_URL_SIGNAL}
+      - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
+    network_mode: bridge
 
 volumes:
   certs: { }

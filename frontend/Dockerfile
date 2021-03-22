@@ -1,9 +1,10 @@
 FROM node:alpine as build-deps
+ARG REACT_APP_SIGNAL_URL
+ARG REACT_APP_SIGNAL_PORT 
 WORKDIR /src
 COPY . /src
 RUN yarn
-RUN yarn build .
-
+RUN ${REACT_APP_SIGNAL_URL} ${REACT_APP_SIGNAL_PORT} yarn build .
 # Second stage - start webserver
 
 FROM nginx:alpine

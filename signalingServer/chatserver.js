@@ -68,8 +68,8 @@ function handleWebRequest(request, response) {
 // Spin up the HTTPS server on the port assigned to this sample.
 // This will be turned into a WebSocket port very shortly.
 
-webServer.listen(6503, function() {
-  log("Server is listening on port 6503");
+webServer.listen(process.env.PORT, function() {
+  log(`Server started on Port:  ${process.env.PORT}`);
 });
 
 // Create the WebSocket server by converting the HTTPS server into one.

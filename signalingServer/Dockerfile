@@ -1,10 +1,11 @@
 FROM node:alpine
+ARG SIGNAL_PORT
 
 WORKDIR /usr/src/app
 
 COPY . .
 RUN npm install
 
-EXPOSE 6503
+EXPOSE ${VIRTUAL_PORT}
 
-CMD ["node", "chatserver.js"]
+CMD PORT=${VIRTUAL_PORT} node chatserver.js
