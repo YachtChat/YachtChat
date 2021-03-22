@@ -27,10 +27,11 @@ services:
 
   dev_frontend:
       build:
-        dockerfile: ./Dockerfile_dev
         context: ./frontend
+        dockerfile: ./Dockerfile_dev
       volumes:
         - /home/git_environment/DevNotZoom/frontend:/home/frontend
+        #-  /Users/marc/Development/DockerTests/frontend:/home/frontend
       environment:
         - VIRTUAL_HOST=www.dev.chat.alphabibber.com
         - LETSENCRYPT_HOST=www.dev.chat.alphabibber.com
