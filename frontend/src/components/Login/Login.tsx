@@ -4,12 +4,14 @@ import {Space, User} from "../../store/models";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {connectToServer, requestLogin} from "../../store/connectionSlice";
+import {requestSpaces} from "../../store/spaceSlice";
 
 interface Props {
     activeUser: User
-    //spaces: Space[]
+    spaces: Space[]
     setName: (name: string) => void
     connect: () => void
+    requestSpaces: () => void
 }
 
 interface State {
@@ -42,6 +44,7 @@ export class Login extends Component<Props, State> {
 
     componentDidMount() {
         this.props.connect()
+        this.props.requestSpaces()
     }
 
     render() {
@@ -64,11 +67,11 @@ export class Login extends Component<Props, State> {
                     <div className="dropdown">
                         <label htmlFor="spaces">Choose a Space:</label>
                         <select id="spaces" name="spaces">
-                            {/*{this.props.spaces.map(space => <option key={space.id}
-                            value={space.name}>{space.name} </option>)}*/}
-                            <option value="workspace">Workspace</option>
+                            {this.props.spaces.map(space => <option
+                            value={space.name}>{space.name} </option>)}
+                            {/*<option value="workspace">Workspace</option>
                             <option value="funspace">Funspace</option>
-                            <option value="another space">Another Space</option>
+                            <option value="another space">Another Space</option>*/}
                         </select>
                     </div>
                     <button onClick={this.handleSubmit.bind(this)}>
@@ -89,10 +92,12 @@ export class Login extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
+    spaces: state.space.spaces
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     setName: (name: string) => dispatch(requestLogin(name)),
+    requestSpaces: () => dispatch(requestSpaces()),
     connect: () => dispatch(connectToServer())
 })
 
