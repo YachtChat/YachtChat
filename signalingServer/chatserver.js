@@ -111,7 +111,7 @@ wsServer.on('request', function(request) {
       try{
         message = JSON.parse(message.utf8Data);
       } catch(error){
-        console.log("ERROR: Message is not of type json");
+        log("ERROR: Message is not of type json");
         return;
       }
       // every connection has and type and the sender id
@@ -119,7 +119,7 @@ wsServer.on('request', function(request) {
       try{
         type = message.type;
       } catch(error){
-        console.log("ERROR: A message from a client should have a 'type'");
+        log("ERROR: A message from a client should have a 'type'");
         return;
       }
       // handle different types
@@ -129,7 +129,7 @@ wsServer.on('request', function(request) {
           try{
             name = message.name;
           } catch(error){
-            console.log("ERROR: For login the client should provide a name");
+            log("ERROR: For login the client should provide a name");
             return;
           }
           login(user.id, name);
@@ -144,7 +144,7 @@ wsServer.on('request', function(request) {
             y = message.position.y;
             range = message.position.range;
           } catch(error){
-            console.log("ERROR: A position change should provide a x, y and range value");
+            log("ERROR: A position change should provide a x, y and range value");
             return;
           }
           positionChange(user.id, x, y, range);
@@ -154,7 +154,7 @@ wsServer.on('request', function(request) {
           try{
             target = message.target;
           } catch(error){
-            console.log("ERROR: A signaling message should have a target and a content");
+            log("ERROR: A signaling message should have a target and a content");
           }
           let content = {...message};
           delete content["type"];
@@ -166,7 +166,7 @@ wsServer.on('request', function(request) {
           leave(user.id);
           break;
         default:
-          console.log("This message is not of known type")
+          log("This message is not of known type")
           return
       }
     }
@@ -208,12 +208,12 @@ function signaling(id, target, message){
   try{
     connections.get(target).sendUTF(JSON.stringify(combinedObj));
   } catch(error){
-    console.log("ERROR: This target does not exist")
+    log("ERROR: This target does not exist")
   }
 }
 
 function leave(id){
-  console.log("User with id " + id + " left")
+  log("User with id " + id + " left")
   users.delete(id);
   connections.delete(id);
   connections.forEach(function (connection, _){
