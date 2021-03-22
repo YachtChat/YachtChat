@@ -9,30 +9,33 @@ import {
 } from "@material-ui/core";
 
 import {BrowserRouter as Router, Link as RouterLink, Route, Switch, withRouter} from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import Contact from "../Contact/Contact";
 import About from "../About/About";
 import Tutorial from "../Tutorial/Tutorial";
 import Product from "../Product/Product";
+import Contactcontainer from "../Contactcontainer/Contactcontainer";
 
 
-
-
-const Header = () => {
+const Header = (props: any) => {
     const history = useHistory();
+
     function changeUrl(label: string) {
         history.push(`/${label}`);
+
+        const section = document.getElementById(`#${label!}`)
+        console.log(section)
+        if (section)
+            section.scrollIntoView({behavior: "smooth", block: "start"})
     }
 
 
-
-
-     const getMenuButtons = () => {
+    const getMenuButtons = () => {
 
 
         return headersData.map(({label, href}) => {
             return <Button
-                 // hier muss noch iteriert werden über die labels und je nach labels abgefragt werden
+
                 {...{
                     key: label,
                     color: "inherit",
@@ -47,7 +50,7 @@ const Header = () => {
     };
 
 
-   const displayDesktop = () => {
+    const displayDesktop = () => {
         return (
 
             <Toolbar className="ToolBar">{notzoomLogo} {getMenuButtons()}</Toolbar>
@@ -57,36 +60,34 @@ const Header = () => {
     };
 
 
-
-   const headersData = [
+    const headersData = [
         {
             label: "Contact",
-            href: "/contact",
+            href: "/#contact",
         },
         {
             label: "Tutorial",
-            href: "/tutorial",
+            href: "/#tutorial",
         },
         {
             label: "About",
-            href: "/about",
+            href: "/#about",
         },
         {
             label: "Product",
-            href: "/product",
+            href: "/#product",
         },
     ];
 
 
-   const notzoomLogo = (
+    const notzoomLogo = (
         <Typography variant="h6" component="h1" className="Logo">
             NotZoom
         </Typography>
     );
 
 
-
-    return(
+    return (
         <>
             <AppBar className="Header"> {
                 displayDesktop()
@@ -95,12 +96,7 @@ const Header = () => {
 
             </AppBar>
 
-            <Switch>
-                <Route exact path="/contact" component={Contact}/>
-                <Route exact path="/about" component={About}/>
-                <Route exact path="/tutorial" component={Tutorial}/>
-                <Route exact path="/product" component={Product}/>
-            </Switch>
+
         </>
 
     );
