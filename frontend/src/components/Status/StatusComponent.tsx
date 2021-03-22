@@ -26,10 +26,6 @@ export class StatusComponent extends Component<Props> {
 
     }
 
-    componentDidMount() {
-
-    }
-
     render() {
         return (
             <div>

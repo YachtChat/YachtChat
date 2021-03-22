@@ -5,6 +5,9 @@ import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {connectToServer, requestLogin} from "../../store/connectionSlice";
 import {requestSpaces} from "../../store/spaceSlice";
+import googleButton from "../../rsc/google_button.svg";
+import appleLogo from "../../rsc/apple.svg";
+import github from "../../rsc/github.svg";
 
 interface Props {
     activeUser: User
@@ -50,38 +53,47 @@ export class Login extends Component<Props, State> {
 
     render() {
         return (
+            <div className={"contentWrapper"}>
+                <div className={"backgroundRange"}/>
+                <div className={"backgroundBall"}/>
+                <div className="login-box">
+                    <h2>AlphaBibber Chat</h2>
 
-            <div className="login-box">
-                <h2>Alphabibber Master App. Please sign in</h2>
+                    <form>
+                        <h3>Sign in</h3>
+                        <div className="login-buttons">
+                            <div>
+                                <img src={googleButton}/>
+                            </div>
 
-                <form>
-                    <div className="user-box">
-                        <input type="text" value={this.state.value}
-                               onKeyDown={this.handleKeySubmit.bind(this)}
-                               onChange={this.handleChange.bind(this)} autoFocus/>
-                            <label>Username</label>
-                    </div>
-                    <div className="user-box">
-                        <input type="password"/>
-                        <label>Password</label>
-                    </div>
-                    <div className="dropdown">
-                        <label htmlFor="spaces">Choose a Space:</label>
-                        <select id="spaces" name="spaces">
-                            {this.props.spaces.map(space => <option
-                            value={space.name}>{space.name} </option>)}
-                        </select>
-                    </div>
-                    <button onClick={this.handleSubmit.bind(this)}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        Submit
-                    </button>
-                </form>
+                            <div style={{background: "black"}} className={"logoImage"}>
+                                <img src={appleLogo}/>
+                            </div>
+
+                            <div style={{background: "gray"}} className={"logoImage"}>
+                                <svg id={"github"}>
+                                    <image xlinkHref={github} width="28" height="30" fill="white"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div className="user-box">
+                            <h3>Or join public space</h3>
+                            <div className="inputPair">
+                                <label>Username</label>
+                                <input type="text" value={this.state.value}
+                                       onKeyDown={this.handleKeySubmit.bind(this)}
+                                       onChange={this.handleChange.bind(this)} autoFocus/>
+                            </div>
+
+                            <button onClick={this.handleSubmit.bind(this)}>
+                                Join
+                            </button>
+                        </div>
+                    </form>
 
 
+                </div>
             </div>
         )
     }
@@ -99,4 +111,4 @@ const mapDispatchToProps = (dispatch: any) => ({
     connect: () => dispatch(connectToServer())
 })
 
-export default connect(mapStateToProps,  mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
