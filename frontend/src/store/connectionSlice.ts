@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
 import {getUser, getUserID, handlePositionUpdate, removeUser, setUser, setUserId, setUsers} from "./userSlice";
-import {handleError} from "./errorSlice";
+import {handleError} from "./statusSlice";
 import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
 
 let websocket_url: string | undefined = process.env.REACT_APP_WEBSOCKET_URL;

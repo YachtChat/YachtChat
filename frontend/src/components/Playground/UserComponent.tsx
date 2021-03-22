@@ -42,7 +42,8 @@ export class UserComponent extends Component<Props> {
             height: userSize,
             left: x - userSize / 2,
             top: y - userSize / 2,
-            opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5
+            opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5,
+            transform: (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)"
         }
         // range in pixels
         const rangeInPx = 2 * maxRange * user.position.range * this.props.sizeMultiplier + userSize

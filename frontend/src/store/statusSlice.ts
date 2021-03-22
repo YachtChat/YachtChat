@@ -1,13 +1,13 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 
-interface ErrorState {
+interface StatusState {
     error?: string
 }
 
-const initialState: ErrorState = {};
+const initialState: StatusState = {};
 
-export const userSlice = createSlice({
+export const statusSlice = createSlice({
     name: 'error',
     initialState,
     reducers: {
@@ -19,10 +19,10 @@ export const userSlice = createSlice({
 
 export const {
     setError,
-} = userSlice.actions;
+} = statusSlice.actions;
 
 export const handleError = (error: string): AppThunk => (dispatch, getState) => {
 
 }
 
-export default userSlice.reducer;
+export default statusSlice.reducer;

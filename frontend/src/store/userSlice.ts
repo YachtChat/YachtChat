@@ -26,8 +26,7 @@ export const userSlice = createSlice({
         move: (state, action: PayloadAction<{ id: number, position: UserCoordinates }>) => {
 
             if (state.activeUser.id === action.payload.id) {
-                state.activeUser.position.x = action.payload.position.x;
-                state.activeUser.position.y = action.payload.position.y;
+                state.activeUser.position = action.payload.position;
             }
             if (!state.otherUsers[action.payload.id])
                 return
@@ -99,8 +98,8 @@ export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispa
 }
 
 export const handlePositionUpdate = (object: { id: number, position: UserCoordinates }): AppThunk => (dispatch, getState) => {
-    const user = getState().userState.activeUser
     dispatch(move(object))
+    const user = getState().userState.activeUser
     const currentRange = maxRange * user.position.range
 
     let users: User[] = []

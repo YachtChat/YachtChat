@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './App.scss';
-import Playground from "./components/playground";
+import Playground from "./components/Playground";
 import Login from "./components/Login/Login";
 import {RootState} from "./store/store";
 import {connect} from "react-redux";

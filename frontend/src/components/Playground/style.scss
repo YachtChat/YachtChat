@@ -45,17 +45,18 @@
     }
 
     .User {
-      background-color: aqua;
+      background-color: cadetblue;
     }
   }
 
   .User {
+    background-color: gray;
     position: absolute;
     border-radius: 50%;
     display: block;
     user-select: none;
     overflow: hidden;
-    transition: 0.2s opacity;
+    transition: 0.2s opacity, 0.2s transform;
 
     video {
       position: absolute;

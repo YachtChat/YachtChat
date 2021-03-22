@@ -2,11 +2,11 @@ import React, {Component} from "react";
 import {User, UserCoordinates} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
-import UserComponent from "./UserComponent";
 import './style.scss';
 import {changeScaling, getUsers, submitMovement} from "../../store/userSlice";
-import NavigationBar from "../navigationbar/NavigationBar";
+import NavigationBar from "../NavigationBar/NavigationBar";
 import {displayVideo, mute} from "../../store/rtcSlice";
+import UserComponent from "./UserComponent";
 
 interface Props {
     activeUser: User
@@ -22,6 +22,7 @@ interface Props {
 
 interface State {
     dragActive: boolean
+    mapDragActive: boolean
 }
 
 export class Playground extends Component<Props, State> {
@@ -29,7 +30,8 @@ export class Playground extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            dragActive: false
+            dragActive: false,
+            mapDragActive: false,
         }
     }
 
@@ -60,8 +62,14 @@ export class Playground extends Component<Props, State> {
     // function that moves the active user if the mouse
     moveMouse(e: React.MouseEvent) {
         if (this.state.dragActive) {
+            const x = e.currentTarget.getBoundingClientRect().x
+            const y = e.currentTarget.getBoundingClientRect().y
             const scaling = this.props.sizeMultiplier
-            this.props.move({x: e.pageX / scaling, y: e.pageY / scaling, range: this.props.activeUser.position.range})
+            this.props.move({
+                x: e.clientX / scaling - x,
+                y: e.clientY / scaling - y,
+                range: this.props.activeUser.position.range
+            })
         }
     }
 

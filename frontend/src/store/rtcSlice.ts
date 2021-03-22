@@ -3,7 +3,7 @@ import {AppThunk, RootState} from './store';
 import {send} from "./connectionSlice";
 import {rtcConfiguration} from "./stunServerConfig";
 import {getUser, getUserID, getUsers, gotRemoteStream, handlePositionUpdate} from "./userSlice";
-import {handleError} from "./errorSlice";
+import {handleError} from "./statusSlice";
 
 interface RTCState {
     muted: boolean
@@ -56,7 +56,13 @@ export const requestUserMediaAndJoin = (): AppThunk => (dispatch, getState) => {
         dispatch(send({
             type: "join"
         }))
-    )
+    ).catch(() => {
+        dispatch(handleError("Unable to get video."))
+        dispatch(send({
+                type: "join"
+            })
+        )
+    })
 }
 
 export const mute = (): AppThunk => (dispatch, getState) => {

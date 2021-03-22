@@ -6,7 +6,7 @@
     <style>
         html, body {
             text-align: center;
-            font-family: -apple-system, SansSerif;
+            font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             vertical-align: middle;
             height: 100%;
             width: 100%;
@@ -80,10 +80,7 @@
             minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
             secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
 
-            if (t.total <= 0) {
-                clearInterval(timeinterval);
-            }
-            if (t.hours <= 0 && t.minutes <= 0 && t.seconds <= 0)
+            if (t.hours < 0 || t.minutes < 0 || t.seconds < 0)
                 window.location.replace("https://www.chat.alphabibber.com");
         }
 
@@ -91,7 +88,7 @@
         const timeinterval = setInterval(updateClock, 1000);
     }
 
-    const deadline = new Date(Date.parse('22 Mar 2021 10:32:00 UTC+1'));
+    const deadline = new Date(Date.parse('22 Mar 2021 19:00:00 UTC+1'));
     initializeClock('clockdiv', deadline);
 </script>
 </html>
