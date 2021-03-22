@@ -36,25 +36,25 @@ services:
       - REACT_APP_SIGNAL_PORT={SIGNAL_PORT}
     network_mode: bridge
 
-  signaling_server:
-    build:
-      context: ./signalingServer
-      dockerfile: ./Dockerfile
-    environment:
-      - VIRTUAL_HOST={URL_SIGNAL}
-      - LETSENCRYPT_HOST={URL_SIGNAL}
-      - VIRTUAL_PORT={SIGNAL_PORT}
-    network_mode: bridge
+  # signaling_server:
+  #   build:
+  #     context: ./signalingServer
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     - VIRTUAL_HOST={URL_SIGNAL}
+  #     - LETSENCRYPT_HOST={URL_SIGNAL}
+  #     - VIRTUAL_PORT={SIGNAL_PORT}
+  #   network_mode: bridge
 
-  spaces-service:
-    build:
-      context: ./spaces-service
-      dockerfile: ./Dockerfile
-    environment:
-      - VIRTUAL_HOST={URL_SPACES}
-      - LETSENCRYPT_HOST={URL_SPACES}
-      - VIRTUAL_PORT={SPACES_PORT}
-    network_mode: bridge
+  # spaces-service:
+  #   build:
+  #     context: ./spaces-service
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     - VIRTUAL_HOST={URL_SPACES}
+  #     - LETSENCRYPT_HOST={URL_SPACES}
+  #     - VIRTUAL_PORT={SPACES_PORT}
+  #   network_mode: bridge
 
 # =================== DEV ===================
 
