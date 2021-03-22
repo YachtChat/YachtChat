@@ -22,6 +22,10 @@ public class Space {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner")
+    private User owner;
+
     @OneToMany(mappedBy = "space", cascade = CascadeType.REMOVE)
     @JsonIgnore // this annotation is needed to prevent infinite recursion when retrieving all spaces/users
     private List<User> users;
@@ -32,6 +36,12 @@ public class Space {
 
     public Space(String name) {
         this.name = name;
+        this.setUsers(new ArrayList<>());
+    }
+
+    public Space(String name, User owner) {
+        this.name = name;
+        this.owner = owner;
         this.setUsers(new ArrayList<>());
     }
 
@@ -61,5 +71,17 @@ public class Space {
 
     public void removeUser(User user) {
         this.users.remove(user);
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public Boolean canUserSeeSpace(String userId) {
+        return (this.getOwner() == null || this.getOwner().getId().equals(userId));
     }
 }
