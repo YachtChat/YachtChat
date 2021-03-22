@@ -1,29 +1,29 @@
 version: "2"
 services:
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - certs:/etc/nginx/certs:ro
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-    network_mode: bridge
+  # nginx-proxy:
+  #   image: jwilder/nginx-proxy
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - certs:/etc/nginx/certs:ro
+  #     - vhost:/etc/nginx/vhost.d
+  #     - html:/usr/share/nginx/html
+  #     - /var/run/docker.sock:/tmp/docker.sock:ro
+  #   network_mode: bridge
 
-  letsencrypt-nginx-proxy-companion:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    volumes_from:
-      - nginx-proxy
-    environment:
-      - DEFAULT_EMAIL=ole.sen@gmx.de
-    volumes:
-      - certs:/etc/nginx/certs:rw
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    network_mode: bridge
+  # letsencrypt-nginx-proxy-companion:
+  #   image: jrcs/letsencrypt-nginx-proxy-companion
+  #   volumes_from:
+  #     - nginx-proxy
+  #   environment:
+  #     - DEFAULT_EMAIL=ole.sen@gmx.de
+  #   volumes:
+  #     - certs:/etc/nginx/certs:rw
+  #     - vhost:/etc/nginx/vhost.d
+  #     - html:/usr/share/nginx/html
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   network_mode: bridge
 
   nginx-proxyed-container:
     build:
@@ -58,35 +58,35 @@ services:
 
 # =================== DEV ===================
 
-  dev_frontend:
-    build:
-      context: ./frontend
-      dockerfile: ./Dockerfile_dev
-    ports: 
-      - "3000:3000"
-    volumes:
-      - /home/git_environment/DevNotZoom/frontend:/home/frontend
-      #-  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
-    environment:
-      - VIRTUAL_HOST=${DEV_URL}
-      - LETSENCRYPT_HOST=${DEV_URL}
-      - VIRTUAL_PORT=3000
-      - REACT_APP_SOCKET_URL=${URL_SIGNAL}
-      - REACT_APP_SOCKET_PORT=${SIGNAL_PORT}
-    network_mode: bridge
+  # dev_frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: ./Dockerfile_dev
+  #   ports: 
+  #     - "3000:3000"
+  #   volumes:
+  #     - /home/git_environment/DevNotZoom/frontend:/home/frontend
+  #     #-  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
+  #   environment:
+  #     - VIRTUAL_HOST=${DEV_URL}
+  #     - LETSENCRYPT_HOST=${DEV_URL}
+  #     - VIRTUAL_PORT=3000
+  #     - REACT_APP_SOCKET_URL=${URL_SIGNAL}
+  #     - REACT_APP_SOCKET_PORT=${SIGNAL_PORT}
+  #   network_mode: bridge
   
-  dev_signaling_server:
-    build:
-      context: ./signalingServer
-      dockerfile: ./Dockerfile_dev
-    volumes:
-      - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
-      #-  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
-    environment:
-      - VIRTUAL_HOST=${DEV_URL_SIGNAL}
-      - LETSENCRYPT_HOST=${DEV_URL_SIGNAL}
-      - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
-    network_mode: bridge
+  # dev_signaling_server:
+  #   build:
+  #     context: ./signalingServer
+  #     dockerfile: ./Dockerfile_dev
+  #   volumes:
+  #     - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
+  #     #-  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
+  #   environment:
+  #     - VIRTUAL_HOST=${DEV_URL_SIGNAL}
+  #     - LETSENCRYPT_HOST=${DEV_URL_SIGNAL}
+  #     - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
+  #   network_mode: bridge
 
 volumes:
   certs: { }
