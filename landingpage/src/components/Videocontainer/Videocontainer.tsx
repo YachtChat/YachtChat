@@ -1,15 +1,22 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './Videocontainer.scss';
+import theVideo from "./demo.mp4";
 
-const Videocontainer: React.FC = () => (
-    <figure className="video">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/IqX9Gi05ZuQ" title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen></iframe>
 
-    </figure>
 
-);
+export class Videocontainer extends Component {
+    render() {
+        return(
+            <video autoPlay playsInline loop muted height="1000" width="1000">
+                <source src={theVideo}/>
+            </video>
+        );
+    }
+
+
+
+
+
+}
 
 export default Videocontainer;
