@@ -1,16 +1,38 @@
 version: "2"
 services:
-  nginx-proxyed-container:
+    nginx-proxy:
+    image: jwilder/nginx-proxy
     ports:
-    - 3000:3000
-    build:
-      context: ./frontend
-      dockerfile: ./Dockerfile
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
     network_mode: bridge
 
-  signaling_server:
-    build:
-      context: ./signalingServer
-      dockerfile: ./Dockerfile
+  letsencrypt-nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes_from:
+      - nginx-proxy
+    environment:
+      - DEFAULT_EMAIL=ole.sen@gmx.de
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     network_mode: bridge
 
+  frontend:
+      build:
+        dockerfile: ./Dockerfile_dev
+        context: ./frontend
+      volumes:
+        - /home/git_environment/DevNotZoom/frontend:/home/gitfrontend
+      environment:
+        - VIRTUAL_HOST=www.dev.chat.alphabibber.com
+        - LETSENCRYPT_HOST=www.dev.chat.alphabibber.com
+        - VIRTUAL_PORT = 3000
+      network_mode: bridge

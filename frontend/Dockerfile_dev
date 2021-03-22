@@ -1,0 +1,7 @@
+FROM node:alpine as build-deps
+
+WORKDIR /home/frontend
+
+EXPOSE 3000
+
+CMD yarn run start
