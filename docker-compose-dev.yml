@@ -36,3 +36,8 @@ services:
         - LETSENCRYPT_HOST=www.dev.chat.alphabibber.com
         - VIRTUAL_PORT=3000
       network_mode: bridge
+      
+volumes:
+  certs: { }
+  vhost: { }
+  html: { }
