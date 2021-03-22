@@ -34,7 +34,7 @@ export class Login extends Component<Props, State> {
     }
 
     handleKeySubmit(event: React.KeyboardEvent) {
-        if(event.key == "13") {
+        if (event.key === "13") {
             this.props.setName(this.state.value)
         }
     }

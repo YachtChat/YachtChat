@@ -7,7 +7,7 @@ import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUser
 
 let websocket_url: string | undefined = process.env.REACT_APP_WEBSOCKET_URL;
 
-if (process.env.NODE_ENV == "development"){
+if (process.env.NODE_ENV === "development") {
     websocket_url = process.env.REACT_APP_WEBSOCKET_URL_LOCAL;
 }
 
@@ -46,7 +46,12 @@ export const {connect, disconnect, login, logout} = webSocketSlice.actions;
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
     //socket = new WebSocket('wss://call.tristanratz.com:9090')
-    socket = new WebSocket(<string>websocket_url, 'json');
+    if (!websocket_url) {
+        dispatch(handleError("No websocket url defined for this environment"))
+        return
+    }
+
+    socket = new WebSocket(websocket_url, 'json');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");

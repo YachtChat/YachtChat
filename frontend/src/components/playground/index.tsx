@@ -4,10 +4,9 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import UserComponent from "./UserComponent";
 import './style.scss';
-import {submitMovement, getUsers, changeScaling} from "../../store/userSlice";
+import {changeScaling, getUsers, submitMovement} from "../../store/userSlice";
 import NavigationBar from "../navigationbar/NavigationBar";
 import {displayVideo, mute} from "../../store/rtcSlice";
-import Room from "../Room/Room";
 
 interface Props {
     activeUser: User
@@ -62,7 +61,7 @@ export class Playground extends Component<Props, State> {
     moveMouse(e: React.MouseEvent) {
         if (this.state.dragActive) {
             const scaling = this.props.sizeMultiplier
-            this.props.move({x: e.pageX / scaling, y: e.pageY /scaling, range: this.props.activeUser.position.range})
+            this.props.move({x: e.pageX / scaling, y: e.pageY / scaling, range: this.props.activeUser.position.range})
         }
     }
 
@@ -71,7 +70,11 @@ export class Playground extends Component<Props, State> {
         if (this.state.dragActive) {
             const scaling = this.props.sizeMultiplier
             alert("moveTouch triggered")
-            //this.props.move({x: e. * 1/scaling, y: e.pageY * 1/scaling, range: this.props.activeUser.position.range})
+            this.props.move({
+                x: e.touches[0].clientX / scaling,
+                y: e.touches[0].clientY / scaling,
+                range: this.props.activeUser.position.range
+            })
         }
     }
 
@@ -91,21 +94,21 @@ export class Playground extends Component<Props, State> {
     }
 
     // calls handleZoomOut if user scrolls down/ handleZoomIn if user scrolls up
-    onWheel(event: any){
-        if(event.deltaY < 0 || event.deltaX < 0) {
+    onWheel(event: any) {
+        if (event.deltaY < 0 || event.deltaX < 0) {
             this.handleZoomOut()
         }
 
-        if(event.deltaY > 0 || event.deltaX > 0){
+        if (event.deltaY > 0 || event.deltaX > 0) {
             this.handleZoomIn()
         }
     }
 
     handleKeyStream(event: React.KeyboardEvent) {
-        if(event.key == "77") { //"m"
+        if (event.key === "77") { //"m"
             this.props.toggleAudio()
         }
-        if(event.key == "67") { //"c"
+        if (event.key === "67") { //"c"
             this.props.toggleVideo()
         }
     }
@@ -118,14 +121,14 @@ export class Playground extends Component<Props, State> {
                 <div className="Playground" onMouseMove={this.moveMouse.bind(this)}
                      onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}
                      onWheel={this.onWheel.bind(this)} onTouchMove={this.moveTouch.bind(this)}
-                     onTouchEnd={this.dragEnd.bind(this)} onKeyDown={this.handleKeyStream.bind(this)}>
+                     onTouchEnd={this.dragEnd.bind(this)} onKeyDown={this.handleKeyStream.bind(this)} tabIndex={0}>
                     {this.props.otherUsers.map(user => <UserComponent key={user.id} user={user}/>)}
                     <UserComponent user={this.props.activeUser} onMouseDown={this.dragStart.bind(this)}
-                        onTouchStart={this.dragStartTouch.bind(this)}/>
-                    <div className="roomgrid">
-                        <Room roomName="Thinktank"/>
-                        <Room roomName="Kitchen"/>
-                    </div>
+                                   onTouchStart={this.dragStartTouch.bind(this)}/>
+                    {/*<div className="roomgrid">*/}
+                    {/*    <Room roomName="Thinktank"/>*/}
+                    {/*    <Room roomName="Kitchen"/>*/}
+                    {/*</div>*/}
                 </div>
                 <div className="btn">
                     <button onClick={this.handleZoomIn.bind(this)}>+</button>

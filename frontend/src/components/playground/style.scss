@@ -12,6 +12,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: row;
+  position: relative;
 }
 
 .roomgrid {
@@ -25,6 +26,7 @@
   flex-grow: 1;
   height: 100vh;
   background-color: white;
+  position: relative;
   overflow: hidden;
 
   .userRange {

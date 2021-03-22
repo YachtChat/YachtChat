@@ -7,14 +7,14 @@ interface Props {
 
 export class Room extends Component<Props> {
 
-    constructor(props: Props) {
-        super(props);
-    }
+    // constructor(props: Props) {
+    //     super(props);
+    // }
 
     //Room kennt seine User
 
     render() {
-        return(
+        return (
             <div className="box">
                 <div>
                     {this.props.roomName}

@@ -4,11 +4,16 @@
 @import '~react-pro-sidebar/dist/scss/styles.scss';
 
 #sidebar {
-  opacity: 0.2;
+  opacity: 0.8;
   flex-grow: 0;
+  text-align: center;
 
   &:hover {
     opacity: 1.0;
+  }
+
+  .pro-inner-item {
+    margin: auto auto;
   }
 }
 
@@ -22,10 +27,13 @@
 }
 
 .slider-parent {
-  display: flex;              /* establish flex container */
-  flex-direction: column;     /* stack flex items vertically */
-  justify-content: center;    /* center items vertically, in this case */
-  align-items: center;        /* center items horizontally, in this case */
+  display: flex; /* establish flex container */
+  flex-direction: column; /* stack flex items vertically */
+  justify-content: center; /* center items vertically, in this case */
+  align-items: center; /* center items horizontally, in this case */
   height: 200px;
   width: 100%
+}
+
+@keyframes swing {
 }

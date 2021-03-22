@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {send} from "./connectionSlice";
 import {rtcConfiguration} from "./stunServerConfig";
-import {getUser, getUserID, getUsers, gotRemoteStream} from "./userSlice";
+import {getUser, getUserID, getUsers, gotRemoteStream, handlePositionUpdate} from "./userSlice";
 import {handleError} from "./errorSlice";
 
 interface RTCState {
@@ -84,8 +84,6 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
 }
 
 export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
-    const localClient = getUserID(getState())
-    console.log("SEND ALL")
     rtpSender[id].forEach(rtp => {
         if (rtp.track && rtp.track.kind === 'audio') {
             rtp.track.enabled = true
@@ -94,7 +92,6 @@ export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
 }
 
 export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
-    const localClient = getUserID(getState())
     rtpSender[id].forEach(rtp => {
         if (rtp.track && rtp.track.kind === 'audio') {
             rtp.track.enabled = false
@@ -134,7 +131,7 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
 
                 rtpSender[userId] = []
                 streams[localClient].getTracks().forEach((track, idx) => {
-                    rtpSender[userId][idx] = rtcConnections[userId].addTrack(track.clone(), streams[localClient])
+                    rtpSender[userId][idx] = rtcConnections[userId].addTrack(track, streams[localClient])
                 })
             }
         });
@@ -152,6 +149,7 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
                 }).catch(handleError);
             });
         }
+        dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position}))
     }
 }
 
