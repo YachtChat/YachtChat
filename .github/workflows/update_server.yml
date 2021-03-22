@@ -29,6 +29,7 @@ jobs:
             sudo mvn -f ./spaces-service/pom.xml package -DskipTests
             sudo docker-compose build nginx-proxyed-container signaling_server spaces-service nginx-presentation
             sudo docker-compose up --no-deps -d nginx-proxyed-container signaling_server spaces-service nginx-presentation
+            sudo docker system prune -a
           host: www.chat.alphabibber.com #${{ secrets.HOST}}
           user: danilo_walenta #${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
