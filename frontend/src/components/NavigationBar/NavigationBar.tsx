@@ -17,7 +17,7 @@ import {
     FaVideo,
     FaVideoSlash
 } from 'react-icons/fa';
-import RangeSlider from "./RangeSlider";
+import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../store/connectionSlice";
 import {displayVideo, mute} from "../../store/rtcSlice";
 
@@ -77,12 +77,21 @@ export class NavigationBar extends Component<Props, State> {
         }
     }
 
+    // function that switches the state of the navigationbar bar (collapsed/not collapsed)
+    handleHoverCollapse(event: any) {
+        if (!this.state.collapsed) {
+            this.setState({
+                collapsed: true
+            })
+        }
+    }
+
 
     render() {
         const micIcon = (this.props.muted) ? this.icons.micOffIcon : this.icons.micOnIcon
         const videoIcon = (this.props.video) ? this.icons.videoOnIcon : this.icons.videoOffIcon
         return (
-            <ProSidebar id="sidebar" collapsed={this.state.collapsed}>
+            <ProSidebar id="sidebar" collapsed={this.state.collapsed} onMouseLeave={this.handleHoverCollapse.bind(this)}>
                 <Menu iconShape="circle">
                     <MenuItem icon={<FaBars/>} onClick={this.handleCollapse.bind(this)}>Dashboard</MenuItem>
                     <SubMenu title="Rename" icon={<FaSignature/>}>
