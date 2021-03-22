@@ -96,9 +96,6 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
                 rtcConnections[userId].onicecandidate = (event) => {
                     if (event.candidate) {
                         console.log(localClient, ' Send candidate to ', userId);
-                        setTimeout(() => {
-                            console.log('hello');
-                        }, 1000);
                         dispatch(send({
                             type: "signaling",
                             target: userId,
@@ -126,9 +123,6 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
             rtcConnections[joinedUserId].createOffer(offerOptions).then((description) => {
                 rtcConnections[joinedUserId].setLocalDescription(description).then(() => {
                     console.log(localClient, ' Send offer to ', joinedUserId);
-                    setTimeout(() => {
-                        console.log('hello');
-                    }, 1000);
                     dispatch(send({
                         type: 'signaling',
                         target: joinedUserId,
