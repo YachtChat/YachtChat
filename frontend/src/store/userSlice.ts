@@ -72,7 +72,9 @@ export const userSlice = createSlice({
             // })
         },
         changeScaling: (state, action: PayloadAction<number>) => {
-            state.scalingFactor = action.payload
+            if (action.payload <= 2.0 && action.payload >= 0.5) {
+                state.scalingFactor = action.payload
+            }
         },
     },
 });

@@ -88,17 +88,12 @@ export class Playground extends Component<Props, State> {
 
     // function handleZoomIn increases the sizeMultiplier
     handleZoomIn() {
-        if (this.props.sizeMultiplier <= 2.0) {
-            this.props.changeSizeMultiplier(this.props.sizeMultiplier + 0.1)
-        }
+        this.props.changeSizeMultiplier(this.props.sizeMultiplier + 0.1)
     }
 
     // function handleZoomOut decreases the sizeMultiplier
     handleZoomOut() {
-        if (this.props.sizeMultiplier >= 0.5) {
-            this.props.changeSizeMultiplier(this.props.sizeMultiplier - 0.1)
-        }
-
+        this.props.changeSizeMultiplier(this.props.sizeMultiplier - 0.1)
     }
 
     // calls handleZoomOut if user scrolls down/ handleZoomIn if user scrolls up
@@ -113,10 +108,11 @@ export class Playground extends Component<Props, State> {
     }
 
     handleKeyStream(event: React.KeyboardEvent) {
-        if (event.key === "77") { //"m"
+        console.log("Event")
+        if (event.key === "m") { //"m"
             this.props.toggleAudio()
         }
-        if (event.key === "67") { //"c"
+        if (event.key === "c") { //"c"
             this.props.toggleVideo()
         }
     }

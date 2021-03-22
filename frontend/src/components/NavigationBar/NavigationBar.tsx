@@ -10,12 +10,12 @@ import {
     FaCog,
     FaMicrophone,
     FaMicrophoneSlash,
+    FaPlusCircle,
     FaPowerOff,
     FaSignature,
+    FaSignOutAlt,
     FaVideo,
-    FaVideoSlash,
-    FaPlusCircle,
-    FaSignOutAlt
+    FaVideoSlash
 } from 'react-icons/fa';
 import RangeSlider from "./RangeSlider";
 import {sendLogout} from "../../store/connectionSlice";
