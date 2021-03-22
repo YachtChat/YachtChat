@@ -3,8 +3,8 @@ services:
   dev_nginx-proxy:
     image: jwilder/nginx-proxy
     ports:
-      - "80:80"
-      - "443:443"
+      - "81:81"
+      - "444:444"
     volumes:
       - certs:/etc/nginx/certs:ro
       - vhost:/etc/nginx/vhost.d
