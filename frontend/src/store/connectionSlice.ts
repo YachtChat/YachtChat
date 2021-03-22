@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
 import {getUser, getUserID, handlePositionUpdate, removeUser, setUser, setUserId, setUsers} from "./userSlice";
-import {handleError} from "./statusSlice";
+import {handleError, handleSuccess} from "./statusSlice";
 import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
 
 let websocket_url: string | undefined = process.env.REACT_APP_WEBSOCKET_URL;
@@ -56,11 +56,13 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
     socket.onopen = () => {
         console.log("Connected to the signaling server");
         dispatch(connect())
+        dispatch(handleSuccess("Connection"))
     };
 
     socket.onerror = (err) => {
-        console.log("Got error", err);
+        console.error("Got error", err);
         dispatch(disconnect())
+        dispatch(handleError("Connection failed"))
     };
 
     socket.onmessage = function (msg) {
@@ -159,8 +161,7 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
 
 export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) => {
     if (!success) {
-        dispatch(handleError("Login failed. Try different user name."))
-        alert("Ooops...try a different username");
+        dispatch(handleError("Login failed. Try again later."))
     } else {
         //**********************
         //Starting a peer connection

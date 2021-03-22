@@ -4,6 +4,7 @@ import Playground from "./components/Playground";
 import {RootState} from "./store/store";
 import Login from "./components/Login/Login";
 import {connect} from "react-redux";
+import StatusComponent from "./components/Status/StatusComponent";
 
 interface Props {
     loggedIn: boolean
@@ -29,7 +30,7 @@ export class App extends Component<Props, State> {
                 {!this.props.loggedIn &&
                 <Login/>
                 }
-
+                <StatusComponent/>
             </div>
         );
     }
