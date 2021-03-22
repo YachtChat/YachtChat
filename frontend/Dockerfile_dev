@@ -1,7 +1,7 @@
 FROM node:alpine as build-deps
 
 WORKDIR /home/frontend
-CMD yarn
+RUN yarn
 
 EXPOSE 3000
 
