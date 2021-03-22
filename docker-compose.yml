@@ -25,16 +25,16 @@ services:
   #     - /var/run/docker.sock:/var/run/docker.sock:ro
   #   network_mode: bridge
 
-  nginx-proxyed-container:
-    build:
-      context: ./frontend
-      dockerfile: ./Dockerfile
-    environment:
-      - VIRTUAL_HOST={URL}
-      - LETSENCRYPT_HOST={URL}
-      - REACT_APP_SIGNAL_URL={URL_SIGNAL}
-      - REACT_APP_SIGNAL_PORT={SIGNAL_PORT}
-    network_mode: bridge
+  # nginx-proxyed-container:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     - VIRTUAL_HOST={URL}
+  #     - LETSENCRYPT_HOST={URL}
+  #     - REACT_APP_SIGNAL_URL={URL_SIGNAL}
+  #     - REACT_APP_SIGNAL_PORT={SIGNAL_PORT}
+  #   network_mode: bridge
 
   # signaling_server:
   #   build:
@@ -65,8 +65,8 @@ services:
   #   ports: 
   #     - "3000:3000"
   #   volumes:
-  #     - /home/git_environment/DevNotZoom/frontend:/home/frontend
-  #     #-  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
+  #     # - /home/git_environment/DevNotZoom/frontend:/home/frontend
+  #     -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
   #   environment:
   #     - VIRTUAL_HOST=${DEV_URL}
   #     - LETSENCRYPT_HOST=${DEV_URL}
@@ -75,18 +75,20 @@ services:
   #     - REACT_APP_SOCKET_PORT=${SIGNAL_PORT}
   #   network_mode: bridge
   
-  # dev_signaling_server:
-  #   build:
-  #     context: ./signalingServer
-  #     dockerfile: ./Dockerfile_dev
-  #   volumes:
-  #     - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
-  #     #-  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
-  #   environment:
-  #     - VIRTUAL_HOST=${DEV_URL_SIGNAL}
-  #     - LETSENCRYPT_HOST=${DEV_URL_SIGNAL}
-  #     - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
-  #   network_mode: bridge
+  dev_signaling_server:
+    build:
+      context: ./signalingServer
+      dockerfile: ./Dockerfile_dev
+    ports:
+      - ${DEV_SIGNAL_PORT}:${DEV_SIGNAL_PORT}
+    volumes:
+      # - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
+      -  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
+    environment:
+      - VIRTUAL_HOST=${DEV_URL_SIGNAL}
+      - LETSENCRYPT_HOST=${DEV_URL_SIGNAL}
+      - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
+    network_mode: bridge
 
 volumes:
   certs: { }
