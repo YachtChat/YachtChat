@@ -1,12 +1,13 @@
 import React, {Component} from "react";
 import './style.scss';
-import {User} from "../../store/models";
+import {Space, User} from "../../store/models";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {connectToServer, requestLogin} from "../../store/connectionSlice";
 
 interface Props {
     activeUser: User
+    //spaces: Space[]
     setName: (name: string) => void
     connect: () => void
 }
@@ -59,6 +60,16 @@ export class Login extends Component<Props, State> {
                     <div className="user-box">
                         <input type="password"/>
                         <label>Password</label>
+                    </div>
+                    <div className="dropdown">
+                        <label htmlFor="spaces">Choose a Space:</label>
+                        <select id="spaces" name="spaces">
+                            {/*{this.props.spaces.map(space => <option key={space.id}
+                            value={space.name}>{space.name} </option>)}*/}
+                            <option value="workspace">Workspace</option>
+                            <option value="funspace">Funspace</option>
+                            <option value="another space">Another Space</option>
+                        </select>
                     </div>
                     <button onClick={this.handleSubmit.bind(this)}>
                         <span></span>
