@@ -69,9 +69,6 @@ export class Login extends Component<Props, State> {
                         <select id="spaces" name="spaces">
                             {this.props.spaces.map(space => <option
                             value={space.name}>{space.name} </option>)}
-                            {/*<option value="workspace">Workspace</option>
-                            <option value="funspace">Funspace</option>
-                            <option value="another space">Another Space</option>*/}
                         </select>
                     </div>
                     <button onClick={this.handleSubmit.bind(this)}>
