@@ -4,8 +4,6 @@ import {Space, User} from "../../store/models";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {connectToServer, requestLogin} from "../../store/connectionSlice";
-import {Link} from "react-router-dom";
-import Landingpage from "../Landingpage/Landingpage";
 import {requestSpaces} from "../../store/spaceSlice";
 
 interface Props {

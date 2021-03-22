@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
 import './App.scss';
 import Playground from "./components/Playground";
-import Login from "./components/Login/Login";
 import {RootState} from "./store/store";
+import Login from "./components/Login/Login";
 import {connect} from "react-redux";
-import Landingpage from "./components/Landingpage/Landingpage";
-import {BrowserRouter as Router, Route, Link, Switch, Redirect} from 'react-router-dom';
 
-interface State{
-    isUserAuthenticated: boolean
+interface Props {
+    loggedIn: boolean
 }
-interface Props{}
+
+interface State {
+}
 
 export class App extends Component<Props, State> {
     constructor(props: Props) {
@@ -22,22 +22,23 @@ export class App extends Component<Props, State> {
 
     render() {
         return (
-            <Router>
+            <div className={"App"}>
+                {this.props.loggedIn &&
+                <Playground/>
+                }
+                {!this.props.loggedIn &&
+                <Login/>
+                }
 
-                <Switch>
-                    <Route exact path="/">
-                        <Redirect to="/landingpage"/>
-                    </Route>
-                    <Route exact path = "/landingpage" component={Landingpage}/>
-                    <Route exact path="/playground" component={Playground}/>
-                </Switch>
-
-            </Router>
+            </div>
         );
     }
 
 }
 
+const mapStateToProps = (state: RootState) => ({
+    loggedIn: state.webSocket.loggedIn
+})
 
 
-export default App;
+export default connect(mapStateToProps)(App);
