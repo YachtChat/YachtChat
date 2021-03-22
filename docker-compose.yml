@@ -54,6 +54,21 @@ services:
       - VIRTUAL_PORT=8080
     network_mode: bridge
 
+# Runing our dev servers
+  
+  dev_frontend:
+      build:
+        context: ./frontend
+        dockerfile: ./Dockerfile_dev
+      volumes:
+        - /home/git_environment/DevNotZoom/frontend:/home/frontend
+        # -  /Users/marc/Development/DockerTests/frontend:/home/frontend
+      environment:
+        - VIRTUAL_HOST=www.dev.chat.alphabibber.com
+        - LETSENCRYPT_HOST=www.dev.chat.alphabibber.com
+        - VIRTUAL_PORT=3000
+      network_mode: bridge
+
 volumes:
   certs: { }
   vhost: { }
