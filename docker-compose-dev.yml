@@ -26,17 +26,34 @@ services:
   #   network_mode: bridge
 
   dev_frontend:
-      build:
-        context: ./frontend
-        dockerfile: ./Dockerfile_dev
-      volumes:
-        - /home/git_environment/DevNotZoom/frontend:/home/frontend
-        # -  /Users/marc/Development/DockerTests/frontend:/home/frontend
-      environment:
-        - VIRTUAL_HOST=www.dev.chat.alphabibber.com
-        - LETSENCRYPT_HOST=www.dev.chat.alphabibber.com
-        - VIRTUAL_PORT=3000
-      network_mode: bridge
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile_dev
+    ports: 
+      - "3000:3000"
+    volumes:
+      # - /home/git_environment/DevNotZoom/frontend:/home/frontend
+      -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
+    environment:
+      - VIRTUAL_HOST=DEV_URL
+      - LETSENCRYPT_HOST=DEV_URL
+      - VIRTUAL_PORT=3000
+      - REACT_APP_SOCKET_URL
+    network_mode: bridge
+  
+  dev_signaling_server:
+    build:
+      context: ./signalingServer
+      dockerfile: ./Dockerfile_dev
+    volumes:
+      # - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
+      -  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
+    environment:
+      - VIRTUAL_HOST=DEV_URL
+      - LETSENCRYPT_HOST=DEV_URL
+      - VIRTUAL_PORT=6504
+    network_mode: bridge
+
 
 volumes:
   certs: { }
