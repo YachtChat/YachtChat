@@ -79,6 +79,10 @@ const Header = () => {
             label: "Contact",
             href: "/contact",
         },
+        {
+            label: "Impressum",
+            href: "/impressum"
+        },
     ];
 
 

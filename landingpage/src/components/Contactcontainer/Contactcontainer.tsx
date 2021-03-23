@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
        return (
             <div id={`contact`} className="Contactcontainer">
-                <Card className="card">
+                <Card className="contact-card">
                     <CardMedia
                         className="media"
                         image={

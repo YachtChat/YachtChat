@@ -5,6 +5,7 @@ import Videocontainer from "./components/Videocontainer/Videocontainer";
 import Informationcontainer from "./components/Informationcontainer/Informationcontainer";
 import Contactcontainer from "./components/Contactcontainer/Contactcontainer";
 import Product from "./components/Product/Product";
+import Impressum from "./components/Impressum/Impressum";
 
 
 
@@ -21,6 +22,7 @@ function App() {
       <Videocontainer/>
       <Informationcontainer/>
       <Contactcontainer/>
+      <Impressum/>
 
 
 
