@@ -1,9 +1,46 @@
+@import "src/variables.module";
+
 .btn {
+  margin: 1rem;
   position: fixed;
   display: flex;
   flex-direction: column;
-  bottom: 1px;
-  right: 1px
+  bottom: 0;
+  right: 0;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+
+  button {
+    width: 2rem;
+    height: 2rem;
+    border-radius: $border_radius;
+    background: $foreground_light;
+    border: 1px solid $accent_light;
+    color: $button_font_light;
+    font-weight: bold;
+    transition: 0.2s color;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        border: 1px solid $accent_dark;
+        background: $foreground_dark;
+        color: $button_font_dark;
+      }
+    }
+
+    &:hover {
+      color: $button_font_hover;
+    }
+
+    &:first-of-type {
+      border-radius: 5px 5px 0 0;
+      border-bottom: 1px black;
+    }
+
+    &:last-of-type {
+      border-radius: 0 0 5px 5px;
+    }
+  }
 }
 
 .contentWrapper {
@@ -26,14 +63,15 @@
 .Playground {
   flex-grow: 1;
   height: 100vh;
-  background-color: white;
   position: relative;
   overflow: hidden;
   user-select: none;
 
+  background: $background_2_light;
+
   @media (prefers-color-scheme: dark) {
     & {
-      background: #171717;
+      background: $background_2_dark;
     }
   }
 

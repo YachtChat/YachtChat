@@ -141,6 +141,12 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
                 }
 
                 rtpSender[userId] = []
+
+                if (!streams[localClient]) {
+                    dispatch(handleError("Could not access media."))
+                    return
+                }
+
                 streams[localClient].getTracks().forEach((track, idx) => {
                     rtpSender[userId][idx] = rtcConnections[userId].addTrack(track, streams[localClient])
                 })

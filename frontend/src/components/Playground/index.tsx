@@ -4,7 +4,6 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import './style.scss';
 import {changeScaling, getUsers, submitMovement} from "../../store/userSlice";
-import NavigationBar from "../NavigationBar/NavigationBar";
 import {displayVideo, mute} from "../../store/rtcSlice";
 import UserComponent from "./UserComponent";
 import NewNavigationBar from "../NavigationBar/NewNavigationBar";
@@ -122,7 +121,9 @@ export class Playground extends Component<Props, State> {
     render() {
         return (
             <div className={"contentWrapper"}>
-                <NewNavigationBar/>
+                <div className={"navwrapper"}>
+                    <NewNavigationBar/>
+                </div>
                 <div className="Playground" onMouseMove={this.moveMouse.bind(this)}
                      onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}
                      onWheel={this.onWheel.bind(this)} onTouchMove={this.moveTouch.bind(this)}

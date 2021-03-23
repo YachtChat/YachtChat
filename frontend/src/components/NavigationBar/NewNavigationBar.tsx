@@ -11,7 +11,6 @@ import {
     FaMicrophoneSlash,
     FaPlusCircle,
     FaPowerOff,
-    FaSignature,
     FaSignOutAlt,
     FaVideo,
     FaVideoSlash
@@ -154,6 +153,7 @@ export class NewNavigationBar extends Component<Props, State> {
                                     <div className="inner-item rangeslider">
                                         <RangeSlider/>
                                     </div>
+                                    <span className={"item-content"}>Range</span>
                                 </li>
                             </ul>
                         </div>
