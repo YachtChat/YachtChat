@@ -33,8 +33,6 @@ services:
         - REACT_APP_SIGNAL_URL=${SIGNAL_URL}
         - REACT_APP_SIGNAL_PORT=${SIGNAL_PORT}
         - REACT_APP_SPACES_URL=${SPACES_URL}
-    ports:
-      - "80:80"
     environment:
       - VIRTUAL_HOST=${FRONTEND_URL}
       - LETSENCRYPT_HOST=${FRONTEND_URL}
