@@ -39,7 +39,7 @@ services:
       - LETSENCRYPT_HOST=DEV_URL
       - VIRTUAL_PORT=3000
       - REACT_APP_SOCKET_URL
-    network_mode: bridge
+    network_mode: dev_bridge
   
   dev_signaling_server:
     build:
@@ -52,7 +52,7 @@ services:
       - VIRTUAL_HOST=DEV_URL
       - LETSENCRYPT_HOST=DEV_URL
       - VIRTUAL_PORT=6504
-    network_mode: bridge
+    network_mode: dev_bridge
 
 
 volumes:
