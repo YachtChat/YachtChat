@@ -22,14 +22,15 @@ const Informationcontainer: React.FC = () => (
                   variant={"h6"}
                   gutterBottom
               >
-                  Albert Einstein did not die here
+                  Redefining mobility through communication
               </Typography>
               <Typography
                   className={"MuiTypography--subheading"}
                   variant={"caption"}
               >
-                  We are going to learn different kinds of species in nature that live
-                  together to form amazing environment.
+                  NotZoom connects, socializes and amplifies productivity.  Your home office transforms into a place of collaboration.
+                  Especially in these times, digital communication tools are needed like never before. Making this communication as intuitive and accessible as possible is our mission.
+                  We enable a new experience of digital communication.
               </Typography>
               <Divider className="divider" light />
           </CardContent>
