@@ -7,6 +7,7 @@ import {changeScaling, getUsers, submitMovement} from "../../store/userSlice";
 import NavigationBar from "../NavigationBar/NavigationBar";
 import {displayVideo, mute} from "../../store/rtcSlice";
 import UserComponent from "./UserComponent";
+import NewNavigationBar from "../NavigationBar/NewNavigationBar";
 
 interface Props {
     activeUser: User
@@ -121,7 +122,7 @@ export class Playground extends Component<Props, State> {
     render() {
         return (
             <div className={"contentWrapper"}>
-                <NavigationBar/>
+                <NewNavigationBar/>
                 <div className="Playground" onMouseMove={this.moveMouse.bind(this)}
                      onMouseLeave={this.dragEnd.bind(this)} onMouseUp={this.dragEnd.bind(this)}
                      onWheel={this.onWheel.bind(this)} onTouchMove={this.moveTouch.bind(this)}

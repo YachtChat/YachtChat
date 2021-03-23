@@ -4,7 +4,7 @@
 @import '~react-pro-sidebar/dist/scss/styles.scss';
 
 #sidebar {
-  opacity: 1;
+  opacity: 0.8;
   flex-grow: 0;
   text-align: center;
 
@@ -20,10 +20,12 @@
 .range-slider{
   transform: rotate(270deg);
   height: 150px;
+  text-align: center;
 }
 
 .range-value {
   font-size: 15px;
+  text-align: center;
 }
 
 .slider-parent {
@@ -36,4 +38,118 @@
 }
 
 @keyframes swing {
+}
+
+.navbar {
+  color: #adadad;
+  height: 100%;
+  width: 200px;
+  min-width: 200px;
+  text-align: left;
+  transition: width, left, right, 0.3s;
+  position: relative;
+  z-index: 1009;
+
+  &.collapsed {
+      width: 80px;
+      min-width: 80px;
+    }
+
+  > .navbar-inner {
+      background: #1d1d1d;
+      height: 100%;
+      position: relative;
+      z-index: 101;
+
+    > .navbar-layout {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      z-index: 101;
+
+      > .menu {
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        > ul {
+          margin: 0;
+          padding: 0;
+          list-style-type: none;
+
+          > .menu-item {
+            position: relative;
+            font-size: 15px;
+
+            > .inner-item {
+              position: relative;
+              display: flex;
+              align-items: center;
+              padding: 8px 35px 8px 20px;
+              cursor: pointer;
+              margin: auto auto;
+
+              > .icon-wrapper {
+                margin-right: 10px;
+                font-size: 14px;
+                width: 35px;
+                min-width: 35px;
+                height: 35px;
+                line-height: 35px;
+                text-align: center;
+                display: inline-block;
+                border-radius: 50%;
+                background-color: #2b2b2b;
+
+                > .icon {
+                  display: flex;
+                  height: 100%;
+                  align-items: center;
+                  justify-content: center;
+                }
+              }
+
+              > .item-content {
+                flex-grow: 1;
+                flex-shrink: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+            }
+
+            > .submenu-item{
+              padding-left: 20px;
+            }
+
+            > .closed {
+              display: none;
+            }
+
+            > .react-slidedown {
+              height: 0;
+              transition-property: none;
+              transition-duration: 0.2s;
+              transition-timing-function: ease-in-out;
+            }
+
+            > .rangeslider {
+              padding: 0;
+            }
+          }
+
+          > .spacer-50 {
+            height: 50px;
+          }
+        }
+      }
+
+      > .bottom {
+        margin-top: auto;
+      }
+    }
+
+  }
 }
