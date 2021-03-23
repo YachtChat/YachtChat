@@ -67,7 +67,11 @@ export const requestUserMediaAndJoin = (): AppThunk => (dispatch, getState) => {
 
 export const mute = (): AppThunk => (dispatch, getState) => {
     dispatch(toggleMute())
-    streams[getState().userState.activeUser.id].getAudioTracks()[0].enabled = !getState().rtc.muted
+
+    if (!streams[getUserID(getState())])
+        return
+
+    streams[getUserID(getState())].getAudioTracks()[0].enabled = !getState().rtc.muted
     getUsers(getState()).forEach(u => {
         rtpSender[u.id].forEach(rtp => {
             if (rtp.track && rtp.track.kind === 'audio') {
@@ -79,6 +83,9 @@ export const mute = (): AppThunk => (dispatch, getState) => {
 
 export const displayVideo = (): AppThunk => (dispatch, getState) => {
     dispatch(toggleVideo())
+
+    if (!streams[getUserID(getState())])
+        return
     streams[getUserID(getState())].getVideoTracks()[0].enabled = getState().rtc.video
     getUsers(getState()).forEach(u => {
         rtpSender[u.id].forEach(rtp => {

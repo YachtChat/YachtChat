@@ -66,6 +66,7 @@
   position: relative;
   overflow: hidden;
   user-select: none;
+  cursor: move;
 
   background: $background_2_light;
 
@@ -90,6 +91,8 @@
   }
 
   .activeUser {
+    cursor: default;
+
     .userRange {
       background: radial-gradient(circle, rgba(121, 9, 9, .8) 1%, rgba(255, 255, 255, 0) 70%);
       border: solid 1px rgba(255, 0, 0, .4);

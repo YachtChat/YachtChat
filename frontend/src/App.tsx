@@ -8,7 +8,8 @@ import StatusComponent from "./components/Status/StatusComponent";
 import "webrtc-adapter";
 
 interface Props {
-    loggedIn: boolean
+    joinedRoom: boolean
+    connected: boolean
 }
 
 interface State {
@@ -25,10 +26,10 @@ export class App extends Component<Props, State> {
     render() {
         return (
             <div className={"App"}>
-                {this.props.loggedIn &&
+                {(this.props.joinedRoom && this.props.connected) &&
                 <Playground/>
                 }
-                {!this.props.loggedIn &&
+                {!this.props.joinedRoom &&
                 <Login/>
                 }
                 <StatusComponent/>
@@ -39,7 +40,8 @@ export class App extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    loggedIn: state.webSocket.loggedIn
+    joinedRoom: state.webSocket.joinedRoom,
+    connected: state.webSocket.connected
 })
 
 

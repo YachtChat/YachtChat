@@ -7,9 +7,9 @@ interface SpaceState {
 
 const initialState: SpaceState = {
     offset: {
-        x: window.innerHeight / 2,
-        y: window.innerHeight / 2,
-        scale: 0,
+        x: -window.innerWidth / 2,
+        y: -window.innerHeight / 2,
+        scale: 1.0,
     }
 }
 
@@ -21,7 +21,8 @@ export const spaceSlice = createSlice({
             state.offset = action.payload
         },
         scalePlayground: (state, action: PayloadAction<number>) => {
-            state.offset.scale = action.payload
+            if (action.payload <= 2.0 && action.payload >= 0.5)
+                state.offset.scale = action.payload
         }
     }
 });

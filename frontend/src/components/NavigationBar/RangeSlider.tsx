@@ -5,7 +5,6 @@ import {connect} from "react-redux";
 import {submitRadius} from "../../store/userSlice";
 import './style.scss';
 import {Slider} from "@material-ui/core";
-import variables from "../../variables.module.scss";
 
 
 interface Props {
@@ -19,24 +18,19 @@ export class RangeSlider extends Component<Props> {
         this.props.changeRadius(event.target.value)
     }
 
-    componentDidMount() {
-        console.log(variables)
-    }
-
     render() {
-        // @ts-ignore
         return (
             <div className="slider-parent">
                 <Slider
                     className={"slider"}
                     orientation="vertical"
                     color={"primary"}
-
                     defaultValue={this.props.activeUser.position.range}
                     max={1}
                     min={0.1}
                     step={0.05}
                     track={false}
+                    key={`slider-${this.props.activeUser.position.range}`}
                     onChange={(e, n) => this.props.changeRadius(n as number)}
                     aria-labelledby="vertical-slider"
                 />
