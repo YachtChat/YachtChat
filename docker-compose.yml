@@ -1,34 +1,34 @@
 version: "2"
 services:
-   nginx-proxy:
-     image: jwilder/nginx-proxy
-     ports:
-       - "80:80"
-       - "443:443"
-     volumes:
-       - certs:/etc/nginx/certs:ro
-       - vhost:/etc/nginx/vhost.d
-       - html:/usr/share/nginx/html
-       - /var/run/docker.sock:/tmp/docker.sock:ro
-     network_mode: bridge
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    network_mode: bridge
 
-   letsencrypt-nginx-proxy-companion:
-     image: jrcs/letsencrypt-nginx-proxy-companion
-     volumes_from:
-       - nginx-proxy
-     environment:
-       - DEFAULT_EMAIL=ole.sen@gmx.de
-     volumes:
-       - certs:/etc/nginx/certs:rw
-       - vhost:/etc/nginx/vhost.d
-       - html:/usr/share/nginx/html
-       - /var/run/docker.sock:/var/run/docker.sock:ro
+  letsencrypt-nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes_from:
+      - nginx-proxy
+    environment:
+      - DEFAULT_EMAIL=ole.sen@gmx.de
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
   nginx-proxyed-container:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
-      args: 
+      args:
         - REACT_APP_SIGNAL_URL=${SIGNAL_URL}
         - REACT_APP_SIGNAL_PORT=${SIGNAL_PORT}
         - REACT_APP_SPACES_URL=${SPACES_URL}
