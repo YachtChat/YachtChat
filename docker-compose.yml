@@ -67,6 +67,15 @@ services:
   #     - LETSENCRYPT_HOST=presentation.alphabibber.com
   #   network_mode: bridge
 
+  nginx-presentation:
+    build:
+      context: ./presentation
+      dockerfile: ./Dockerfile
+    environment:
+      - VIRTUAL_HOST=presentation.alphabibber.com
+      - LETSENCRYPT_HOST=presentation.alphabibber.com
+    network_mode: bridge
+
 volumes:
   certs: { }
   vhost: { }

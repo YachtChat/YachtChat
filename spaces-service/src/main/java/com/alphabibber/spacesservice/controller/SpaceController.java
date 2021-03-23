@@ -34,6 +34,11 @@ public class SpaceController extends SpringBootServletInitializer {
         return spaceService.getSpaces();
     }
 
+    @GetMapping("/users/")
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
     @PostMapping("/createSpace")
     public Space createSpace(@RequestParam String name) {
         return spaceService.createSpace(new Space(name));

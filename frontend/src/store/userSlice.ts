@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {User, UserCoordinates} from "./models";
 import {sendPosition} from "./connectionSlice";
+import {sendAudio, unsendAudio} from "./rtcSlice";
 
 interface UserState {
     activeUser: User
@@ -15,13 +16,21 @@ const initialState: UserState = {
     scalingFactor: 1.0
 };
 
+export const userProportion = 100
+export const maxRange = 300
+
 export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        move: (state, action: PayloadAction<UserCoordinates>) => {
-            state.activeUser.position.x = action.payload.x;
-            state.activeUser.position.y = action.payload.y;
+        move: (state, action: PayloadAction<{ id: number, position: UserCoordinates }>) => {
+
+            if (state.activeUser.id === action.payload.id) {
+                state.activeUser.position = action.payload.position;
+            }
+            if (!state.otherUsers[action.payload.id])
+                return
+            state.otherUsers[action.payload.id].position = action.payload.position
         },
         changeRadius: (state, action: PayloadAction<number>) => {
             state.activeUser.position.range = action.payload;
@@ -34,21 +43,17 @@ export const userSlice = createSlice({
         },
         setUserId: (state, action: PayloadAction<number>) => {
             state.activeUser.id = action.payload
+            state.activeUser.inProximity = true
         },
         setName: (state, action: PayloadAction<any>) => {
             if (action.payload.id)
-            state.activeUser.name = action.payload.name
+                state.activeUser.name = action.payload.name
         },
-        addUser: (state, action: PayloadAction<User>) => {
+        setUser: (state, action: PayloadAction<User>) => {
             state.otherUsers[action.payload.id] = action.payload
         },
         removeUser: (state, action: PayloadAction<number>) => {
             delete state.otherUsers[action.payload]
-        },
-        handlePositionUpdate: (state, action: PayloadAction<any>) => {
-            if (!state.otherUsers[action.payload.id])
-                return
-            state.otherUsers[action.payload.id].position = action.payload.position
         },
         setUsers: (state, action: PayloadAction<{ [key: number]: User }>) => {
             const otherUsers: { [key: number]: User } = {}
@@ -67,8 +72,10 @@ export const userSlice = createSlice({
             // })
         },
         changeScaling: (state, action: PayloadAction<number>) => {
-            state.scalingFactor = action.payload
-        }
+            if (action.payload <= 2.0 && action.payload >= 0.5) {
+                state.scalingFactor = action.payload
+            }
+        },
     },
 });
 
@@ -76,9 +83,8 @@ export const {
     move,
     changeRadius,
     gotRemoteStream,
-    addUser,
+    setUser,
     setName,
-    handlePositionUpdate,
     setUsers,
     removeUser,
     setUserId,
@@ -86,11 +92,40 @@ export const {
 } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {
-    if (getState().userState.activeUser.position !== coordinates) {
+    const user = getState().userState.activeUser
+    if (user.position !== coordinates) {
         dispatch(sendPosition(coordinates))
-        dispatch(move(coordinates))
+        dispatch(handlePositionUpdate({id: user.id, position: coordinates}))
     }
-};
+}
+
+export const handlePositionUpdate = (object: { id: number, position: UserCoordinates }): AppThunk => (dispatch, getState) => {
+    dispatch(move(object))
+    const user = getState().userState.activeUser
+    const currentRange = maxRange * user.position.range
+
+    let users: User[] = []
+
+    if (user.id === object.id)
+        users = getUsers(getState())
+    else
+        users.push(getUserById(getState(), object.id))
+
+    // if (getUser(getState()).position === user.position)
+    users.forEach(u => {
+        const dist = Math.sqrt(
+            Math.pow(((u.position.x) - (user.position.x)), 2) +
+            Math.pow(((u.position.y) - (user.position.y)), 2)
+        )
+        if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
+            dispatch(sendAudio(u.id))
+            dispatch(setUser({...u, inProximity: true}))
+        } else if (dist > (currentRange + userProportion / 2) && (!!u.inProximity || u.inProximity === undefined)) {
+            dispatch(unsendAudio(u.id))
+            dispatch(setUser({...u, inProximity: false}))
+        }
+    })
+}
 
 export const submitRadius = (radius: number): AppThunk => (dispatch, getState) => {
     dispatch(changeRadius(radius))

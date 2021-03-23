@@ -31,7 +31,7 @@ public class SpacesServiceApplication implements CommandLineRunner {
 		log.info("DataSource = " + dataSource);
 
 		Space freeForAll = new Space("Free For All");
-		Space savedSpace = spaceService.createSpace(freeForAll);
+		spaceService.createSpace(freeForAll);
 	}
 
 }

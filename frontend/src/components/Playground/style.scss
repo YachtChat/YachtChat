@@ -12,39 +12,64 @@
   overflow: hidden;
   display: flex;
   flex-direction: row;
+  position: relative;
 }
+
+.roomgrid {
+  min-height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
 
 .Playground {
   flex-grow: 1;
   height: 100vh;
   background-color: white;
+  position: relative;
   overflow: hidden;
+  user-select: none;
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: #171717;
+    }
+  }
+
+  &:focus {
+    outline: none;
+    border-bottom: 2px solid darkblue;
+  }
 
   .userRange {
     position: absolute;
     background: green;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(9, 121, 9, .4) 1%, rgba(255, 255, 255, 0) 70%);
-    border: solid 1px rgba(255, 0, 0, .2);
+    background: radial-gradient(circle, rgba(9, 121, 9, .8) 0%, rgba(255, 255, 255, 0) 70%);
+    border: solid 1px rgba(255, 0, 0, .4);
+    transition: 0.2s opacity;
   }
 
   .activeUser {
     .userRange {
-      background: radial-gradient(circle, rgba(121, 9, 9, .4) 1%, rgba(255, 255, 255, 0) 70%);
-      border: solid 1px rgba(255, 0, 0, .2);
+      background: radial-gradient(circle, rgba(121, 9, 9, .8) 1%, rgba(255, 255, 255, 0) 70%);
+      border: solid 1px rgba(255, 0, 0, .4);
     }
 
     .User {
-      background-color: aqua;
+      background-color: cadetblue;
     }
   }
 
   .User {
+    background-color: gray;
     position: absolute;
     border-radius: 50%;
     display: block;
     user-select: none;
     overflow: hidden;
+    transition: 0.2s opacity, 0.2s transform;
 
     video {
       position: absolute;
