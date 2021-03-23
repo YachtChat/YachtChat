@@ -15,11 +15,13 @@ interface Props {
 export class UserComponent extends Component<Props> {
 
     private myRef: React.RefObject<HTMLVideoElement>;
+    private myName: React.RefObject<HTMLSpanElement>;
 
     constructor(props: Props) {
         super(props);
 
         this.myRef = React.createRef();
+        this.myName = React.createRef();
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
@@ -39,6 +41,11 @@ export class UserComponent extends Component<Props> {
         const offsetX = this.props.playgroundOffset.x
         const offsetY = this.props.playgroundOffset.y
 
+        let nameWidth = 0
+        if (this.myName.current) {
+            nameWidth = this.myName.current.getBoundingClientRect().width
+        }
+
         const userStyle = {
             width: userSize,
             height: userSize,
@@ -49,6 +56,12 @@ export class UserComponent extends Component<Props> {
         }
         // range in pixels
         const rangeInPx = 2 * maxRange * user.position.range * scale + userSize
+
+        const userNameStyle = {
+            left: x - offsetX - nameWidth / 2,
+            top: y + userSize / 2 - offsetY + 15,
+            transform: (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)"
+        }
 
         const rangeStyle = {
             width: rangeInPx,
@@ -66,7 +79,8 @@ export class UserComponent extends Component<Props> {
                     <video autoPlay muted={this.props.isActiveUser} ref={this.myRef}/>
                     }
                 </div>
-                <span>{user.name}</span>
+                <span ref={this.myName} className={"userName"}
+                      style={userNameStyle}>{(this.props.isActiveUser) ? "You" : user.name}</span>
             </div>
         )
     }
