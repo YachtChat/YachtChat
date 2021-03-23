@@ -30,8 +30,8 @@ services:
       context: ./frontend
       dockerfile: ./Dockerfile_dev
     volumes:
-      # - /home/git_environment/DevNotZoom/frontend:/home/frontend
-      -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
+      - /home/git_environment/DevNotZoom/frontend:/home/frontend
+      # -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
     environment:
       - VIRTUAL_HOST=${DEV_URL}
       - LETSENCRYPT_HOST=${DEV_URL}
@@ -44,8 +44,8 @@ services:
       context: ./signalingServer
       dockerfile: ./Dockerfile_dev
     volumes:
-      # - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
-      -  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
+      - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
+      # -  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
     environment:
       - VIRTUAL_HOST=${DEV_URL_SIGNAL}
       - LETSENCRYPT_HOST=${DEV_URL}
