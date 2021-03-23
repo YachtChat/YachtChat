@@ -56,7 +56,6 @@ if (!webServer) {
   } catch(err) {
     webServer = null;
     log(`Error attempting to create HTTP(s) server: ${err.toString()}`);
-    log("test"):
   }
 }
 
