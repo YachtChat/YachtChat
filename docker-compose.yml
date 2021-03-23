@@ -65,8 +65,10 @@ services:
       context: ./presentation
       dockerfile: ./Dockerfile
     environment:
-      - VIRTUAL_HOST=presentation.alphabibber.com
-      - LETSENCRYPT_HOST=presentation.alphabibber.com
+#      - VIRTUAL_HOST=presentation.alphabibber.com
+#      - LETSENCRYPT_HOST=presentation.alphabibber.com
+      - VIRTUAL_HOST=${PRESENTATION_URL}
+      - LETSENCRYPT_HOST=${PRESENTATION_URL}
     network_mode: bridge
 
 volumes:
