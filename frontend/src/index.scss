@@ -1,0 +1,32 @@
+$background_light: white;
+$background_dark: white;
+$background_2_light: #f6f6f6;
+$background_2_dark: rgba(256, 256, 256, 0.1);
+$foreground_light: white;
+$foreground_dark: #171717;
+$focus_light: #eee;
+$focus_dark: #090909;
+$accent_light: #b9c2d0;
+$accent_dark: #204359;
+$font_dark: #ccc;
+$font_light: #ccc;
+$headline_light: white;
+$headline_dark: white;
+$headline_2_light: gray;
+$headline_2_dark: white;
+$button_font_light: black;
+$button_font_dark: white;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Canltarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

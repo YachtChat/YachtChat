@@ -12,6 +12,12 @@ export interface UserCoordinates {
     range: number
 }
 
+export interface PlaygroundOffset {
+    x: number
+    y: number
+    scale: number
+}
+
 export interface Space {
     name: string
     id: string

@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {send} from "./connectionSlice";
-import {rtcConfiguration} from "./stunServerConfig";
+import {rtcConfiguration} from "./config";
 import {getUser, getUserID, getUsers, gotRemoteStream, handlePositionUpdate} from "./userSlice";
 import {handleError} from "./statusSlice";
 
@@ -90,8 +90,11 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
 }
 
 export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
+
     rtpSender[id].forEach(rtp => {
+        console.log("Trying to enable audio to ", id)
         if (rtp.track && rtp.track.kind === 'audio') {
+            console.log("Enabled audio")
             rtp.track.enabled = true
         }
     })
@@ -99,7 +102,9 @@ export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
 
 export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
     rtpSender[id].forEach(rtp => {
+        console.log("Trying not to enable audio to ", id)
         if (rtp.track && rtp.track.kind === 'audio') {
+            console.log("Disabled audio")
             rtp.track.enabled = false
         }
     })

@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Space} from "./models";
 import {AppThunk} from "./store";
 import axios from "axios";
+import {spacesService} from "./config";
 
 interface SpaceState {
     spaces: Space[]
@@ -22,11 +23,9 @@ export const spaceSlice = createSlice({
 });
 
 export const requestSpaces = ():AppThunk => dispatch =>  {
-    axios.get("https://spaces.chat.alphabibber.com/spaces/").then(response => {
+    axios.get(spacesService.concat("/spaces/")).then(response => {
         dispatch(setSpaces(response.data))
     }).catch(e => console.log(e.trace))
-
-
 }
 
 export const {

@@ -4,12 +4,7 @@ import {User, UserCoordinates} from "./models";
 import {getUser, getUserID, handlePositionUpdate, removeUser, setUser, setUserId, setUsers} from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
 import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
-
-let websocket_url: string | undefined = process.env.REACT_APP_WEBSOCKET_URL;
-
-if (process.env.NODE_ENV === "development") {
-    websocket_url = process.env.REACT_APP_WEBSOCKET_URL_LOCAL;
-}
+import {websocket_url} from "./config";
 
 interface WebSocketState {
     connected: boolean
@@ -45,7 +40,6 @@ export const webSocketSlice = createSlice({
 export const {connect, disconnect, login, logout} = webSocketSlice.actions;
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
-    //socket = new WebSocket('wss://call.tristanratz.com:9090')
     if (!websocket_url) {
         dispatch(handleError("No websocket url defined for this environment"))
         return
@@ -106,12 +100,14 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                     break;
                 const fromId: number = data.source;
                 if (fromId !== getUserID(getState())) {
+                    const randomWait = Math.floor(Math.random() * Math.floor(200))
                     switch (data.signal_type) {
                         case "candidate":
-                            dispatch(handleCandidate(data.candidate, fromId))
+                            setTimeout(() => dispatch(handleCandidate(data.candidate, fromId)), randomWait)
                             break;
                         case "sdp":
-                            dispatch(handleSdp(data.description, fromId));
+                            setTimeout(() => dispatch(handleSdp(data.description, fromId)), randomWait)
+
                             break;
                         default:
                             dispatch(handleError("Unknown signaling type."))

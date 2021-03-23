@@ -1,4 +1,8 @@
-const rtcConfiguration = {
+export const websocket_url: string | undefined = (process.env.NODE_ENV === "development") ? process.env.REACT_APP_WEBSOCKET_URL_LOCAL : process.env.REACT_APP_WEBSOCKET_URL;
+export const spacesService: string = "https://spaces.chat.alphabibber.com"
+export const loginService: string = "https://spaces.chat.alphabibber.com"
+
+export const rtcConfiguration = {
     "iceServers": [{
         "urls": [
             "stun:stun2.1.google.com:19302",
@@ -271,6 +275,3 @@ const rtcConfiguration = {
         ]
     }]
 }
-
-
-export {rtcConfiguration};

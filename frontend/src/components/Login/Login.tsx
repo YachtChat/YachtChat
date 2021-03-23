@@ -8,6 +8,7 @@ import {requestSpaces} from "../../store/spaceSlice";
 import googleButton from "../../rsc/google_button.svg";
 import appleLogo from "../../rsc/apple.svg";
 import github from "../../rsc/github.svg";
+import {loginService} from "../../store/config";
 
 interface Props {
     activeUser: User
@@ -57,30 +58,37 @@ export class Login extends Component<Props, State> {
                 <div className={"backgroundRange"}/>
                 <div className={"backgroundBall"}/>
                 <div className="login-box">
-                    <h2>AlphaBibber Chat</h2>
 
-                    <form>
+                    <div className={"signin"}>
+                        <h2>AlphaBibber Chat</h2>
                         <h3>Sign in</h3>
                         <div className="login-buttons">
-                            <div>
-                                <img src={googleButton}/>
-                            </div>
 
                             <div style={{background: "black"}} className={"logoImage"}>
-                                <img src={appleLogo}/>
+                                <a href={loginService.concat("/oauth_login?method=google")}>
+                                    <img alt={"Sign in with Apple"} src={appleLogo}/>
+                                </a>
                             </div>
 
-                            <div style={{background: "gray"}} className={"logoImage"}>
-                                <svg id={"github"}>
-                                    <image xlinkHref={github} width="28" height="30" fill="white"/>
-                                </svg>
+                            <div style={{background: "white"}} className={"logoImage"}>
+                                <a href={loginService.concat("/oauth_login?method=google")}>
+                                    <img alt={"Sign in with Google"} src={googleButton}/>
+                                </a>
+                            </div>
+
+                            <div id={"github"} className={"logoImage"}>
+                                <a href={loginService.concat("/oauth_login?method=google")}>
+                                    <img src={github}/>
+                                </a>
                             </div>
                         </div>
+                        </div>
 
+                    <form>
                         <div className="user-box">
                             <h3>Or join public space</h3>
+                            <label>Username</label>
                             <div className="inputPair">
-                                <label>Username</label>
                                 <input type="text" value={this.state.value}
                                        onKeyDown={this.handleKeySubmit.bind(this)}
                                        onChange={this.handleChange.bind(this)} autoFocus/>

@@ -1,4 +1,4 @@
-$color: #204359;
+@import "../../index";
 
 .contentWrapper {
   width: 100%;
@@ -10,7 +10,7 @@ $color: #204359;
     position: absolute;
     width: 200vw;
     height: 200vw;
-    background: #f6f6f6;
+    background: $background_2_light;
     margin-right: 0;
     right: 0;
     border-radius: 50%;
@@ -18,7 +18,7 @@ $color: #204359;
 
     @media (prefers-color-scheme: dark) {
       & {
-        background: rgba(256, 256, 256, 0.1);
+        background: $background_2_dark;
       }
     }
   }
@@ -30,7 +30,7 @@ $color: #204359;
   left: 50%;
   width: 400px;
   transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 1);
+  background: $foreground_light;
   box-sizing: border-box;
   box-shadow: 0 15px 40px rgba(0, 0, 0, .1);
   font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -41,62 +41,63 @@ $color: #204359;
     padding: 2rem;
   }
 
-  h3 {
-    color: black;
-  }
-
   h2 {
-    margin: 0;
-    width: 100%;
-    padding: 4rem 2rem 2rem;
-    color: white;
-    background: $color;
-    box-sizing: border-box;
+    color: $headline_light;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $headline_dark;
+      }
+    }
   }
 
   h3 {
     font-style: normal;
     text-transform: uppercase;
     font-size: 0.8rem;
-    color: gray;
+    color: $headline_2_light;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $headline_2_dark;
+      }
+    }
   }
+
 
   @media (prefers-color-scheme: dark) {
     & {
-      background: #171717;
-      color: white;
-
-      h2, h3 {
-        color: white;
-      }
+      background: $foreground_dark;
+      color: $font_light;
     }
   }
 
   .user-box {
     position: relative;
     text-align: left;
-    padding: 2rem 0;
+    padding: 0 0 2rem 0;
+
+    label {
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #ccc;
+      text-transform: uppercase;
+      padding: 1rem;
+    }
 
     h3 {
       text-align: center;
     }
 
     .inputPair {
-      background: #eee;
-      padding: 1rem;
-      text-transform: uppercase;
+      background: $focus_light;
+
       border-radius: 0.5rem;
 
       @media (prefers-color-scheme: dark) {
         & {
-          background: #090909;
+          background: $focus_dark;
         }
-      }
-
-      label {
-        font-size: 0.5rem;
-        font-weight: bold;
-        color: #ccc;
       }
     }
 
@@ -108,7 +109,7 @@ $color: #204359;
       border: none;
       outline: none;
       background: transparent;
-      padding: 0.5rem 0;
+      padding: 1rem;
 
       &:focus ~ label,
       &:valid ~ label {
@@ -121,7 +122,7 @@ $color: #204359;
     button {
       position: relative;
       display: inline-block;
-      padding: 1rem 20px;
+      padding: 1rem 1rem;
       width: 100%;
       font-size: 1rem;
       text-decoration: none;
@@ -130,19 +131,19 @@ $color: #204359;
       transition: .2s;
       margin-top: 40px;
       background-color: transparent;
-      border: 1px solid $color;
-      border-radius: 2rem;
+      border: 1px solid $accent_light;
+      color: $button_font_light;
+      border-radius: 0.5rem;
       outline: none;
 
       &:hover {
-        background: #eeeeee;
-        border: 1px solid gray;
-        color: gray;
+        background: rgba(125, 125, 125, 0.5);
       }
 
       @media (prefers-color-scheme: dark) {
         & {
-          color: gray;
+          color: $button_font_dark;
+          border: 1px solid $accent_dark;
         }
       }
 
@@ -154,44 +155,57 @@ $color: #204359;
   }
 }
 
-.login-buttons {
-  position: relative;
-  width: auto;
-  align-items: center;
-  justify-content: space-around;
-  display: flex;
-  margin: 0 auto;
-  cursor: pointer;
+.signin {
+  margin: 0;
+  width: 100%;
+  padding: 4rem 2rem 4rem 2rem;
+  background: $accent_light;
+  box-sizing: border-box;
 
-  div {
-    height: 38px;
-    width: 38px;
-    border-radius: 2px;
-
-    margin: 0 1rem;
-
-    img {
-      height: 38px;
-      width: 40px;
-    }
-
-    &.logoImage {
-      background: black;
-
-      img, svg {
-        height: 38px;
-        width: 40px;
-        fill: white;
-        stroke: white;
-
-        &#github {
-          height: 28px;
-          width: 30px;
-          padding: 5px;
-        }
-      }
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: $accent_dark;
     }
   }
 
+  .login-buttons {
+    position: relative;
+    width: auto;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: 0 auto;
+    cursor: pointer;
 
+
+    .logoImage {
+      height: 40px;
+      width: 40px;
+      border-radius: 2px;
+      margin: 0 1rem;
+      overflow: hidden;
+      background: black;
+      transition: .2s opacity;
+
+      &:hover {
+        opacity: 0.5;
+      }
+
+
+      &#github {
+        img {
+          padding: 10px;
+          box-sizing: border-box;
+        }
+      }
+
+      img {
+        height: 40px;
+        width: 40px;
+        fill: white;
+        stroke: white;
+      }
+
+    }
+  }
 }

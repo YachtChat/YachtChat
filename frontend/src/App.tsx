@@ -5,6 +5,7 @@ import {RootState} from "./store/store";
 import Login from "./components/Login/Login";
 import {connect} from "react-redux";
 import StatusComponent from "./components/Status/StatusComponent";
+import "webrtc-adapter";
 
 interface Props {
     loggedIn: boolean
