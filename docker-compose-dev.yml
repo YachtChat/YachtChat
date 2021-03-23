@@ -1,34 +1,11 @@
 version: "2"
 services:
-  # dev_nginx-proxy:
-  #   image: jwilder/nginx-proxy
-  #   ports:
-  #     - "81:81"
-  #     - "444:444"
-  #   volumes:
-  #     - certs:/etc/nginx/certs:ro
-  #     - vhost:/etc/nginx/vhost.d
-  #     - html:/usr/share/nginx/html
-  #     - /var/run/docker.sock:/tmp/docker.sock:ro
-  #   network_mode: bridge
-
-  # dev_letsencrypt-nginx-proxy-companion:
-  #   image: jrcs/letsencrypt-nginx-proxy-companion
-  #   volumes_from:
-  #     - dev_nginx-proxy
-  #   environment:
-  #     - DEFAULT_EMAIL=ole.sen@gmx.de
-  #   volumes:
-  #     - certs:/etc/nginx/certs:rw
-  #     - vhost:/etc/nginx/vhost.d
-  #     - html:/usr/share/nginx/html
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #   network_mode: bridge
-
   dev_frontend:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile_dev
+    ports: 
+      - "3000:3000"
     volumes:
       - /home/git_environment/DevNotZoom/frontend:/home/frontend
       # -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
@@ -36,19 +13,22 @@ services:
       - VIRTUAL_HOST=${DEV_URL}
       - LETSENCRYPT_HOST=${DEV_URL}
       - VIRTUAL_PORT=3000
-      - REACT_APP_SOCKET_URL
+      - REACT_APP_SOCKET_URL=${DEV_SIGNAL_URL}
+      - REACT_APP_SOCKET_PORT=${DEV_SIGNAL_PORT}
     network_mode: bridge
   
   dev_signaling_server:
     build:
       context: ./signalingServer
       dockerfile: ./Dockerfile_dev
+    ports: 
+      - "6504:6504"
     volumes:
       - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
       # -  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
     environment:
-      - VIRTUAL_HOST=${DEV_URL_SIGNAL}
-      - LETSENCRYPT_HOST=${DEV_URL}
+      - VIRTUAL_HOST=${DEV_SIGNAL_URL}
+      - LETSENCRYPT_HOST=${DEV_SIGNAL_URL}
       - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
     network_mode: bridge
 
