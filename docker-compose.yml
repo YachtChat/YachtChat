@@ -23,72 +23,39 @@ services:
   #     - vhost:/etc/nginx/vhost.d
   #     - html:/usr/share/nginx/html
   #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #   network_mode: bridge
 
-  # nginx-proxyed-container:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: ./Dockerfile
-  #   environment:
-  #     - VIRTUAL_HOST={URL}
-  #     - LETSENCRYPT_HOST={URL}
-  #     - REACT_APP_SIGNAL_URL={URL_SIGNAL}
-  #     - REACT_APP_SIGNAL_PORT={SIGNAL_PORT}
-  #   network_mode: bridge
+  nginx-proxyed-container:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+      args: 
+        - REACT_APP_SIGNAL_URL=${SIGNAL_URL}
+        - REACT_APP_SIGNAL_PORT=${SIGNAL_PORT}
+    ports:
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    environment:
+      - VIRTUAL_HOST=${FRONTEND_URL}
+      - LETSENCRYPT_HOST=${FRONTEND_URL}
 
-  # signaling_server:
-  #   build:
-  #     context: ./signalingServer
-  #     dockerfile: ./Dockerfile
-  #   environment:
-  #     - VIRTUAL_HOST={URL_SIGNAL}
-  #     - LETSENCRYPT_HOST={URL_SIGNAL}
-  #     - VIRTUAL_PORT={SIGNAL_PORT}
-  #   network_mode: bridge
-
-  # spaces-service:
-  #   build:
-  #     context: ./spaces-service
-  #     dockerfile: ./Dockerfile
-  #   environment:
-  #     - VIRTUAL_HOST={URL_SPACES}
-  #     - LETSENCRYPT_HOST={URL_SPACES}
-  #     - VIRTUAL_PORT={SPACES_PORT}
-  #   network_mode: bridge
-
-# =================== DEV ===================
-
-  # dev_frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: ./Dockerfile_dev
-  #   ports: 
-  #     - "3000:3000"
-  #   volumes:
-  #     # - /home/git_environment/DevNotZoom/frontend:/home/frontend
-  #     -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
-  #   environment:
-  #     - VIRTUAL_HOST=${DEV_URL}
-  #     - LETSENCRYPT_HOST=${DEV_URL}
-  #     - VIRTUAL_PORT=3000
-  #     - REACT_APP_SOCKET_URL=${URL_SIGNAL}
-  #     - REACT_APP_SOCKET_PORT=${SIGNAL_PORT}
-  #   network_mode: bridge
-  
-  dev_signaling_server:
+  signaling_server:
     build:
       context: ./signalingServer
-      dockerfile: ./Dockerfile_dev
+      dockerfile: ./Dockerfile
     ports:
-      - ${DEV_SIGNAL_PORT}:${DEV_SIGNAL_PORT}
-    volumes:
-      - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
-      # -  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
+      - ${SIGNAL_PORT}:${SIGNAL_PORT}
     environment:
-      - VIRTUAL_HOST=${DEV_URL_SIGNAL}
-      - LETSENCRYPT_HOST=${DEV_URL_SIGNAL}
-      - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
-    network_mode: bridge
+      - VIRTUAL_HOST=${SIGNAL_URL}
+      - LETSENCRYPT_HOST=${SIGNAL_URL}
+      - VIRTUAL_PORT=${SIGNAL_PORT}
+
+  spaces-service:
+    build:
+      context: ./spaces-service
+      dockerfile: ./Dockerfile
+    environment:
+      - VIRTUAL_HOST=${URL_SPACES}
+      - LETSENCRYPT_HOST=${URL_SPACES}
+      - VIRTUAL_PORT=${SPACES_PORT}
 
 volumes:
   certs: { }
