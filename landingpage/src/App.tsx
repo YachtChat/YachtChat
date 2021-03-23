@@ -4,6 +4,7 @@ import Header from './components/Header/Header';
 import Videocontainer from "./components/Videocontainer/Videocontainer";
 import Informationcontainer from "./components/Informationcontainer/Informationcontainer";
 import Contactcontainer from "./components/Contactcontainer/Contactcontainer";
+import Product from "./components/Product/Product";
 
 
 
@@ -16,6 +17,7 @@ function App() {
 
 
         <Header/>
+        <Product/>
       <Videocontainer/>
       <Informationcontainer/>
       <Contactcontainer/>

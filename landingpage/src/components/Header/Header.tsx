@@ -5,7 +5,7 @@ import {
     Toolbar,
     Typography,
     makeStyles,
-    Button, Link,
+    Button, Link, Card,
 } from "@material-ui/core";
 
 
@@ -17,7 +17,7 @@ import Product from "../Product/Product";
 
 
 
-const Header = (props: any) => {
+const Header = () => {
     const history = useHistory();
 
     function changeUrl(label: string) {
@@ -56,6 +56,8 @@ const Header = (props: any) => {
             <Toolbar className="ToolBar">{notzoomLogo} {getMenuButtons()}</Toolbar>
 
 
+
+
         );
     };
 
@@ -88,7 +90,7 @@ const Header = (props: any) => {
 
 
     return (
-        <>
+
             <AppBar className="Header"> {
                 displayDesktop()
             }
@@ -97,7 +99,8 @@ const Header = (props: any) => {
             </AppBar>
 
 
-        </>
+
+
 
     );
 

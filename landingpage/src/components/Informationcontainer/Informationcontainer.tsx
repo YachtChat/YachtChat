@@ -8,11 +8,11 @@ import Divider from "@material-ui/core/Divider";
 
 const Informationcontainer: React.FC = () => (
   <div id={`about`} className="Informationcontainer">
-      <Card className="card">
+      <Card className="information-card">
           <CardMedia
               className="media"
               image={
-                  "https://image.freepik.com/free-photo/river-foggy-mountains-landscape_1204-511.jpg"
+                  "https://cdn.pixabay.com/photo/2015/09/09/19/56/office-932926_960_720.jpg"
               }
 
           />
