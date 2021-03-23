@@ -64,8 +64,8 @@ const Header = () => {
 
     const headersData = [
         {
-            label: "Contact",
-            href: "/contact",
+            label: "Product",
+            href: "/product",
         },
         {
             label: "Tutorial",
@@ -76,8 +76,8 @@ const Header = () => {
             href: "/about",
         },
         {
-            label: "Product",
-            href: "/product",
+            label: "Contact",
+            href: "/contact",
         },
     ];
 
