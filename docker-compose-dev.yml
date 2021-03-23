@@ -10,11 +10,12 @@ services:
       - /home/git_environment/DevNotZoom/frontend:/home/frontend
       # -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
     environment:
-      - VIRTUAL_HOST=${DEV_URL}
-      - LETSENCRYPT_HOST=${DEV_URL}
+      - VIRTUAL_HOST=${DEV_FRONTEND_URL}
+      - LETSENCRYPT_HOST=${DEV_FRONTEND_URL}
       - VIRTUAL_PORT=3000
       - REACT_APP_SOCKET_URL=${DEV_SIGNAL_URL}
       - REACT_APP_SOCKET_PORT=${DEV_SIGNAL_PORT}
+      - REACT_APP_SPACES_URL=${SPACES_URL}
     network_mode: bridge
   
   dev_signaling_server:

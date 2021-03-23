@@ -1,8 +1,8 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
-import {addUser, getUserID, handlePositionUpdate, removeUser, setUserId, setUsers} from "./userSlice";
-import {handleError} from "./errorSlice";
+import {getUser, getUserID, handlePositionUpdate, removeUser, setUser, setUserId, setUsers} from "./userSlice";
+import {handleError, handleSuccess} from "./statusSlice";
 import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
 
 // start it like this `REACT_APP_SOCKET_URL=ws://localhost:6503` yarn run start
@@ -14,8 +14,8 @@ interface WebSocketState {
     loggedIn: boolean
 }
 
-
 let socket: WebSocket | null = null;
+
 const initialState: WebSocketState = {
     connected: false,
     loggedIn: false
@@ -44,16 +44,22 @@ export const {connect, disconnect, login, logout} = webSocketSlice.actions;
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
     //socket = new WebSocket('wss://call.tristanratz.com:9090')
+    if(!SOCKET_URL || !SOCKET_PORT){
+        dispatch(handleError("No websocket url defined for this environment"));
+        return;
+    }
     socket = new WebSocket("wss://" + <string>SOCKET_URL + ":" + SOCKET_PORT, 'json');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");
         dispatch(connect())
+        dispatch(handleSuccess("Connection"))
     };
 
     socket.onerror = (err) => {
-        console.log("Got error", err);
+        console.error("Got error", err);
         dispatch(disconnect())
+        dispatch(handleError("Connection failed"))
     };
 
     socket.onmessage = function (msg) {
@@ -73,12 +79,15 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                 dispatch(setUsers(data.users));
                 const count = Object.keys(getState().userState.otherUsers).length + 1;
                 dispatch(handleRTCEvents(getUserID(getState()), count));
+                const user = getUser(getState())
+                dispatch(handlePositionUpdate({id: user.id, position: user.position}))
                 break;
             case "new_user":
                 if (loggedIn) {
-                    dispatch(addUser(data.user));
+                    dispatch(setUser(data.user));
                     const count = Object.keys(getState().userState.otherUsers).length + 1;
                     dispatch(handleRTCEvents(data.user.id, count));
+                    dispatch(handlePositionUpdate({id: data.user.id, position: data.user.position}))
                 }
                 break;
             case "user_left":
@@ -86,7 +95,7 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                     dispatch(removeUser(data.id))
                 break;
             case "position_change":
-                if (loggedIn)
+                if (loggedIn && data.id !== getUserID(getState()))
                     dispatch(handlePositionUpdate(data));
                 break;
             case "signaling":
@@ -149,8 +158,7 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
 
 export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) => {
     if (!success) {
-        dispatch(handleError("Login failed. Try different user name."))
-        alert("Ooops...try a different username");
+        dispatch(handleError("Login failed. Try again later."))
     } else {
         //**********************
         //Starting a peer connection
