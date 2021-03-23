@@ -29,17 +29,15 @@ services:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile_dev
-    ports: 
-      - "3000:3000"
     volumes:
       # - /home/git_environment/DevNotZoom/frontend:/home/frontend
       -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
     environment:
-      - VIRTUAL_HOST=DEV_URL
-      - LETSENCRYPT_HOST=DEV_URL
+      - VIRTUAL_HOST=${DEV_URL}
+      - LETSENCRYPT_HOST=${DEV_URL}
       - VIRTUAL_PORT=3000
       - REACT_APP_SOCKET_URL
-    network_mode: dev_bridge
+    network_mode: bridge
   
   dev_signaling_server:
     build:
@@ -49,10 +47,10 @@ services:
       # - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
       -  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
     environment:
-      - VIRTUAL_HOST=DEV_URL
-      - LETSENCRYPT_HOST=DEV_URL
-      - VIRTUAL_PORT=6504
-    network_mode: dev_bridge
+      - VIRTUAL_HOST=${DEV_URL_SIGNAL}
+      - LETSENCRYPT_HOST=${DEV_URL}
+      - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
+    network_mode: bridge
 
 
 volumes:
