@@ -8,6 +8,7 @@ import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUser
 // start it like this `REACT_APP_SOCKET_URL=ws://localhost:6503` yarn run start
 const SOCKET_URL:string | undefined = process.env.REACT_APP_SOCKET_URL;
 const SOCKET_PORT:string | undefined = process.env.REACT_APP_SOCKET_PORT;
+const string = "tst";
 
 interface WebSocketState {
     connected: boolean
