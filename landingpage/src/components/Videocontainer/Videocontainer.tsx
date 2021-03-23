@@ -7,7 +7,7 @@ import theVideo from "./demo.mp4";
 export class Videocontainer extends Component {
     render() {
         return(
-            <video id={`#tutorial`} autoPlay playsInline loop muted height="1000" width="1000">
+            <video id={`tutorial`} autoPlay playsInline loop muted height="1000" width="1000">
                 <source src={theVideo}/>
             </video>
         );

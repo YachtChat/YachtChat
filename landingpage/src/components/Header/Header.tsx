@@ -8,13 +8,13 @@ import {
     Button, Link,
 } from "@material-ui/core";
 
-import {BrowserRouter as Router, Link as RouterLink, Route, Switch, withRouter} from "react-router-dom";
+
 import {useHistory} from "react-router-dom";
-import Contact from "../Contact/Contact";
+
 import About from "../About/About";
-import Tutorial from "../Tutorial/Tutorial";
+
 import Product from "../Product/Product";
-import Contactcontainer from "../Contactcontainer/Contactcontainer";
+
 
 
 const Header = (props: any) => {
@@ -23,7 +23,7 @@ const Header = (props: any) => {
     function changeUrl(label: string) {
         history.push(`/${label}`);
 
-        const section = document.getElementById(`#${label!}`)
+        const section = document.getElementById(`${label!}`)
         console.log(section)
         if (section)
             section.scrollIntoView({behavior: "smooth", block: "start"})
@@ -63,19 +63,19 @@ const Header = (props: any) => {
     const headersData = [
         {
             label: "Contact",
-            href: "/#contact",
+            href: "/contact",
         },
         {
             label: "Tutorial",
-            href: "/#tutorial",
+            href: "/tutorial",
         },
         {
             label: "About",
-            href: "/#about",
+            href: "/about",
         },
         {
             label: "Product",
-            href: "/#product",
+            href: "/product",
         },
     ];
 
