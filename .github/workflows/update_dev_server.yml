@@ -25,7 +25,7 @@ jobs:
         with:
           command: |
             cd /home/git_environment/DevNotZoom/
-            sudo git pull origin development
+            sudo git pull
           host: www.chat.alphabibber.com #${{ secrets.HOST}}
           user: danilo_walenta #${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
