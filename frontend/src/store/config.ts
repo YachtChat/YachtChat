@@ -1,6 +1,6 @@
 export const websocket_url: string | undefined = (process.env.NODE_ENV === "development") ? process.env.REACT_APP_WEBSOCKET_URL_LOCAL : process.env.REACT_APP_WEBSOCKET_URL;
-export const spacesService: string = "https://spaces.chat.alphabibber.com"
-export const loginService: string = "https://spaces.chat.alphabibber.com"
+export const spacesService: string = "https://spaces.meet.alphabibber.com"
+export const loginService: string = "https://spaces.meet.alphabibber.com"
 
 export const rtcConfiguration = {
     "iceServers": [{

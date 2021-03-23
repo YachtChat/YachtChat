@@ -30,8 +30,8 @@ services:
       context: ./frontend
       dockerfile: ./Dockerfile
     environment:
-      - VIRTUAL_HOST=www.chat.alphabibber.com
-      - LETSENCRYPT_HOST=www.chat.alphabibber.com
+      - VIRTUAL_HOST=www.meet.alphabibber.com
+      - LETSENCRYPT_HOST=www.meet.alphabibber.com
     network_mode: bridge
 
   signaling_server:
@@ -39,8 +39,8 @@ services:
       context: ./signalingServer
       dockerfile: ./Dockerfile
     environment:
-      - VIRTUAL_HOST=backend.chat.alphabibber.com
-      - LETSENCRYPT_HOST=backend.chat.alphabibber.com
+      - VIRTUAL_HOST=backend.meet.alphabibber.com
+      - LETSENCRYPT_HOST=backend.meet.alphabibber.com
       - VIRTUAL_PORT=6503
     network_mode: bridge
 
@@ -49,8 +49,8 @@ services:
       context: ./spaces-service
       dockerfile: ./Dockerfile
     environment:
-      - VIRTUAL_HOST=spaces.chat.alphabibber.com
-      - LETSENCRYPT_HOST=spaces.chat.alphabibber.com
+      - VIRTUAL_HOST=spaces.meet.alphabibber.com
+      - LETSENCRYPT_HOST=spaces.meet.alphabibber.com
       - VIRTUAL_PORT=8080
     network_mode: bridge
 
