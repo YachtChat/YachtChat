@@ -4,8 +4,6 @@ services:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile_dev
-    ports: 
-      - "3000:3000"
     volumes:
       - /home/git_environment/DevNotZoom/frontend:/home/frontend
       # -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
@@ -22,8 +20,8 @@ services:
     build:
       context: ./signalingServer
       dockerfile: ./Dockerfile_dev
-    ports: 
-      - ${DEV_SIGNAL_PORT}:${DEV_SIGNAL_PORT}
+#    ports:
+#      - ${DEV_SIGNAL_PORT}:${DEV_SIGNAL_PORT}
     volumes:
       - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
       # - /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer

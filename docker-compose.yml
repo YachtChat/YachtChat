@@ -34,10 +34,10 @@ services:
         - REACT_APP_SIGNAL_PORT=${SIGNAL_PORT}
         - REACT_APP_SPACES_URL=${SPACES_URL}
     environment:
-#      - VIRTUAL_HOST=${FRONTEND_URL}
-      - VIRTUAL_HOST=www.chat.alphabibber.com
-#      - LETSENCRYPT_HOST=${FRONTEND_URL}
-      - LETSENCRYPT_HOST=www.chat.alphabibber.com
+      - VIRTUAL_HOST=${FRONTEND_URL}
+#      - VIRTUAL_HOST=www.chat.alphabibber.com
+      - LETSENCRYPT_HOST=${FRONTEND_URL}
+#      - LETSENCRYPT_HOST=www.chat.alphabibber.com
     network_mode: bridge
 
   signaling_server:
