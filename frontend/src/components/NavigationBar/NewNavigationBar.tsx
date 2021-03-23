@@ -84,7 +84,8 @@ export class NewNavigationBar extends Component<Props, State> {
     handleHoverCollapse(event: any) {
         if (!this.state.collapsed) {
             this.setState({
-                collapsed: true
+                collapsed: true,
+                className: "navbar collapsed"
             })
         }
     }
@@ -94,7 +95,7 @@ export class NewNavigationBar extends Component<Props, State> {
         const micIcon = (this.props.muted) ? this.icons.micOffIcon : this.icons.micOnIcon
         const videoIcon = (this.props.video) ? this.icons.videoOnIcon : this.icons.videoOffIcon
         return (
-            <div className={this.state.className}>
+            <div id="sidebar" className={this.state.className} onMouseLeave={this.handleHoverCollapse.bind(this)}>
                 <div className="navbar-inner">
                     <div className="navbar-layout">
                         <div className="menu">
