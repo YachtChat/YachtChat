@@ -14,34 +14,35 @@
   padding: 1rem;
   box-sizing: border-box;
 
-  .range-slider {
-    writing-mode: bt-lr; /* IE */
-    -webkit-appearance: slider-vertical; /* WebKit */
-    height: 10rem;
-    width: 5px;
-    border-radius: 5px;
-    background: #d3d3d3;
-    outline: none;
-    opacity: 0.7;
-    transition: opacity .2s;
+  .MuiSlider-thumb {
+    background: $button_font_light;
+    box-shadow: none;
 
-    .thumb {
-      background: green;
-      border: 2px solid green;
-
+    &:hover {
+      box-shadow: 0 0 0 8px $accent_light;
     }
 
-    &::-webkit-slider-thumb, &::-moz-range-thumb {
-      background: $accent_light;
-      -webkit-appearance: none;
-      appearance: none;
+    @media (prefers-color-scheme: dark) {
+      & {
+        background: $button_font_dark;
+        -webkit-appearance: none;
+        appearance: none;
 
-      @media (prefers-color-scheme: dark) {
-        & {
-          background: $accent_dark;
-          -webkit-appearance: none;
-          appearance: none;
-        }
+      }
+      &:hover {
+        box-shadow: 0 0 0 8px $accent_light;
+      }
+    }
+  }
+
+  .MuiSlider-rail {
+    background: $accent_light;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        background: $accent_dark;
+        -webkit-appearance: none;
+        appearance: none;
       }
     }
   }

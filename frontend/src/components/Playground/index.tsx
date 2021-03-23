@@ -26,7 +26,7 @@ interface State {
     userDragActive: boolean
     mapDragActive: boolean
     previousOffset?: { x: number, y: number }
-    mapDragStart?: { x: number, y: number }
+    dragStart?: { x: number, y: number }
 }
 
 export class Playground extends Component<Props, State> {
@@ -56,22 +56,43 @@ export class Playground extends Component<Props, State> {
         }
 
         if (id === "activeUser")
-            this.setState({userDragActive: true})
+            this.setState({
+                userDragActive: true,
+                dragStart: {x, y}
+            })
         else
             this.setState({
                 mapDragActive: true,
                 previousOffset: this.props.offset,
-                mapDragStart: {x, y}
+                dragStart: {x, y}
             })
+    }
+
+    onMouseUp(e: React.MouseEvent) {
+        const scaling = this.props.offset.scale
+        const x = e.currentTarget.getBoundingClientRect().x
+        const y = e.currentTarget.getBoundingClientRect().y
+
+        if (!this.state.dragStart ||
+            this.state.dragStart.x === e.clientX ||
+            this.state.dragStart.y === e.clientY) {
+            this.props.move({
+                x: e.clientX / scaling - x + this.props.offset.x / scaling,
+                y: e.clientY / scaling - y + this.props.offset.y / scaling,
+                range: this.props.activeUser.position.range
+            })
+        }
+        this.dragEnd(e)
     }
 
     // function that sets the state of dragActive on false
     // if the mouse left the playground or is not holded anymore
-    dragEnd() {
+    dragEnd(e: React.MouseEvent) {
+
         this.setState({
             userDragActive: false,
             mapDragActive: false,
-            mapDragStart: undefined,
+            dragStart: undefined,
             previousOffset: undefined
         })
     }
@@ -90,7 +111,7 @@ export class Playground extends Component<Props, State> {
         }
         if (this.state.mapDragActive) {
             const prev = this.state.previousOffset!
-            const start = this.state.mapDragStart!
+            const start = this.state.dragStart!
             this.props.movePlayground({
                 ...this.props.offset,
                 x: (prev.x + (start.x - e.clientX)) - x,
@@ -152,10 +173,10 @@ export class Playground extends Component<Props, State> {
                 <div id={"Playground"} className="Playground"
                      onMouseMove={this.moveMouse.bind(this)}
                      onMouseLeave={this.dragEnd.bind(this)}
-                     onMouseUp={this.dragEnd.bind(this)}
+                     onMouseUp={this.onMouseUp.bind(this)}
                      onWheel={this.onWheel.bind(this)}
                      onTouchMove={this.moveTouch.bind(this)}
-                     onTouchEnd={this.dragEnd.bind(this)}
+                    //onTouchEnd={this.dragEnd.bind(this)}
                      onKeyDown={this.handleKeyStream.bind(this)}
                      onMouseDown={this.dragStart.bind(this)}
                      onTouchStart={this.dragStart.bind(this)}

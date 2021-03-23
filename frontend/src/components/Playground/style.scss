@@ -19,6 +19,7 @@
     color: $button_font_light;
     font-weight: bold;
     transition: 0.2s color;
+    outline: none;
 
     @media (prefers-color-scheme: dark) {
       & {
@@ -87,7 +88,7 @@
     border-radius: 50%;
     background: radial-gradient(circle, rgba(9, 121, 9, .8) 0%, rgba(255, 255, 255, 0) 70%);
     border: solid 1px rgba(255, 0, 0, .4);
-    transition: 0.2s opacity, 0.1s width, 0.1s height;
+    transition: 0.2s opacity;
   }
 
   .userName {
@@ -100,10 +101,12 @@
     transition: 0.2s width,
     0.2s height,
     0.2s transition;
+    color: $button_font_light;
 
     @media (prefers-color-scheme: dark) {
       & {
         background: $background_dark;
+        color: $button_font_dark;
       }
     }
   }
