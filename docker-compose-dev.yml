@@ -22,10 +22,10 @@ services:
       context: ./signalingServer
       dockerfile: ./Dockerfile_dev
     ports: 
-      - "6504:6504"
+      - ${DEV_SIGNAL_PORT}:${DEV_SIGNAL_PORT}
     volumes:
       - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
-      # -  /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
+      # - /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
     environment:
       - VIRTUAL_HOST=${DEV_SIGNAL_URL}
       - LETSENCRYPT_HOST=${DEV_SIGNAL_URL}
