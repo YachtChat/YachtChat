@@ -14,7 +14,7 @@ services:
     environment:
       - VIRTUAL_HOST=${DEV_FRONTEND_URL}
       - LETSENCRYPT_HOST=${DEV_FRONTEND_URL}
-      - VIRTUAL_PORT=3000
+      - VIRTUAL_PORT=${DEV_FRONTEND_PORT}
  #     - REACT_APP_SOCKET_URL=${DEV_SIGNAL_URL}
  #     - REACT_APP_SOCKET_PORT=${DEV_SIGNAL_PORT}
  #     - REACT_APP_SPACES_URL=${SPACES_URL}
@@ -32,7 +32,7 @@ services:
     environment:
       - VIRTUAL_HOST=${DEV_SIGNAL_URL}
       - LETSENCRYPT_HOST=${DEV_SIGNAL_URL}
-      - VIRTUAL_PORT=6504
+      - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
     network_mode: bridge
 
 
