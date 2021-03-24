@@ -26,7 +26,7 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo git pull
-            sudo mvn -f ./spaces-service/pom.xml package -DskipTests
+            sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
             sudo docker-compose down nginx-proxyed-container signaling_server spaces-service nginx-presentation
             sudo docker-compose build nginx-proxyed-container signaling_server spaces-service nginx-presentation
             sudo docker-compose up --no-deps -d nginx-proxyed-container signaling_server spaces-service nginx-presentation
