@@ -167,11 +167,11 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-              }
-            }
 
-            > .submenu-item {
-              padding-left: 20px;
+                > .closed {
+                  display: none;
+                }
+              }
             }
 
             > .closed {
@@ -179,7 +179,7 @@
             }
 
             > .react-slidedown {
-              height: 0;
+              height: auto;
               transition-property: none;
               transition-duration: 0.2s;
               transition-timing-function: ease-in-out;
