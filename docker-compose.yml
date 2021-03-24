@@ -51,7 +51,7 @@ services:
     environment:
       - VIRTUAL_HOST=spaces.meet.alphabibber.com
       - LETSENCRYPT_HOST=spaces.meet.alphabibber.com
-      - VIRTUAL_PORT=8080
+      - VIRTUAL_PORT=8081
     network_mode: bridge
 
   nginx-presentation:
