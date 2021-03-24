@@ -24,6 +24,9 @@ services:
     build:
       context: ./signalingServer
       dockerfile: ./Dockerfile_dev
+      args:
+        - VIRTUAL_HOST=${DEV_SIGNAL_URL}
+        - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
 #    ports:
 #      - ${DEV_SIGNAL_PORT}:${DEV_SIGNAL_PORT}
     volumes:
