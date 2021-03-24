@@ -1,167 +1,217 @@
-$color: #0cf;
+@import "src/variables.module";
 
-#submitBtn {
-  display: inline-block;
-  color: black;
-  background-color: $color;
-  border-radius: 50%;
-  height: 2vh;
-  width: 5vw
+.contentWrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: $background_light;
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: $background_dark;
+    }
+  }
+
+  .backgroundBall {
+    display: block;
+    position: absolute;
+    width: 200vw;
+    height: 200vw;
+    background: $background_2_light;
+    margin-right: 0;
+    right: 0;
+    border-radius: 50%;
+    transform: translate(50%, -40vh);
+    @media (prefers-color-scheme: dark) {
+      & {
+        background: $background_2_dark;
+      }
+    }
+  }
+
 }
 
-.login-box{
+.login-box {
   position: absolute;
   top: 50%;
   left: 50%;
   width: 400px;
-  padding: 40px;
   transform: translate(-50%, -50%);
-  background: rgba(0,0,0,.5);
+  background: $foreground_light;
   box-sizing: border-box;
-  box-shadow: 0 15px 25px rgba(0,0,0,.6);
-  border-radius: 10px;
+  box-shadow: $shadow;
+  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  border-radius: $border_radius;
+  overflow: hidden;
 
-  & h2 {
-    color: white
+  form {
+    padding: 2rem;
   }
-}
 
-.login-box {
+  h2 {
+    color: $headline_light;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $headline_dark;
+      }
+    }
+  }
+
+  h3 {
+    font-style: normal;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: $headline_2_light;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $headline_2_dark;
+      }
+    }
+  }
+
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: $foreground_dark;
+      color: $font_light;
+    }
+  }
+
   .user-box {
     position: relative;
+    text-align: left;
+    padding: 0 0 2rem 0;
+
+    label {
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #ccc;
+      text-transform: uppercase;
+      padding: 1rem;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
+    .inputPair {
+      background: $focus_light;
+      border-radius: $border_radius;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          background: $focus_dark;
+        }
+      }
+    }
+
+    input, select {
+      width: 100%;
+      font-size: 16px;
+      color: gray;
+      box-sizing: border-box;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 1rem;
+
+      &:focus ~ label,
+      &:valid ~ label {
+        top: -20px;
+        left: 0;
+        font-size: 12px;
+      }
+    }
+
+    button {
+      position: relative;
+      display: inline-block;
+      padding: 1rem 1rem;
+      width: 100%;
+      font-size: 1rem;
+      text-decoration: none;
+      text-transform: uppercase;
+      overflow: hidden;
+      transition: .2s;
+      margin-top: 40px;
+      background-color: transparent;
+      border: 1px solid $accent_light;
+      color: $button_font_light;
+      border-radius: $border_radius;
+      outline: none;
+
+      &:hover {
+        background: rgba(125, 125, 125, 0.5);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          color: $button_font_dark;
+          border: 1px solid $accent_dark;
+        }
+      }
+
+      span {
+        position: absolute;
+        display: block;
+      }
+    }
   }
 }
 
-.login-box .user-box input {
+.signin {
+  margin: 0;
   width: 100%;
-  padding: 10px 0;
-  font-size: 16px;
-  color: #fff;
-  margin-bottom: 30px;
-  border: none;
-  border-bottom: 1px solid #fff;
-  outline: none;
-  background: transparent;
-}
-.login-box .user-box label {
-  position: absolute;
-  top:0;
-  left: 0;
-  padding: 10px 0;
-  font-size: 16px;
-  color: #fff;
-  pointer-events: none;
-  transition: .5s;
-}
+  padding: 4rem 2rem 4rem 2rem;
+  background: $accent_light;
+  box-sizing: border-box;
 
-.login-box .user-box input:focus ~ label,
-.login-box .user-box input:valid ~ label {
-  top: -20px;
-  left: 0;
-  color: #03e9f4;
-  font-size: 12px;
-}
-
-.login-box form a {
-  position: relative;
-  display: inline-block;
-  padding: 10px 20px;
-  color: #03e9f4;
-  font-size: 16px;
-  text-decoration: none;
-  text-transform: uppercase;
-  overflow: hidden;
-  transition: .5s;
-  margin-top: 40px;
-  letter-spacing: 4px
-}
-
-.login-box a:hover {
-  background: #03e9f4;
-  color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 5px #03e9f4,
-  0 0 25px #03e9f4,
-  0 0 50px #03e9f4,
-  0 0 100px #03e9f4;
-}
-
-.login-box a span {
-  position: absolute;
-  display: block;
-}
-
-.login-box a span:nth-child(1) {
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #03e9f4);
-  animation: btn-anim1 1s linear infinite;
-}
-
-@keyframes btn-anim1 {
-  0% {
-    left: -100%;
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: $accent_dark;
+    }
   }
-  50%,100% {
-    left: 100%;
-  }
-}
 
-.login-box a span:nth-child(2) {
-  top: -100%;
-  right: 0;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(180deg, transparent, #03e9f4);
-  animation: btn-anim2 1s linear infinite;
-  animation-delay: .25s
-}
+  .login-buttons {
+    position: relative;
+    width: auto;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: 0 auto;
+    cursor: pointer;
 
-@keyframes btn-anim2 {
-  0% {
-    top: -100%;
-  }
-  50%,100% {
-    top: 100%;
-  }
-}
 
-.login-box a span:nth-child(3) {
-  bottom: 0;
-  right: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(270deg, transparent, #03e9f4);
-  animation: btn-anim3 1s linear infinite;
-  animation-delay: .5s
-}
+    .logoImage {
+      height: 40px;
+      width: 40px;
+      border-radius: 2px;
+      margin: 0 1rem;
+      overflow: hidden;
+      background: black;
+      transition: .2s opacity;
 
-@keyframes btn-anim3 {
-  0% {
-    right: -100%;
-  }
-  50%,100% {
-    right: 100%;
-  }
-}
+      &:hover {
+        opacity: 0.5;
+      }
 
-.login-box a span:nth-child(4) {
-  bottom: -100%;
-  left: 0;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(360deg, transparent, #03e9f4);
-  animation: btn-anim4 1s linear infinite;
-  animation-delay: .75s
-}
 
-@keyframes btn-anim4 {
-  0% {
-    bottom: -100%;
-  }
-  50%,100% {
-    bottom: 100%;
+      &#github {
+        img {
+          padding: 10px;
+          box-sizing: border-box;
+        }
+      }
+
+      img {
+        height: 40px;
+        width: 40px;
+        fill: white;
+        stroke: white;
+      }
+
+    }
   }
 }

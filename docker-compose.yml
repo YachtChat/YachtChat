@@ -1,0 +1,69 @@
+version: "2"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certs:/etc/nginx/certs:ro
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    network_mode: bridge
+
+  letsencrypt-nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes_from:
+      - nginx-proxy
+    environment:
+      - DEFAULT_EMAIL=ole.sen@gmx.de
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: bridge
+
+  nginx-proxyed-container:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    environment:
+      - VIRTUAL_HOST=www.meet.alphabibber.com
+      - LETSENCRYPT_HOST=www.meet.alphabibber.com
+    network_mode: bridge
+
+  signaling_server:
+    build:
+      context: ./signalingServer
+      dockerfile: ./Dockerfile
+    environment:
+      - VIRTUAL_HOST=backend.meet.alphabibber.com
+      - LETSENCRYPT_HOST=backend.meet.alphabibber.com
+      - VIRTUAL_PORT=6503
+    network_mode: bridge
+
+  spaces-service:
+    build:
+      context: ./spaces-service
+      dockerfile: ./Dockerfile
+    environment:
+      - VIRTUAL_HOST=spaces.meet.alphabibber.com
+      - LETSENCRYPT_HOST=spaces.meet.alphabibber.com
+      - VIRTUAL_PORT=8080
+    network_mode: bridge
+
+  nginx-presentation:
+    build:
+      context: ./presentation
+      dockerfile: ./Dockerfile
+    environment:
+      - VIRTUAL_HOST=presentation.alphabibber.com
+      - LETSENCRYPT_HOST=presentation.alphabibber.com
+    network_mode: bridge
+
+volumes:
+  certs: { }
+  vhost: { }
+  html: { }

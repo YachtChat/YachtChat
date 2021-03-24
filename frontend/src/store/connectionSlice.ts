@@ -1,21 +1,21 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppThunk, RootState} from './store';
+import {createSlice} from '@reduxjs/toolkit';
+import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
-import {handlePositionUpdate, requestUserMedia, setName, updateUsers} from "./userSlice";
+import {getUser, getUserID, handlePositionUpdate, removeUser, setUser, setUserId, setUsers} from "./userSlice";
+import {handleError, handleSuccess} from "./statusSlice";
+import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
+import {websocket_url} from "./config";
 
 interface WebSocketState {
-    id: number
     connected: boolean
-    loggedIn: boolean
+    joinedRoom: boolean
 }
 
 let socket: WebSocket | null = null;
-let rtcConnection: RTCPeerConnection | null = null;
 
 const initialState: WebSocketState = {
-    id: -1,
     connected: false,
-    loggedIn: false
+    joinedRoom: false
 };
 
 export const webSocketSlice = createSlice({
@@ -25,67 +25,98 @@ export const webSocketSlice = createSlice({
         connect: (state) => {
             state.connected = true
         },
-        login: (state) => {
-            state.loggedIn = true
+        joined: (state) => {
+            state.joinedRoom = true
         },
-        logout: (state) => {
-            state.loggedIn = false
+        leftRoom: (state) => {
+            state.joinedRoom = false
         },
         disconnect: (state) => {
             state.connected = false
         },
-        saveID: (state, action: PayloadAction<number>) => {
-            state.id = action.payload
-        }
     },
 });
 
-export const {connect, disconnect, login, logout, saveID} = webSocketSlice.actions;
+export const {connect, disconnect, joined, leftRoom} = webSocketSlice.actions;
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
-    //socket = new WebSocket('wss://call.tristanratz.com:9090');
-    socket = new WebSocket('wss://www.alphabibber.com:6503', 'json');
+    if (!websocket_url) {
+        dispatch(handleError("No websocket url defined for this environment"))
+        return
+    }
+
+    socket = new WebSocket(websocket_url, 'json');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");
         dispatch(connect())
+        dispatch(handleSuccess("Connection"))
     };
 
     socket.onerror = (err) => {
-        console.log("Got error", err);
+        console.error("Got error", err);
         dispatch(disconnect())
+        dispatch(handleError("Connection failed"))
     };
 
     socket.onmessage = function (msg) {
-        console.log("Got message", msg.data);
         var data = JSON.parse(msg.data);
+        //if (data.type !== "position_change")
+        //    console.log("Got message", msg.data);
+        const loggedIn = getState().webSocket.joinedRoom
 
         switch (data.type) {
             case "id":
-                dispatch(saveID(data.id))
-                break;
-            case "userlist":
-                dispatch(updateUsers(data.users))
+                dispatch(setUserId(data.id))
                 break;
             case "login":
-                dispatch(handleLogin(data.name, data.success));
+                dispatch(handleLogin(data.success));
                 break;
-            case "position":
-                dispatch(handlePositionUpdate(data));
+            case "join":
+                dispatch(setUsers(data.users));
+                const count = Object.keys(getState().userState.otherUsers).length + 1;
+                dispatch(handleRTCEvents(getUserID(getState()), count));
+                const user = getUser(getState())
+                dispatch(handlePositionUpdate({id: user.id, position: user.position}))
                 break;
-            //when somebody wants to call us
-            case "offer":
-                handleOffer(data.offer, data.name);
+            case "new_user":
+                if (loggedIn) {
+                    dispatch(setUser(data.user));
+                    const count = Object.keys(getState().userState.otherUsers).length + 1;
+                    dispatch(handleRTCEvents(data.user.id, count));
+                    dispatch(handlePositionUpdate({id: data.user.id, position: data.user.position}))
+                }
                 break;
-            case "answer":
-                handleAnswer(data.answer);
+            case "user_left":
+                if (loggedIn)
+                    dispatch(removeUser(data.id))
                 break;
-            //when a remote peer sends an ice candidate to us
-            case "candidate":
-                handleCandidate(data.candidate);
+            case "position_change":
+                if (loggedIn && data.id !== getUserID(getState()))
+                    dispatch(handlePositionUpdate(data));
+                break;
+            case "signaling":
+                if (!loggedIn)
+                    break;
+                const fromId: number = data.source;
+                if (fromId !== getUserID(getState())) {
+                    const randomWait = Math.floor(Math.random() * Math.floor(200))
+                    switch (data.signal_type) {
+                        case "candidate":
+                            setTimeout(() => dispatch(handleCandidate(data.candidate, fromId)), randomWait)
+                            break;
+                        case "sdp":
+                            setTimeout(() => dispatch(handleSdp(data.description, fromId)), randomWait)
+
+                            break;
+                        default:
+                            dispatch(handleError("Unknown signaling type."))
+                    }
+                }
                 break;
             default:
-                break;
+                dispatch(handleError("Unknown server event"))
+                break
         }
     };
 
@@ -95,8 +126,7 @@ export const send = (message: { [key: string]: any }, target?: User): AppThunk =
     //attach the other peer username to our messages
     const msgObj = {
         ...message,
-        id: getState().webSocket.id,
-        target: (!!target) ? target.id : undefined,
+        id: getUserID(getState()),
     }
 
     if (socket !== null)
@@ -112,121 +142,34 @@ export const requestLogin = (name: string): AppThunk => (dispatch) => {
     }
 }
 
+export const sendLogout = (): AppThunk => (dispatch) => {
+    dispatch(send({type: "leave"}))
+    dispatch(leftRoom())
+    destroySession()
+}
+
 export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) => {
     dispatch(send({
-        type: "position",
+        type: "position_change",
         position,
     }));
 }
 
-export const handleCandidate = (candidate: any) => {
-    rtcConnection!.addIceCandidate(new RTCIceCandidate(candidate));
-}
-
-
-export const handleLogin = (success: boolean, name: string): AppThunk => (dispatch, getState) => {
+export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) => {
     if (!success) {
-        alert("Ooops...try a different username");
+        dispatch(handleError("Login failed. Try again later."))
     } else {
         //**********************
         //Starting a peer connection
         //**********************
 
-        dispatch(login())
-        dispatch(setName({name, id: getState().webSocket.id}))
-        dispatch(requestUserMedia((stream: MediaStream) => {
-
-            let configuration = {
-                "iceServers": [{"urls": "stun:stun2.1.google.com:19302"}]
-            }
-
-            rtcConnection = new RTCPeerConnection(configuration)
-
-            // setup stream listening
-
-            stream.getTracks().forEach(track =>
-                rtcConnection?.addTrack(track, stream)
-            )
-
-            //when a remote user adds stream to the peer connection, we display it
-            // rtcConnection.onaddstream = (e) => {
-            //     const inStream = new MediaStream(e.stream);
-            //     remoteAudio.srcObject = inStream;
-            // };
-
-            // Setup ice handling
-            rtcConnection.onicecandidate = function (event) {
-                if (event.candidate) {
-                    send({
-                        type: "candidate",
-                        candidate: event.candidate
-                    });
-                }
-            };
-
-        }))
+        dispatch(joined())
+        dispatch(requestUserMediaAndJoin())
     }
-}
-
-//when somebody sends us an offer
-const handleOffer = (offer: any, name: string) => {
-    const connectedUser = name;
-    // dispatch add user
-
-    if (!rtcConnection)
-        return
-    rtcConnection.setRemoteDescription(new RTCSessionDescription(offer));
-
-    //create an answer to an offer
-    rtcConnection.createAnswer().then((answer: any) => {
-        if (!rtcConnection)
-            return
-        rtcConnection!.setLocalDescription(answer);
-
-        send({
-            type: "answer",
-            answer: answer
-        });
-
-    });
-
 }
 
 export const sendUsername = (name: string): AppThunk => dispatch => {
-    dispatch(send({type: "username", name: name}))
+    dispatch(send({type: "login", name: name}))
 }
-
-export const leaveChat = (): AppThunk => dispatch => {
-    dispatch(logout())
-    dispatch(send({type: "leave"}))
-    rtcConnection?.close()
-}
-
-//when we got an answer from a remote user
-function handleAnswer(answer: any) {
-    if (rtcConnection)
-        rtcConnection.setRemoteDescription(new RTCSessionDescription(answer));
-}
-
-function createOffer(callToUsername: string) {
-    if (callToUsername.length > 0) {
-        const connectedUser = callToUsername;
-
-        if (!rtcConnection)
-            return
-
-        // create an offer
-        rtcConnection.createOffer().then(function (offer) {
-            send({
-                type: "offer",
-                offer: offer
-            });
-
-            rtcConnection!.setLocalDescription(offer);
-        });
-    }
-}
-
-export const getUser = (state: RootState) => state.userState.activeUser;
 
 export default webSocketSlice.reducer;

@@ -1,12 +1,19 @@
 import React, {Component} from 'react';
 import './App.scss';
-import Playground from "./components/playground";
-import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
+import Playground from "./components/Playground";
+import {RootState} from "./store/store";
+import Login from "./components/Login/Login";
+import {connect} from "react-redux";
+import StatusComponent from "./components/Status/StatusComponent";
+import "webrtc-adapter";
 
-interface State{
-    isUserAuthenticated: boolean
+interface Props {
+    joinedRoom: boolean
+    connected: boolean
 }
-interface Props{}
+
+interface State {
+}
 
 export class App extends Component<Props, State> {
     constructor(props: Props) {
@@ -18,21 +25,24 @@ export class App extends Component<Props, State> {
 
     render() {
         return (
-            <Router>
-
-                <Switch>
-                    <Route exact path="/">
-                        <Redirect to="/landingpage"/>
-                    </Route>
-                    <Route exact path="/playground" component={Playground}/>
-                </Switch>
-
-            </Router>
+            <div className={"App"}>
+                {(this.props.joinedRoom && this.props.connected) &&
+                <Playground/>
+                }
+                {!this.props.joinedRoom &&
+                <Login/>
+                }
+                <StatusComponent/>
+            </div>
         );
     }
 
 }
 
+const mapStateToProps = (state: RootState) => ({
+    joinedRoom: state.webSocket.joinedRoom,
+    connected: state.webSocket.connected
+})
 
 
-export default App;
+export default connect(mapStateToProps)(App);
