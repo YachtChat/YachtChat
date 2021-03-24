@@ -2,10 +2,7 @@ FROM node:14
 
 WORKDIR /home/signalingServer
 ARG VIRTUAL_PORT
-ARG VIRTUAL_URL
-
 
 ENV VIRTUAL_PORT=${VIRTUAL_PORT}
-ENV VIRTUAL_URL=${VIRTUAL_URL}
 EXPOSE 6504
 CMD npm install && npm install -g nodemon && PORT=${VIRTUAL_PORT} nodemon chatserver.js

@@ -4,6 +4,10 @@ services:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile_dev
+      args:
+        - REACT_APP_SIGNAL_URL=${SIGNAL_URL}
+        - REACT_APP_SIGNAL_PORT=${SIGNAL_PORT}
+        - REACT_APP_SPACES_URL=${SPACES_URL}
     volumes:
       - /home/git_environment/DevNotZoom/frontend:/home/frontend
       # -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
@@ -11,9 +15,9 @@ services:
       - VIRTUAL_HOST=${DEV_FRONTEND_URL}
       - LETSENCRYPT_HOST=${DEV_FRONTEND_URL}
       - VIRTUAL_PORT=3000
-      - REACT_APP_SOCKET_URL=${DEV_SIGNAL_URL}
-      - REACT_APP_SOCKET_PORT=${DEV_SIGNAL_PORT}
-      - REACT_APP_SPACES_URL=${SPACES_URL}
+ #     - REACT_APP_SOCKET_URL=${DEV_SIGNAL_URL}
+ #     - REACT_APP_SOCKET_PORT=${DEV_SIGNAL_PORT}
+ #     - REACT_APP_SPACES_URL=${SPACES_URL}
     network_mode: bridge
   
   dev_signaling_server:
@@ -28,7 +32,7 @@ services:
     environment:
       - VIRTUAL_HOST=${DEV_SIGNAL_URL}
       - LETSENCRYPT_HOST=${DEV_SIGNAL_URL}
-      - VIRTUAL_PORT=${DEV_SIGNAL_PORT}
+      - VIRTUAL_PORT=6504
     network_mode: bridge
 
 
