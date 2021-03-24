@@ -44,6 +44,9 @@ services:
     build:
       context: ./signalingServer
       dockerfile: ./Dockerfile
+      args:
+        - VIRTUAL_HOST=${SIGNAL_URL}
+        - VIRTUAL_PORT=${SIGNAL_PORT}
     environment:
       - VIRTUAL_HOST=${SIGNAL_URL}
       - LETSENCRYPT_HOST=${SIGNAL_URL}
