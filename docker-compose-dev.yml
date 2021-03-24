@@ -8,6 +8,7 @@ services:
         - REACT_APP_SIGNAL_URL=${DEV_SIGNAL_URL}
         - REACT_APP_SIGNAL_PORT=${DEV_SIGNAL_PORT}
         - REACT_APP_SPACES_URL=${SPACES_URL}
+        - VIRTUAL_PORT=${DEV_FRONTEND_PORT}
     volumes:
       - /home/git_environment/DevNotZoom/frontend:/home/frontend
       # -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
