@@ -4,6 +4,7 @@ import webSocketSlice from "./connectionSlice";
 import rtcSlice from "./rtcSlice";
 import spaceSlice from "./spaceSlice";
 import statusSlice from "./statusSlice";
+import playgroundSlice from "./playgroundSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
     webSocket: webSocketSlice,
     rtc: rtcSlice,
     space: spaceSlice,
-    status: statusSlice
+    status: statusSlice,
+    playground: playgroundSlice,
   },
 });
 

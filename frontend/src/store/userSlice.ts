@@ -7,13 +7,11 @@ import {sendAudio, unsendAudio} from "./rtcSlice";
 interface UserState {
     activeUser: User
     otherUsers: { [key: number]: User }
-    scalingFactor: number
 }
 
 const initialState: UserState = {
     activeUser: {id: -1, name: "name", position: {x: 200, y: 200, range: 0.3}},
     otherUsers: {},
-    scalingFactor: 1.0
 };
 
 export const userProportion = 100
@@ -71,11 +69,6 @@ export const userSlice = createSlice({
             //     state.otherUsers[u.id] = u
             // })
         },
-        changeScaling: (state, action: PayloadAction<number>) => {
-            if (action.payload <= 2.0 && action.payload >= 0.5) {
-                state.scalingFactor = action.payload
-            }
-        },
     },
 });
 
@@ -87,8 +80,7 @@ export const {
     setName,
     setUsers,
     removeUser,
-    setUserId,
-    changeScaling
+    setUserId
 } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {
@@ -118,9 +110,11 @@ export const handlePositionUpdate = (object: { id: number, position: UserCoordin
             Math.pow(((u.position.y) - (user.position.y)), 2)
         )
         if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
+            console.log(user.id, "in Range - sending audio to", u.id)
             dispatch(sendAudio(u.id))
             dispatch(setUser({...u, inProximity: true}))
         } else if (dist > (currentRange + userProportion / 2) && (!!u.inProximity || u.inProximity === undefined)) {
+            console.log(user.id, "not in Range - dont send audio", u.id)
             dispatch(unsendAudio(u.id))
             dispatch(setUser({...u, inProximity: false}))
         }

@@ -32,8 +32,6 @@ export const requestSpaces = ():AppThunk => dispatch =>  {
     axios.get("https://" + SPACES_URL + "/spaces/").then(response => {
         dispatch(setSpaces(response.data))
     }).catch(e => console.log(e.trace))
-
-
 }
 
 export const {

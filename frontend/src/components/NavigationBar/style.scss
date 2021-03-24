@@ -1,65 +1,104 @@
 /*$sidebar-bg-color: red;*/
 
-
 @import '~react-pro-sidebar/dist/scss/styles.scss';
-
-#sidebar {
-  opacity: 0.8;
-  flex-grow: 0;
-  text-align: center;
-
-  &:hover {
-    opacity: 1.0;
-  }
-
-  .pro-inner-item {
-    margin: auto auto;
-  }
-}
-
-.range-slider{
-  transform: rotate(270deg);
-  height: 150px;
-  text-align: center;
-}
-
-.range-value {
-  font-size: 15px;
-  text-align: center;
-}
+@import "src/variables.module";
 
 .slider-parent {
   display: flex; /* establish flex container */
-  flex-direction: column; /* stack flex items vertically */
+  flex-direction: row; /* stack flex items vertically */
+  align-content: center;
   justify-content: center; /* center items vertically, in this case */
   align-items: center; /* center items horizontally, in this case */
   height: 200px;
-  width: 100%
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+
+  .MuiSlider-thumb {
+    background: $button_font_light;
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: 0 0 0 8px $accent_light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        background: $button_font_dark;
+        -webkit-appearance: none;
+        appearance: none;
+
+      }
+      &:hover {
+        box-shadow: 0 0 0 8px $accent_light;
+      }
+    }
+  }
+
+  .MuiSlider-rail {
+    background: $accent_light;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        background: $accent_dark;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+    }
+  }
+
+  .range-value {
+    font-size: 1rem;
+    text-align: center;
+  }
 }
 
-@keyframes swing {
+.navwrapper {
+  user-select: none;
+  padding: 1rem;
+  box-sizing: border-box;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
 }
 
 .navbar {
-  color: #adadad;
+  text-align: center;
+  color: $button_font_light;
   height: 100%;
   width: 200px;
   min-width: 200px;
-  text-align: left;
   transition: width, left, right, 0.3s;
   position: relative;
   z-index: 1009;
 
-  &.collapsed {
-      width: 80px;
-      min-width: 80px;
+  @media (prefers-color-scheme: dark) {
+    & {
+      color: $button_font_dark;
     }
+  }
+
+  &.collapsed {
+    width: 80px;
+    min-width: 80px;
+  }
 
   > .navbar-inner {
-      background: #1d1d1d;
-      height: 100%;
-      position: relative;
-      z-index: 101;
+    background: $foreground_light;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 101;
+    box-shadow: $shadow;
+    border-radius: $border_radius;
+    overflow: hidden;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        background: $foreground_dark;
+      }
+    }
 
     > .navbar-layout {
       height: 100%;
@@ -82,6 +121,11 @@
           > .menu-item {
             position: relative;
             font-size: 15px;
+            transition: 0.2s color;
+
+            &:hover {
+              color: $button_font_hover;
+            }
 
             > .inner-item {
               position: relative;
@@ -101,7 +145,13 @@
                 text-align: center;
                 display: inline-block;
                 border-radius: 50%;
-                background-color: #2b2b2b;
+                border: solid 1px $accent_light;
+
+                @media (prefers-color-scheme: dark) {
+                  & {
+                    border: solid 1px $accent_dark;
+                  }
+                }
 
                 > .icon {
                   display: flex;
@@ -117,11 +167,11 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-              }
-            }
 
-            > .submenu-item{
-              padding-left: 20px;
+                > .closed {
+                  display: none;
+                }
+              }
             }
 
             > .closed {
@@ -129,7 +179,7 @@
             }
 
             > .react-slidedown {
-              height: 0;
+              height: auto;
               transition-property: none;
               transition-duration: 0.2s;
               transition-timing-function: ease-in-out;

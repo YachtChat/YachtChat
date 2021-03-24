@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {send} from "./connectionSlice";
-import {rtcConfiguration} from "./stunServerConfig";
+import {rtcConfiguration} from "./config";
 import {getUser, getUserID, getUsers, gotRemoteStream, handlePositionUpdate} from "./userSlice";
 import {handleError} from "./statusSlice";
 
@@ -67,7 +67,11 @@ export const requestUserMediaAndJoin = (): AppThunk => (dispatch, getState) => {
 
 export const mute = (): AppThunk => (dispatch, getState) => {
     dispatch(toggleMute())
-    streams[getState().userState.activeUser.id].getAudioTracks()[0].enabled = !getState().rtc.muted
+
+    if (!streams[getUserID(getState())])
+        return
+
+    streams[getUserID(getState())].getAudioTracks()[0].enabled = !getState().rtc.muted
     getUsers(getState()).forEach(u => {
         rtpSender[u.id].forEach(rtp => {
             if (rtp.track && rtp.track.kind === 'audio') {
@@ -79,6 +83,9 @@ export const mute = (): AppThunk => (dispatch, getState) => {
 
 export const displayVideo = (): AppThunk => (dispatch, getState) => {
     dispatch(toggleVideo())
+
+    if (!streams[getUserID(getState())])
+        return
     streams[getUserID(getState())].getVideoTracks()[0].enabled = getState().rtc.video
     getUsers(getState()).forEach(u => {
         rtpSender[u.id].forEach(rtp => {
@@ -90,8 +97,11 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
 }
 
 export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
+
     rtpSender[id].forEach(rtp => {
+        console.log("Trying to enable audio to ", id)
         if (rtp.track && rtp.track.kind === 'audio') {
+            console.log("Enabled audio")
             rtp.track.enabled = true
         }
     })
@@ -99,7 +109,9 @@ export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
 
 export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
     rtpSender[id].forEach(rtp => {
+        console.log("Trying not to enable audio to ", id)
         if (rtp.track && rtp.track.kind === 'audio') {
+            console.log("Disabled audio")
             rtp.track.enabled = false
         }
     })
@@ -136,6 +148,12 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
                 }
 
                 rtpSender[userId] = []
+
+                if (!streams[localClient]) {
+                    dispatch(handleError("Could not access media."))
+                    return
+                }
+
                 streams[localClient].getTracks().forEach((track, idx) => {
                     rtpSender[userId][idx] = rtcConnections[userId].addTrack(track, streams[localClient])
                 })

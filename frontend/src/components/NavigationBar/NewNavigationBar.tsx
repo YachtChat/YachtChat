@@ -11,7 +11,6 @@ import {
     FaMicrophoneSlash,
     FaPlusCircle,
     FaPowerOff,
-    FaSignature,
     FaSignOutAlt,
     FaVideo,
     FaVideoSlash
@@ -19,6 +18,7 @@ import {
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../store/connectionSlice";
 import {displayVideo, mute} from "../../store/rtcSlice";
+import Settings from "./Settings";
 
 interface Props {
     activeUser: User
@@ -34,6 +34,7 @@ interface State {
     value: string
     collapsed: boolean
     className: string
+    open: boolean
 }
 
 export class NewNavigationBar extends Component<Props, State> {
@@ -50,7 +51,8 @@ export class NewNavigationBar extends Component<Props, State> {
         this.state = {
             value: "",
             collapsed: true,
-            className: "navbar collapsed"
+            className: "navbar collapsed",
+            open: false
         }
     }
 
@@ -86,6 +88,22 @@ export class NewNavigationBar extends Component<Props, State> {
             this.setState({
                 collapsed: true,
                 className: "navbar collapsed"
+            })
+        }
+    }
+
+    handleSettingsOpen(event: any) {
+        if (!this.state.open) {
+            this.setState({
+                open: true,
+            })
+        }
+    }
+
+    handleSettingsClosed(event: any) {
+        if (this.state.open) {
+            this.setState({
+                open: false,
             })
         }
     }
@@ -154,12 +172,13 @@ export class NewNavigationBar extends Component<Props, State> {
                                     <div className="inner-item rangeslider">
                                         <RangeSlider/>
                                     </div>
+                                    <span className={"item-content"}>Range</span>
                                 </li>
                             </ul>
                         </div>
                         <div className="menu bottom">
                             <ul>
-                                <li className="menu-item">
+                                <li className="menu-item" onClick={this.handleSettingsOpen.bind(this)}>
                                     <div className="inner-item">
                                         <span className="icon-wrapper">
                                             <span className="icon">
@@ -168,26 +187,10 @@ export class NewNavigationBar extends Component<Props, State> {
                                         </span>
                                         <span className="item-content">
                                             Settings
+                                            <div onClick={this.handleSettingsOpen.bind(this)}>
+                                                <Settings open={this.state.open} onClose={this.handleSettingsClosed.bind(this)}/>
+                                            </div>
                                         </span>
-                                        {/*<span className="arrow-wrapper">
-
-                                        </span>*/}
-                                    </div>
-                                    <div className="submenu-item react-slidedown closed">
-                                        <ul>
-                                            <li className="menu-item">
-                                                <div className="inner-item">
-                                                    <span className="icon-wrapper">
-                                                        <span className="icon">
-                                                            <FaCog/>
-                                                        </span>
-                                                    </span>
-                                                    <span className="item-content">
-                                                        Settings
-                                                    </span>
-                                                </div>
-                                            </li>
-                                        </ul>
                                     </div>
                                 </li>
                                 <li className="menu-item">

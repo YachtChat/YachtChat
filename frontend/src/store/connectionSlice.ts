@@ -11,14 +11,14 @@ const SOCKET_PORT:string | undefined = process.env.REACT_APP_SIGNAL_PORT;
 
 interface WebSocketState {
     connected: boolean
-    loggedIn: boolean
+    joinedRoom: boolean
 }
 
 let socket: WebSocket | null = null;
 
 const initialState: WebSocketState = {
     connected: false,
-    loggedIn: false
+    joinedRoom: false
 };
 
 export const webSocketSlice = createSlice({
@@ -28,11 +28,11 @@ export const webSocketSlice = createSlice({
         connect: (state) => {
             state.connected = true
         },
-        login: (state) => {
-            state.loggedIn = true
+        joined: (state) => {
+            state.joinedRoom = true
         },
-        logout: (state) => {
-            state.loggedIn = false
+        leftRoom: (state) => {
+            state.joinedRoom = false
         },
         disconnect: (state) => {
             state.connected = false
@@ -40,7 +40,7 @@ export const webSocketSlice = createSlice({
     },
 });
 
-export const {connect, disconnect, login, logout} = webSocketSlice.actions;
+export const {connect, disconnect, joined, leftRoom} = webSocketSlice.actions;
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
     //socket = new WebSocket('wss://call.tristanratz.com:9090')
@@ -66,7 +66,7 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
         var data = JSON.parse(msg.data);
         //if (data.type !== "position_change")
         //    console.log("Got message", msg.data);
-        const loggedIn = getState().webSocket.loggedIn
+        const loggedIn = getState().webSocket.joinedRoom
 
         switch (data.type) {
             case "id":
@@ -103,12 +103,14 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                     break;
                 const fromId: number = data.source;
                 if (fromId !== getUserID(getState())) {
+                    const randomWait = Math.floor(Math.random() * Math.floor(200))
                     switch (data.signal_type) {
                         case "candidate":
-                            dispatch(handleCandidate(data.candidate, fromId))
+                            setTimeout(() => dispatch(handleCandidate(data.candidate, fromId)), randomWait)
                             break;
                         case "sdp":
-                            dispatch(handleSdp(data.description, fromId));
+                            setTimeout(() => dispatch(handleSdp(data.description, fromId)), randomWait)
+
                             break;
                         default:
                             dispatch(handleError("Unknown signaling type."))
@@ -145,7 +147,7 @@ export const requestLogin = (name: string): AppThunk => (dispatch) => {
 
 export const sendLogout = (): AppThunk => (dispatch) => {
     dispatch(send({type: "leave"}))
-    dispatch(logout())
+    dispatch(leftRoom())
     destroySession()
 }
 
@@ -164,7 +166,7 @@ export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) 
         //Starting a peer connection
         //**********************
 
-        dispatch(login())
+        dispatch(joined())
         dispatch(requestUserMediaAndJoin())
     }
 }

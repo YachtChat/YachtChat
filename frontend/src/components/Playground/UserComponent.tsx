@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {User} from "../../store/models";
+import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getStream} from "../../store/rtcSlice";
@@ -7,20 +7,21 @@ import {maxRange, userProportion} from "../../store/userSlice";
 
 interface Props {
     user: User
-    onMouseDown?: (e: React.MouseEvent) => void
-    onTouchStart?: (e: React.TouchEvent) => void
-    sizeMultiplier: number
+    isActiveUser: boolean
+    playgroundOffset: PlaygroundOffset
     muted: boolean
 }
 
 export class UserComponent extends Component<Props> {
 
     private myRef: React.RefObject<HTMLVideoElement>;
+    private myName: React.RefObject<HTMLSpanElement>;
 
     constructor(props: Props) {
         super(props);
 
         this.myRef = React.createRef();
+        this.myName = React.createRef();
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
@@ -30,50 +31,63 @@ export class UserComponent extends Component<Props> {
     }
 
     render() {
+        const scale = this.props.playgroundOffset.scale
         if (this.props.user.name === null)
             return (<div/>);
         const user = this.props.user
-        const userSize = userProportion * this.props.sizeMultiplier
-        const x = user.position.x * this.props.sizeMultiplier
-        const y = user.position.y * this.props.sizeMultiplier
+        const userSize = userProportion * scale
+        const x = user.position.x * scale
+        const y = user.position.y * scale
+        const offsetX = this.props.playgroundOffset.x
+        const offsetY = this.props.playgroundOffset.y
+
+        let nameWidth = 0
+        if (this.myName.current) {
+            nameWidth = this.myName.current.getBoundingClientRect().width
+        }
 
         const userStyle = {
             width: userSize,
             height: userSize,
-            left: x - userSize / 2,
-            top: y - userSize / 2,
+            left: x - userSize / 2 - offsetX,
+            top: y - userSize / 2 - offsetY,
             opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5,
             transform: (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)"
         }
         // range in pixels
-        const rangeInPx = 2 * maxRange * user.position.range * this.props.sizeMultiplier + userSize
+        const rangeInPx = 2 * maxRange * user.position.range * scale + userSize
+
+        const userNameStyle = {
+            left: x - offsetX - nameWidth / 2,
+            top: y + userSize / 2 - offsetY + 15,
+            transform: (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)"
+        }
 
         const rangeStyle = {
             width: rangeInPx,
             height: rangeInPx,
-            left: x - rangeInPx / 2,
-            top: y - rangeInPx / 2,
+            left: x - rangeInPx / 2 - offsetX,
+            top: y - rangeInPx / 2 - offsetY,
             opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5
         }
 
         return (
-            <div className={(!!this.props.onMouseDown) ? "activeUser" : ""}>
+            <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
                 <div className={"userRange"} style={rangeStyle}/>
-                <div className="User" style={userStyle}
-                     onMouseDown={(!!this.props.onMouseDown) ? this.props.onMouseDown : () => {
-                     }}>
-                    {user.name}
+                <div id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
                     {!!this.props.user.userStream &&
-                    <video autoPlay muted={!!this.props.onMouseDown} ref={this.myRef}/>
+                    <video autoPlay muted={this.props.isActiveUser} ref={this.myRef}/>
                     }
                 </div>
+                <span ref={this.myName} className={"userName"}
+                      style={userNameStyle}>{(this.props.isActiveUser) ? "You" : user.name}</span>
             </div>
         )
     }
 }
 
 const mapStateToProps = (state: RootState) => ({
-    sizeMultiplier: state.userState.scalingFactor,
+    playgroundOffset: state.playground.offset,
     muted: state.rtc.muted
 })
 
