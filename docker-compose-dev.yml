@@ -10,7 +10,8 @@ services:
         - REACT_APP_SPACES_URL=${SPACES_URL}
         - VIRTUAL_PORT=${DEV_FRONTEND_PORT}
     volumes:
-      - /home/git_environment/DevNotZoom/frontend:/home/frontend
+      - ${DEV_FRONTEND_VOLUME}:/home/frontend
+      #- /home/git_environment/DevNotZoom/frontend:/home/frontend
       # -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
     environment:
       - VIRTUAL_HOST=${DEV_FRONTEND_URL}
@@ -20,7 +21,22 @@ services:
  #     - REACT_APP_SOCKET_PORT=${DEV_SIGNAL_PORT}
  #     - REACT_APP_SPACES_URL=${SPACES_URL}
     network_mode: bridge
-  
+
+  dev_landingpage:
+    build:
+      context: ./landingpage
+      dockerfile: ./Dockerfile_dev
+      args:
+        - VIRTUAL_PORT=${DEV_LANDINGPAGE_PORT}
+    volumes:
+        - ${DEV_LANDINGPAGE_VOLUME}:/home/landingpage
+        #- /home/git_environment/DevNotZoom/frontend:/home/landingpage
+        # -  /Users/marc/Development/Other/RTC/shmooze/frontend:/home/frontend
+    environment:
+        - VIRTUAL_HOST=${DEV_LANDINGPAGE_URL}
+        - LETSENCRYPT_HOST=${DEV_LANDINGPAGE_URL}
+    network_mode: bridge
+
   dev_signaling_server:
     build:
       context: ./signalingServer
@@ -31,7 +47,8 @@ services:
 #    ports:
 #      - ${DEV_SIGNAL_PORT}:${DEV_SIGNAL_PORT}
     volumes:
-      - /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
+      - ${DEV_SIGNAL_VOLUME}:/home/signalingServer
+      #- /home/git_environment/DevNotZoom/signalingServer:/home/signalingServer
       # - /Users/marc/Development/Other/RTC/shmooze/signalingServer:/home/signalingServer
     environment:
       - VIRTUAL_HOST=${DEV_SIGNAL_URL}
