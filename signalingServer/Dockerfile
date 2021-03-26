@@ -1,5 +1,5 @@
 FROM node:alpine
-ARG SIGNAL_PORT
+ARG VIRTUAL_PORT
 
 WORKDIR /usr/src/app
 
