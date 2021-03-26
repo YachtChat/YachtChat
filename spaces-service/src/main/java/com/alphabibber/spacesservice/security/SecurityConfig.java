@@ -19,32 +19,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/oauth_login", "/loginFailure", "/", "/authenticated", "/spaces/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .oauth2Login()
-                .loginPage("/oauth_login")
-//                .authorizationEndpoint()
-//                .baseUri("/oauth2/authorize-client")
-//                .authorizationRequestRepository(authorizationRequestRepository())
+                .permitAll();
+//                .anyRequest()
+//                .authenticated()
 //                .and()
-//                .tokenEndpoint()
-//                .accessTokenResponseClient(accessTokenResponseClient())
-//                .and()
-                .defaultSuccessUrl("/loginSuccess")
-                .failureUrl("/loginFailure");
+//                .oauth2Login()
+//                .loginPage("/oauth_login")
+////                .authorizationEndpoint()
+////                .baseUri("/oauth2/authorize-client")
+////                .authorizationRequestRepository(authorizationRequestRepository())
+////                .and()
+////                .tokenEndpoint()
+////                .accessTokenResponseClient(accessTokenResponseClient())
+////                .and()
+//                .defaultSuccessUrl("/loginSuccess")
+//                .failureUrl("/loginFailure");
     }
 
-    @Bean
-    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
-        return new HttpSessionOAuth2AuthorizationRequestRepository();
-    }
-
-    @Bean
-    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
-        return accessTokenResponseClient;
-    }
+//    @Bean
+//    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
+//        return new HttpSessionOAuth2AuthorizationRequestRepository();
+//    }
+//
+//    @Bean
+//    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+//        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
+//        return accessTokenResponseClient;
+//    }
 
 }
