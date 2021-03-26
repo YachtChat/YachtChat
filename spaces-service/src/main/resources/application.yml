@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: "${VIRTUAL_PORT:8081}"
 
 spring:
   application:
@@ -13,10 +13,10 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: "${OAUTH_GOOGLE_CLIENT_ID:}"
-            client-secret: "${OAUTH_GOOGLE_CLIENT_SECRET:}"
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          google:
+#            client-id: "${OAUTH_GOOGLE_CLIENT_ID:""}"
+#            client-secret: "${OAUTH_GOOGLE_CLIENT_SECRET:""}"

@@ -66,6 +66,8 @@ services:
     build:
       context: ./spaces-service
       dockerfile: ./Dockerfile
+      args:
+        - VIRTUAL_PORT=${SPACES_PORT}
     environment:
       - VIRTUAL_HOST=${SPACES_URL}
       - LETSENCRYPT_HOST=${SPACES_URL}
