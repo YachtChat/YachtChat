@@ -78,7 +78,7 @@ export class Login extends Component<Props, State> {
 
                             <div id={"github"} className={"logoImage"}>
                                 <a href={loginService.concat("/oauth_login/?method=github")}>
-                                    <img src={github}/>
+                                    <img alt={"Sign in with Github"} src={github}/>
                                 </a>
                             </div>
                         </div>

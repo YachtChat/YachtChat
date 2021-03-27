@@ -13,11 +13,6 @@ interface Props {
 }
 
 export class RangeComponent extends Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
     render() {
         const scale = this.props.playgroundOffset.scale
         if (this.props.user.name === null)

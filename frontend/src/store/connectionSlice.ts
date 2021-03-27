@@ -48,7 +48,7 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
         dispatch(handleError("No websocket url defined for this environment"));
         return;
     }
-    socket = new WebSocket("wss://" + <string>SOCKET_URL, 'json');
+    socket = new WebSocket("wss://" + SOCKET_URL, 'json');
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");
