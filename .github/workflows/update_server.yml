@@ -31,6 +31,6 @@ jobs:
             sudo docker-compose build nginx-proxyed-container signaling_server spaces-service nginx-presentation
             sudo docker-compose up --no-deps -d nginx-proxyed-container signaling_server spaces-service nginx-presentation
             sudo docker system prune --all --force
-          host: www.meet.alphabibber.com #${{ secrets.HOST}}
+          host: www.alphabibber.com #${{ secrets.HOST}}
           user: danilo_walenta #${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
