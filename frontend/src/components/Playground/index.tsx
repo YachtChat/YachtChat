@@ -7,7 +7,7 @@ import {getUsers, submitMovement} from "../../store/userSlice";
 import {displayVideo, mute} from "../../store/rtcSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
-import NewNavigationBar from "../NavigationBar/NewNavigationBar";
+import NewNavigationBar from "../NavigationBar/NavigationBar";
 import {movePlayground, scalePlayground} from "../../store/playgroundSlice";
 
 interface Props {
