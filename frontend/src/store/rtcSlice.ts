@@ -119,7 +119,7 @@ export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
 
 export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk => (dispatch, getState) => {
     // get client ids
-    const clients = Object.keys(getState().userState.otherUsers).map(k => Number(k))
+    const clients = getUsers(getState()).map(k => Number(k.id))
     const localClient: number = getUserID(getState())
     clients.push(localClient)
 
