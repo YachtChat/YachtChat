@@ -83,8 +83,8 @@ export class Playground extends Component<Props, State> {
             const x = e.currentTarget.getBoundingClientRect().x
             const y = e.currentTarget.getBoundingClientRect().y
             this.props.move({
-                x: e.clientX / scaling - x + this.props.offset.x / scaling,
-                y: e.clientY / scaling - y + this.props.offset.y / scaling,
+                x: e.clientX / scaling - x + this.props.offset.x,
+                y: e.clientY / scaling - y + this.props.offset.y,
                 range: this.props.activeUser.position.range
             })
         }
@@ -111,8 +111,8 @@ export class Playground extends Component<Props, State> {
         const y = e.currentTarget.getBoundingClientRect().y
         if (this.state.userDragActive) {
             this.props.move({
-                x: e.clientX / scaling - x + this.props.offset.x / scaling,
-                y: e.clientY / scaling - y + this.props.offset.y / scaling,
+                x: e.clientX / scaling - x + this.props.offset.x,
+                y: e.clientY / scaling - y + this.props.offset.y,
                 range: this.props.activeUser.position.range
             })
         }
@@ -121,8 +121,13 @@ export class Playground extends Component<Props, State> {
             const start = this.state.dragStart!
             this.props.movePlayground({
                 ...this.props.offset,
-                x: (prev.x + (start.x - e.clientX)) - x,
-                y: (prev.y + (start.y - e.clientY)) - y
+                x: (prev.x + (start.x - e.clientX) / scaling) - x,
+                y: (prev.y + (start.y - e.clientY) / scaling) - y
+            })
+            this.props.move({
+                x: this.state.previousPosition!.x + (start.x - e.clientX) / scaling,
+                y: this.state.previousPosition!.y + (start.y - e.clientY) / scaling,
+                range: this.props.activeUser.position.range
             })
         }
     }
@@ -142,12 +147,28 @@ export class Playground extends Component<Props, State> {
 
     // function handleZoomIn increases the sizeMultiplier
     handleZoomIn() {
-        this.props.changeSizeMultiplier(this.props.offset.scale + 0.1)
+        //this.props.changeSizeMultiplier(this.props.offset.scale + 0.1)
+        this.handleZoom(0.1)
     }
 
     // function handleZoomOut decreases the sizeMultiplier
     handleZoomOut() {
-        this.props.changeSizeMultiplier(this.props.offset.scale - 0.1)
+        //this.props.changeSizeMultiplier(this.props.offset.scale - 0.1)
+        this.handleZoom(-0.1)
+    }
+
+    handleZoom(z: number) {
+        const scale = this.props.offset.scale
+        const userPos = this.props.activeUser.position
+        const offX = this.props.offset.x
+        const offY = this.props.offset.y
+        const x = offX + ((userPos.x - offX) * (scale + z) - (userPos.x - offX) * scale) / (scale + z)
+        const y = offY + ((userPos.y - offY) * (scale + z) - (userPos.y - offY) * scale) / (scale + z)
+        this.props.movePlayground({
+            x,
+            y,
+            scale: this.props.offset.scale + z
+        })
     }
 
     // calls handleZoomOut if user scrolls down/ handleZoomIn if user scrolls up
