@@ -15,10 +15,12 @@ import {
     FaVideo,
     FaVideoSlash
 } from 'react-icons/fa';
+import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../store/connectionSlice";
 import {displayVideo, mute} from "../../store/rtcSlice";
 import Settings from "./Settings";
+import {centerUser} from "../../store/playgroundSlice";
 
 interface Props {
     activeUser: User
@@ -26,6 +28,7 @@ interface Props {
     logout: () => void
     toggleAudio: () => void
     toggleVideo: () => void
+    center: () => void
     video: boolean
     muted: boolean
 }
@@ -125,32 +128,32 @@ export class NewNavigationBar extends Component<Props, State> {
                                             <FaBars/>
                                         </span>
                                     </span>
-                                    <span className="item-content">
+                                        <span className="item-content">
                                         Dashboard
                                     </span>
                                     </div>
                                 </li>
-                                <li className="menu-item">
+                                <li className="menu-item" onClick={this.props.toggleVideo}>
                                     <div className="inner-item">
                                     <span className="icon-wrapper">
-                                        <span className="icon" onClick={this.props.toggleVideo}>
+                                        <span className="icon">
                                             {videoIcon}
                                         </span>
                                     </span>
-                                    <span className="item-content" onClick={this.props.toggleVideo}>
+                                        <span className="item-content">
                                         Video
                                     </span>
                                     </div>
                                 </li>
-                                <li className="menu-item">
+                                <li className="menu-item" onClick={this.props.toggleAudio}>
                                     <div className="inner-item">
                                     <span className="icon-wrapper">
-                                        <span className="icon" onClick={this.props.toggleAudio}>
+                                        <span className="icon">
                                             {micIcon}
                                         </span>
                                     </span>
-                                    <span className="item-content" onClick={this.props.toggleAudio}>
-                                        Mic
+                                        <span className="item-content">
+                                        Microphone
                                     </span>
                                     </div>
                                 </li>
@@ -161,8 +164,20 @@ export class NewNavigationBar extends Component<Props, State> {
                                             <FaPlusCircle/>
                                         </span>
                                     </span>
-                                    <span className="item-content">
+                                        <span className="item-content">
                                         Add User
+                                    </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item" onClick={this.props.center}>
+                                    <div className="inner-item">
+                                    <span className="icon-wrapper">
+                                        <span className="icon">
+                                            <MdFilterCenterFocus/>
+                                        </span>
+                                    </span>
+                                        <span className="item-content">
+                                        Center user
                                     </span>
                                     </div>
                                 </li>
@@ -187,8 +202,9 @@ export class NewNavigationBar extends Component<Props, State> {
                                         </span>
                                         <span className="item-content">
                                             Settings
-                                            <div onClick={this.handleSettingsOpen.bind(this)}>
-                                                <Settings open={this.state.open} onClose={this.handleSettingsClosed.bind(this)}/>
+                                            <div>
+                                                <Settings open={this.state.open}
+                                                          onClose={this.handleSettingsClosed.bind(this)}/>
                                             </div>
                                         </span>
                                     </div>
@@ -205,14 +221,14 @@ export class NewNavigationBar extends Component<Props, State> {
                                     </span>
                                     </div>
                                 </li>
-                                <li className="menu-item">
+                                <li className="menu-item" onClick={this.props.logout}>
                                     <div className="inner-item">
                                     <span className="icon-wrapper">
-                                        <span className="icon" onClick={this.props.logout}>
+                                        <span className="icon">
                                             <FaPowerOff/>
                                         </span>
                                     </span>
-                                        <span className="item-content" onClick={this.props.logout}>
+                                        <span className="item-content">
                                         Log Out
                                     </span>
                                     </div>
@@ -236,7 +252,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     setName: (name: string) => dispatch(submitNameChange(name)),
     toggleAudio: () => dispatch(mute()),
     toggleVideo: () => dispatch(displayVideo()),
-    logout: () => dispatch(sendLogout())
+    logout: () => dispatch(sendLogout()),
+    center: () => dispatch(centerUser())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewNavigationBar)
