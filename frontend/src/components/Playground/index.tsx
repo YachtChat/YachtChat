@@ -6,6 +6,7 @@ import './style.scss';
 import {getUsers, submitMovement} from "../../store/userSlice";
 import {displayVideo, mute} from "../../store/rtcSlice";
 import UserComponent from "./UserComponent";
+import RangeComponent from "./RangeComponent";
 import NewNavigationBar from "../NavigationBar/NewNavigationBar";
 import {movePlayground, scalePlayground} from "../../store/playgroundSlice";
 
@@ -26,6 +27,7 @@ interface State {
     userDragActive: boolean
     mapDragActive: boolean
     previousOffset?: { x: number, y: number }
+    previousPosition?: { x: number, y: number }
     dragStart?: { x: number, y: number }
 }
 
@@ -42,8 +44,8 @@ export class Playground extends Component<Props, State> {
     // function that sets the state of dragActive on true
     // if the mouse is clicked on the active user
     dragStart(event: React.MouseEvent | React.TouchEvent) {
-        // @ts-ignore
-        const id = event.target.id
+        event.stopPropagation()
+        const activeUser = ((event.target as HTMLDivElement).id === "activeUser")
 
         let x, y;
 
@@ -55,7 +57,7 @@ export class Playground extends Component<Props, State> {
             y = (event as React.TouchEvent).touches[0].clientY
         }
 
-        if (id === "activeUser")
+        if (activeUser)
             this.setState({
                 userDragActive: true,
                 dragStart: {x, y}
@@ -64,18 +66,22 @@ export class Playground extends Component<Props, State> {
             this.setState({
                 mapDragActive: true,
                 previousOffset: this.props.offset,
+                previousPosition: {
+                    x: this.props.activeUser.position.x,
+                    y: this.props.activeUser.position.y
+                },
                 dragStart: {x, y}
             })
     }
 
     onMouseUp(e: React.MouseEvent) {
-        const scaling = this.props.offset.scale
-        const x = e.currentTarget.getBoundingClientRect().x
-        const y = e.currentTarget.getBoundingClientRect().y
-
+        // Click functionality
         if (!this.state.dragStart ||
             this.state.dragStart.x === e.clientX ||
             this.state.dragStart.y === e.clientY) {
+            const scaling = this.props.offset.scale
+            const x = e.currentTarget.getBoundingClientRect().x
+            const y = e.currentTarget.getBoundingClientRect().y
             this.props.move({
                 x: e.clientX / scaling - x + this.props.offset.x / scaling,
                 y: e.clientY / scaling - y + this.props.offset.y / scaling,
@@ -93,7 +99,8 @@ export class Playground extends Component<Props, State> {
             userDragActive: false,
             mapDragActive: false,
             dragStart: undefined,
-            previousOffset: undefined
+            previousOffset: undefined,
+            previousPosition: undefined
         })
     }
 
@@ -174,7 +181,7 @@ export class Playground extends Component<Props, State> {
                 <div className={"navwrapper"}>
                     <NewNavigationBar/>
                 </div>
-                <div id={"Playground"} className="Playground"
+                <div id={"Playground"} style={style} className="Playground"
                      onMouseMove={this.moveMouse.bind(this)}
                      onMouseLeave={this.dragEnd.bind(this)}
                      onMouseUp={this.onMouseUp.bind(this)}
@@ -185,8 +192,16 @@ export class Playground extends Component<Props, State> {
                      onMouseDown={this.dragStart.bind(this)}
                      onTouchStart={this.dragStart.bind(this)}
                      tabIndex={0}>
-                    {this.props.otherUsers.map(user => <UserComponent key={user.id} isActiveUser={false} user={user}/>)}
-                    <UserComponent user={this.props.activeUser} isActiveUser={true}/>
+                    {this.props.otherUsers.map(user => <RangeComponent key={user.id} isActiveUser={false}
+                                                                       selected={false} user={user}/>)}
+                    <RangeComponent user={this.props.activeUser}
+                                    selected={this.state.mapDragActive || this.state.userDragActive}
+                                    isActiveUser={true}/>
+                    {this.props.otherUsers.map(user => <UserComponent key={user.id} isActiveUser={false}
+                                                                      selected={false} user={user}/>)}
+                    <UserComponent user={this.props.activeUser}
+                                   selected={this.state.mapDragActive || this.state.userDragActive}
+                                   isActiveUser={true}/>
                     {/*<div className="roomgrid">*/}
                     {/*    <Room roomName="Thinktank"/>*/}
                     {/*    <Room roomName="Kitchen"/>*/}
