@@ -50,45 +50,46 @@ export class UserComponent extends Component<Props> {
         let nameWidth = 0
         let nameHeight = 0
         let nameOpacity = 0.7
-        let userNamePosX = x - userSize / 2 - offsetX
-        let userNamePosY = y - userSize / 2 - offsetY
 
         if (this.myName.current) {
             nameWidth = this.myName.current.getBoundingClientRect().width
             nameHeight = this.myName.current.getBoundingClientRect().height
         }
 
+        let userNamePosX = x - nameWidth / 2 - offsetX
+        let userNamePosY = y + userSize / 2 - offsetY + 15
+
         if (userNamePosX < 0) {
-            userNamePosX = 100 + nameWidth
+            userNamePosX = 15 + nameWidth
             nameOpacity = 0
         }
         if (userNamePosX > window.innerWidth) {
-            userNamePosX = window.innerWidth - (100 - nameWidth)
+            userNamePosX = window.innerWidth - (15 - nameWidth)
             nameOpacity = 0
         }
 
         if (userNamePosY < 0) {
-            userNamePosY = 100 + nameWidth
+            userNamePosY = 15 + nameWidth
             nameOpacity = 0
         }
         if (userNamePosY > window.innerHeight) {
-            userNamePosY = window.innerHeight - (100 - nameHeight)
+            userNamePosY = window.innerHeight - (15 - nameHeight)
             nameOpacity = 0
         }
 
         const userStyle = {
             width: userSize,
             height: userSize,
-            left: userNamePosX,
-            top: userNamePosY,
+            left: x - userSize / 2 - offsetX,
+            top: y - userSize / 2 - offsetY,
             opacity: userOpacity,
             transform: userScale,
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
         }
 
         const userNameStyle = {
-            left: x - offsetX - nameWidth / 2,
-            top: y + userSize / 2 - offsetY + 15,
+            left: userNamePosX,
+            top: userNamePosY,
             transform: (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)",
             opacity: nameOpacity
         }
