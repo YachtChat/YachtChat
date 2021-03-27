@@ -165,6 +165,10 @@ export class Playground extends Component<Props, State> {
     }
 
     render() {
+        const scaling = this.props.offset.scale
+        const style = {
+            backgroundPosition: `${-this.props.offset.x * scaling}px ${-this.props.offset.y * scaling}px`
+        }
         return (
             <div className={"contentWrapper"}>
                 <div className={"navwrapper"}>

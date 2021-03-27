@@ -18,7 +18,8 @@ export const spaceSlice = createSlice({
     initialState,
     reducers: {
         movePlayground: (state, action: PayloadAction<PlaygroundOffset>) => {
-            state.offset = action.payload
+            if (action.payload.scale <= 2.0 && action.payload.scale >= 0.5)
+                state.offset = action.payload
         },
         scalePlayground: (state, action: PayloadAction<number>) => {
             if (action.payload <= 2.0 && action.payload >= 0.5)
