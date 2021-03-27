@@ -39,8 +39,8 @@ export const centerUser = (): AppThunk => (dispatch, getState) => {
     const offset = getState().playground.offset
     dispatch(movePlayground({
         ...offset,
-        x: userPos.x - window.innerWidth / 2,
-        y: userPos.y - window.innerHeight / 2
+        x: userPos.x - window.innerWidth / offset.scale / 2,
+        y: userPos.y - window.innerHeight / offset.scale / 2
     }))
 }
 
