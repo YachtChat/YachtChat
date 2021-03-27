@@ -68,8 +68,8 @@
   overflow: hidden;
   user-select: none;
   cursor: move;
-
-  background: $background_2_light;
+  background: url("../../rsc/background.png") repeat 0 0;
+  background-size: 3rem 3rem;
 
   @media (prefers-color-scheme: dark) {
     & {
