@@ -40,6 +40,15 @@ services:
 #      - LETSENCRYPT_HOST=www.chat.alphabibber.com
     network_mode: bridge
 
+  nginx-landingpage:
+    build:
+      context: ./landingpage
+      dockerfile: ./Dockerfile
+    environment:
+        - VIRTUAL_HOST=${LANDINGPAGE_URL}
+        - LETSENCRYPT_HOST=${LANDINGPAGE_URL}
+    network_mode: bridge
+
   signaling_server:
     build:
       context: ./signalingServer
@@ -57,6 +66,8 @@ services:
     build:
       context: ./spaces-service
       dockerfile: ./Dockerfile
+      args:
+        - VIRTUAL_PORT=${SPACES_PORT}
     environment:
       - VIRTUAL_HOST=${SPACES_URL}
       - LETSENCRYPT_HOST=${SPACES_URL}
