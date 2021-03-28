@@ -67,7 +67,7 @@ jobs:
         run: |-
           docker build \
           --file ./frontend/Dockerfile \
-          --tag "gcr.io/$PROJECT_ID/$IFRONTEND_IMAGE:$TAG" \
+          --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG" \
           --build-arg REACT_APP_SIGNAL_URL=${SIGNAL_URL} \
           --build-arg REACT_APP_SIGNAL_PORT=${SIGNAL_PORT} \
           --build-arg REACT_APP_SPACES_URL=${SPACES_URL} \
