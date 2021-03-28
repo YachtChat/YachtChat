@@ -54,8 +54,8 @@ metadata:
 spec:
   domains: #"www.alphabibber.com,signal.alphabibber.com,spaces.alphabibber.com"
     - www.alphabibber.com
-    - signal.alphabibber.com
-    - spaces.alphabibber.com
+#    - signal.alphabibber.com
+#    - spaces.alphabibber.com
 #  - ${LANDINGPAGE_URL}
 #  - ${PRESENTATION_URL}
 #  signal.alphabibber.com
