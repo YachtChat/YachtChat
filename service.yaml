@@ -8,7 +8,7 @@ spec:
   type: NodePort
   ports:
     - port: 80
-      targetPort: %env(int:FRONTEND_PORT)%
+      targetPort: $(FRONTEND_PORT)
       protocol: TCP
       name: http
 ---
@@ -50,7 +50,7 @@ spec:
   type: NodePort
   ports:
     - port: 80
-      targetPort: ${{SIGNAL_PORT}}
+      targetPort: $(SIGNAL_PORT)
       protocol: TCP
       name: http
 ---
@@ -64,6 +64,6 @@ spec:
   type: NodePort
   ports:
     - port: 80
-      targetPort: ${{SPACES_PORT}}
+      targetPort: $(SPACES_PORT)
       protocol: TCP
       name: http
