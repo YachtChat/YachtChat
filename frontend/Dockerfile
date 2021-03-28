@@ -3,7 +3,7 @@ ARG REACT_APP_SIGNAL_PORT
 ARG REACT_APP_SIGNAL_URL
 ARG REACT_APP_SPACES_URL
 WORKDIR /src
-COPY . /src
+COPY ./frontend /src
 RUN yarn
 RUN yarn build .
 # Second stage - start webserver

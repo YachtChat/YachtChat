@@ -3,7 +3,7 @@ ARG VIRTUAL_PORT
 
 WORKDIR /usr/src/app
 
-COPY . .
+COPY ./signalingServer .
 RUN npm install
 ENV VIRTUAL_PORT=${VIRTUAL_PORT}
 EXPOSE ${VIRTUAL_PORT}

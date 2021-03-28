@@ -1,6 +1,6 @@
 FROM node:alpine as build-deps
 WORKDIR /src
-COPY . /src
+COPY ./landingpage /src
 RUN yarn
 RUN yarn build .
 # Second stage - start webserver
