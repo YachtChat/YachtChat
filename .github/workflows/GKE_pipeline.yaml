@@ -134,6 +134,12 @@ jobs:
           ./kustomize edit set image gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG=gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG
           ./kustomize build . | kubectl apply -f -
           kubectl rollout status deployment/$FRONTEND_DEPLOYMENT_NAME
+          ./kustomize edit set image gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG=gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG
+          ./kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment/$SIGNALING_DEPLOYMENT_NAME
+          ./kustomize edit set image gcr.io/PROJECT_ID/SPACES_IMAGE:TAG=gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG
+          ./kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment/$SPACES_DEPLOYMENT_NAME
           kubectl get services -o wide
 
 #      - name: Deploy landingpage Image to GKE cluster
