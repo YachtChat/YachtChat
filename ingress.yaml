@@ -7,7 +7,7 @@ metadata:
     networking.gke.io/managed-certificates: alphabibber-certificate
 spec:
   rules:
-    - host: ${FRONTEND_URL}
+    - host: www.alphabibber.com
       http:
         paths:
           - path: /*
@@ -31,7 +31,7 @@ spec:
 #              serviceName: presentation-service
 #              servicePort: 80
 
-    - host: ${SIGNAL_URL}
+    - host: signal.alphabibber.com
       http:
         paths:
           - path: /*
@@ -39,7 +39,7 @@ spec:
               serviceName: signalingServer-service
               servicePort: 80
 
-    - host: ${SPACES_URL}
+    - host: spaces.alphabibber.com
       http:
         paths:
           - path: /*
@@ -53,8 +53,8 @@ metadata:
   name: alphabibber-certificate
 spec:
   domains:
-    - ${FRONTEND_URL}
+    - www.alphabibber.com
 #    - ${LANDINGPAGE_URL}
 #    - ${PRESENTATION_URL}
-    - ${SIGNAL_URL}
-    - ${SPACES_URL}
+    - signal.alphabibber.com
+    - spaces.alphabibber.com

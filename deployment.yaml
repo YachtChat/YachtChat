@@ -17,7 +17,7 @@ spec:
           image: gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: ${{FRONTEND_PORT}}
+            - containerPort: 80
 ---
 #apiVersion: apps/v1
 #kind: Deployment
@@ -80,7 +80,7 @@ spec:
           image: gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: ${{SIGNAL_PORT}}
+            - containerPort: 6503
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -101,4 +101,4 @@ spec:
           image: gcr.io/PROJECT_ID/SPACES_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: ${{SPACES_PORT}}
+            - containerPort: 8081
