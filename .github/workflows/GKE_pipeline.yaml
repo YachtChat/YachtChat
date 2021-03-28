@@ -6,6 +6,9 @@ on:
 #      - main
        - devops/migrationtoGKE
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
 env:
   PROJECT_ID: ${{secrets.GKE_PROJECT}}
   GKE_CLUSTER: alphabibber-gke
