@@ -1,104 +1,104 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend_app
+  name: frontend-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend_app
+      app: frontend-app
   template:
     metadata:
       labels:
-        app: frontend_app
+        app: frontend-app
     spec:
       containers:
-        - name: frontend_app
+        - name: frontend-app
           image: gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: ${FRONTEND_PORT}
+            - containerPort: FRONTEND_PORT
 ---
 #apiVersion: apps/v1
 #kind: Deployment
 #metadata:
-#  name: landingpage_app
+#  name: landingpage-app
 #spec:
 #  replicas: 1
 #  selector:
 #    matchLabels:
-#      app: landingpage_app
+#      app: landingpage-app
 #  template:
 #    metadata:
 #      labels:
-#        app: landingpage_app
+#        app: landingpage-app
 #    spec:
 #      containers:
-#        - name: landingpage_app
+#        - name: landingpage-app
 #          image: gcr.io/PROJECT_ID/LANDINGPAGE_IMAGE:TAG
 #          imagePullPolicy: Always
 #          ports:
-#            - containerPort: ${LANDINGPAGE_PORT}
+#            - containerPort: LANDINGPAGE_PORT
 #---
 #apiVersion: apps/v1
 #kind: Deployment
 #metadata:
-#  name: presentation_app
+#  name: presentation-app
 #spec:
 #  replicas: 1
 #  selector:
 #    matchLabels:
-#      app: presentation_app
+#      app: presentation-app
 #  template:
 #    metadata:
 #      labels:
-#        app: presentation_app
+#        app: presentation-app
 #    spec:
 #      containers:
-#        - name: presentation_app
+#        - name: presentation-app
 #          image: gcr.io/PROJECT_ID/PRESENTATION_IMAGE:TAG
 #          imagePullPolicy: Always
 #          ports:
- #           - containerPort: ${PRESENTAION_PORT}
+ #           - containerPort: PRESENTAION_PORT
 #---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: signalingServer_app
+  name: signalingServer-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: signalingServer_app
+      app: signalingServer-app
   template:
     metadata:
       labels:
-        app: signalingServer_app
+        app: signalingServer-app
     spec:
       containers:
-        - name: signalingServer_app
+        - name: signalingServer-app
           image: gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: ${SIGNAL_PORT}
+            - containerPort: SIGNAL_PORT
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spacesService_app
+  name: spacesService-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spacesService_app
+      app: spacesService-app
   template:
     metadata:
       labels:
-        app: spacesService_app
+        app: spacesService-app
     spec:
       containers:
-        - name: spacesService_app
+        - name: spacesService-app
           image: gcr.io/PROJECT_ID/SPACES_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: ${SPACES_PORT}
+            - containerPort: SPACES_PORT

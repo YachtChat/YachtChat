@@ -1,24 +1,24 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend_service
+  name: frontend-service
 spec:
   selector:
-    app: frontend_app
+    app: frontend-app
   type: NodePort
   ports:
     - port: 80
-      targetPort: ${FRONTEND_PORT}
+      targetPort: FRONTEND_PORT
       protocol: TCP
       name: http
 ---
 #apiVersion: v1
 #kind: Service
 #metadata:
-#  name: landingpage_service
+#  name: landingpage-service
 #spec:
 #  selector:
-#    app: landingpage_app
+#    app: landingpage-app
 #  type: NodePort
 #  ports:
 #    - port: 80
@@ -29,10 +29,10 @@ spec:
 #apiVersion: v1
 #kind: Service
 #metadata:
-#  name: presentation_service
+#  name: presentation-service
 #spec:
 #  selector:
-#    app: presentation_app
+#    app: presentation-app
 #  type: NodePort
 #  ports:
 #    - port: 80
@@ -43,27 +43,27 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: signalingServer_service
+  name: signalingServer-service
 spec:
   selector:
-    app: signalingServer_app
+    app: signalingServer-app
   type: NodePort
   ports:
     - port: 80
-      targetPort: ${SIGNAL_PORT}
+      targetPort: SIGNAL_PORT
       protocol: TCP
       name: http
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: spacesService_service
+  name: spacesService-service
 spec:
   selector:
-    app: spacesService_app
+    app: spacesService-app
   type: NodePort
   ports:
     - port: 80
-      targetPort: ${SPACES_PORT}
+      targetPort: SPACES_PORT
       protocol: TCP
       name: http
