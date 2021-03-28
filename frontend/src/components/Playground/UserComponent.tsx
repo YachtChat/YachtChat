@@ -3,10 +3,11 @@ import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getStream} from "../../store/rtcSlice";
-import {maxRange, userProportion} from "../../store/userSlice";
+import {userProportion} from "../../store/userSlice";
 
 interface Props {
     user: User
+    selected: boolean
     isActiveUser: boolean
     playgroundOffset: PlaygroundOffset
     muted: boolean
@@ -38,12 +39,42 @@ export class UserComponent extends Component<Props> {
         const userSize = userProportion * scale
         const x = user.position.x * scale
         const y = user.position.y * scale
-        const offsetX = this.props.playgroundOffset.x
-        const offsetY = this.props.playgroundOffset.y
+        const offsetX = this.props.playgroundOffset.x * scale
+        const offsetY = this.props.playgroundOffset.y * scale
+        let userOpacity = ((!!user.inProximity && !this.props.muted) || this.props.selected) ? 1 : 0.5
+        let userScale = (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)"
+        if (this.props.selected) {
+            userScale = "scale(1.2)"
+        }
 
         let nameWidth = 0
+        let nameHeight = 0
+        let nameOpacity = 0.7
+
         if (this.myName.current) {
             nameWidth = this.myName.current.getBoundingClientRect().width
+            nameHeight = this.myName.current.getBoundingClientRect().height
+        }
+
+        let userNamePosX = x - nameWidth / 2 - offsetX
+        let userNamePosY = y + userSize / 2 - offsetY + 15
+
+        if (userNamePosX < 0) {
+            userNamePosX = 15 + nameWidth
+            nameOpacity = 0
+        }
+        if (userNamePosX > window.innerWidth) {
+            userNamePosX = window.innerWidth - (15 - nameWidth)
+            nameOpacity = 0
+        }
+
+        if (userNamePosY < 0) {
+            userNamePosY = 15 + nameWidth
+            nameOpacity = 0
+        }
+        if (userNamePosY > window.innerHeight) {
+            userNamePosY = window.innerHeight - (15 - nameHeight)
+            nameOpacity = 0
         }
 
         const userStyle = {
@@ -51,29 +82,20 @@ export class UserComponent extends Component<Props> {
             height: userSize,
             left: x - userSize / 2 - offsetX,
             top: y - userSize / 2 - offsetY,
-            opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5,
-            transform: (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)"
+            opacity: userOpacity,
+            transform: userScale,
+            boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
         }
-        // range in pixels
-        const rangeInPx = 2 * maxRange * user.position.range * scale + userSize
 
         const userNameStyle = {
-            left: x - offsetX - nameWidth / 2,
-            top: y + userSize / 2 - offsetY + 15,
-            transform: (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)"
-        }
-
-        const rangeStyle = {
-            width: rangeInPx,
-            height: rangeInPx,
-            left: x - rangeInPx / 2 - offsetX,
-            top: y - rangeInPx / 2 - offsetY,
-            opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5
+            left: userNamePosX,
+            top: userNamePosY,
+            transform: (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)",
+            opacity: nameOpacity
         }
 
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
-                <div className={"userRange"} style={rangeStyle}/>
                 <div id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
                     {!!this.props.user.userStream &&
                     <video autoPlay muted={this.props.isActiveUser} ref={this.myRef}/>

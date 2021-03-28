@@ -5,7 +5,6 @@ export const loginService: string = "https://spaces.meet.alphabibber.com"
 export const rtcConfiguration = {
     "iceServers": [{
         "urls": [
-            "stun:stun2.1.google.com:19302",
             "stun:iphone-stun.strato-iphone.de:3478",
             "stun:numb.viagenie.ca:3478",
             "stun:s1.taraba.net:3478",

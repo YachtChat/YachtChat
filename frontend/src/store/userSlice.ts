@@ -10,7 +10,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-    activeUser: {id: -1, name: "name", position: {x: 200, y: 200, range: 0.3}},
+    activeUser: {id: -1, name: "name", position: {x: 0, y: 0, range: 0.2}},
     otherUsers: {},
 };
 
