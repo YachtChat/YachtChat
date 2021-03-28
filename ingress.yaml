@@ -36,7 +36,7 @@ spec:
         paths:
           - path: /*
             backend:
-              serviceName: signalingServer-service
+              serviceName: signalingserver-service
               servicePort: 80
 
     - host: spaces.alphabibber.com
@@ -44,7 +44,7 @@ spec:
         paths:
           - path: /*
             backend:
-              serviceName: spacesService-service
+              serviceName: spacesservice-service
               servicePort: 80
 ---
 apiVersion: networking.gke.io/v1beta1
