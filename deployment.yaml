@@ -64,19 +64,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: signalingServer-app
+  name: signalingserver-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: signalingServer-app
+      app: signalingserver-app
   template:
     metadata:
       labels:
-        app: signalingServer-app
+        app: signalingserver-app
     spec:
       containers:
-        - name: signalingServer-app
+        - name: signalingserver-app
           image: gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG
           imagePullPolicy: Always
           ports:
@@ -85,19 +85,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spacesService-app
+  name: spacesservice-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spacesService-app
+      app: spacesservice-app
   template:
     metadata:
       labels:
-        app: spacesService-app
+        app: spacesservice-app
     spec:
       containers:
-        - name: spacesService-app
+        - name: spacesservice-app
           image: gcr.io/PROJECT_ID/SPACES_IMAGE:TAG
           imagePullPolicy: Always
           ports:

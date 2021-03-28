@@ -43,10 +43,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: signalingServer-service
+  name: signalingserver-service
 spec:
   selector:
-    app: signalingServer-app
+    app: signalingserver-app
   type: NodePort
   ports:
     - port: 80
@@ -57,10 +57,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: spacesService-service
+  name: spacesservice-service
 spec:
   selector:
-    app: spacesService-app
+    app: spacesservice-app
   type: NodePort
   ports:
     - port: 80
