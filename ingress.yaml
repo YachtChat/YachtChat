@@ -54,7 +54,7 @@ metadata:
 spec:
   domains:
     - ${FRONTEND_URL}
-#      ${LANDINGPAGE_URL}
-#      ${PRESENTATION_URL}
-      ${SIGNAL_URL}
-      ${SPACES_URL}
+#    - ${LANDINGPAGE_URL}
+#    - ${PRESENTATION_URL}
+    - ${SIGNAL_URL}
+    - ${SPACES_URL}
