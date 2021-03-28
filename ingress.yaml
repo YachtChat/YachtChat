@@ -12,7 +12,7 @@ spec:
         paths:
           - path: /*
             backend:
-              serviceName: frontend_service
+              serviceName: frontend-service
               servicePort: 80
 
 #    - host: ${LANDINGPAGE_URL}
@@ -20,7 +20,7 @@ spec:
 #        paths:
 #          - path: /*
 #            backend:
-#              serviceName: landingpage_service
+#              serviceName: landingpage-service
 #              servicePort: 80
 
 #    - host: ${PRESENTATION_URL}
@@ -28,7 +28,7 @@ spec:
 #        paths:
 #          - path: /*
 #            backend:
-#              serviceName: presentation_service
+#              serviceName: presentation-service
 #              servicePort: 80
 
     - host: ${SIGNAL_URL}
@@ -36,7 +36,7 @@ spec:
         paths:
           - path: /*
             backend:
-              serviceName: signalingServer_service
+              serviceName: signalingServer-service
               servicePort: 80
 
     - host: ${SPACES_URL}
@@ -44,7 +44,7 @@ spec:
         paths:
           - path: /*
             backend:
-              serviceName: spacesService_service
+              serviceName: spacesService-service
               servicePort: 80
 ---
 apiVersion: networking.gke.io/v1beta1

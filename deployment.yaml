@@ -17,7 +17,7 @@ spec:
           image: gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: FRONTEND_PORT
+            - containerPort: ${{FRONTEND_PORT}}
 ---
 #apiVersion: apps/v1
 #kind: Deployment
@@ -38,7 +38,7 @@ spec:
 #          image: gcr.io/PROJECT_ID/LANDINGPAGE_IMAGE:TAG
 #          imagePullPolicy: Always
 #          ports:
-#            - containerPort: LANDINGPAGE_PORT
+#            - containerPort: ${{LANDINGPAGE_PORT}}
 #---
 #apiVersion: apps/v1
 #kind: Deployment
@@ -59,7 +59,7 @@ spec:
 #          image: gcr.io/PROJECT_ID/PRESENTATION_IMAGE:TAG
 #          imagePullPolicy: Always
 #          ports:
- #           - containerPort: PRESENTAION_PORT
+ #           - containerPort: ${{PRESENTAION_PORT}}
 #---
 apiVersion: apps/v1
 kind: Deployment
@@ -80,7 +80,7 @@ spec:
           image: gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: SIGNAL_PORT
+            - containerPort: ${{SIGNAL_PORT}}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -101,4 +101,4 @@ spec:
           image: gcr.io/PROJECT_ID/SPACES_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: SPACES_PORT
+            - containerPort: ${{SPACES_PORT}}
