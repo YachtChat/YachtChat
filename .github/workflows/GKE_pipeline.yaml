@@ -66,7 +66,7 @@ jobs:
       - name: Build frontend image
         run: |-
           docker build \
-          --file ./frontend/Dockerfile
+          --file ./frontend/Dockerfile \
           --tag "gcr.io/$PROJECT_ID/$IFRONTEND_MAGE:$TAG" \
           --build-arg REACT_APP_SIGNAL_URL=${SIGNAL_URL} \
           --build-arg REACT_APP_SIGNAL_PORT=${SIGNAL_PORT} \
@@ -90,7 +90,7 @@ jobs:
       - name: Build signalingServer image
         run: |-
           docker build \
-          --file ./signalingServer/Dockerfile
+          --file ./signalingServer/Dockerfile \
           --tag "gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG" \
           --build-arg VIRTUAL_HOST=${SIGNAL_URL} \
           --build-arg VIRTUAL_PORT=${SIGNAL_PORT} \
@@ -99,7 +99,7 @@ jobs:
       - name: Build spacesService image
         run: |-
           docker build \
-          --file ./spaces-service/Dockerfile
+          --file ./spaces-service/Dockerfile \
           --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
           --build-arg VIRTUAL_PORT=${SPACES_PORT} \
           .
