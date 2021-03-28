@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend_app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend_app
+  template:
+    metadata:
+      labels:
+        app: frontend_app
+    spec:
+      containers:
+        - name: frontend_app
+          image: gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG
+          imagePullPolicy: Always
+          ports:
+            - containerPort: ${FRONTEND_PORT}
+---
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: landingpage_app
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: landingpage_app
+#  template:
+#    metadata:
+#      labels:
+#        app: landingpage_app
+#    spec:
+#      containers:
+#        - name: landingpage_app
+#          image: gcr.io/PROJECT_ID/LANDINGPAGE_IMAGE:TAG
+#          imagePullPolicy: Always
+#          ports:
+#            - containerPort: ${LANDINGPAGE_PORT}
+#---
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: presentation_app
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: presentation_app
+#  template:
+#    metadata:
+#      labels:
+#        app: presentation_app
+#    spec:
+#      containers:
+#        - name: presentation_app
+#          image: gcr.io/PROJECT_ID/PRESENTATION_IMAGE:TAG
+#          imagePullPolicy: Always
+#          ports:
+ #           - containerPort: ${PRESENTAION_PORT}
+#---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signalingServer_app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: signalingServer_app
+  template:
+    metadata:
+      labels:
+        app: signalingServer_app
+    spec:
+      containers:
+        - name: signalingServer_app
+          image: gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG
+          imagePullPolicy: Always
+          ports:
+            - containerPort: ${SIGNAL_PORT}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spacesService_app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spacesService_app
+  template:
+    metadata:
+      labels:
+        app: spacesService_app
+    spec:
+      containers:
+        - name: spacesService_app
+          image: gcr.io/PROJECT_ID/SPACES_IMAGE:TAG
+          imagePullPolicy: Always
+          ports:
+            - containerPort: ${SPACES_PORT}

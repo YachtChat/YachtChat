@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: alphabibber-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip
+    networking.gke.io/managed-certificates: alphabibber-certificate
+spec:
+  rules:
+    - host: ${FRONTEND_URL}
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: frontend_service
+              servicePort: 80
+
+#    - host: ${LANDINGPAGE_URL}
+#      http:
+#        paths:
+#          - path: /*
+#            backend:
+#              serviceName: landingpage_service
+#              servicePort: 80
+
+#    - host: ${PRESENTATION_URL}
+#      http:
+#        paths:
+#          - path: /*
+#            backend:
+#              serviceName: presentation_service
+#              servicePort: 80
+
+    - host: ${SIGNAL_URL}
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: signalingServer_service
+              servicePort: 80
+
+    - host: ${SPACES_URL}
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: spacesService_service
+              servicePort: 80
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: alphabibber-certificate
+spec:
+  domains:
+    - ${FRONTEND_URL}
+#      ${LANDINGPAGE_URL}
+#      ${PRESENTATION_URL}
+      ${SIGNAL_URL}
+      ${SPACES_URL}
