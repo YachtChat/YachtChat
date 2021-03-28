@@ -47,12 +47,12 @@ spec:
               serviceName: spacesservice-service
               servicePort: 80
 ---
-#apiVersion: networking.gke.io/v1beta1
-#kind: ManagedCertificate
-#metadata:
-#  name: alphabibber-certificate
-#spec:
-#  domains: [www.alphabibber.com,signal.alphabibber.com,spaces.alphabibber.com]
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: alphabibber-certificate
+spec:
+  domains: "www.alphabibber.com,signal.alphabibber.com,spaces.alphabibber.com"
 #  www.alphabibber.com
 #  - ${LANDINGPAGE_URL}
 #  - ${PRESENTATION_URL}
