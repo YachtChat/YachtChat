@@ -6,4 +6,4 @@ COPY ./spaces-service/${JAR_FILE} app.jar
 
 EXPOSE ${VIRTUAL_PORT}
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","/spaces-service/app.jar"]

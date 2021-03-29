@@ -8,4 +8,4 @@ RUN npm install
 ENV VIRTUAL_PORT=${VIRTUAL_PORT}
 EXPOSE ${VIRTUAL_PORT}
 
-CMD PORT=${VIRTUAL_PORT} node chatserver.js
+CMD PORT=${VIRTUAL_PORT} node ./signalingServer/chatserver.js
