@@ -61,10 +61,3 @@ spec:
 #  - ${PRESENTATION_URL}
 #  signal.alphabibber.com
 #  spaces.alphabibber.com
----
-apiVersion: compute.cnrm.cloud.google.com/v1beta1
-kind: ComputeAddress
-metadata:
-  name: alphabibber-ingress-ip
-spec:
-  location: europe-west3
