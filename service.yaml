@@ -39,28 +39,28 @@ spec:
 #      protocol: TCP
 #      name: http
 #---
-apiVersion: v1
-kind: Service
-metadata:
-  name: signalingserver-service
-spec:
-  selector:
-    app: signalingserver-app
-  type: NodePort
-  ports:
-    - port: 80
-      targetPort: 6503
-      protocol: TCP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: spacesservice-service
-spec:
-  selector:
-    app: spacesservice-app
-  type: NodePort
-  ports:
-    - port: 80
-      targetPort: 8081
-      protocol: TCP
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: signalingserver-service
+#spec:
+#  selector:
+#    app: signalingserver-app
+#  type: NodePort
+##  ports:
+#    - port: 80
+#      targetPort: 6503
+#      protocol: TCP
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: spacesservice-service
+#spec:
+#  selector:
+#    app: spacesservice-app
+#  type: NodePort
+#  ports:
+#    - port: 80
+#      targetPort: 8081
+#      protocol: TCP

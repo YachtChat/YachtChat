@@ -61,44 +61,44 @@ spec:
 #          ports:
  #           - containerPort: ${{PRESENTAION_PORT}}
 #---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: signalingserver-app
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: signalingserver-app
-  template:
-    metadata:
-      labels:
-        app: signalingserver-app
-    spec:
-      containers:
-        - name: signalingserver-app
-          image: gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 6503
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: spacesservice-app
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: spacesservice-app
-  template:
-    metadata:
-      labels:
-        app: spacesservice-app
-    spec:
-      containers:
-        - name: spacesservice-app
-          image: gcr.io/PROJECT_ID/SPACES_IMAGE:TAG
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8081
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: signalingserver-app
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: signalingserver-app
+#  template:
+#    metadata:
+#      labels:
+#        app: signalingserver-app
+#    spec:
+#      containers:
+#        - name: signalingserver-app
+#          image: gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG
+#          imagePullPolicy: Always
+#          ports:
+#            - containerPort: 6503
+#---
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: spacesservice-app
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: spacesservice-app
+#  template:
+#    metadata:
+#      labels:
+#        app: spacesservice-app
+#    spec:
+#      containers:
+#        - name: spacesservice-app
+#          image: gcr.io/PROJECT_ID/SPACES_IMAGE:TAG
+#          imagePullPolicy: Always
+#          ports:
+#            - containerPort: 8081

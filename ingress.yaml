@@ -4,7 +4,7 @@ metadata:
   name: alphabibber-ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip
-    networking.gke.io/managed-certificates: alphabibber-certificate3
+    networking.gke.io/managed-certificates: alphabibber-certificate4
     kubernetes.io/ingress.class: "gce"
 spec:
   rules:
@@ -32,31 +32,31 @@ spec:
 #              serviceName: presentation-service
 #              servicePort: 80
 
-    - host: signal.alphabibber.com
-      http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: signalingserver-service
-              servicePort: 80
-
-    - host: spaces.alphabibber.com
-      http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: spacesservice-service
-              servicePort: 80
+#    - host: signal.alphabibber.com
+#      http:
+#        paths:
+#          - path: /*
+#            backend:
+#              serviceName: signalingserver-service
+#              servicePort: 80
+#
+#    - host: spaces.alphabibber.com
+#      http:
+#        paths:
+#          - path: /*
+#            backend:
+#              serviceName: spacesservice-service
+#              servicePort: 80
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: alphabibber-certificate3
+  name: alphabibber-certificate4
 spec:
   domains: #"www.alphabibber.com,signal.alphabibber.com,spaces.alphabibber.com"
     - www.alphabibber.com
-    - signal.alphabibber.com
-    - spaces.alphabibber.com
+#    - signal.alphabibber.com
+#    - spaces.alphabibber.com
 #  - ${LANDINGPAGE_URL}
 #  - ${PRESENTATION_URL}
 #  signal.alphabibber.com
