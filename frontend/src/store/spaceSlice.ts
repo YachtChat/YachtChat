@@ -5,7 +5,7 @@ import axios from "axios";
 import {handleError} from "./statusSlice";
 
 const SPACES_URL:string | undefined = process.env.REACT_APP_SPACES_URL;
-SPACES_URL = "space.alphabibber.com"
+SPACES_URL = "space.alphabibber.com";
 
 interface SpaceState {
     spaces: Space[]

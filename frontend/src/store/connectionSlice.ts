@@ -9,7 +9,7 @@ import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUser
 const SOCKET_URL:string | undefined = process.env.REACT_APP_SIGNAL_URL;
 const SOCKET_PORT:string | undefined = process.env.REACT_APP_SIGNAL_PORT;
 SOCKET_URL = "signal.alphabibber.com";
-SOCKET_PORT = "6503"
+SOCKET_PORT = "6503";
 
 
 interface WebSocketState {
