@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: alphabibber-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip
+#    kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip
     networking.gke.io/managed-certificates: alphabibber-certificate5
     kubernetes.io/ingress.class: "gce"
 spec:
