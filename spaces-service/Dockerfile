@@ -1,9 +1,8 @@
 FROM maven:3.6.3-jdk-11
 
-ARG VIRTUAL_PORT
 ARG JAR_FILE=target/*.jar
-COPY ./spaces-service/${JAR_FILE} app.jar
+ADD ${JAR_FILE} app.jar
 
-EXPOSE ${VIRTUAL_PORT}
+EXPOSE 8081
 
-ENTRYPOINT ["java","-jar","/spaces-service/app.jar"]
+ENTRYPOINT ["exec", "java","-jar","/app.jar"]
