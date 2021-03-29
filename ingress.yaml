@@ -4,7 +4,7 @@ metadata:
   name: alphabibber-ingress
   annotations:
 #    kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip
-    networking.gke.io/managed-certificates: alphabibber-certificate
+    networking.gke.io/managed-certificates: alphabibber-certificate2
 spec:
   rules:
     - host: www.alphabibber.com
@@ -50,7 +50,7 @@ spec:
 apiVersion: networking.gke.io/v1beta1
 kind: ManagedCertificate
 metadata:
-  name: alphabibber-certificate
+  name: alphabibber-certificate2
 spec:
   domains: #"www.alphabibber.com,signal.alphabibber.com,spaces.alphabibber.com"
     - www.alphabibber.com
