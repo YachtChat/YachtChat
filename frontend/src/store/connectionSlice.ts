@@ -6,10 +6,8 @@ import {handleError, handleSuccess} from "./statusSlice";
 import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
 
 // start it like this `REACT_APP_SOCKET_URL=ws://localhost:6503` yarn run start
-const SOCKET_URL:string | undefined = process.env.REACT_APP_SIGNAL_URL;
-const SOCKET_PORT:string | undefined = process.env.REACT_APP_SIGNAL_PORT;
-SOCKET_URL = "signal.alphabibber.com";
-SOCKET_PORT = "6503";
+const SOCKET_URL:string =  "signal.alphabibber.com";//| undefined = process.env.REACT_APP_SIGNAL_URL;
+const SOCKET_PORT:string = "6503";//| undefined = process.env.REACT_APP_SIGNAL_PORT;
 
 
 interface WebSocketState {
