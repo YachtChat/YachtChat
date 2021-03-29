@@ -86,23 +86,23 @@ jobs:
 #          --file ./presentation/Dockerfile
 #          --tag "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG" \
 #          .
-      # Build the Docker image
-#      - name: Build signalingServer image
-#        run: |-
-#          docker build \
-#          --file ./signalingServer/Dockerfile \
-#          --tag "gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG" \
-#          --build-arg VIRTUAL_HOST=${SIGNAL_URL} \
-#          --build-arg VIRTUAL_PORT=${SIGNAL_PORT} \
-#          .
-      # Build the Docker image
-#      - name: Build spacesService image
-#        run: |-
-#          docker build \
-#          --file ./spaces-service/Dockerfile \
-#          --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
-#          --build-arg VIRTUAL_PORT=${SPACES_PORT} \
-#          .
+#       Build the Docker image
+      - name: Build signalingServer image
+        run: |-
+          docker build \
+          --file ./signalingServer/Dockerfile \
+          --tag "gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG" \
+          --build-arg VIRTUAL_HOST=${SIGNAL_URL} \
+          --build-arg VIRTUAL_PORT=${SIGNAL_PORT} \
+          .
+#       Build the Docker image
+      - name: Build spacesService image
+        run: |-
+          docker build \
+          --file ./spaces-service/Dockerfile \
+          --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
+          --build-arg VIRTUAL_PORT=${SPACES_PORT} \
+          .
 
       - name: Publish frontend Docker Image to GCR
         run: |-
@@ -113,12 +113,12 @@ jobs:
 #      - name: Publish presentation Docker Image to GCR
 #        run: |-
 #          docker push "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG"
-#      - name: Publish signalingServer Docker Image to GCR
-#        run: |-
-#          docker push "gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG"
-#      - name: Publish spacesServer Docker Image to GCR
-#        run: |-
-#          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
+      - name: Publish signalingServer Docker Image to GCR
+        run: |-
+          docker push "gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG"
+      - name: Publish spacesServer Docker Image to GCR
+        run: |-
+          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
 
       - name: Set up Kustomize
         run: |-
@@ -128,8 +128,12 @@ jobs:
       - name: Deploy frontend Image to GKE cluster
         run: |-
           ./kustomize edit set image gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG
+          ./kustomize edit set image gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG
+          ./kustomize edit set gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG
           ./kustomize build . | kubectl apply -f -
           kubectl rollout status deployment/$FRONTEND_DEPLOYMENT_NAME
+          kubectl rollout status deployment/$SIGNALING_DEPLOYMENT_NAME
+          kubectl rollout status deployment/$SPACES_DEPLOYMENT_NAME
           kubectl get services -o wide
 
 #      - name: Deploy landingpage Image to GKE cluster
