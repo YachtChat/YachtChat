@@ -9,7 +9,7 @@ on:
 env:
   PROJECT_ID: ${{secrets.GKE_PROJECT}}
   GKE_CLUSTER: alphabibber-gke
-  GKE_ZONE: europe-west3
+  GKE_ZONE: europe-west3-a
   FRONTEND_DEPLOYMENT_NAME: frontend-app
   LANDINGPAGE_DEPLOYMENT_NAME: landingpage-app
   PRESENTATION_DEPLOYMENT_NAME: presentation-app
