@@ -47,7 +47,7 @@ spec:
   selector:
     app: signalingserver-app
   type: NodePort
-#  ports:
+  ports:
     - port: 80
       targetPort: 6503
       protocol: TCP
