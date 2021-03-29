@@ -10,7 +10,6 @@ spec:
     - port: 80
       targetPort: 80
       protocol: TCP
-      name: http
 ---
 #apiVersion: v1
 #kind: Service
@@ -52,7 +51,6 @@ spec:
     - port: 80
       targetPort: 6503
       protocol: TCP
-      name: http
 ---
 apiVersion: v1
 kind: Service
@@ -66,4 +64,3 @@ spec:
     - port: 80
       targetPort: 8081
       protocol: TCP
-      name: http
