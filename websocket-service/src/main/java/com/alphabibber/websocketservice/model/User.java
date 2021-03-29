@@ -7,12 +7,13 @@ import lombok.Setter;
 import javax.websocket.Session;
 
 public class User {
-    public User(Session session){
+    public User(Session session, String id){
         this.session = session;
         this.position = new Position(100, 100, 3);
+        this.id = id;
     }
     @Getter @Setter @Expose(serialize = false)
     private Session session;
-    @Getter @Setter private String id;
-    @Getter @Setter private Position position;
+    @Getter @Setter @Expose private String id;
+    @Getter @Setter @Expose  private Position position;
 }
