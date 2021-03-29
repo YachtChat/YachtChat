@@ -94,7 +94,7 @@ jobs:
 #          --tag "gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG" \
 #          --build-arg VIRTUAL_HOST=${SIGNAL_URL} \
 #          --build-arg VIRTUAL_PORT=${SIGNAL_PORT} \
-          .
+#          .
       # Build the Docker image
 #      - name: Build spacesService image
 #        run: |-
@@ -102,7 +102,7 @@ jobs:
 #          --file ./spaces-service/Dockerfile \
 #          --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
 #          --build-arg VIRTUAL_PORT=${SPACES_PORT} \
-          .
+#          .
 
       - name: Publish frontend Docker Image to GCR
         run: |-
