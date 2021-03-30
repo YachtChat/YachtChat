@@ -41,7 +41,7 @@ spec:
               serviceName: signalingserver-service
               servicePort: 80
 
-    - host: spaces.alphabibber.com
+    - host: space.alphabibber.com
       http:
         paths:
           - path: /*
@@ -57,5 +57,5 @@ spec:
   domains:
     - www.alphabibber.com
     - signal.alphabibber.com
-    - spaces.alphabibber.com
+    - space.alphabibber.com
 
