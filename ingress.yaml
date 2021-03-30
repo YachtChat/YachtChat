@@ -20,7 +20,7 @@ spec:
             backend:
               serviceName: signalingserver-service
               servicePort: 443
-          - path: /spaces
+          - path: /spaces/
             backend:
               serviceName: spacesservice-service
               servicePort: 443
