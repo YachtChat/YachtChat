@@ -12,10 +12,18 @@ spec:
     - host: www.alphabibber.com
       http:
         paths:
-          - path: /*
+          - path: /
             backend:
               serviceName: frontend-service
               servicePort: 443
+          - path: /signal/
+              backend:
+                serviceName: signalingserver-service
+                servicePort: 443
+          - path: /spaces
+              backend:
+                serviceName: spacesservice-service
+                servicePort: 443
 
 #    - host: ${LANDINGPAGE_URL}
 #      http:
@@ -33,21 +41,21 @@ spec:
 #              serviceName: presentation-service
 #              servicePort: 80
 
-    - host: signal.alphabibber.com
-      http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: signalingserver-service
-              servicePort: 443
-
-    - host: space.alphabibber.com
-      http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: spacesservice-service
-              servicePort: 443
+#    - host: signal.alphabibber.com
+#      http:
+#        paths:
+#          - path: /*
+#            backend:
+#              serviceName: signalingserver-service
+#              servicePort: 443
+#
+#    - host: space.alphabibber.com
+#      http:
+#        paths:
+#          - path: /*
+#            backend:
+#              serviceName: spacesservice-service
+#              servicePort: 443
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
@@ -56,5 +64,5 @@ metadata:
 spec:
   domains:
     - www.alphabibber.com
-    - signal.alphabibber.com
-    - space.alphabibber.com
+#    - signal.alphabibber.com
+#    - space.alphabibber.com
