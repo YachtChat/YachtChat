@@ -157,16 +157,3 @@ jobs:
 #          kubectl rollout status deployment/$PRESENTATION_DEPLOYMENT_NAME
 #          kubectl get services -o wide
 
-#      - name: Deploy signalingServer Image to GKE cluster
-#        run: |-
-#          ./kustomize edit set image gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG
-#          ./kustomize build . | kubectl apply -f -
-#          kubectl rollout status deployment/$SIGNALING_DEPLOYMENT_NAME
-#          kubectl get services -o wide
-
-#      - name: Deploy spacesService Image to GKE cluster
-#        run: |-
-#          ./kustomize edit set gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG
-#          ./kustomize build . | kubectl apply -f -
-#          kubectl rollout status deployment/$SPACES_DEPLOYMENT_NAME
-#          kubectl get services -o wide
