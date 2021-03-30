@@ -17,13 +17,13 @@ spec:
               serviceName: frontend-service
               servicePort: 443
           - path: /signal/
-              backend:
-                serviceName: signalingserver-service
-                servicePort: 443
+            backend:
+              serviceName: signalingserver-service
+              servicePort: 443
           - path: /spaces
-              backend:
-                serviceName: spacesservice-service
-                servicePort: 443
+            backend:
+              serviceName: spacesservice-service
+              servicePort: 443
 
 #    - host: ${LANDINGPAGE_URL}
 #      http:
