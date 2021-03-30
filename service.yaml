@@ -43,6 +43,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: signalingserver-service
+  annotations:
+    cloud.google.com/backend-config: '{"ports": {"6503":"service-backend-config"}}'
 spec:
   selector:
     app: signalingserver-app
@@ -64,3 +66,10 @@ spec:
     - port: 80
       targetPort: 8081
       protocol: TCP
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: service-backend-config
+spec:
+  timeoutSec: 3600
