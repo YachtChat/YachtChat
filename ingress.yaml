@@ -11,8 +11,7 @@ spec:
     - host: www.alphabibber.com
       http:
         paths:
-          - path: /*
-            backend:
+          - backend:
               serviceName: frontend-service
               servicePort: 80
 
@@ -35,16 +34,14 @@ spec:
     - host: signal.alphabibber.com
       http:
         paths:
-          - path: /*
-            backend:
+          - backend:
               serviceName: signalingserver-service
               servicePort: 80
 
     - host: space.alphabibber.com
       http:
         paths:
-          - path: /*
-            backend:
+          - backend:
               serviceName: spacesservice-service
               servicePort: 80
 ---
