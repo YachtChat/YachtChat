@@ -13,7 +13,7 @@ spec:
         paths:
           - backend:
               serviceName: frontend-service
-              servicePort: 80
+              servicePort: 443
 
 #    - host: ${LANDINGPAGE_URL}
 #      http:
@@ -36,14 +36,14 @@ spec:
         paths:
           - backend:
               serviceName: signalingserver-service
-              servicePort: 80
+              servicePort: 443
 
     - host: space.alphabibber.com
       http:
         paths:
           - backend:
               serviceName: spacesservice-service
-              servicePort: 80
+              servicePort: 443
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
