@@ -9,7 +9,7 @@ metadata:
     kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
-    - host: www.alphabibber.com
+    - host: alphabibber.com
       http:
         paths:
           - path: /
