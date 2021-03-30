@@ -56,13 +56,13 @@ spec:
 #            backend:
 #              serviceName: spacesservice-service
 #              servicePort: 443
----
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
-  name: alphabibber-certificate5
-spec:
-  domains:
-    - alphabibber.com
+#---
+#apiVersion: networking.gke.io/v1
+#kind: ManagedCertificate
+#metadata:
+#  name: alphabibber-certificate5
+#spec:
+#  domains:
+#    - alphabibber.com
 #    - signal.alphabibber.com
 #    - space.alphabibber.com
