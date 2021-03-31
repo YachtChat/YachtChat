@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class LoginHandler {
+    private final String URL = System.getenv("SPACES_URL");
     private final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .build();
@@ -28,18 +29,17 @@ public class LoginHandler {
 
         // Check if the user is allowed to enter the room
         // TODO change to https
-        // TODO get this from env variables
-        String url = "http://localhost:8081/spaces/" + roomId + "/canUserJoin?userId=" + secret;
+        String requestUrl = URL + "/spaces/" + roomId + "/canUserJoin?userId=" + secret;
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(url))
+                .uri(URI.create(requestUrl))
                 .build();
 
         HttpResponse<String> response;
         try {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            log.error("Spaces server did not answer on {}", url);
+            log.error("Spaces server did not answer on {}", requestUrl);
 //          Todo Howto Error Handling discuss with Chris
             log.error(String.valueOf(e.getStackTrace()));
             return;

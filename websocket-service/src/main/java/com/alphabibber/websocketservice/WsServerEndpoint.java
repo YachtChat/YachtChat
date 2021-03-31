@@ -18,7 +18,6 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-// TODO take a look at code analysis
 
 @Component
 @ServerEndpoint(value = "/room/{roomID}", encoders = { LoginAnswerEncoder.class, NewUserAnswerEncoder.class,
@@ -56,25 +55,37 @@ public class WsServerEndpoint {
     public void openMessage(@PathParam("roomID") String roomId, Session session, String message)  {
         // TODO should we here catch the exception that are possibly thrown
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
-
+        Map<String, User> room = roomMap.get(roomId);
         String type = jsonObject.get("type").getAsString();
 
         switch (type){
             case "login":
                 String secret = jsonObject.get("user_secret").getAsString();
-                loginHandler.handleLogin(roomMap.get(roomId), roomId, secret, session);
+                loginHandler.handleLogin(room, roomId, secret, session);
                 break;
             case "position":
+                if (! room.containsKey(session.getId())){
+                    log.warn("User {} tried to update his Position while not being logged in", session.getId());
+                    return;
+                }
                 String position = jsonObject.get("position").getAsString();
                 positionChangeHandler.handlePositinChange(roomMap.get(roomId), roomId, session, position);
                 break;
             case "signal":
+                if (! room.containsKey(session.getId())){
+                    log.warn("User {} tried to signal while not being logged in", session.getId());
+                    return;
+                }
                 String content = jsonObject.get("content").getAsString();
                 String target_id = jsonObject.get("target_id").getAsString();
                 signalHandler.handleSignal(roomMap.get(roomId), roomId, session, content, target_id);
                 log.info("User {} send message to user {} in room {}", session.getId(), target_id, roomId);
                 break;
             case "leave":
+                if (! room.containsKey(session.getId())){
+                    log.warn("User {} tried to leave while not being logged in", session.getId());
+                    return;
+                }
                 leaveHandler.handleLeave(roomMap.get(roomId), session);
                 log.info("User {} has left the room {}", session.getId(), roomId);
                 break;
