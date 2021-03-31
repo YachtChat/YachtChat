@@ -4,7 +4,7 @@ import {AppThunk} from "./store";
 import axios from "axios";
 import {handleError} from "./statusSlice";
 
-const SPACES_URL:string = "spaces.chat.alphabibber.com";//| undefined = process.env.REACT_APP_SPACES_URL;
+const SPACES_URL:string = "spaces.gke.alphabibber.com";//| undefined = process.env.REACT_APP_SPACES_URL;
 
 interface SpaceState {
     spaces: Space[]
