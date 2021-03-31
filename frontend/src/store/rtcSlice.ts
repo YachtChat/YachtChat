@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {send} from "./connectionSlice";
 import {rtcConfiguration} from "./config";
@@ -8,47 +8,108 @@ import {handleError} from "./statusSlice";
 interface RTCState {
     muted: boolean
     video: boolean
+    cameras: string[]
+    microphones: string[]
+    speakers: string[]
+    selected: {
+        camera?: string,
+        speaker?: string,
+        microphone?: string
+    }
+    cameraChangeOngoing: boolean
 }
 
 const initialState: RTCState = {
     muted: false,
-    video: true
+    video: true,
+    cameras: [],
+    microphones: [],
+    speakers: [],
+    selected: {},
+    cameraChangeOngoing: false
 };
 
 let rtcConnections: { [key: string]: RTCPeerConnection } = {};
 let rtpSender: { [key: string]: RTCRtpSender[] } = {};
 let streams: { [key: string]: MediaStream } = {};
+let mediaDevices: { [key: string]: MediaDeviceInfo } = {};
 
 const offerOptions = {
     offerToReceiveVideo: true,
     offerToReceiveAudio: true
 };
 
-const mediaConstrains = {
-    video: {width: 320, height: 320, facingMode: "user",},
-    audio: true
-}
-
 export const rtcSlice = createSlice({
     name: 'rtc',
     initialState,
     reducers: {
+        initAllMediaDevices: (state, action: PayloadAction<any>) => {
+            state.cameras = action.payload.cameras
+            state.microphones = action.payload.microphones
+            state.speakers = action.payload.speakers
+        },
         toggleMute: (state) => {
             state.muted = !state.muted
         },
         toggleVideo: (state) => {
             state.video = !state.video
-        }
+        },
+        setCameraChangeOngoing: (state, action: PayloadAction<boolean>) => {
+            state.cameraChangeOngoing = action.payload
+        },
+        setCamera: (state, action: PayloadAction<string>) => {
+            state.selected.camera = action.payload
+        },
+        setMicrophone: (state, action: PayloadAction<string>) => {
+            state.selected.microphone = action.payload
+
+        },
+        setSpeaker: (state, action: PayloadAction<string>) => {
+            state.selected.speaker = action.payload
+
+        },
     },
 });
 
 export const {
+    initAllMediaDevices,
     toggleVideo,
-    toggleMute
+    toggleMute,
+    setCamera,
+    setMicrophone,
+    setSpeaker,
+    setCameraChangeOngoing
 } = rtcSlice.actions;
 
+export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
+
+    navigator.mediaDevices.enumerateDevices().then(md => {
+        const cameras: string[] = []
+        const microphones: string[] = []
+        const speakers: string[] = []
+        md.forEach(d => {
+            if (d.kind === "audioinput") {
+                microphones.push(d.deviceId)
+                mediaDevices[d.deviceId] = d
+            } else if (d.kind === "audiooutput") {
+                speakers.push(d.deviceId)
+                mediaDevices[d.deviceId] = d
+            } else if (d.kind === "videoinput") {
+                cameras.push(d.deviceId)
+                mediaDevices[d.deviceId] = d
+            }
+        })
+        dispatch(initAllMediaDevices({
+            cameras,
+            microphones,
+            speakers
+        }))
+    })
+
+}
+
 export const requestUserMediaAndJoin = (): AppThunk => (dispatch, getState) => {
-    navigator.mediaDevices.getUserMedia(mediaConstrains).then((e) => {
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
         streams[localClient] = e
         dispatch(gotRemoteStream(localClient))
@@ -238,6 +299,76 @@ export const destroySession = () => {
     rtcConnections = {}
 }
 
+export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {
+    dispatch(setCameraChangeOngoing(true))
+    dispatch(setCamera(camera))
+    dispatch(handleInputChange())
+}
+export const changeAudioInput = (microphone: string): AppThunk => (dispatch, getState) => {
+    dispatch(setMicrophone(microphone))
+    dispatch(handleInputChange())
+
+}
+
+export const handleInputChange = (): AppThunk => (dispatch, getState) => {
+    const localClient = getUserID(getState())
+    const oldStream = streams[localClient]
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
+        streams[localClient] = e
+        dispatch(setCameraChangeOngoing(false))
+        streams[localClient].getTracks().forEach(s => {
+            getUsers(getState()).forEach(u => {
+                rtpSender[u.id].forEach(rs => {
+                    if (rs.track && rs.track.kind === s.kind)
+                        rs.replaceTrack(s.clone())
+                })
+            })
+        })
+    })
+
+    oldStream.getTracks().forEach(t => t.stop())
+}
+
+export const changeAudioOutput = (speaker: string): AppThunk => (dispatch, getState) => {
+    dispatch(setSpeaker(speaker))
+}
+
 export const getRtcConnection = (state: RootState, id: number) => rtcConnections[id];
+export const getMediaConstrains = (state: RootState) => {
+    return {
+        video: {
+            width: 320,
+            height: 320,
+            facingMode: "user",
+            deviceId: getCamera(state)
+        },
+        audio: {
+            deviceId: getMicrophone(state),
+            echoCancellation: true
+        }
+    }
+}
+export const getMicrophone = (state: RootState): string => {
+    const sel = state.rtc.selected.microphone
+    if (sel && state.rtc.microphones.find(c => c === sel))
+        return sel
+    if (state.rtc.cameras[0])
+        return state.rtc.microphones[0]
+    return ""
+}
+export const getCamera = (state: RootState): string => {
+    const sel = state.rtc.selected.camera
+    if (sel && state.rtc.cameras.find(c => c === sel))
+        return sel
+    if (state.rtc.cameras[0])
+        return state.rtc.cameras[0]
+    return ""
+}
+export const getSpeaker = (state: RootState): string => {
+    // get selected speaker if available
+    // otherwise get first available
+    return (state.rtc.speakers[0]) ? state.rtc.speakers[0] : ""
+}
 export const getStream = (id: number) => streams[id]
+export const getMediaDevices = () => mediaDevices
 export default rtcSlice.reducer;
