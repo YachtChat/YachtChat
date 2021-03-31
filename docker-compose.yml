@@ -62,6 +62,19 @@ services:
       - VIRTUAL_PORT=${SIGNAL_PORT}
     network_mode: bridge
 
+  websocket-service:
+    build:
+      context: ./websocket-service
+      dockerfile: ./Dockerfile
+      args:
+        - SPACES_URL=${SPACES_URL}
+        - VIRTUAL_PORT=${WEBSOCKET_PORT}
+    environment:
+      - LETSENCRYPT_HOST=${WEBSOCKET_URL}
+      - VIRTUAL_PORT=${WEBSOCKET_PORT}
+      - VIRTUAL_HOST=${WEBSOCKET_URL}
+    network_mode: bridge
+
   spaces-service:
     build:
       context: ./spaces-service
