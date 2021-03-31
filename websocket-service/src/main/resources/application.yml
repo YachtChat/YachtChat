@@ -1,0 +1,2 @@
+server:
+  port: "${VIRTUAL_PORT:9999}"
