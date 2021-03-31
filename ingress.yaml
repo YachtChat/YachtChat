@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: alphabibber-ingress
@@ -56,13 +56,16 @@ spec:
 #            backend:
 #              serviceName: spacesservice-service
 #              servicePort: 443
-#---
-#apiVersion: networking.gke.io/v1
-#kind: ManagedCertificate
-#metadata:
-#  name: alphabibber-certificate5
-#spec:
-#  domains:
-#    - alphabibber.com
-#    - signal.alphabibber.com
-#    - space.alphabibber.com
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: alphabibber-certificate5
+spec:
+  domains:
+    - alphabibber.com
+    - signal.alphabibber.com
+    - space.alphabibber.com
