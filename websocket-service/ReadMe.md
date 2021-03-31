@@ -2,7 +2,7 @@
 
 ### Run the Websocket Server
 The server expects some env variables that should look like this:
-`SPACES_URL=ws://localhost:8080/`
+`SPACES_URL=localhost:8081`
 `VIRTUAL_PORT=8085`
 
 1. First step is to build the jar file (run the following command in the root of the Socket Microservice):

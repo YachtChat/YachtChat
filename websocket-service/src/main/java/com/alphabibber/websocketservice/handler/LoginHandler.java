@@ -29,7 +29,7 @@ public class LoginHandler {
 
         // Check if the user is allowed to enter the room
         // TODO change to https
-        String requestUrl = URL + "/spaces/" + roomId + "/canUserJoin?userId=" + secret;
+        String requestUrl = "https://" + URL + "/spaces/" + roomId + "/canUserJoin?userId=" + secret;
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(requestUrl))
@@ -46,6 +46,9 @@ public class LoginHandler {
         }
         JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
         boolean isAllowed = jsonObject.get("valid").getAsBoolean();
+
+        // TODO delete this
+        isAllowed = true;
 
         if (!isAllowed) {
             // if the user is not allowed to enter the room the websocket connection will be closed
