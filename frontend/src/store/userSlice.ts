@@ -111,12 +111,12 @@ export const handlePositionUpdate = (object: { id: number, position: UserCoordin
         )
         if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
             console.log(user.id, "in Range - sending audio to", u.id)
-            dispatch(sendAudio(u.id))
             dispatch(setUser({...u, inProximity: true}))
+            dispatch(sendAudio(u.id))
         } else if (dist > (currentRange + userProportion / 2) && (!!u.inProximity || u.inProximity === undefined)) {
             console.log(user.id, "not in Range - dont send audio", u.id)
-            dispatch(unsendAudio(u.id))
             dispatch(setUser({...u, inProximity: false}))
+            dispatch(unsendAudio(u.id))
         }
     })
 }

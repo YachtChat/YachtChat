@@ -25,7 +25,7 @@ const offerOptions = {
 };
 
 const mediaConstrains = {
-    video: {width: 320, height: 320, facingMode: "user"},
+    video: {width: 320, height: 320, facingMode: "user",},
     audio: true
 }
 
@@ -76,8 +76,11 @@ export const mute = (): AppThunk => (dispatch, getState) => {
         rtpSender[u.id].forEach(rtp => {
             if (rtp.track && rtp.track.kind === 'audio') {
                 rtp.track.enabled = (!getState().rtc.muted && !!u.inProximity)
+
+                console.log(getUserID(getState()), (!getState().rtc.muted && !!u.inProximity), u.id)
             }
         })
+        console.log(rtpSender)
     })
 }
 
@@ -104,7 +107,9 @@ export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
             console.log("Enabled audio")
             rtp.track.enabled = true
         }
+        //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
     })
+    console.log(rtpSender)
 }
 
 export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
@@ -114,7 +119,9 @@ export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
             console.log("Disabled audio")
             rtp.track.enabled = false
         }
+        console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
     })
+    console.log(rtpSender)
 }
 
 export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk => (dispatch, getState) => {
@@ -129,7 +136,7 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
                 rtcConnections[userId] = new RTCPeerConnection(rtcConfiguration);
                 rtcConnections[userId].onicecandidate = (event) => {
                     if (event.candidate) {
-                        console.log(localClient, ' Send candidate to ', userId);
+                        console.log(localClient, 'send candidate to ', userId);
                         dispatch(send({
                             type: "signaling",
                             target: userId,
@@ -155,7 +162,7 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
                 }
 
                 streams[localClient].getTracks().forEach((track, idx) => {
-                    rtpSender[userId][idx] = rtcConnections[userId].addTrack(track, streams[localClient])
+                    rtpSender[userId][idx] = rtcConnections[userId].addTrack(track.clone(), streams[localClient])
                 })
             }
         });
