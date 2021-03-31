@@ -96,7 +96,7 @@ export class UserComponent extends Component<Props> {
 
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
-                <div id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
+                <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
                     {!!this.props.user.userStream &&
                     <video autoPlay muted={this.props.isActiveUser} ref={this.myRef}/>
                     }

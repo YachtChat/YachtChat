@@ -44,11 +44,16 @@ export const {connect, disconnect, joined, leftRoom} = webSocketSlice.actions;
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
     //socket = new WebSocket('wss://call.tristanratz.com:9090')
-    if(!SOCKET_URL || !SOCKET_PORT){
+    if (!SOCKET_URL) {
         dispatch(handleError("No websocket url defined for this environment"));
         return;
     }
-    socket = new WebSocket("wss://" + SOCKET_URL, 'json');
+
+    if (!SOCKET_PORT)
+        socket = new WebSocket(SOCKET_URL, 'json');
+    else
+        socket = new WebSocket(SOCKET_URL + ":" + SOCKET_PORT, 'json');
+
 
     socket.onopen = () => {
         console.log("Connected to the signaling server");

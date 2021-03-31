@@ -26,7 +26,7 @@ export const spaceSlice = createSlice({
 
 export const requestSpaces = ():AppThunk => dispatch =>  {
     if(!SPACES_URL){
-        dispatch(handleError("No websocket url defined for this environment"));
+        dispatch(handleError("No spaces url defined for this environment"));
         return;
     }
     axios.get("https://" + SPACES_URL + "/spaces/").then(response => {
