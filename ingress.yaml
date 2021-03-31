@@ -4,12 +4,11 @@ metadata:
   name: alphabibber-ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip2
-    networking.gke.io/managed-certificates: alphabibber-certificate5
+    networking.gke.io/managed-certificates: alphabibber-certificate
     kubernetes.io/ingress.class: "gce"
-#    kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
-    - host: alphabibber.com
+    - host: chat.alphabibber.com
       http:
         paths:
           - path: /
@@ -63,6 +62,6 @@ metadata:
   name: alphabibber-certificate5
 spec:
   domains:
-    - alphabibber.com
+    - chat.alphabibber.com
 #    - signal.alphabibber.com
 #    - space.alphabibber.com
