@@ -6,13 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.websocket.EncodeException;
-import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.util.Map;
 
 public class SignalHandler {
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void handleSignal(Map<String, User> room, String roomId, Session session, String content, String target_id){
         SignalAnswer answer = new SignalAnswer(content, session.getId());

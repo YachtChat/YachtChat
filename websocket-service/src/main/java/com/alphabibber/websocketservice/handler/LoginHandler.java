@@ -22,9 +22,9 @@ public class LoginHandler {
     private final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .build();
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public void handleLogin(Map room, String roomId, String secret, Session session) {
+    public void handleLogin(Map<String, User> room, String roomId, String secret, Session session) {
 
         // Check if the user is allowed to enter the room
         // TODO change to https
@@ -64,7 +64,7 @@ public class LoginHandler {
         room.put(session.getId(), new User(session, session.getId()));
 
         // tell the user that he was added to the room
-        LoginAnswer loginAnswer = new LoginAnswer(true, new ArrayList<User>(room.values()), session.getId());
+        LoginAnswer loginAnswer = new LoginAnswer(true, new ArrayList<>(room.values()), session.getId());
         try {
             session.getBasicRemote().sendObject(loginAnswer);
         } catch (EncodeException | IOException e) {

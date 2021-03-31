@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class PositionChangeHandler {
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void handlePositinChange(Map<String, User> room, String roomId, Session session, String position){
         Gson gson = new Gson();

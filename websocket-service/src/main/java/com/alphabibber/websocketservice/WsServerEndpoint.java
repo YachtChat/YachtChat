@@ -24,28 +24,28 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint(value = "/room/{roomID}", encoders = { LoginAnswerEncoder.class, NewUserAnswerEncoder.class,
         PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class})
 public class WsServerEndpoint {
-    private Logger log = LoggerFactory.getLogger(this.getClass());
-    private LoginHandler loginHandler = new LoginHandler();
-    private PositionChangeHandler positionChangeHandler = new PositionChangeHandler();
-    private LeaveHandler leaveHandler = new LeaveHandler();
-    private SignalHandler signalHandler = new SignalHandler();
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final LoginHandler loginHandler = new LoginHandler();
+    private final PositionChangeHandler positionChangeHandler = new PositionChangeHandler();
+    private final LeaveHandler leaveHandler = new LeaveHandler();
+    private final SignalHandler signalHandler = new SignalHandler();
 
 
     // Have a look at the ConcurrentHashMap here:
     // https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html
     // https://www.baeldung.com/java-concurrent-map
     // Keep in mind the load factor and the concurrency level
-    private static Map<String, Map<String, User>> roomMap = new ConcurrentHashMap<>(8);
+    private static final Map<String, Map<String, User>> roomMap = new ConcurrentHashMap<>(8);
 
 
     @OnOpen
     public void openOpen(@PathParam("roomID") String roomId, Session session) {
         // Get the room form the roomMap
-        Map room = roomMap.get(roomId);
+        Map<String, User> room = roomMap.get(roomId);
         // Check if the room exist if not create a new set for it
         if (room == null){
             // create new Map for room
-            room = new ConcurrentHashMap<>(8);
+            room = new ConcurrentHashMap(8);
             roomMap.put(roomId, room);
             log.info("Room {} newly opend", roomId);
         }

@@ -1,10 +1,8 @@
 package com.alphabibber.websocketservice.encoder;
 
-import com.alphabibber.websocketservice.handler.SignalHandler;
 import com.alphabibber.websocketservice.model.answer.SignalAnswer;
 import com.google.gson.Gson;
 
-import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
