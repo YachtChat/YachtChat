@@ -23,44 +23,34 @@ export class Settings extends Component<Props> {
             <Dialog open={this.props.open} onClose={this.props.onClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Settings</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        To rename yourself please insert your new username.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="New Username"
-                        type="text"
-                        fullWidth
-                    />
-                    <DialogContentText>
-                        Change Video device
-                    </DialogContentText>
-                    <div className="dropdown">
-                        {/*<label htmlFor="spaces">Choose a Space:</label>*/}
-                        <select id="spaces" name="spaces">
-                            <option value="video one">Video one</option>
-                            <option value="video two">Video two</option>
-                        </select>
+                    <div className={"settings-item"}>
+                        <DialogContentText className={"dialog-content-text"}>
+                            Change Video device (not working at the moment)
+                        </DialogContentText>
+                        <div className="dropdown">
+                            {/*<label htmlFor="spaces">Choose a Space:</label>*/}
+                            <select id="videodevices" name="videodevices">
+                                <option value="video one">Video one</option>
+                                <option value="video two">Video two</option>
+                            </select>
+                        </div>
                     </div>
-                    <DialogContentText>
-                        Change Audio device
-                    </DialogContentText>
-                    <div className="dropdown">
-                        {/*<label htmlFor="spaces">Choose a Space:</label>*/}
-                        <select id="spaces" name="spaces">
-                            <option value="audio one">Audio one</option>
-                            <option value="audio two">Audio two</option>
-                        </select>
+                    <div className={"settings-item"}>
+                        <DialogContentText>
+                            Change Audio device (not working at the moment)
+                        </DialogContentText>
+                        <div className="dropdown">
+                            {/*<label htmlFor="spaces">Choose a Space:</label>*/}
+                            <select id="audiodevices" name="audiodevices">
+                                <option value="audio one">Audio one</option>
+                                <option value="audio two">Audio two</option>
+                            </select>
+                        </div>
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.props.onClose} color="primary">
+                    <Button onClick={this.props.onClose} id={"btn-settings"}>
                         Cancel
-                    </Button>
-                    <Button color="primary">
-                        Rename
                     </Button>
                 </DialogActions>
             </Dialog>
