@@ -20,13 +20,14 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: connect via ssh and deploy frontend, signaling-server, spaces-server and presentation-page
+      - name: connect via ssh and deploy services
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
             cd /home/git_environment/NotZoom/
             sudo git pull
             sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
+            sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
             sudo docker-compose down nginx-proxyed-container signaling_server spaces-service nginx-presentation websocket-service
             sudo docker-compose build nginx-proxyed-container signaling_server spaces-service nginx-presentation websocket-service
             sudo docker-compose up --no-deps -d nginx-proxyed-container signaling_server spaces-service nginx-presentation websocket-service
