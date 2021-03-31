@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class LeaveHandler {
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void handleLeave(Map<String, User> room, Session session) {
         room.remove(session.getId());

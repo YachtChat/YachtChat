@@ -3,7 +3,6 @@ package com.alphabibber.websocketservice.encoder;
 import com.alphabibber.websocketservice.model.answer.PositionAnswer;
 import com.google.gson.Gson;
 
-import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
