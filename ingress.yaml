@@ -1,14 +1,14 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: alphabibber-ingress
+  name: alphabibber-ingress3
   annotations:
     kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip2
-    networking.gke.io/managed-certificates: alphabibber-certificate7
+    networking.gke.io/managed-certificates: alphabibber-certificate8
     kubernetes.io/ingress.class: "gce"
 spec:
   rules:
-    - host: www.chat.alphabibber.com
+    - host: www.gke.alphabibber.com
       http:
         paths:
           - path: /*
@@ -32,7 +32,7 @@ spec:
 #              serviceName: presentation-service
 #              servicePort: 80
 
-    - host: signal.chat.alphabibber.com
+    - host: signal.gke.alphabibber.com
       http:
         paths:
           - path: /*
@@ -40,7 +40,7 @@ spec:
               serviceName: signalingserver-service
               servicePort: 80
 
-    - host: spaces.chat.alphabibber.com
+    - host: spaces.gke.alphabibber.com
       http:
         paths:
           - path: /*
@@ -51,10 +51,10 @@ spec:
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: alphabibber-certificate7
+  name: alphabibber-certificate8
 spec:
   domains:
-    - www.chat.alphabibber.com
-    - signal.chat.alphabibber.com
-    - space.chat.alphabibber.com
+    - www.gke.alphabibber.com
+    - signal.gke.alphabibber.com
+    - space.gke.alphabibber.com
 
