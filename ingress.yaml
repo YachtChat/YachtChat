@@ -57,7 +57,7 @@ spec:
 #              serviceName: spacesservice-service
 #              servicePort: 443
 ---
-apiVersion: networking.gke.io/v1
+apiVersion: networking.gke.io/v1beta2
 kind: ManagedCertificate
 metadata:
   name: alphabibber-certificate5
