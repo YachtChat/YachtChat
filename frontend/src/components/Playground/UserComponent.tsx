@@ -34,12 +34,6 @@ export class UserComponent extends Component<Props> {
             if (!this.videoObject.current.srcObject || this.props.camera !== prevProps.camera) {
                 this.videoObject.current.srcObject = getStream(this.props.user.id)
             }
-            // if (this.props.camera !== prevProps.camera) {
-            //     console.log("New camera")
-            //     const srcObj = (this.videoObject.current.srcObject as MediaStream)
-            //     srcObj.getTracks().forEach(t => srcObj.removeTrack(t))
-            //     getStream(this.props.user.id).getTracks().forEach(t => srcObj.addTrack(t))
-            // }
 
             //@ts-ignore
             this.videoObject.current.setSinkId(this.props.speaker)

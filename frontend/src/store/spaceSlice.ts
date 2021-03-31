@@ -3,8 +3,7 @@ import {Space} from "./models";
 import {AppThunk} from "./store";
 import axios from "axios";
 import {handleError} from "./statusSlice";
-
-const SPACES_URL:string | undefined = process.env.REACT_APP_SPACES_URL;
+import {SPACES_URL} from "./config";
 
 interface SpaceState {
     spaces: Space[]

@@ -137,11 +137,8 @@ export const mute = (): AppThunk => (dispatch, getState) => {
         rtpSender[u.id].forEach(rtp => {
             if (rtp.track && rtp.track.kind === 'audio') {
                 rtp.track.enabled = (!getState().rtc.muted && !!u.inProximity)
-
-                console.log(getUserID(getState()), (!getState().rtc.muted && !!u.inProximity), u.id)
             }
         })
-        console.log(rtpSender)
     })
 }
 
@@ -170,7 +167,6 @@ export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
         }
         //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
     })
-    console.log(rtpSender)
 }
 
 export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
@@ -180,9 +176,8 @@ export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
             console.log("Disabled audio")
             rtp.track.enabled = false
         }
-        console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
+        //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
     })
-    console.log(rtpSender)
 }
 
 export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk => (dispatch, getState) => {
