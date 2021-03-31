@@ -60,12 +60,9 @@ spec:
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
   name: alphabibber-certificate5
 spec:
   domains:
     - alphabibber.com
-    - signal.alphabibber.com
-    - space.alphabibber.com
+#    - signal.alphabibber.com
+#    - space.alphabibber.com
