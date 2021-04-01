@@ -22,6 +22,9 @@ env:
   PRESENTATION_IMAGE: presentation-image
   SIGNALING_IMAGE: signaling-image
   SPACES_IMAGE: spaces-image
+  SPACES_URL: spaces.gke.alphabibber.com
+  SPACES_PORT: 8081
+  SIGNAL_URL: signal.gke.alphabibber.com
   TAG: 1.0.0
 
 jobs:
@@ -70,9 +73,9 @@ jobs:
           docker build \
           --file ./frontend/Dockerfile \
           --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG" \
-          --build-arg REACT_APP_SIGNAL_URL=${SIGNAL_URL} \
+          --build-arg REACT_APP_SIGNAL_URL=$SIGNAL_URL \
           --build-arg REACT_APP_SIGNAL_PORT=${SIGNAL_PORT} \
-          --build-arg REACT_APP_SPACES_URL=${SPACES_URL} \
+          --build-arg REACT_APP_SPACES_URL=$SPACES_URL \
           ./frontend
       # Build the Docker image
 #      - name: Build landingpage image
@@ -103,7 +106,7 @@ jobs:
           docker build \
           --file ./spaces-service/Dockerfile \
           --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
-          --build-arg VIRTUAL_PORT=${SPACES_PORT} \
+          --build-arg VIRTUAL_PORT=$SPACES_PORT \
           ./spaces-service
 
       - name: Publish frontend Docker Image to GCR
