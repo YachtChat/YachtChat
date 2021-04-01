@@ -5,6 +5,7 @@ export interface User {
     userStream?: boolean
     inProximity?: boolean
     message?: string
+    picture?: string
 }
 
 export interface UserCoordinates {

@@ -101,6 +101,7 @@ export class UserComponent extends Component<Props> {
             opacity: userOpacity,
             transform: userScale,
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
+            backgroundImage: `url(${user.picture})`,
         }
 
         const userNameStyle = {

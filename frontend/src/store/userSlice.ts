@@ -3,6 +3,7 @@ import {AppThunk, RootState} from './store';
 import {User, UserCoordinates} from "./models";
 import {sendPosition} from "./connectionSlice";
 import {sendAudio, unsendAudio} from "./rtcSlice";
+import UserImage from "../rsc/Download.png"
 
 interface UserState {
     activeUser: User
@@ -10,7 +11,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-    activeUser: {id: "-1", name: "name", position: {x: 0, y: 0, range: 0.2}},
+    activeUser: {id: "-1", name: "name", position: {x: 0, y: 0, range: 0.2}, picture: UserImage},
     otherUsers: {},
 };
 
