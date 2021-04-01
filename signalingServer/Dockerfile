@@ -2,7 +2,7 @@ FROM node:alpine
 
 WORKDIR /usr/src/app
 
-COPY ./signalingServer .
+COPY . .
 ENV VIRTUAL_PORT=${VIRTUAL_PORT}
 EXPOSE ${VIRTUAL_PORT}
 

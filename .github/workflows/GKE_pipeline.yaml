@@ -73,7 +73,7 @@ jobs:
           --build-arg REACT_APP_SIGNAL_URL=${SIGNAL_URL} \
           --build-arg REACT_APP_SIGNAL_PORT=${SIGNAL_PORT} \
           --build-arg REACT_APP_SPACES_URL=${SPACES_URL} \
-          .
+          ./frontend
       # Build the Docker image
 #      - name: Build landingpage image
 #        run: |-
@@ -96,7 +96,7 @@ jobs:
           --tag "gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG" \
           --build-arg VIRTUAL_HOST=${SIGNAL_URL} \
           --build-arg VIRTUAL_PORT=${SIGNAL_PORT} \
-          .
+          ./signalingServer
 #       Build the Docker image
       - name: Build spacesService image
         run: |-
@@ -104,7 +104,7 @@ jobs:
           --file ./spaces-service/Dockerfile \
           --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
           --build-arg VIRTUAL_PORT=${SPACES_PORT} \
-          .
+          ./spaces-service
 
       - name: Publish frontend Docker Image to GCR
         run: |-

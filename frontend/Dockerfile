@@ -3,7 +3,7 @@ FROM node:alpine as build-deps
 ARG REACT_APP_SIGNAL_URL
 ARG REACT_APP_SPACES_URL
 WORKDIR /src
-COPY ./frontend /src
+COPY . /src
 RUN yarn
 RUN yarn build .
 # Second stage - start webserver
