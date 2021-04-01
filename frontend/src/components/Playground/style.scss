@@ -13,6 +13,8 @@
   button {
     width: 2rem;
     height: 2rem;
+    padding: 0;
+    margin: 0;
     border-radius: $border_radius;
     background: $foreground_light;
     border: 1px solid $accent_light;

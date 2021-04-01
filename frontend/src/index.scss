@@ -71,3 +71,13 @@ input, select {
     font-size: 12px;
   }
 }
+
+label {
+  font-size: $label_font_size;
+  font-weight: bold;
+  color: #ccc;
+  text-transform: uppercase;
+  padding: 0 1rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}

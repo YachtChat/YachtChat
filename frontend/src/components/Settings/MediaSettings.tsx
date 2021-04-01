@@ -15,6 +15,7 @@ import {
     loadAllMediaDevices
 } from "../../store/rtcSlice";
 import {User} from "../../store/models";
+import VolumeIndicator from "./VolumeIndicator";
 
 interface Props {
     user: User
@@ -65,6 +66,7 @@ export class MediaSettings extends Component<Props> {
                             ref.srcObject = getStream(this.props.user.id)
                     }}/>
                 </div>
+                <VolumeIndicator/>
                 <div className={"settings-item"}>
                     <label>
                         Change Video Input
