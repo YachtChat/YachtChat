@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import './App.scss';
 import Playground from "./components/Playground";
 import {RootState} from "./store/store";
-import Login from "./components/Login/Login";
+import Login from "./components/Login";
 import {connect} from "react-redux";
-import StatusComponent from "./components/Status/StatusComponent";
+import StatusComponent from "./components/Status";
 import "webrtc-adapter";
 
 interface Props {

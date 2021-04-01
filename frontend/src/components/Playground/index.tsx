@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import './style.scss';
-import NavigationBar from "../NavigationBar/NavigationBar";
+import NavigationBar from "../NavigationBar";
 import {handleZoom} from "../../store/playgroundSlice";
 import Canvas from "./Canvas";
 
