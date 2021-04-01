@@ -16,8 +16,8 @@ spec:
         - name: frontend-app
           image: gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG
           imagePullPolicy: Always
-          ports:
-            - containerPort: 80
+#          ports:
+#            - containerPort: 80
 ---
 #apiVersion: apps/v1
 #kind: Deployment
@@ -79,8 +79,8 @@ spec:
         - name: signalingserver-app
           image: gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG
           imagePullPolicy: Always
-          ports:
-            - containerPort: 6503
+#          ports:
+#            - containerPort: 6503
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -100,5 +100,5 @@ spec:
         - name: spacesservice-app
           image: gcr.io/PROJECT_ID/SPACES_IMAGE:TAG
           imagePullPolicy: Always
-          ports:
-            - containerPort: 8081
+#          ports:
+#            - containerPort: 8081

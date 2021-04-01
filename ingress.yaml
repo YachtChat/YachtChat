@@ -4,12 +4,12 @@ metadata:
   name: alphabibber-ingress3
   annotations:
     kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip2
-    networking.gke.io/managed-certificates: alphabibber-certificate9
-#    kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.allow-http: "false"
+#    networking.gke.io/managed-certificates: alphabibber-certificate9
+##    kubernetes.io/ingress.class: "gce"
+#    kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
-    - host: www.gke.alphabibber.com
+    - host: gke.alphabibber.com
       http:
         paths:
           - path: /*
@@ -48,14 +48,14 @@ spec:
             backend:
               serviceName: spacesservice-service
               servicePort: 80
----
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
-  name: alphabibber-certificate9
-spec:
-  domains:
-    - www.gke.alphabibber.com
-    - signal.gke.alphabibber.com
-    - space.gke.alphabibber.com
+#---
+#apiVersion: networking.gke.io/v1
+#kind: ManagedCertificate
+#metadata:
+#  name: alphabibber-certificate9
+#spec:
+#  domains:
+#    - www.gke.alphabibber.com
+#    - signal.gke.alphabibber.com
+#    - space.gke.alphabibber.com
 
