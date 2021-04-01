@@ -43,3 +43,31 @@ button {
     }
   }
 }
+
+input, select {
+  width: 100%;
+  font-size: $input_font_size;
+  color: $input_font_light;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 1rem;
+  background: $focus_light;
+  border-radius: $border_radius;
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: $focus_dark;
+      color: $input_font_dark;
+      border: 1px solid $accent_dark;
+    }
+  }
+
+  &:focus ~ label,
+  &:valid ~ label {
+    top: -20px;
+    left: 0;
+    font-size: 12px;
+  }
+}

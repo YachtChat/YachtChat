@@ -96,67 +96,8 @@
       text-align: center;
     }
 
-    .inputPair {
-      background: $focus_light;
-      border-radius: $border_radius;
-
-      @media (prefers-color-scheme: dark) {
-        & {
-          background: $focus_dark;
-        }
-      }
-    }
-
-    input, select {
-      width: 100%;
-      font-size: 16px;
-      color: gray;
-      box-sizing: border-box;
-      border: none;
-      outline: none;
-      background: transparent;
-      padding: 1rem;
-
-      &:focus ~ label,
-      &:valid ~ label {
-        top: -20px;
-        left: 0;
-        font-size: 12px;
-      }
-    }
-
     button {
-      position: relative;
-      display: inline-block;
-      padding: 1rem 1rem;
-      width: 100%;
-      font-size: 1rem;
-      text-decoration: none;
-      text-transform: uppercase;
-      overflow: hidden;
-      transition: .2s;
-      margin-top: 40px;
-      background-color: transparent;
-      border: 1px solid $accent_light;
-      color: $button_font_light;
-      border-radius: $border_radius;
-      outline: none;
-
-      &:hover {
-        background: rgba(125, 125, 125, 0.5);
-      }
-
-      @media (prefers-color-scheme: dark) {
-        & {
-          color: $button_font_dark;
-          border: 1px solid $accent_dark;
-        }
-      }
-
-      span {
-        position: absolute;
-        display: block;
-      }
+      margin-top: 2rem;
     }
   }
 }

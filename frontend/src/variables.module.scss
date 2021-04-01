@@ -10,6 +10,8 @@ $accent_light: #b9c2d0;
 $accent_dark: #204359;
 $font_dark: #ccc;
 $font_light: #ccc;
+$input_font_dark: #4e4e4e;
+$input_font_light: gray;
 $headline_light: white;
 $headline_dark: white;
 $headline_2_light: gray;
@@ -19,6 +21,10 @@ $button_font_hover: gray;
 $button_font_dark: white;
 $border_radius: 0.5rem;
 $shadow: 0 15px 40px rgba(0, 0, 0, .2);
+$text_size: 0.8rem;
+$input_font_size: 0.8rem;
+$button_font_size: 0.8rem;
+$label_font_size: 0.7rem;
 
 :export {
   background_light: $background_light;
