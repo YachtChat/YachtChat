@@ -39,6 +39,10 @@ public class WsServerEndpoint {
 
     @OnOpen
     public void openOpen(@PathParam("roomID") String roomId, Session session) {
+        // increase the idle timeout time otherwise the user will be disconnected after a minute
+        // set to 10 hours
+        session.setMaxIdleTimeout(36000000);
+
         // Get the room form the roomMap
         Map<String, User> room = roomMap.get(roomId);
         // Check if the room exist if not create a new set for it
