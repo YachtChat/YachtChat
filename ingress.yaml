@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: alphabibber-ingress3
+  name: alphabibber-ingress4
   annotations:
     kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip2
 #    networking.gke.io/managed-certificates: alphabibber-certificate9
