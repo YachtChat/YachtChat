@@ -19,7 +19,7 @@ import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../store/connectionSlice";
 import {displayVideo, mute} from "../../store/rtcSlice";
-import Settings from "./Settings";
+import Settings from "../Settings";
 import {centerUser} from "../../store/playgroundSlice";
 
 interface Props {

@@ -1,0 +1,91 @@
+@import "../../variables.module";
+
+#form-dialog-title {
+  background-color: $accent_light;
+  color: $headline_light;
+
+  & h2 {
+    font-weight: bold;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      background-color: $accent_dark;
+      color: $headline_light;
+    }
+  }
+}
+
+.settings {
+  padding-top: 1rem;
+  background: $foreground_light;
+  color: $button_font_light;
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      color: $button_font_dark;
+      background: $foreground_dark;
+    }
+  }
+
+  .no-media {
+    text-align: center;
+    padding: 2rem 0;
+
+    div {
+      padding: 0 0 2rem 0;
+    }
+
+    button {
+
+    }
+  }
+
+  .videoPreview {
+    width: 100%;
+
+    video {
+      display: block;
+      border-radius: 50%;
+      margin: 2rem auto;
+      box-shadow: $shadow;
+      width: 200px;
+      height: 200px;
+    }
+  }
+
+
+  .settings-item {
+    margin-bottom: 1.5rem;
+
+    > .dialog-content-text {
+      color: black;
+    }
+
+    > .dropdown {
+      background-color: $focus_light;
+      border-radius: .5rem;
+    }
+
+    label {
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #ccc;
+      text-transform: uppercase;
+      padding: 1rem;
+    }
+
+
+    select {
+      width: 100%;
+      font-size: 16px;
+      color: grey;
+      box-sizing: border-box;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 1rem;
+    }
+
+  }
+}

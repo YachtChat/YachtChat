@@ -88,16 +88,17 @@ export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
         const microphones: string[] = []
         const speakers: string[] = []
         md.forEach(d => {
-            if (d.kind === "audioinput") {
-                microphones.push(d.deviceId)
-                mediaDevices[d.deviceId] = d
-            } else if (d.kind === "audiooutput") {
-                speakers.push(d.deviceId)
-                mediaDevices[d.deviceId] = d
-            } else if (d.kind === "videoinput") {
-                cameras.push(d.deviceId)
-                mediaDevices[d.deviceId] = d
-            }
+            if (d.deviceId !== "")
+                if (d.kind === "audioinput") {
+                    microphones.push(d.deviceId)
+                    mediaDevices[d.deviceId] = d
+                } else if (d.kind === "audiooutput") {
+                    speakers.push(d.deviceId)
+                    mediaDevices[d.deviceId] = d
+                } else if (d.kind === "videoinput") {
+                    cameras.push(d.deviceId)
+                    mediaDevices[d.deviceId] = d
+                }
         })
         dispatch(initAllMediaDevices({
             cameras,
@@ -319,9 +320,9 @@ export const handleInputChange = (): AppThunk => (dispatch, getState) => {
                 })
             })
         })
-    })
+        oldStream.getTracks().forEach(t => t.stop())
+    }).catch(() => dispatch(handleError("Cannot get user media")))
 
-    oldStream.getTracks().forEach(t => t.stop())
 }
 
 export const changeAudioOutput = (speaker: string): AppThunk => (dispatch, getState) => {
