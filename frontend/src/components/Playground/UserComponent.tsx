@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
-import {getStream} from "../../store/rtcSlice";
+import {getCamera, getSpeaker, getStream} from "../../store/rtcSlice";
 import {userProportion} from "../../store/userSlice";
 
 interface Props {
@@ -11,23 +11,32 @@ interface Props {
     isActiveUser: boolean
     playgroundOffset: PlaygroundOffset
     muted: boolean
+    speaker: string
+    camera: string
+    cameraChangeOngoing: boolean
 }
 
 export class UserComponent extends Component<Props> {
 
-    private myRef: React.RefObject<HTMLVideoElement>;
-    private myName: React.RefObject<HTMLSpanElement>;
+    private videoObject: React.RefObject<HTMLVideoElement>;
+    private myName: React.RefObject<HTMLMediaElement>;
 
     constructor(props: Props) {
         super(props);
 
-        this.myRef = React.createRef();
+        this.videoObject = React.createRef();
         this.myName = React.createRef();
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        if (this.props.user.userStream && this.myRef.current && !this.myRef.current.srcObject) {
-            this.myRef.current.srcObject = getStream(this.props.user.id)
+        if (this.props.user.userStream && this.videoObject.current && !this.props.cameraChangeOngoing) {
+
+            if (!this.videoObject.current.srcObject || this.props.camera !== prevProps.camera) {
+                this.videoObject.current.srcObject = getStream(this.props.user.id)
+            }
+
+            //@ts-ignore
+            this.videoObject.current.setSinkId(this.props.speaker)
         }
     }
 
@@ -96,9 +105,9 @@ export class UserComponent extends Component<Props> {
 
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
-                <div id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
+                <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
                     {!!this.props.user.userStream &&
-                    <video autoPlay muted={this.props.isActiveUser} ref={this.myRef}/>
+                    <video key={this.props.camera} autoPlay muted={this.props.isActiveUser} ref={this.videoObject}/>
                     }
                 </div>
                 <span ref={this.myName} className={"userName"}
@@ -110,7 +119,10 @@ export class UserComponent extends Component<Props> {
 
 const mapStateToProps = (state: RootState) => ({
     playgroundOffset: state.playground.offset,
-    muted: state.rtc.muted
+    muted: state.rtc.muted,
+    speaker: getSpeaker(state),
+    camera: getCamera(state),
+    cameraChangeOngoing: state.rtc.cameraChangeOngoing
 })
 
 export default connect(mapStateToProps)(UserComponent)
