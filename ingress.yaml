@@ -40,10 +40,6 @@ spec:
             backend:
               serviceName: signalingserver-service
               servicePort: 80
-          - path: /health
-            backend:
-              serviceName: frontend-service
-              servicePort: 80
 
     - host: spaces.gke.alphabibber.com
       http:
