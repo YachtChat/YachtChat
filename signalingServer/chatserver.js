@@ -83,10 +83,6 @@ if (!wsServer) {
   log("ERROR: Unable to create WbeSocket server!");
 }
 
-router.get('/', function (req, res, next) {
-  res.json({status: 'UP'});
-});
-app.use("/health", router);
 
 
 // Set up a "connect" message handler on our WebSocket server. This is
