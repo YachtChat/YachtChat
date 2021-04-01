@@ -13,31 +13,17 @@ interface Props {
     muted: boolean
     speaker: string
     camera: string
-    cameraChangeOngoing: boolean
+    mediaChangeOngoing: boolean
 }
 
 export class UserComponent extends Component<Props> {
 
-    private videoObject: React.RefObject<HTMLVideoElement>;
     private myName: React.RefObject<HTMLMediaElement>;
 
     constructor(props: Props) {
         super(props);
 
-        this.videoObject = React.createRef();
         this.myName = React.createRef();
-    }
-
-    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        if (this.props.user.userStream && this.videoObject.current && !this.props.cameraChangeOngoing) {
-
-            if (!this.videoObject.current.srcObject || this.props.camera !== prevProps.camera) {
-                this.videoObject.current.srcObject = getStream(this.props.user.id)
-            }
-
-            //@ts-ignore
-            this.videoObject.current.setSinkId(this.props.speaker)
-        }
     }
 
     render() {
@@ -107,7 +93,16 @@ export class UserComponent extends Component<Props> {
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
                     {!!this.props.user.userStream &&
-                    <video key={this.props.camera} autoPlay muted={this.props.isActiveUser} ref={this.videoObject}/>
+                    <video key={this.props.camera} autoPlay muted={this.props.isActiveUser} ref={ref => {
+                        if (ref && !this.props.mediaChangeOngoing) {
+                            ref.srcObject = getStream(this.props.user.id)
+                            // @ts-ignore
+                            if (ref.setSinkId) {
+                                //@ts-ignore
+                                ref.setSinkId(this.props.speaker)
+                            }
+                        }
+                    }}/>
                     }
                 </div>
                 <span ref={this.myName} className={"userName"}
@@ -122,7 +117,7 @@ const mapStateToProps = (state: RootState) => ({
     muted: state.rtc.muted,
     speaker: getSpeaker(state),
     camera: getCamera(state),
-    cameraChangeOngoing: state.rtc.cameraChangeOngoing
+    mediaChangeOngoing: state.rtc.mediaChangeOngoing
 })
 
 export default connect(mapStateToProps)(UserComponent)

@@ -6,6 +6,7 @@ import {getStream,} from "../../store/rtcSlice";
 
 interface Props {
     audio?: MediaStream
+    mediaChangeOngoing: boolean
 }
 
 interface State {
@@ -27,6 +28,17 @@ export class MediaSettings extends Component<Props, State> {
     }
 
     componentDidMount() {
+        this.mountStream()
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
+        if (prevProps !== this.props && !this.props.mediaChangeOngoing) {
+            this.unmountStream()
+            this.mountStream()
+        }
+    }
+
+    mountStream() {
         this.audioContext = new window.AudioContext();
         this.analyser = this.audioContext.createAnalyser();
         this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
@@ -38,6 +50,10 @@ export class MediaSettings extends Component<Props, State> {
     }
 
     componentWillUnmount() {
+        this.unmountStream()
+    }
+
+    unmountStream() {
         cancelAnimationFrame(this.rafID);
         if (this.analyser)
             this.analyser.disconnect();
@@ -76,6 +92,7 @@ export class MediaSettings extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     audio: getStream(state.userState.activeUser.id),
+    mediaChangeOngoing: state.rtc.mediaChangeOngoing,
 })
 
 export default connect(mapStateToProps)(MediaSettings)

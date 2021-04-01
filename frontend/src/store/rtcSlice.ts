@@ -16,7 +16,7 @@ interface RTCState {
         speaker?: string,
         microphone?: string
     }
-    cameraChangeOngoing: boolean
+    mediaChangeOngoing: boolean
 }
 
 const initialState: RTCState = {
@@ -26,7 +26,7 @@ const initialState: RTCState = {
     microphones: [],
     speakers: [],
     selected: {},
-    cameraChangeOngoing: false
+    mediaChangeOngoing: false
 };
 
 let rtcConnections: { [key: string]: RTCPeerConnection } = {};
@@ -54,8 +54,8 @@ export const rtcSlice = createSlice({
         toggleVideo: (state) => {
             state.video = !state.video
         },
-        setCameraChangeOngoing: (state, action: PayloadAction<boolean>) => {
-            state.cameraChangeOngoing = action.payload
+        setMediaChangeOngoing: (state, action: PayloadAction<boolean>) => {
+            state.mediaChangeOngoing = action.payload
         },
         setCamera: (state, action: PayloadAction<string>) => {
             state.selected.camera = action.payload
@@ -78,7 +78,7 @@ export const {
     setCamera,
     setMicrophone,
     setSpeaker,
-    setCameraChangeOngoing
+    setMediaChangeOngoing
 } = rtcSlice.actions;
 
 export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
@@ -296,11 +296,12 @@ export const destroySession = () => {
 }
 
 export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {
-    dispatch(setCameraChangeOngoing(true))
+    dispatch(setMediaChangeOngoing(true))
     dispatch(setCamera(camera))
     dispatch(handleInputChange())
 }
 export const changeAudioInput = (microphone: string): AppThunk => (dispatch, getState) => {
+    dispatch(setMediaChangeOngoing(true))
     dispatch(setMicrophone(microphone))
     dispatch(handleInputChange())
 
@@ -311,7 +312,7 @@ export const handleInputChange = (): AppThunk => (dispatch, getState) => {
     const oldStream = streams[localClient]
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         streams[localClient] = e
-        dispatch(setCameraChangeOngoing(false))
+        dispatch(setMediaChangeOngoing(false))
         streams[localClient].getTracks().forEach(s => {
             getUsers(getState()).forEach(u => {
                 rtpSender[u.id].forEach(rs => {
