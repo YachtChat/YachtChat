@@ -83,8 +83,6 @@ if (!wsServer) {
   log("ERROR: Unable to create WbeSocket server!");
 }
 
-
-
 // Set up a "connect" message handler on our WebSocket server. This is
 // called whenever a user connects to the server's port using the
 // WebSocket protocol.
