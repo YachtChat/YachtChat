@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.sql.DataSource;
 
-
 @SpringBootApplication
 public class SpacesServiceApplication implements CommandLineRunner {
 
@@ -28,7 +27,7 @@ public class SpacesServiceApplication implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) {
 		log.info("DataSource = " + dataSource);
 
 		Space freeForAll = new Space("Free For All");

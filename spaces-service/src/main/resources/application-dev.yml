@@ -5,10 +5,10 @@ spring:
   application:
     name: spaces-service
   datasource:
-    url: "${PROD_DB:jdbc:h2:mem:spaces_db}"
+    url: "${DEV_DB:jdbc:h2:mem:spaces_db}"
     driver-class-name: org.h2.Driver
-    username: "${PROD_DB_USER:sa}"
-    password: "${PROD_DB_PASSWORD:}"
+    username: "${DEV_DB_USER:admin}"
+    password: "${DEV_DB_PASSWORD:password}"
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:

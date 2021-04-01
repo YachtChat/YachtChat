@@ -8,6 +8,9 @@ import com.alphabibber.spacesservice.service.SpaceService;
 import com.alphabibber.spacesservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +34,9 @@ public class SpaceController extends SpringBootServletInitializer {
 
     @GetMapping("/")
     public List<Space> getAllSpaces() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+
         return spaceService.getSpaces();
     }
 
