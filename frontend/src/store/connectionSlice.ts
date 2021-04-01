@@ -47,9 +47,9 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
     }
 
     if (!SOCKET_PORT)
-        socket = new WebSocket(SOCKET_URL, 'json');
+        socket = new WebSocket("wss://" + SOCKET_URL, 'json');
     else
-        socket = new WebSocket(SOCKET_URL + ":" + SOCKET_PORT, 'json');
+        socket = new WebSocket("wss://" + SOCKET_URL + ":" + SOCKET_PORT, 'json');
 
 
     socket.onopen = () => {
