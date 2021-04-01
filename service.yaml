@@ -9,7 +9,6 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-      protocol: SSL
 ---
 #apiVersion: v1
 #kind: Service
@@ -50,7 +49,6 @@ spec:
   ports:
     - port: 80
       targetPort: 6503
-      protocol: SSL
 ---
 apiVersion: v1
 kind: Service
@@ -63,5 +61,4 @@ spec:
   ports:
     - port: 80
       targetPort: 8081
-      protocol: SSL
 
