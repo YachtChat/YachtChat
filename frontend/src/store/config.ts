@@ -6,9 +6,8 @@ export const loginService: string = "https://spaces.meet.alphabibber.com"
 
 export const rtcConfiguration = {
     "iceServers": [{
-        "url": "stun:global.stun.twilio.com:3478?transport=udp",
-        "urls": "stun:global.stun.twilio.com:3478?transport=udp"
-        // "urls": [
+        "urls": [
+                "stun:stun.alphabibber.com:3478"
         //     "stun:iphone-stun.strato-iphone.de:3478",
         //     "stun:numb.viagenie.ca:3478",
         //     "stun:s1.taraba.net:3478",
@@ -275,6 +274,6 @@ export const rtcConfiguration = {
         //     "stun:stun3.l.google.com:19302",
         //     "stun:stun4.l.google.com:19302",
         //     "stun:stunserver.org:3478"
-        // ]
+        ]
     }]
 }
