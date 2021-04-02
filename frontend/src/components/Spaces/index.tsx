@@ -33,7 +33,11 @@ export class Spaces extends Component<Props> {
                 <Wrapper className="spaces">
                     <h1>Hey, {this.props.activeUser.name}.</h1>
                     <p>AlphaBibber Chat is a video chatting app. So please click and confirm video to continue.</p>
-                    <button onClick={this.props.requestUserMedia}>Request media</button>
+                    <button onClick={() => {
+                        this.props.requestUserMedia()
+                        this.props.loadMediaDevices()
+                    }}>Request media
+                    </button>
                 </Wrapper>
             )
         if (this.props.cameras.length !== 0 && this.props.microphones.length !== 0 && !this.props.userMedia)

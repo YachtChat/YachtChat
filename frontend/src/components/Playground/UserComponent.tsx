@@ -41,7 +41,9 @@ export class UserComponent extends Component<Props> {
             }
 
             //@ts-ignore
-            this.videoObject.current.setSinkId(this.props.speaker)
+            if (this.videoObject.current.setSinkId)
+                //@ts-ignore
+                this.videoObject.current.setSinkId(this.props.speaker)
         }
     }
 
