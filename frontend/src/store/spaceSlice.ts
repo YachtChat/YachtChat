@@ -3,8 +3,7 @@ import {Space} from "./models";
 import {AppThunk} from "./store";
 import axios from "axios";
 import {handleError} from "./statusSlice";
-
-const SPACES_URL:string | undefined = process.env.REACT_APP_SPACES_URL;
+import {SPACES_URL} from "./config";
 
 interface SpaceState {
     spaces: Space[]
@@ -26,7 +25,7 @@ export const spaceSlice = createSlice({
 
 export const requestSpaces = ():AppThunk => dispatch =>  {
     if(!SPACES_URL){
-        dispatch(handleError("No websocket url defined for this environment"));
+        dispatch(handleError("No spaces url defined for this environment"));
         return;
     }
     axios.get("https://" + SPACES_URL + "/spaces/").then(response => {

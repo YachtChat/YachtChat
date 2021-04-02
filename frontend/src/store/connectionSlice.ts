@@ -4,10 +4,7 @@ import {User, UserCoordinates} from "./models";
 import {getUser, getUserID, handlePositionUpdate, removeUser, setUser, setUserId, setUsers} from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
 import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
-
-// start it like this `REACT_APP_SOCKET_URL=ws://localhost:6503` yarn run start
-const SOCKET_URL:string | undefined = process.env.REACT_APP_SIGNAL_URL;
-const SOCKET_PORT:string | undefined = process.env.REACT_APP_SIGNAL_PORT;
+import {SOCKET_PORT, SOCKET_URL} from "./config";
 
 interface WebSocketState {
     connected: boolean
@@ -44,16 +41,20 @@ export const {connect, disconnect, joined, leftRoom} = webSocketSlice.actions;
 
 export const connectToServer = (): AppThunk => (dispatch, getState) => {
     //socket = new WebSocket('wss://call.tristanratz.com:9090')
-    if(!SOCKET_URL || !SOCKET_PORT){
+    if (!SOCKET_URL) {
         dispatch(handleError("No websocket url defined for this environment"));
         return;
     }
-    socket = new WebSocket("wss://" + <string>SOCKET_URL, 'json');
+
+    if (!SOCKET_PORT)
+        socket = new WebSocket("wss://" + SOCKET_URL, 'json');
+    else
+        socket = new WebSocket("wss://" + SOCKET_URL + ":" + SOCKET_PORT, 'json');
+
 
     socket.onopen = () => {
-        console.log("Connected to the signaling server");
         dispatch(connect())
-        dispatch(handleSuccess("Connection"))
+        dispatch(handleSuccess("Connected to the signaling server"))
     };
 
     socket.onerror = (err) => {

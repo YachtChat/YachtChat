@@ -20,18 +20,19 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: connect via ssh and deploy frontend, signaling-server, spaces-server and presentation-page
+      - name: connect via ssh and deploy services
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
             cd /home/git_environment/NotZoom/
             sudo git pull
             sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
+            sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
             sudo mvn clean -f ./auth-service/pom.xml package -DskipTests
-            sudo docker-compose down nginx-proxyed-container signaling_server spaces-service nginx-presentation auth-service
-            sudo docker-compose build nginx-proxyed-container signaling_server spaces-service nginx-presentation auth-service
-            sudo docker-compose up --no-deps -d nginx-proxyed-container signaling_server spaces-service nginx-presentation auth-service
+            sudo docker-compose down nginx-proxyed-container signaling_server spaces-service nginx-presentation websocket-service auth-service
+            sudo docker-compose build nginx-proxyed-container signaling_server spaces-service nginx-presentation websocket-service auth-service
+            sudo docker-compose up --no-deps -d nginx-proxyed-container signaling_server spaces-service nginx-presentation websocket-service auth-service
             sudo docker system prune --all --force
-          host: www.meet.alphabibber.com #${{ secrets.HOST}}
+          host: www.alphabibber.com #${{ secrets.HOST}}
           user: danilo_walenta #${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}

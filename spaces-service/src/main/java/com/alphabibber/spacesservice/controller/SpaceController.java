@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -71,10 +72,14 @@ public class SpaceController extends SpringBootServletInitializer {
     }
 
     @GetMapping(path = "/{spaceId}/canUserJoin")
-    public Boolean canUserJoinSpace(@PathVariable String spaceId, @RequestParam String userId) {
-        return spaceService.getSpaceById(spaceId).getUsers()
+    public HashMap<String, Boolean> canUserJoinSpace(@PathVariable String spaceId, @RequestParam String userId) {
+        Boolean boolResponse = spaceService.getSpaceById(spaceId).getUsers()
                         .stream()
                         .anyMatch(user -> user.getId().equals(userId));
+
+        HashMap<String, Boolean> map = new HashMap<>();
+        map.put("valid", boolResponse);
+        return map;
     }
 
     @PostMapping(path = "/{spaceId}/addParticipant")

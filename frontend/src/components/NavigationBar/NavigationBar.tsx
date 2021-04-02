@@ -4,7 +4,6 @@ import {User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {submitNameChange} from "../../store/userSlice";
 import {connect} from "react-redux";
-import {Menu, MenuItem, ProSidebar, SubMenu} from 'react-pro-sidebar';
 import {
     FaBars,
     FaCog,
@@ -12,14 +11,16 @@ import {
     FaMicrophoneSlash,
     FaPlusCircle,
     FaPowerOff,
-    FaSignature,
     FaSignOutAlt,
     FaVideo,
     FaVideoSlash
 } from 'react-icons/fa';
+import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../store/connectionSlice";
 import {displayVideo, mute} from "../../store/rtcSlice";
+import Settings from "../Settings";
+import {centerUser} from "../../store/playgroundSlice";
 
 interface Props {
     activeUser: User
@@ -27,6 +28,7 @@ interface Props {
     logout: () => void
     toggleAudio: () => void
     toggleVideo: () => void
+    center: () => void
     video: boolean
     muted: boolean
 }
@@ -34,6 +36,8 @@ interface Props {
 interface State {
     value: string
     collapsed: boolean
+    className: string
+    open: boolean
 }
 
 export class NavigationBar extends Component<Props, State> {
@@ -49,7 +53,9 @@ export class NavigationBar extends Component<Props, State> {
         super(props);
         this.state = {
             value: "",
-            collapsed: true
+            collapsed: true,
+            className: "navbar collapsed",
+            open: false
         }
     }
 
@@ -68,11 +74,13 @@ export class NavigationBar extends Component<Props, State> {
     handleCollapse(event: any) {
         if (this.state.collapsed) {
             this.setState({
-                collapsed: false
+                collapsed: false,
+                className: "navbar"
             })
         } else if (!this.state.collapsed) {
             this.setState({
-                collapsed: true
+                collapsed: true,
+                className: "navbar collapsed"
             })
         }
     }
@@ -81,7 +89,24 @@ export class NavigationBar extends Component<Props, State> {
     handleHoverCollapse(event: any) {
         if (!this.state.collapsed) {
             this.setState({
-                collapsed: true
+                collapsed: true,
+                className: "navbar collapsed"
+            })
+        }
+    }
+
+    handleSettingsOpen(event: any) {
+        if (!this.state.open) {
+            this.setState({
+                open: true,
+            })
+        }
+    }
+
+    handleSettingsClosed(event: any) {
+        if (this.state.open) {
+            this.setState({
+                open: false,
             })
         }
     }
@@ -91,27 +116,128 @@ export class NavigationBar extends Component<Props, State> {
         const micIcon = (this.props.muted) ? this.icons.micOffIcon : this.icons.micOnIcon
         const videoIcon = (this.props.video) ? this.icons.videoOnIcon : this.icons.videoOffIcon
         return (
-            <ProSidebar id="sidebar" collapsed={this.state.collapsed} onMouseLeave={this.handleHoverCollapse.bind(this)}>
-                <Menu iconShape="circle">
-                    <MenuItem icon={<FaBars/>} onClick={this.handleCollapse.bind(this)}>Dashboard</MenuItem>
-                    <SubMenu title="Rename" icon={<FaSignature/>}>
-                        <MenuItem>
-                            <input type="text" value={this.state.value} onChange={this.handleChange.bind(this)}/>
-                            <br/>
-                            <button onClick={this.handleSubmit.bind(this)}>
-                                Submit
-                            </button>
-                        </MenuItem>
-                    </SubMenu>
-                    <MenuItem icon={videoIcon} onClick={this.props.toggleVideo}>Video</MenuItem>
-                    <MenuItem icon={micIcon} onClick={this.props.toggleAudio}>Mic</MenuItem>
-                    <MenuItem icon={<FaPlusCircle/>}>Add User</MenuItem>
-                    <MenuItem icon={<FaSignOutAlt/>}>Leave Room</MenuItem>
-                    <MenuItem icon={<FaCog/>}>Settings</MenuItem>
-                    <MenuItem icon={<FaPowerOff/>} onClick={this.props.logout}>Log Out</MenuItem>
-                </Menu>
-                <RangeSlider/>
-            </ProSidebar>
+            <div id="sidebar" className={this.state.className} onMouseLeave={this.handleHoverCollapse.bind(this)}>
+                <div className="navbar-inner">
+                    <div className="navbar-layout">
+                        <div className="menu">
+                            <ul>
+                                <li className="menu-item" onClick={this.handleCollapse.bind(this)}>
+                                    <div className="inner-item">
+                                    <span className="icon-wrapper">
+                                        <span className="icon">
+                                            <FaBars/>
+                                        </span>
+                                    </span>
+                                        <span className="item-content">
+                                        Dashboard
+                                    </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item" onClick={this.props.toggleVideo}>
+                                    <div className="inner-item">
+                                    <span className="icon-wrapper">
+                                        <span className="icon">
+                                            {videoIcon}
+                                        </span>
+                                    </span>
+                                        <span className="item-content">
+                                        Video
+                                    </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item" onClick={this.props.toggleAudio}>
+                                    <div className="inner-item">
+                                    <span className="icon-wrapper">
+                                        <span className="icon">
+                                            {micIcon}
+                                        </span>
+                                    </span>
+                                        <span className="item-content">
+                                        Microphone
+                                    </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item">
+                                    <div className="inner-item">
+                                    <span className="icon-wrapper">
+                                        <span className="icon">
+                                            <FaPlusCircle/>
+                                        </span>
+                                    </span>
+                                        <span className="item-content">
+                                        Add User
+                                    </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item" onClick={this.props.center}>
+                                    <div className="inner-item">
+                                    <span className="icon-wrapper">
+                                        <span className="icon">
+                                            <MdFilterCenterFocus/>
+                                        </span>
+                                    </span>
+                                        <span className="item-content">
+                                        Center user
+                                    </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item spacer-50">
+                                </li>
+                                <li className="menu-item">
+                                    <div className="inner-item rangeslider">
+                                        <RangeSlider/>
+                                    </div>
+                                    <span className={"item-content"}>Range</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div className="menu bottom">
+                            <ul>
+                                <li className="menu-item" onClick={this.handleSettingsOpen.bind(this)}>
+                                    <div className="inner-item">
+                                        <span className="icon-wrapper">
+                                            <span className="icon">
+                                                <FaCog/>
+                                            </span>
+                                        </span>
+                                        <span className="item-content">
+                                            Settings
+                                            <div>
+                                                <Settings open={this.state.open}
+                                                          onClose={this.handleSettingsClosed.bind(this)}/>
+                                            </div>
+                                        </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item">
+                                    <div className="inner-item">
+                                    <span className="icon-wrapper">
+                                        <span className="icon">
+                                            <FaSignOutAlt/>
+                                        </span>
+                                    </span>
+                                        <span className="item-content">
+                                        Leave Room
+                                    </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item" onClick={this.props.logout}>
+                                    <div className="inner-item">
+                                    <span className="icon-wrapper">
+                                        <span className="icon">
+                                            <FaPowerOff/>
+                                        </span>
+                                    </span>
+                                        <span className="item-content">
+                                        Log Out
+                                    </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         )
     }
 }
@@ -126,7 +252,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     setName: (name: string) => dispatch(submitNameChange(name)),
     toggleAudio: () => dispatch(mute()),
     toggleVideo: () => dispatch(displayVideo()),
-    logout: () => dispatch(sendLogout())
+    logout: () => dispatch(sendLogout()),
+    center: () => dispatch(centerUser())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavigationBar)
