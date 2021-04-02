@@ -49,6 +49,21 @@ services:
         - LETSENCRYPT_HOST=${LANDINGPAGE_URL}
     network_mode: bridge
 
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: ./Dockerfile
+      args:
+        - VIRTUAL_PORT=${AUTH_PORT}
+    environment:
+      - VIRTUAL_HOST=${AUTH_URL}
+      - LETSENCRYPT_HOST=${AUTH_URL}
+      - VIRTUAL_PORT=${AUTH_PORT}
+      - OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}
+      - OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}
+
+    network_mode: bridge
+
   signaling_server:
     build:
       context: ./signalingServer
@@ -60,6 +75,19 @@ services:
       - VIRTUAL_HOST=${SIGNAL_URL}
       - LETSENCRYPT_HOST=${SIGNAL_URL}
       - VIRTUAL_PORT=${SIGNAL_PORT}
+    network_mode: bridge
+
+  websocket-service:
+    build:
+      context: ./websocket-service
+      dockerfile: ./Dockerfile
+      args:
+        - SPACES_URL=${SPACES_URL}
+        - VIRTUAL_PORT=${WEBSOCKET_PORT}
+    environment:
+      - LETSENCRYPT_HOST=${WEBSOCKET_URL}
+      - VIRTUAL_PORT=${WEBSOCKET_PORT}
+      - VIRTUAL_HOST=${WEBSOCKET_URL}
     network_mode: bridge
 
   spaces-service:

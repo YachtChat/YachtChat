@@ -32,6 +32,7 @@ public class SpaceController extends SpringBootServletInitializer {
 
     @GetMapping("/")
     public List<Space> getAllSpaces() {
+
         return spaceService.getSpaces();
     }
 

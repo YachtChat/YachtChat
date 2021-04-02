@@ -45,7 +45,7 @@ export class Canvas extends Component<Props, State> {
     // if the mouse is clicked on the active user
     dragStart(event: React.MouseEvent | React.TouchEvent) {
         event.stopPropagation()
-        const activeUser = ((event.target as HTMLDivElement).id === "activeUser")
+        const activeUser = ((event.target as HTMLDivElement).dataset.id === "activeUser")
 
         let x, y;
 

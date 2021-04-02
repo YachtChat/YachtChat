@@ -1,3 +1,5 @@
+@import "./variables.module";
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -11,4 +13,71 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+button {
+  position: relative;
+  display: inline-block;
+  padding: 1rem 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .2s;
+  background-color: transparent;
+  border: 1px solid $accent_light;
+  color: $button_font_light;
+  border-radius: $border_radius;
+  outline: none;
+
+  &:hover {
+    background: rgba(125, 125, 125, 0.5);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      color: $button_font_dark;
+      border: 1px solid $accent_dark;
+    }
+  }
+}
+
+input, select {
+  width: 100%;
+  font-size: $input_font_size;
+  color: $input_font_light;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 1rem;
+  background: $focus_light;
+  border-radius: $border_radius;
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: $focus_dark;
+      color: $input_font_dark;
+      border: 1px solid $accent_dark;
+    }
+  }
+
+  &:focus ~ label,
+  &:valid ~ label {
+    top: -20px;
+    left: 0;
+    font-size: 12px;
+  }
+}
+
+label {
+  font-size: $label_font_size;
+  font-weight: bold;
+  color: #ccc;
+  text-transform: uppercase;
+  padding: 0 1rem;
+  margin-bottom: 0.5rem;
+  display: block;
 }
