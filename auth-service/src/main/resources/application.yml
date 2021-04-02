@@ -1,0 +1,22 @@
+server:
+  port: "${VIRTUAL_PORT:8080}"
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: "${PROD_DB:jdbc:h2:mem:auth_db}"
+    driver-class-name: org.h2.Driver
+    username: "${PROD_DB_USER:admin}"
+    password: "${PROD_DB_PASSWORD:password}"
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: "${OAUTH_GOOGLE_CLIENT_ID:}"
+            client-secret: "${OAUTH_GOOGLE_CLIENT_SECRET:}"
