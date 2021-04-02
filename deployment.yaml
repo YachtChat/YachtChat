@@ -79,13 +79,13 @@ spec:
         - name: websocket-app
           image: gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG
           imagePullPolicy: Always
-#          ports:
-#            - containerPort: 8085
           readinessProbe:
             httpGet:
               port: 8085
               path: /actuator/health
             initialDelaySeconds: 10
+#          ports:
+#            - containerPort: 8085
 ---
 apiVersion: apps/v1
 kind: Deployment
