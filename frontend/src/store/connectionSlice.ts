@@ -74,9 +74,10 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
     };
 
     socket.onmessage = function (msg) {
+        // console.log("Got message", msg);
         var data = JSON.parse(msg.data);
-        //if (data.type !== "position_change")
-        //    console.log("Got message", msg.data);
+        // if (data.type !== "position_change")
+        // console.log("Object", data);
         const loggedIn = getState().webSocket.joinedRoom
         switch (data.type) {
             case "id":
@@ -93,10 +94,10 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 break;
             case "new_user":
                 if (loggedIn) {
-                    dispatch(setUser(data.user));
+                    dispatch(setUser(data));
                     const count = Object.keys(getState().userState.otherUsers).length + 1;
-                    dispatch(handleRTCEvents(data.user.id, count));
-                    dispatch(handlePositionUpdate({id: data.user.id, position: data.user.position}))
+                    dispatch(handleRTCEvents(data.id, count));
+                    dispatch(handlePositionUpdate({id: data.id, position: data.position}))
                 }
                 break;
             case "leave":
@@ -107,21 +108,22 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 if (loggedIn && data.id !== getUserID(getState()))
                     dispatch(handlePositionUpdate(data));
                 break;
-            case "signaling":
+            case "signal":
                 if (!loggedIn)
                     break;
                 const fromId: string = data.sender_id;
                 if (fromId !== getUserID(getState())) {
                     const randomWait = Math.floor(Math.random() * Math.floor(200))
-                    switch (data.content.signal_type) {
+                    const signal_content = data.content
+                    switch (signal_content.signal_type) {
                         case "candidate":
-                            setTimeout(() => dispatch(handleCandidate(data.content.candidate, fromId)), randomWait)
+                            setTimeout(() => dispatch(handleCandidate(signal_content.candidate, fromId)), randomWait)
                             break;
                         case "sdp":
-                            setTimeout(() => dispatch(handleSdp(data.content.description, fromId)), randomWait)
+                            setTimeout(() => dispatch(handleSdp(signal_content.description, fromId)), randomWait)
                             break;
                         case "message":
-                            dispatch(handleMessage(data.content.message, fromId))
+                            dispatch(handleMessage(signal_content.message, fromId))
                             break;
                         default:
                             dispatch(handleError("Unknown signaling type."))
@@ -139,7 +141,7 @@ export const sendMessage = (message: string): AppThunk => (dispatch, getState) =
     getUsers(getState()).forEach(u => {
         if (u.inProximity) {
             dispatch(send({
-                type: "signaling",
+                type: "signal",
                 target_id: u.id,
                 content: {
                     signal_type: "message",
@@ -158,7 +160,6 @@ export const send = (message: { [key: string]: any }, target?: User): AppThunk =
         id: getUserID(getState()),
     }
 
-    console.log(JSON.stringify(msgObj))
 
     if (socket !== null)
         socket.send(JSON.stringify(msgObj));

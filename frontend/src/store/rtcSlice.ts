@@ -192,11 +192,14 @@ export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk =
         clients.forEach((userId) => {
             if (!rtcConnections[userId]) {
                 rtcConnections[userId] = new RTCPeerConnection(rtcConfiguration);
+                if (localClient === userId)
+                    return;
+
                 rtcConnections[userId].onicecandidate = (event) => {
                     if (event.candidate) {
                         console.log(localClient, 'send candidate to ', userId);
                         dispatch(send({
-                            type: "signaling",
+                            type: "signal",
                             target_id: userId,
                             content: {
                                 signal_type: 'candidate',
@@ -227,12 +230,12 @@ export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk =
             }
         });
 
-        if (count >= 2) {
+        if (count >= 2 && joinedUserId !== localClient) {
             rtcConnections[joinedUserId].createOffer(offerOptions).then((description) => {
                 rtcConnections[joinedUserId].setLocalDescription(description).then(() => {
                     console.log(localClient, ' Send offer to ', joinedUserId);
                     dispatch(send({
-                        type: 'signaling',
+                        type: 'signal',
                         target_id: joinedUserId,
                         content: {
                             signal_type: 'sdp',
@@ -257,6 +260,8 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
         const clientId: string = getUserID(getState());
 
         console.log(clientId, ' Receive sdp from ', fromId);
+        if (clientId === fromId)
+            return
         rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))
             .then(() => {
                 if (description.type === 'offer') {
@@ -264,10 +269,9 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
                         .then((desc) => {
                             rtcConnections[fromId].setLocalDescription(desc).then(() => {
                                 console.log(clientId, ' Send answer to ', fromId);
-
                                 // This replaces the socket.emit function
                                 dispatch(send({
-                                    type: "signaling",
+                                    type: "signal",
                                     target_id: fromId,
                                     content: {
                                         signal_type: "sdp",

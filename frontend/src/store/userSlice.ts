@@ -48,7 +48,10 @@ export const userSlice = createSlice({
                 state.activeUser.name = action.payload.name
         },
         setUser: (state, action: PayloadAction<User>) => {
-            state.otherUsers[action.payload.id] = action.payload
+            state.otherUsers[action.payload.id] = {...action.payload, name: ""}
+        },
+        addUser: (state, action: PayloadAction<any>) => {
+            state.otherUsers[action.payload.id] = {id: action.payload.id, position: action.payload.position, name: ""}
         },
         removeUser: (state, action: PayloadAction<number>) => {
             delete state.otherUsers[action.payload]
@@ -134,11 +137,13 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
         if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
             // console.log(user.id, "in Range - sending audio to", u.id)
             dispatch(setUser({...u, inProximity: true}))
-            dispatch(sendAudio(u.id))
+            if (user.id !== u.id)
+                dispatch(sendAudio(u.id))
         } else if (dist > (currentRange + userProportion / 2) && (!!u.inProximity || u.inProximity === undefined)) {
             // console.log(user.id, "not in Range - dont send audio", u.id)
             dispatch(setUser({...u, inProximity: false}))
-            dispatch(unsendAudio(u.id))
+            if (user.id !== u.id)
+                dispatch(unsendAudio(u.id))
         }
     })
 }
