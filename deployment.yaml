@@ -79,8 +79,8 @@ spec:
         - name: websocket-app
           image: gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG
           imagePullPolicy: Always
-          ports:
-            - containerPort: 8085
+#          ports:
+#            - containerPort: 8085
           readinessProbe:
             httpGet:
               port: 8085
