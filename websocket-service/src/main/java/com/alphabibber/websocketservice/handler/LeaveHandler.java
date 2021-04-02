@@ -11,12 +11,12 @@ import java.util.Map;
 public class LeaveHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public void handleLeave(Map<String, User> room, Session session) {
-        room.remove(session.getId());
+    public void handleLeave(Map<String, User> room, User sender) {
+        room.remove(sender.getSession().getId());
         try {
-            session.close();
+            sender.getSession().close();
         } catch (IOException e) {
-            log.error("Could not end connection to {}", session.getId());
+            log.error("Could not end connection to {}", sender.getId());
             log.error(String.valueOf(e.getStackTrace()));
         }
     }

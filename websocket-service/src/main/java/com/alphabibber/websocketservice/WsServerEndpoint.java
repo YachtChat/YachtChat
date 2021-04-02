@@ -19,6 +19,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,14 +57,16 @@ public class WsServerEndpoint {
             roomMap.put(roomId, room);
             log.info("Room {} newly opend", roomId);
         }
-        log.info("User {} joined the room {}", session.getId(), roomId);
+        log.info("User joined the room {}", roomId);
     }
 
     @OnMessage
     public void openMessage(@PathParam("roomID") String roomId, Session session, String message)  {
         // TODO should we here catch the exception that are possibly thrown
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
+        // Map of room with session.getId() as key and the User Object as value
         Map<String, User> room = roomMap.get(roomId);
+        User sender = null;
         String type;
         try{
             type = jsonObject.get("type").getAsString();
@@ -74,12 +77,13 @@ public class WsServerEndpoint {
 
         switch (type){
             case "login":
-                String secret = jsonObject.get("user_secret").getAsString();
-                loginHandler.handleLogin(room, roomId, secret, session);
+                String token = jsonObject.get("token").getAsString();
+                String userId = jsonObject.get("user_id").getAsString();
+                loginHandler.handleLogin(room, roomId, token, userId, session);
                 break;
             case "position":
                 if (! room.containsKey(session.getId())){
-                    log.warn("User {} tried to update his Position while not being logged in", session.getId());
+                    log.warn("User tried to update his Position while not being logged in");
                     return;
                 }
                 JsonObject positionStr = jsonObject.get("position").getAsJsonObject();
@@ -88,24 +92,34 @@ public class WsServerEndpoint {
                 break;
             case "signal":
                 if (! room.containsKey(session.getId())){
-                    log.warn("User {} tried to signal while not being logged in", session.getId());
+                    log.warn("User tried to signal while not being logged in");
                     return;
                 }
+                sender = room.get(session.getId());
                 JsonObject content = jsonObject.getAsJsonObject("content");
                 String target_id = jsonObject.get("target_id").getAsString();
-                if (! room.containsKey(target_id)){
-                    log.warn("User {} tried to signal to target {} but target does not exist", session.getId(), target_id);
+                // iterate over all user and find the target if it exists
+                User target_user = null;
+                for (User user:room.values()){
+                    if (user.getId().equals(target_id)){
+                        target_user = user;
+                        break;
+                    }
+                }
+                if (target_user == null){
+                    log.warn("User {} tried to signal to target {} but target does not exist", sender.getId(), target_id);
                     return;
                 }
-                signalHandler.handleSignal(roomMap.get(roomId), roomId, session, content, target_id);
-                log.info("User {} send message to user {} in room {}", session.getId(), target_id, roomId);
+                signalHandler.handleSignal(roomMap.get(roomId), roomId, sender, content, target_user);
+                log.info("User {} send message to user {} in room {}", sender.getId(), target_id, roomId);
                 break;
             case "leave":
                 if (! room.containsKey(session.getId())){
-                    log.warn("User {} tried to leave while not being logged in", session.getId());
+                    log.warn("User tried to leave while not being logged in");
                     return;
                 }
-                leaveHandler.handleLeave(roomMap.get(roomId), session);
+                sender = room.get(session.getId());
+                leaveHandler.handleLeave(roomMap.get(roomId), sender);
                 log.info("User {} has left the room {}", session.getId(), roomId);
                 break;
             default:
@@ -115,8 +129,9 @@ public class WsServerEndpoint {
 
     @OnClose
     public void onClose(@PathParam("roomID") String roomId, Session session) throws IOException {
-        leaveHandler.handleLeave(roomMap.get(roomId), session);
-        log.info("User {} has left the room {}", session.getId(), roomId);
+        User sender = roomMap.get(roomId).get(session.getId());
+        leaveHandler.handleLeave(roomMap.get(roomId), sender);
+        log.info("User {} has left the room {}", sender.getId(), roomId);
     }
 
     @OnError
