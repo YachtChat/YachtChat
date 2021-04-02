@@ -4,8 +4,11 @@ import com.alphabibber.websocketservice.encoder.*;
 import com.alphabibber.websocketservice.handler.LeaveHandler;
 import com.alphabibber.websocketservice.handler.PositionChangeHandler;
 import com.alphabibber.websocketservice.handler.SignalHandler;
+import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.handler.LoginHandler;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
@@ -24,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
         PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class})
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    Gson gson = new GsonBuilder().create();
     private final LoginHandler loginHandler = new LoginHandler();
     private final PositionChangeHandler positionChangeHandler = new PositionChangeHandler();
     private final LeaveHandler leaveHandler = new LeaveHandler();
@@ -60,7 +64,13 @@ public class WsServerEndpoint {
         // TODO should we here catch the exception that are possibly thrown
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
         Map<String, User> room = roomMap.get(roomId);
-        String type = jsonObject.get("type").getAsString();
+        String type;
+        try{
+            type = jsonObject.get("type").getAsString();
+        } catch (NullPointerException e){
+            log.error("This json does not contain a field type");
+            return;
+        }
 
         switch (type){
             case "login":
@@ -72,7 +82,8 @@ public class WsServerEndpoint {
                     log.warn("User {} tried to update his Position while not being logged in", session.getId());
                     return;
                 }
-                String position = jsonObject.get("position").getAsString();
+                JsonObject positionStr = jsonObject.get("position").getAsJsonObject();
+                Position position = gson.fromJson(positionStr, Position.class);
                 positionChangeHandler.handlePositinChange(roomMap.get(roomId), roomId, session, position);
                 break;
             case "signal":
@@ -80,8 +91,12 @@ public class WsServerEndpoint {
                     log.warn("User {} tried to signal while not being logged in", session.getId());
                     return;
                 }
-                String content = jsonObject.get("content").getAsString();
+                JsonObject content = jsonObject.getAsJsonObject("content");
                 String target_id = jsonObject.get("target_id").getAsString();
+                if (! room.containsKey(target_id)){
+                    log.warn("User {} tried to signal to target {} but target does not exist", session.getId(), target_id);
+                    return;
+                }
                 signalHandler.handleSignal(roomMap.get(roomId), roomId, session, content, target_id);
                 log.info("User {} send message to user {} in room {}", session.getId(), target_id, roomId);
                 break;
@@ -93,8 +108,9 @@ public class WsServerEndpoint {
                 leaveHandler.handleLeave(roomMap.get(roomId), session);
                 log.info("User {} has left the room {}", session.getId(), roomId);
                 break;
+            default:
+                log.warn("The {} type is not defined", type);
         }
-
     }
 
     @OnClose

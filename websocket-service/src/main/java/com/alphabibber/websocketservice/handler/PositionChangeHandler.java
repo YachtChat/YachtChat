@@ -16,11 +16,10 @@ import java.util.Map;
 public class PositionChangeHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public void handlePositinChange(Map<String, User> room, String roomId, Session session, String position){
+    public void handlePositinChange(Map<String, User> room, String roomId, Session session, Position position){
         Gson gson = new Gson();
-        Position pos = gson.fromJson(position, Position.class);
-        room.get(session.getId()).setPosition(pos);
-        PositionAnswer answer = new PositionAnswer(pos, session.getId());
+        room.get(session.getId()).setPosition(position);
+        PositionAnswer answer = new PositionAnswer(position, session.getId());
         ArrayList<User> users = new ArrayList<>(room.values());
         users.forEach(user -> {
             if (user.getSession().getId() == session.getId()){return;}// this should only skip this iteration
