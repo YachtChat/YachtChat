@@ -4,6 +4,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getCamera, getMicrophone, getSpeaker, getStream} from "../../store/rtcSlice";
 import {userProportion} from "../../store/userSlice";
+import {Tooltip, Zoom} from "@material-ui/core";
 
 interface Props {
     user: User
@@ -110,9 +111,15 @@ export class UserComponent extends Component<Props> {
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
-                    {!!this.props.user.userStream &&
-                    <video key={this.props.camera} autoPlay muted={this.props.isActiveUser} ref={this.videoObject}/>
-                    }
+                    <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message} interactive
+                             title={(this.props.user.message) ? this.props.user.message : ""} placement="top" arrow>
+                        <div>
+                            {!!this.props.user.userStream &&
+                            <video key={this.props.camera} autoPlay muted={this.props.isActiveUser}
+                                   ref={this.videoObject}/>
+                            }
+                        </div>
+                    </Tooltip>
                 </div>
                 <span ref={this.myName} className={"userName"}
                       style={userNameStyle}>{(this.props.isActiveUser) ? "You" : user.name}</span>

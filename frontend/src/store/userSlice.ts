@@ -110,7 +110,7 @@ export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispa
 
 export const handleMessage = (message: string, fromId: string): AppThunk => (dispatch, getState) => {
     const user = getUserById(getState(), fromId)
-    if (user && user.inProximity) {
+    if (user) {
         dispatch(setMessage({message, id: fromId}))
         setTimeout(() => dispatch(destroyMessage(fromId)), 5000)
     }
@@ -150,7 +150,9 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
 
 export const submitRadius = (radius: number): AppThunk => (dispatch, getState) => {
     dispatch(changeRadius(radius))
-    dispatch(sendPosition(getState().userState.activeUser.position))
+    const position = getUser(getState()).position
+    dispatch(sendPosition(position))
+    dispatch(handlePositionUpdate({id: getUserID(getState()), position}))
 };
 
 
@@ -160,7 +162,11 @@ export const submitNameChange = (name: string): AppThunk => dispatch => {
 
 export const getUser = (state: RootState) => state.userState.activeUser;
 export const getUserID = (state: RootState) => state.userState.activeUser.id;
-export const getUserById = (state: RootState, id: string) => state.userState.otherUsers[id];
+export const getUserById = (state: RootState, id: string) => {
+    if (state.userState.activeUser.id === id)
+        return state.userState.activeUser
+    return state.userState.otherUsers[id];
+}
 export const getUsers = (state: RootState) => Object.keys(state.userState.otherUsers).map(
     id => state.userState.otherUsers[id]
 );
