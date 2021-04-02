@@ -64,23 +64,28 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: signalingserver-app
+  name: websocket-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: signalingserver-app
+      app: websocket-app
   template:
     metadata:
       labels:
-        app: signalingserver-app
+        app: websocket-app
     spec:
       containers:
-        - name: signalingserver-app
-          image: gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG
+        - name: websocket-app
+          image: gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG
           imagePullPolicy: Always
           ports:
-            - containerPort: 6503
+            - containerPort: 8085
+          readinessProbe:
+            httpGet:
+              port: 8085
+              path: /actuator/health
+            initialDelaySeconds: 10
 ---
 apiVersion: apps/v1
 kind: Deployment

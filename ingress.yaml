@@ -33,12 +33,12 @@ spec:
 #              serviceName: presentation-service
 #              servicePort: 80
 
-    - host: signal.gke.alphabibber.com
+    - host: websocket.gke.alphabibber.com
       http:
         paths:
           - path: /*
             backend:
-              serviceName: signalingserver-service
+              serviceName: websocket-service
               servicePort: 80
 
     - host: spaces.gke.alphabibber.com

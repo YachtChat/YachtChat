@@ -16,15 +16,19 @@ env:
   LANDINGPAGE_DEPLOYMENT_NAME: landingpage-app
   PRESENTATION_DEPLOYMENT_NAME: presentation-app
   SIGNALING_DEPLOYMENT_NAME: signalingserver-app
+  WEBSOCKET_DEPLOYMENT_NAME: websocket-app
   SPACES_DEPLOYMENT_NAME: spacesservice-app
   FRONTEND_IMAGE: frontend-image
   LANDINGPAGE_IMAGE: landingpage-image
   PRESENTATION_IMAGE: presentation-image
+  WEBSOCKET_IMAGE: websocket-image
   SIGNALING_IMAGE: signaling-image
   SPACES_IMAGE: spaces-image
   SPACES_URL: spaces.gke.alphabibber.com
   SPACES_PORT: 8081
   SIGNAL_URL: signal.gke.alphabibber.com
+  WEBSOCKET_URL: websocket.gke.alphabibber.com
+  WEBSOCKET_PORT: 8085
   TAG: 1.0.0
 
 jobs:
@@ -44,8 +48,10 @@ jobs:
           server-id: github
           settings-path: ${{ github.workspace }}
 
-      - name: Build with Maven
+      - name: Build with Maven spaces-service
         run: mvn clean -f ./spaces-service/pom.xml package -DskipTests
+      - name: Build with Maven websocket-server
+        run: mvn clean -f ./websocket-service/pom.xml package -DskipTests
 
       # Setup gcloud CLI
       - name: Setup gcloud CLI
@@ -73,7 +79,7 @@ jobs:
           docker build \
           --file ./frontend/Dockerfile \
           --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG" \
-          --build-arg REACT_APP_SIGNAL_URL=$SIGNAL_URL \
+          --build-arg REACT_APP_SIGNAL_URL=$WEBSOCKET_URL \
           --build-arg REACT_APP_SIGNAL_PORT=${SIGNAL_PORT} \
           --build-arg REACT_APP_SPACES_URL=$SPACES_URL \
           ./frontend
@@ -92,14 +98,14 @@ jobs:
 #          --tag "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG" \
 #          .
 #       Build the Docker image
-      - name: Build signalingServer image
+      - name: Build websocket-service image
         run: |-
           docker build \
-          --file ./signalingServer/Dockerfile \
-          --tag "gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG" \
-          --build-arg VIRTUAL_HOST=${SIGNAL_URL} \
-          --build-arg VIRTUAL_PORT=${SIGNAL_PORT} \
-          ./signalingServer
+          --file ./websocket-service/Dockerfile \
+          --tag "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG" \
+          --build-arg SPACES_URL=$SPACES_URL \
+          --build-arg VIRTUAL_PORT=$WEBSOCKET_PORT \
+          ./websocket-service
 #       Build the Docker image
       - name: Build spacesService image
         run: |-
@@ -120,7 +126,7 @@ jobs:
 #          docker push "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG"
       - name: Publish signalingServer Docker Image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG"
+          docker push "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG"
       - name: Publish spacesServer Docker Image to GCR
         run: |-
           docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
@@ -135,9 +141,9 @@ jobs:
           ./kustomize edit set image gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG=gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG
           ./kustomize build . | kubectl apply -f -
           kubectl rollout status deployment/$FRONTEND_DEPLOYMENT_NAME
-          ./kustomize edit set image gcr.io/PROJECT_ID/SIGNALING_IMAGE:TAG=gcr.io/$PROJECT_ID/$SIGNALING_IMAGE:$TAG
+          ./kustomize edit set image gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG=gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG
           ./kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment/$SIGNALING_DEPLOYMENT_NAME
+          kubectl rollout status deployment/$WEBSOCKET_DEPLOYMENT_NAME
           ./kustomize edit set image gcr.io/PROJECT_ID/SPACES_IMAGE:TAG=gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG
           ./kustomize build . | kubectl apply -f -
           kubectl rollout status deployment/$SPACES_DEPLOYMENT_NAME
