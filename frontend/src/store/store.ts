@@ -4,6 +4,7 @@ import webSocketSlice from "./connectionSlice";
 import rtcSlice from "./rtcSlice";
 import spaceSlice from "./spaceSlice";
 import statusSlice from "./statusSlice";
+import authSlice from "./authSlice";
 import playgroundSlice from "./playgroundSlice";
 
 export const store = configureStore({
@@ -14,6 +15,7 @@ export const store = configureStore({
     space: spaceSlice,
     status: statusSlice,
     playground: playgroundSlice,
+    auth: authSlice,
   },
 });
 

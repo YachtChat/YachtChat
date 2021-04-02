@@ -1,0 +1,32 @@
+@import "src/variables.module";
+
+.spaces {
+  padding: 2rem;
+  width: 50%;
+  height: 50%;
+  overflow: hidden;
+  text-align: left;
+
+  .spacesWrapper {
+    display: block;
+    margin: 2rem 0;
+
+    .separator {
+      border-top: solid gray 1px;
+    }
+
+    .space {
+      position: relative;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+
+      button {
+        padding: 0.5rem 1rem;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: auto;
+      }
+    }
+  }
+}

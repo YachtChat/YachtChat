@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
-import {getCamera, getSpeaker, getStream} from "../../store/rtcSlice";
+import {getCamera, getMicrophone, getSpeaker, getStream} from "../../store/rtcSlice";
 import {userProportion} from "../../store/userSlice";
 
 interface Props {
@@ -13,17 +13,35 @@ interface Props {
     muted: boolean
     speaker: string
     camera: string
+    microphone: string
+    getStream: (id: string) => MediaStream | undefined
     mediaChangeOngoing: boolean
 }
 
 export class UserComponent extends Component<Props> {
 
     private myName: React.RefObject<HTMLMediaElement>;
+    private videoObject: React.RefObject<HTMLVideoElement>;
 
     constructor(props: Props) {
         super(props);
 
+        this.videoObject = React.createRef();
         this.myName = React.createRef();
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
+        if (this.props.user.userStream && this.videoObject.current && !this.props.mediaChangeOngoing) {
+
+            if (!this.videoObject.current.srcObject ||
+                this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing) {
+                this.videoObject.current.srcObject = this.props.getStream(this.props.user.id)!
+                console.log(this.props.getStream(this.props.user.id)!)
+            }
+
+            //@ts-ignore
+            this.videoObject.current.setSinkId(this.props.speaker)
+        }
     }
 
     render() {
@@ -93,16 +111,7 @@ export class UserComponent extends Component<Props> {
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
                     {!!this.props.user.userStream &&
-                    <video key={this.props.camera} autoPlay muted={this.props.isActiveUser} ref={ref => {
-                        if (ref && !this.props.mediaChangeOngoing) {
-                            ref.srcObject = getStream(this.props.user.id)
-                            // @ts-ignore
-                            if (ref.setSinkId) {
-                                //@ts-ignore
-                                ref.setSinkId(this.props.speaker)
-                            }
-                        }
-                    }}/>
+                    <video key={this.props.camera} autoPlay muted={this.props.isActiveUser} ref={this.videoObject}/>
                     }
                 </div>
                 <span ref={this.myName} className={"userName"}
@@ -117,7 +126,9 @@ const mapStateToProps = (state: RootState) => ({
     muted: state.rtc.muted,
     speaker: getSpeaker(state),
     camera: getCamera(state),
-    mediaChangeOngoing: state.rtc.mediaChangeOngoing
+    microphone: getMicrophone(state),
+    mediaChangeOngoing: state.rtc.mediaChangeOngoing,
+    getStream: (id: string) => getStream(state, id),
 })
 
 export default connect(mapStateToProps)(UserComponent)

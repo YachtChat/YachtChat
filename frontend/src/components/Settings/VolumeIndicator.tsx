@@ -91,7 +91,7 @@ export class MediaSettings extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    audio: getStream(state.userState.activeUser.id),
+    audio: getStream(state, state.userState.activeUser.id),
     mediaChangeOngoing: state.rtc.mediaChangeOngoing,
 })
 

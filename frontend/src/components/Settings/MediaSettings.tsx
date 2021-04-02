@@ -31,6 +31,7 @@ interface Props {
     changeAudioOutput: (speaker: string) => void
     changeAudioInput: (microphone: string) => void
     requestUserMedia: () => void
+    getStream: (id: string) => MediaStream | undefined
 }
 
 export class MediaSettings extends Component<Props> {
@@ -62,8 +63,8 @@ export class MediaSettings extends Component<Props> {
             <div className={"mediaSettings"}>
                 <div className={"videoPreview"}>
                     <video key={this.props.camera} autoPlay muted ref={ref => {
-                        if (ref && !this.props.mediaChangeOngoing)
-                            ref.srcObject = getStream(this.props.user.id)
+                        if (ref && !this.props.mediaChangeOngoing && this.props.getStream(this.props.user.id))
+                            ref.srcObject = this.props.getStream(this.props.user.id)!
                     }}/>
                 </div>
                 <VolumeIndicator/>
@@ -131,6 +132,7 @@ const mapStateToProps = (state: RootState) => ({
     microphone: getMicrophone(state),
     camera: getCamera(state),
     speaker: getSpeaker(state),
+    getStream: (id: string) => getStream(state, id),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -6,8 +6,10 @@ import Login from "./components/Login";
 import {connect} from "react-redux";
 import StatusComponent from "./components/Status";
 import "webrtc-adapter";
+import Spaces from './components/Spaces';
 
 interface Props {
+    loggedIn: boolean
     joinedRoom: boolean
     connected: boolean
 }
@@ -29,7 +31,10 @@ export class App extends Component<Props, State> {
                 {(this.props.joinedRoom && this.props.connected) &&
                 <Playground/>
                 }
-                {!this.props.joinedRoom &&
+                {!this.props.joinedRoom && this.props.loggedIn &&
+                <Spaces/>
+                }
+                {!this.props.joinedRoom && !this.props.loggedIn &&
                 <Login/>
                 }
                 <StatusComponent/>
@@ -40,6 +45,7 @@ export class App extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
+    loggedIn: state.auth.loggedIn,
     joinedRoom: state.webSocket.joinedRoom,
     connected: state.webSocket.connected
 })
