@@ -59,6 +59,9 @@ services:
       - VIRTUAL_HOST=${AUTH_URL}
       - LETSENCRYPT_HOST=${AUTH_URL}
       - VIRTUAL_PORT=${AUTH_PORT}
+      - OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}
+      - OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}
+
     network_mode: bridge
 
   signaling_server:
