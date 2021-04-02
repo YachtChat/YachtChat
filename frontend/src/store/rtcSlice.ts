@@ -16,7 +16,8 @@ interface RTCState {
         speaker?: string,
         microphone?: string
     }
-    cameraChangeOngoing: boolean
+    mediaChangeOngoing: boolean
+    userMedia: boolean
 }
 
 const initialState: RTCState = {
@@ -26,11 +27,13 @@ const initialState: RTCState = {
     microphones: [],
     speakers: [],
     selected: {},
-    cameraChangeOngoing: false
+    mediaChangeOngoing: false,
+    userMedia: false
 };
 
 let rtcConnections: { [key: string]: RTCPeerConnection } = {};
 let rtpSender: { [key: string]: RTCRtpSender[] } = {};
+let localStream: MediaStream | undefined = undefined
 let streams: { [key: string]: MediaStream } = {};
 let mediaDevices: { [key: string]: MediaDeviceInfo } = {};
 
@@ -54,8 +57,8 @@ export const rtcSlice = createSlice({
         toggleVideo: (state) => {
             state.video = !state.video
         },
-        setCameraChangeOngoing: (state, action: PayloadAction<boolean>) => {
-            state.cameraChangeOngoing = action.payload
+        setMediaChangeOngoing: (state, action: PayloadAction<boolean>) => {
+            state.mediaChangeOngoing = action.payload
         },
         setCamera: (state, action: PayloadAction<string>) => {
             state.selected.camera = action.payload
@@ -68,6 +71,9 @@ export const rtcSlice = createSlice({
             state.selected.speaker = action.payload
 
         },
+        setUserMedia: (state, action: PayloadAction<boolean>) => {
+            state.userMedia = action.payload
+        }
     },
 });
 
@@ -78,7 +84,8 @@ export const {
     setCamera,
     setMicrophone,
     setSpeaker,
-    setCameraChangeOngoing
+    setMediaChangeOngoing,
+    setUserMedia
 } = rtcSlice.actions;
 
 export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
@@ -109,31 +116,26 @@ export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
 
 }
 
-export const requestUserMediaAndJoin = (): AppThunk => (dispatch, getState) => {
+export const requestUserMedia = (): AppThunk => (dispatch, getState) => {
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
-        streams[localClient] = e
+        localStream = e
         dispatch(gotRemoteStream(localClient))
     }).then(() =>
-        dispatch(send({
-            type: "join"
-        }))
+        dispatch(setUserMedia(true))
     ).catch(() => {
-        dispatch(handleError("Unable to get video."))
-        dispatch(send({
-                type: "join"
-            })
-        )
+        dispatch(handleError("Unable to get media."))
+        dispatch(setUserMedia(false))
     })
 }
 
 export const mute = (): AppThunk => (dispatch, getState) => {
     dispatch(toggleMute())
 
-    if (!streams[getUserID(getState())])
+    if (!localStream)
         return
 
-    streams[getUserID(getState())].getAudioTracks()[0].enabled = !getState().rtc.muted
+    getStream(getState(), getUserID(getState()))!.getAudioTracks()[0].enabled = !getState().rtc.muted
     getUsers(getState()).forEach(u => {
         rtpSender[u.id].forEach(rtp => {
             if (rtp.track && rtp.track.kind === 'audio') {
@@ -146,9 +148,9 @@ export const mute = (): AppThunk => (dispatch, getState) => {
 export const displayVideo = (): AppThunk => (dispatch, getState) => {
     dispatch(toggleVideo())
 
-    if (!streams[getUserID(getState())])
+    if (!getStream(getState(), getUserID(getState())))
         return
-    streams[getUserID(getState())].getVideoTracks()[0].enabled = getState().rtc.video
+    getStream(getState(), getUserID(getState()))!.getVideoTracks()[0].enabled = getState().rtc.video
     getUsers(getState()).forEach(u => {
         rtpSender[u.id].forEach(rtp => {
             if (rtp.track && rtp.track.kind === 'video') {
@@ -158,8 +160,7 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
     })
 }
 
-export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
-
+export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
     rtpSender[id].forEach(rtp => {
         console.log("Trying to enable audio to ", id)
         if (rtp.track && rtp.track.kind === 'audio') {
@@ -170,7 +171,7 @@ export const sendAudio = (id: number): AppThunk => (dispatch, getState) => {
     })
 }
 
-export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
+export const unsendAudio = (id: string): AppThunk => (dispatch, getState) => {
     rtpSender[id].forEach(rtp => {
         console.log("Trying not to enable audio to ", id)
         if (rtp.track && rtp.track.kind === 'audio') {
@@ -181,24 +182,29 @@ export const unsendAudio = (id: number): AppThunk => (dispatch, getState) => {
     })
 }
 
-export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk => (dispatch, getState) => {
+export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk => (dispatch, getState) => {
     // get client ids
-    const clients = getUsers(getState()).map(k => Number(k.id))
-    const localClient: number = getUserID(getState())
+    const clients = getUsers(getState()).map(k => k.id)
+    const localClient: string = getUserID(getState())
     clients.push(localClient)
 
     if (Array.isArray(clients) && clients.length > 0) {
         clients.forEach((userId) => {
             if (!rtcConnections[userId]) {
                 rtcConnections[userId] = new RTCPeerConnection(rtcConfiguration);
+                if (localClient === userId)
+                    return;
+
                 rtcConnections[userId].onicecandidate = (event) => {
                     if (event.candidate) {
                         console.log(localClient, 'send candidate to ', userId);
                         dispatch(send({
-                            type: "signaling",
-                            target: userId,
-                            signal_type: 'candidate',
-                            candidate: event.candidate
+                            type: "signal",
+                            target_id: userId,
+                            content: {
+                                signal_type: 'candidate',
+                                candidate: event.candidate
+                            }
                         }));
                     }
                 };
@@ -213,26 +219,28 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
 
                 rtpSender[userId] = []
 
-                if (!streams[localClient]) {
+                if (!getStream(getState(), localClient)) {
                     dispatch(handleError("Could not access media."))
                     return
                 }
 
-                streams[localClient].getTracks().forEach((track, idx) => {
-                    rtpSender[userId][idx] = rtcConnections[userId].addTrack(track.clone(), streams[localClient])
+                getStream(getState(), localClient)!.getTracks().forEach((track, idx) => {
+                    rtpSender[userId][idx] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
             }
         });
 
-        if (count >= 2) {
+        if (count >= 2 && joinedUserId !== localClient) {
             rtcConnections[joinedUserId].createOffer(offerOptions).then((description) => {
                 rtcConnections[joinedUserId].setLocalDescription(description).then(() => {
                     console.log(localClient, ' Send offer to ', joinedUserId);
                     dispatch(send({
-                        type: 'signaling',
-                        target: joinedUserId,
-                        description: rtcConnections[joinedUserId].localDescription,
-                        signal_type: 'sdp'
+                        type: 'signal',
+                        target_id: joinedUserId,
+                        content: {
+                            signal_type: 'sdp',
+                            description: rtcConnections[joinedUserId].localDescription,
+                        }
                     }));
                 }).catch(handleError);
             });
@@ -241,17 +249,19 @@ export const handleRTCEvents = (joinedUserId: number, count: number): AppThunk =
     }
 }
 
-export const handleCandidate = (candidate: any, fromId: number): AppThunk => (dispatch: any, getState: any) => {
+export const handleCandidate = (candidate: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
     rtcConnections[fromId].addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e.stack));
 }
 
-export const handleSdp = (description: any, fromId: number): AppThunk => (dispatch: any, getState: any) => {
+export const handleSdp = (description: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
     console.log("Start handleSdp with description:");
     console.dir(description);
     if (!!description) {
-        const clientId: number = getUserID(getState());
+        const clientId: string = getUserID(getState());
 
         console.log(clientId, ' Receive sdp from ', fromId);
+        if (clientId === fromId)
+            return
         rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))
             .then(() => {
                 if (description.type === 'offer') {
@@ -259,13 +269,14 @@ export const handleSdp = (description: any, fromId: number): AppThunk => (dispat
                         .then((desc) => {
                             rtcConnections[fromId].setLocalDescription(desc).then(() => {
                                 console.log(clientId, ' Send answer to ', fromId);
-
                                 // This replaces the socket.emit function
                                 dispatch(send({
-                                    type: "signaling",
-                                    signal_type: "sdp",
-                                    target: fromId,
-                                    description: rtcConnections[fromId].localDescription
+                                    type: "signal",
+                                    target_id: fromId,
+                                    content: {
+                                        signal_type: "sdp",
+                                        description: rtcConnections[fromId].localDescription
+                                    }
                                 }));
                             });
                         })
@@ -278,11 +289,11 @@ export const handleSdp = (description: any, fromId: number): AppThunk => (dispat
     }
 }
 
-export const destroySession = () => {
+export const destroySession = (): AppThunk => (dispatch, getState) => {
     Object.keys(streams).forEach(k => {
-        streams[k].getTracks().forEach(t => {
+        getStream(getState(), k)!.getTracks().forEach(t => {
             t.enabled = false
-            streams[k].removeTrack(t)
+            getStream(getState(), k)!.removeTrack(t)
         })
     })
 
@@ -296,11 +307,12 @@ export const destroySession = () => {
 }
 
 export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {
-    dispatch(setCameraChangeOngoing(true))
+    dispatch(setMediaChangeOngoing(true))
     dispatch(setCamera(camera))
     dispatch(handleInputChange())
 }
 export const changeAudioInput = (microphone: string): AppThunk => (dispatch, getState) => {
+    dispatch(setMediaChangeOngoing(true))
     dispatch(setMicrophone(microphone))
     dispatch(handleInputChange())
 
@@ -308,11 +320,11 @@ export const changeAudioInput = (microphone: string): AppThunk => (dispatch, get
 
 export const handleInputChange = (): AppThunk => (dispatch, getState) => {
     const localClient = getUserID(getState())
-    const oldStream = streams[localClient]
+    const oldStream = getStream(getState(), localClient)
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
-        streams[localClient] = e
-        dispatch(setCameraChangeOngoing(false))
-        streams[localClient].getTracks().forEach(s => {
+        localStream = e
+        dispatch(setMediaChangeOngoing(false))
+        getStream(getState(), localClient)!.getTracks().forEach(s => {
             getUsers(getState()).forEach(u => {
                 rtpSender[u.id].forEach(rs => {
                     if (rs.track && rs.track.kind === s.kind)
@@ -320,8 +332,12 @@ export const handleInputChange = (): AppThunk => (dispatch, getState) => {
                 })
             })
         })
-        oldStream.getTracks().forEach(t => t.stop())
-    }).catch(() => dispatch(handleError("Cannot get user media")))
+        oldStream!.getTracks().forEach(t => t.stop())
+        dispatch(setUserMedia(true))
+    }).catch(() => {
+        dispatch(setUserMedia(false))
+        dispatch(handleError("Cannot get user media"))
+    })
 
 }
 
@@ -365,6 +381,11 @@ export const getSpeaker = (state: RootState): string => {
     // otherwise get first available
     return (state.rtc.speakers[0]) ? state.rtc.speakers[0] : ""
 }
-export const getStream = (id: number) => streams[id]
+export const getStream = (state: RootState, id: string) => {
+    if (streams[id])
+        return streams[id]
+    if (state.userState.activeUser.id === id)
+        return localStream
+}
 export const getMediaDevices = () => mediaDevices
 export default rtcSlice.reducer;

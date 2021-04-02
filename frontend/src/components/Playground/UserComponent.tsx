@@ -2,8 +2,9 @@ import React, {Component} from "react";
 import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
-import {getCamera, getSpeaker, getStream} from "../../store/rtcSlice";
+import {getCamera, getMicrophone, getSpeaker, getStream} from "../../store/rtcSlice";
 import {userProportion} from "../../store/userSlice";
+import {Tooltip, Zoom} from "@material-ui/core";
 
 interface Props {
     user: User
@@ -13,13 +14,15 @@ interface Props {
     muted: boolean
     speaker: string
     camera: string
-    cameraChangeOngoing: boolean
+    microphone: string
+    getStream: (id: string) => MediaStream | undefined
+    mediaChangeOngoing: boolean
 }
 
 export class UserComponent extends Component<Props> {
 
-    private videoObject: React.RefObject<HTMLVideoElement>;
     private myName: React.RefObject<HTMLMediaElement>;
+    private videoObject: React.RefObject<HTMLVideoElement>;
 
     constructor(props: Props) {
         super(props);
@@ -29,14 +32,18 @@ export class UserComponent extends Component<Props> {
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        if (this.props.user.userStream && this.videoObject.current && !this.props.cameraChangeOngoing) {
+        if (this.props.user.userStream && this.videoObject.current && !this.props.mediaChangeOngoing) {
 
-            if (!this.videoObject.current.srcObject || this.props.camera !== prevProps.camera) {
-                this.videoObject.current.srcObject = getStream(this.props.user.id)
+            if (!this.videoObject.current.srcObject ||
+                this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing) {
+                this.videoObject.current.srcObject = this.props.getStream(this.props.user.id)!
+                console.log(this.props.getStream(this.props.user.id)!)
             }
 
             //@ts-ignore
-            this.videoObject.current.setSinkId(this.props.speaker)
+            if (this.videoObject.current.setSinkId)
+                //@ts-ignore
+                this.videoObject.current.setSinkId(this.props.speaker)
         }
     }
 
@@ -106,9 +113,15 @@ export class UserComponent extends Component<Props> {
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
-                    {!!this.props.user.userStream &&
-                    <video key={this.props.camera} autoPlay muted={this.props.isActiveUser} ref={this.videoObject}/>
-                    }
+                    <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message} interactive
+                             title={(this.props.user.message) ? this.props.user.message : ""} placement="top" arrow>
+                        <div>
+                            {!!this.props.user.userStream &&
+                            <video key={this.props.camera} autoPlay muted={this.props.isActiveUser}
+                                   ref={this.videoObject}/>
+                            }
+                        </div>
+                    </Tooltip>
                 </div>
                 <span ref={this.myName} className={"userName"}
                       style={userNameStyle}>{(this.props.isActiveUser) ? "You" : user.name}</span>
@@ -122,7 +135,9 @@ const mapStateToProps = (state: RootState) => ({
     muted: state.rtc.muted,
     speaker: getSpeaker(state),
     camera: getCamera(state),
-    cameraChangeOngoing: state.rtc.cameraChangeOngoing
+    microphone: getMicrophone(state),
+    mediaChangeOngoing: state.rtc.mediaChangeOngoing,
+    getStream: (id: string) => getStream(state, id),
 })
 
 export default connect(mapStateToProps)(UserComponent)

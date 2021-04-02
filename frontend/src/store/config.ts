@@ -2,7 +2,7 @@ export const SPACES_URL: string | undefined = process.env.REACT_APP_SPACES_URL;
 // start it like this `REACT_APP_SOCKET_URL=ws://localhost:6503` yarn run start
 export const SOCKET_URL: string | undefined = process.env.REACT_APP_SIGNAL_URL;
 export const SOCKET_PORT: string | undefined = process.env.REACT_APP_SIGNAL_PORT;
-export const loginService: string = "https://spaces.meet.alphabibber.com"
+export const loginService: string = "https://spaces.alphabibber.com"
 
 export const rtcConfiguration = {
     "iceServers": [{
