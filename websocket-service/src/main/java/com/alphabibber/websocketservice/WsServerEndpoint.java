@@ -119,4 +119,26 @@ public class WsServerEndpoint {
         log.info("User {} has left the room {}", session.getId(), roomId);
     }
 
+    @OnError
+    public void onError(@PathParam("roomID") String roomId, Session session, Throwable e){
+        Throwable cause = e.getCause();
+        if (cause != null){
+            log.error("error-info -> cause: " + cause);
+        }
+        if (roomMap.containsKey(roomId)){
+            Map<String, User> room = roomMap.get(roomId);
+            if (room.containsKey(session.getId())){
+                room.remove(session.getId());
+            }
+        }
+        try{
+            session.close();
+        } catch (IOException ioException) {
+            log.info("Error was handeled with cascading IOException");
+            ioException.printStackTrace();
+        }
+        finally {
+            log.info("Session error was handled");
+        }
+    }
 }
