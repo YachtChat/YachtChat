@@ -41,10 +41,10 @@ jobs:
 
       - name: Dotenv Action
         uses: falti/dotenv-action@v0.2.5
-      - name: Checkout Repository
-        uses: actions/checkout@v2
         with:
           path: ../../.env
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
       - name: IMAGE TAG
         run: echo "$TAG$GITHUB_RUN_NUMBER"
