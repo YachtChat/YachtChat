@@ -39,11 +39,15 @@ jobs:
 
     steps:
 
+      - name: Dotenv Action
+        uses: falti/dotenv-action@v0.2.5
       - name: Checkout Repository
         uses: actions/checkout@v2
 
       - name: IMAGE TAG
         run: echo "$TAG$GITHUB_RUN_NUMBER"
+      - name: .env Var test
+        run: echo "${{ env.AUTH_PORT }}"
 
 #      - name: Setup JDK 1.8
 #        uses: actions/setup-java@v1
