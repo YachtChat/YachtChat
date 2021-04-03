@@ -51,9 +51,9 @@ jobs:
             production-branch: main
             test-branch: test
             dev-branch: devops/migrationtoGKEusingHELM
+
       - name: Test text
         run: echo "test"
-
       - name: Test TAG
         run: echo "<major>.<minor>.<build>[.<pre-release-tag>]"
 
