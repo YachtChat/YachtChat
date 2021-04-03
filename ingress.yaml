@@ -55,6 +55,6 @@ metadata:
   name: alphabibber-cert2
 spec:
   domains:
-    - www.gke.alphabibber.com
+    - gke.alphabibber.com
     - websocket.gke.alphabibber.com
-    - space.gke.alphabibber.com
+    - spaces.gke.alphabibber.com
