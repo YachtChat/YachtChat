@@ -13,7 +13,7 @@ import {
     setUsers
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
-import {destroySession, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
+import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./config";
 
 interface WebSocketState {
@@ -54,6 +54,9 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
         dispatch(handleError("No websocket url defined for this environment"));
         return;
     }
+
+
+    console.log("Try to connect to", spaceID)
 
     if (!SOCKET_PORT)
         socket = new WebSocket("wss://" + SOCKET_URL + "/room/" + spaceID);
@@ -105,6 +108,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
             case "leave":
                 if (loggedIn)
                     dispatch(removeUser(data.id))
+                dispatch(disconnectUser(data.id))
                 break;
             case "position":
                 if (loggedIn && data.id !== getUserID(getState()))
@@ -164,7 +168,6 @@ export const send = (message: { [key: string]: any }, target?: User): AppThunk =
         id: getUserID(getState()),
     }
 
-
     if (socket !== null)
         socket.send(JSON.stringify(msgObj));
 }
@@ -189,12 +192,18 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
     }));
 }
 
-export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) => {
+export const handleLogin = (success: boolean): AppThunk => (dispatch) => {
     if (!success) {
         dispatch(handleError("Login failed. Try again later."))
     } else {
         dispatch(joined())
     }
+}
+
+export const handleLeave = (): AppThunk => (dispatch, getState) => {
+    dispatch(leftRoom())
+    socket?.close()
+    dispatch(disconnect())
 }
 
 export default webSocketSlice.reducer;

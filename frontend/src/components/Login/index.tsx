@@ -54,13 +54,13 @@ export class Login extends Component<Props, State> {
                     <div className="login-buttons">
 
                         <div style={{background: "black"}} className={"logoImage"}>
-                            <a href={loginService.concat("/oauth_login/?method=apple")}>
+                            <a href={loginService.concat("/oauth2/authorization/apple")}>
                                 <img alt={"Sign in with Apple"} src={appleLogo}/>
                             </a>
                         </div>
 
                         <div style={{background: "white"}} className={"logoImage"}>
-                            <a href={loginService.concat("/oauth_login/?method=google")}>
+                            <a href={loginService.concat("/oauth2/authorization/google")}>
                                 <img alt={"Sign in with Google"} src={googleButton}/>
                             </a>
                         </div>

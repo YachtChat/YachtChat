@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {send} from "./connectionSlice";
+import {connectToServer, handleLeave, send} from "./connectionSlice";
 import {rtcConfiguration} from "./config";
 import {getUser, getUserID, getUsers, gotRemoteStream, handlePositionUpdate} from "./userSlice";
 import {handleError} from "./statusSlice";
@@ -116,13 +116,18 @@ export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
 
 }
 
-export const requestUserMedia = (): AppThunk => (dispatch, getState) => {
+export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch, getState) => {
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
         localStream = e
+
+        console.log("HALT STOPP")
+
         dispatch(gotRemoteStream(localClient))
-    }).then(() =>
+        dispatch(loadAllMediaDevices())
         dispatch(setUserMedia(true))
+    }).then(() =>
+        dispatch(connectToServer(spaceID))
     ).catch(() => {
         dispatch(handleError("Unable to get media."))
         dispatch(setUserMedia(false))
@@ -324,7 +329,15 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
     }
 }
 
+export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => {
+    rtpSender[id].forEach(r => r.track?.stop())
+    delete rtpSender[id]
+    rtcConnections[id].close()
+    delete rtcConnections[id]
+}
+
 export const destroySession = (): AppThunk => (dispatch, getState) => {
+    localStream?.getTracks().forEach(t => t.stop())
     Object.keys(streams).forEach(k => {
         getStream(getState(), k)!.getTracks().forEach(t => {
             t.enabled = false
@@ -332,13 +345,16 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
         })
     })
 
-    streams = {}
 
-    Object.keys(rtcConnections).forEach(k => {
-        rtcConnections[k].close()
+    getUsers(getState()).forEach(u => {
+        rtcConnections[u.id].close()
+        rtpSender[u.id].forEach(t => t.track?.stop())
     })
-
+    streams = {}
     rtcConnections = {}
+    rtpSender = {}
+
+    dispatch(handleLeave())
 }
 
 export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {
