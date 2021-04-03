@@ -56,9 +56,9 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
     }
 
     if (!SOCKET_PORT)
-        socket = new WebSocket("wss://" + SOCKET_URL + spaceID);
+        socket = new WebSocket("wss://" + SOCKET_URL + "/room/" + spaceID);
     else
-        socket = new WebSocket("wss://" + SOCKET_URL + ":" + SOCKET_PORT + "/" + spaceID);
+        socket = new WebSocket("wss://" + SOCKET_URL + ":" + SOCKET_PORT + "/room/" + spaceID);
 
 
     socket.onopen = () => {
