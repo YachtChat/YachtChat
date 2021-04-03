@@ -53,7 +53,7 @@ jobs:
             dev-branch: devops/migrationtoGKEusingHELM
 
       - name: Test TAG
-        run: echo <major>.<minor>.<build>[.<pre-release-tag>]
+        run: echo "<major>.<minor>.<build>[.<pre-release-tag>]"
 
 #      - name: Setup JDK 1.8
 #        uses: actions/setup-java@v1
