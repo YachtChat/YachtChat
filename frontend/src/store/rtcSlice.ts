@@ -191,6 +191,7 @@ export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk =
     if (Array.isArray(clients) && clients.length > 0) {
         clients.forEach((userId) => {
             if (!rtcConnections[userId]) {
+                // TODO isn't here a connection created from user a to user a
                 rtcConnections[userId] = new RTCPeerConnection(rtcConfiguration);
                 if (localClient === userId)
                     return;
@@ -231,6 +232,12 @@ export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk =
         });
 
         if (count >= 2 && joinedUserId !== localClient) {
+            //TODO Just the caller should send the offer
+            // The user that were already in the room seem to be the caller
+            // one could also think about creating the rtcConnection here
+            // Idea: it could be better to let the new user be the caller, otherwise all the clients send at once when
+            // a new user joins -> if joinedUserId == localClient then iterate over all user and send offers
+            // Mabey connect to all the user sequentially
             rtcConnections[joinedUserId].createOffer(offerOptions).then((description) => {
                 rtcConnections[joinedUserId].setLocalDescription(description).then(() => {
                     console.log(localClient, ' Send offer to ', joinedUserId);
@@ -239,6 +246,7 @@ export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk =
                         target_id: joinedUserId,
                         content: {
                             signal_type: 'sdp',
+                            // TODO shouldn't this here be the localClient
                             description: rtcConnections[joinedUserId].localDescription,
                         }
                     }));
@@ -260,10 +268,14 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
         const clientId: string = getUserID(getState());
 
         console.log(clientId, ' Receive sdp from ', fromId);
+        // TODO this should happen in the first place
         if (clientId === fromId)
             return
+        // TODO why is this existing here already?
+        // here we get the description from the caller and set them to our remoteDescription
         rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))
             .then(() => {
+                 // TODO why description type offer here?
                 if (description.type === 'offer') {
                     rtcConnections[fromId].createAnswer()
                         .then((desc) => {
@@ -280,10 +292,22 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
                                 }));
                             });
                         })
-                        .catch(dispatch(handleError("RTC Answer could not be created.")));
+                        .catch(
+                            (error) => {
+                            console.log(error)
+                            dispatch(handleError("RTC Answer could not be created."))
+                        }
+                        //     dispatch(handleError("RTC Answer could not be created."))
+                        );
                 }
             })
-            .catch(dispatch(handleError("RTC remote description could not be set.")));
+            .catch(
+                    (error) => {
+                    console.log(error)
+                    dispatch(handleError("RTC remote description could not be set."))
+                }
+                // dispatch(handleError("RTC remote description could not be set."))
+            );
     } else {
         dispatch(handleError("RTC Description was not set"))
     }
