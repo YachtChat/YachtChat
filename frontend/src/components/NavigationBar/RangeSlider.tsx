@@ -26,9 +26,9 @@ export class RangeSlider extends Component<Props> {
                     orientation="vertical"
                     color={"primary"}
                     value={this.props.activeUser.position.range}
-                    max={1}
-                    min={0.1}
-                    step={0.05}
+                    max={100}
+                    min={10}
+                    step={5}
                     track={false}
                     onChange={(e, n) => this.props.changeRadius(n as number)}
                     aria-labelledby="vertical-slider"

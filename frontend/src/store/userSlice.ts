@@ -6,11 +6,11 @@ import {sendAudio, unsendAudio} from "./rtcSlice";
 
 interface UserState {
     activeUser: User
-    otherUsers: { [key: number]: User }
+    otherUsers: { [key: string]: User }
 }
 
 const initialState: UserState = {
-    activeUser: {id: -1, name: "name", position: {x: 0, y: 0, range: 0.2}},
+    activeUser: {id: "-1", name: "name", position: {x: 0, y: 0, range: 0.2}},
     otherUsers: {},
 };
 
@@ -21,7 +21,7 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        move: (state, action: PayloadAction<{ id: number, position: UserCoordinates }>) => {
+        move: (state, action: PayloadAction<{ id: string, position: UserCoordinates }>) => {
 
             if (state.activeUser.id === action.payload.id) {
                 state.activeUser.position = action.payload.position;
@@ -33,13 +33,13 @@ export const userSlice = createSlice({
         changeRadius: (state, action: PayloadAction<number>) => {
             state.activeUser.position.range = action.payload;
         },
-        gotRemoteStream: (state, action: PayloadAction<number>) => {
+        gotRemoteStream: (state, action: PayloadAction<string>) => {
             if (state.activeUser.id === action.payload)
                 state.activeUser.userStream = true
             else
                 state.otherUsers[action.payload].userStream = true
         },
-        setUserId: (state, action: PayloadAction<number>) => {
+        setUserId: (state, action: PayloadAction<string>) => {
             state.activeUser.id = action.payload
             state.activeUser.inProximity = true
         },
@@ -48,20 +48,23 @@ export const userSlice = createSlice({
                 state.activeUser.name = action.payload.name
         },
         setUser: (state, action: PayloadAction<User>) => {
-            state.otherUsers[action.payload.id] = action.payload
+            state.otherUsers[action.payload.id] = {...action.payload, name: ""}
+        },
+        addUser: (state, action: PayloadAction<any>) => {
+            state.otherUsers[action.payload.id] = {id: action.payload.id, position: action.payload.position, name: ""}
         },
         removeUser: (state, action: PayloadAction<number>) => {
             delete state.otherUsers[action.payload]
         },
-        setUsers: (state, action: PayloadAction<{ [key: number]: User }>) => {
-            const otherUsers: { [key: number]: User } = {}
+        setUsers: (state, action: PayloadAction<User[]>) => {
+            const otherUsers: { [key: string]: User } = {}
 
-            Object.keys(action.payload).forEach(k => {
-                const id = Number(k)
+            action.payload.forEach(u => {
+                const id = u.id
                 if (id === state.activeUser.id) {
-                    state.activeUser.position = action.payload[id].position
-                } else if (action.payload[id].name && action.payload[id].position) {
-                    otherUsers[id] = action.payload[id]
+                    state.activeUser.position = u.position
+                } else if (u.position) {
+                    otherUsers[id] = {...u, name: ""}
                 }
             })
             state.otherUsers = otherUsers
@@ -69,6 +72,18 @@ export const userSlice = createSlice({
             //     state.otherUsers[u.id] = u
             // })
         },
+        setMessage: (state, action: PayloadAction<{ message: string, id: string }>) => {
+            if (state.otherUsers[action.payload.id])
+                state.otherUsers[action.payload.id].message = action.payload.message
+            if (state.activeUser.id === action.payload.id)
+                state.activeUser.message = action.payload.message
+        },
+        destroyMessage: (state, action: PayloadAction<string>) => {
+            if (state.otherUsers[action.payload])
+                state.otherUsers[action.payload].message = undefined
+            if (state.activeUser.id === action.payload)
+                state.activeUser.message = undefined
+        }
     },
 });
 
@@ -80,7 +95,9 @@ export const {
     setName,
     setUsers,
     removeUser,
-    setUserId
+    setUserId,
+    setMessage,
+    destroyMessage
 } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {
@@ -91,10 +108,18 @@ export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispa
     }
 }
 
-export const handlePositionUpdate = (object: { id: number, position: UserCoordinates }): AppThunk => (dispatch, getState) => {
+export const handleMessage = (message: string, fromId: string): AppThunk => (dispatch, getState) => {
+    const user = getUserById(getState(), fromId)
+    if (user) {
+        dispatch(setMessage({message, id: fromId}))
+        setTimeout(() => dispatch(destroyMessage(fromId)), 5000)
+    }
+}
+
+export const handlePositionUpdate = (object: { id: string, position: UserCoordinates }): AppThunk => (dispatch, getState) => {
     dispatch(move(object))
     const user = getState().userState.activeUser
-    const currentRange = maxRange * user.position.range
+    const currentRange = maxRange * user.position.range / 100
 
     let users: User[] = []
 
@@ -112,18 +137,22 @@ export const handlePositionUpdate = (object: { id: number, position: UserCoordin
         if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
             // console.log(user.id, "in Range - sending audio to", u.id)
             dispatch(setUser({...u, inProximity: true}))
-            dispatch(sendAudio(u.id))
+            if (user.id !== u.id)
+                dispatch(sendAudio(u.id))
         } else if (dist > (currentRange + userProportion / 2) && (!!u.inProximity || u.inProximity === undefined)) {
             // console.log(user.id, "not in Range - dont send audio", u.id)
             dispatch(setUser({...u, inProximity: false}))
-            dispatch(unsendAudio(u.id))
+            if (user.id !== u.id)
+                dispatch(unsendAudio(u.id))
         }
     })
 }
 
 export const submitRadius = (radius: number): AppThunk => (dispatch, getState) => {
     dispatch(changeRadius(radius))
-    dispatch(sendPosition(getState().userState.activeUser.position))
+    const position = getUser(getState()).position
+    dispatch(sendPosition(position))
+    dispatch(handlePositionUpdate({id: getUserID(getState()), position}))
 };
 
 
@@ -133,9 +162,13 @@ export const submitNameChange = (name: string): AppThunk => dispatch => {
 
 export const getUser = (state: RootState) => state.userState.activeUser;
 export const getUserID = (state: RootState) => state.userState.activeUser.id;
-export const getUserById = (state: RootState, id: number) => state.userState.otherUsers[id];
+export const getUserById = (state: RootState, id: string) => {
+    if (state.userState.activeUser.id === id)
+        return state.userState.activeUser
+    return state.userState.otherUsers[id];
+}
 export const getUsers = (state: RootState) => Object.keys(state.userState.otherUsers).map(
-    id => state.userState.otherUsers[Number(id)]
+    id => state.userState.otherUsers[id]
 );
 
 export default userSlice.reducer;

@@ -21,6 +21,8 @@ import {sendLogout} from "../../store/connectionSlice";
 import {displayVideo, mute} from "../../store/rtcSlice";
 import Settings from "../Settings";
 import {centerUser} from "../../store/playgroundSlice";
+import {IoChatbubble} from "react-icons/all";
+import MessageComponent from "./Message";
 
 interface Props {
     activeUser: User
@@ -37,7 +39,8 @@ interface State {
     value: string
     collapsed: boolean
     className: string
-    open: boolean
+    messagesOpen: boolean
+    settingsOpen: boolean
 }
 
 export class NavigationBar extends Component<Props, State> {
@@ -55,7 +58,8 @@ export class NavigationBar extends Component<Props, State> {
             value: "",
             collapsed: true,
             className: "navbar collapsed",
-            open: false
+            settingsOpen: false,
+            messagesOpen: false
         }
     }
 
@@ -96,19 +100,29 @@ export class NavigationBar extends Component<Props, State> {
     }
 
     handleSettingsOpen(event: any) {
-        if (!this.state.open) {
+        if (!this.state.settingsOpen) {
             this.setState({
-                open: true,
+                settingsOpen: true,
             })
         }
     }
 
-    handleSettingsClosed(event: any) {
-        if (this.state.open) {
+    handleMessagesOpen(event: any) {
+        if (!this.state.messagesOpen) {
             this.setState({
-                open: false,
+                messagesOpen: true,
             })
         }
+    }
+
+    handleClose(event: any) {
+        if (this.state.messagesOpen || this.state.settingsOpen) {
+            this.setState({
+                settingsOpen: false,
+                messagesOpen: false
+            })
+        }
+        console.log(this.state)
     }
 
 
@@ -193,6 +207,23 @@ export class NavigationBar extends Component<Props, State> {
                         </div>
                         <div className="menu bottom">
                             <ul>
+                                <li className="menu-item"
+                                    onClick={() => this.setState(this.handleMessagesOpen.bind(this))}>
+                                    <div className="inner-item">
+                                        <span className="icon-wrapper">
+                                            <span className="icon">
+                                                <IoChatbubble/>
+                                            </span>
+                                        </span>
+                                        <span className="item-content">
+                                            Message
+                                            <div>
+                                                <MessageComponent open={this.state.messagesOpen}
+                                                                  onClose={this.handleClose.bind(this)}/>
+                                            </div>
+                                        </span>
+                                    </div>
+                                </li>
                                 <li className="menu-item" onClick={this.handleSettingsOpen.bind(this)}>
                                     <div className="inner-item">
                                         <span className="icon-wrapper">
@@ -203,8 +234,8 @@ export class NavigationBar extends Component<Props, State> {
                                         <span className="item-content">
                                             Settings
                                             <div>
-                                                <Settings open={this.state.open}
-                                                          onClose={this.handleSettingsClosed.bind(this)}/>
+                                                <Settings open={this.state.settingsOpen}
+                                                          onClose={this.handleClose.bind(this)}/>
                                             </div>
                                         </span>
                                     </div>

@@ -1,9 +1,19 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
-import {getUser, getUserID, handlePositionUpdate, removeUser, setUser, setUserId, setUsers} from "./userSlice";
+import {
+    getUser,
+    getUserID,
+    getUsers,
+    handleMessage,
+    handlePositionUpdate,
+    removeUser,
+    setUser,
+    setUserId,
+    setUsers
+} from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
-import {destroySession, handleCandidate, handleRTCEvents, handleSdp, requestUserMediaAndJoin} from "./rtcSlice";
+import {destroySession, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./config";
 
 interface WebSocketState {
@@ -39,22 +49,22 @@ export const webSocketSlice = createSlice({
 
 export const {connect, disconnect, joined, leftRoom} = webSocketSlice.actions;
 
-export const connectToServer = (): AppThunk => (dispatch, getState) => {
-    //socket = new WebSocket('wss://call.tristanratz.com:9090')
+export const connectToServer = (spaceID: string): AppThunk => (dispatch, getState) => {
     if (!SOCKET_URL) {
         dispatch(handleError("No websocket url defined for this environment"));
         return;
     }
 
     if (!SOCKET_PORT)
-        socket = new WebSocket("wss://" + SOCKET_URL, 'json');
+        socket = new WebSocket("wss://" + SOCKET_URL + "/room/" + spaceID);
     else
-        socket = new WebSocket("wss://" + SOCKET_URL + ":" + SOCKET_PORT, 'json');
+        socket = new WebSocket("wss://" + SOCKET_URL + ":" + SOCKET_PORT + "/room/" + spaceID);
 
 
     socket.onopen = () => {
         dispatch(connect())
         dispatch(handleSuccess("Connected to the signaling server"))
+        dispatch(requestLogin())
     };
 
     socket.onerror = (err) => {
@@ -64,19 +74,18 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
     };
 
     socket.onmessage = function (msg) {
+        // console.log("Got message", msg);
         var data = JSON.parse(msg.data);
-        //if (data.type !== "position_change")
-        //    console.log("Got message", msg.data);
+        // if (data.type !== "position_change")
+        // console.log("Object", data);
         const loggedIn = getState().webSocket.joinedRoom
-
         switch (data.type) {
             case "id":
                 dispatch(setUserId(data.id))
                 break;
             case "login":
+                dispatch(setUserId(data.id));
                 dispatch(handleLogin(data.success));
-                break;
-            case "join":
                 dispatch(setUsers(data.users));
                 const count = Object.keys(getState().userState.otherUsers).length + 1;
                 dispatch(handleRTCEvents(getUserID(getState()), count));
@@ -85,33 +94,36 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                 break;
             case "new_user":
                 if (loggedIn) {
-                    dispatch(setUser(data.user));
+                    dispatch(setUser(data));
                     const count = Object.keys(getState().userState.otherUsers).length + 1;
-                    dispatch(handleRTCEvents(data.user.id, count));
-                    dispatch(handlePositionUpdate({id: data.user.id, position: data.user.position}))
+                    dispatch(handleRTCEvents(data.id, count));
+                    dispatch(handlePositionUpdate({id: data.id, position: data.position}))
                 }
                 break;
-            case "user_left":
+            case "leave":
                 if (loggedIn)
                     dispatch(removeUser(data.id))
                 break;
-            case "position_change":
+            case "position":
                 if (loggedIn && data.id !== getUserID(getState()))
                     dispatch(handlePositionUpdate(data));
                 break;
-            case "signaling":
+            case "signal":
                 if (!loggedIn)
                     break;
-                const fromId: number = data.source;
+                const fromId: string = data.sender_id;
                 if (fromId !== getUserID(getState())) {
                     const randomWait = Math.floor(Math.random() * Math.floor(200))
-                    switch (data.signal_type) {
+                    const signal_content = data.content
+                    switch (signal_content.signal_type) {
                         case "candidate":
-                            setTimeout(() => dispatch(handleCandidate(data.candidate, fromId)), randomWait)
+                            setTimeout(() => dispatch(handleCandidate(signal_content.candidate, fromId)), randomWait)
                             break;
                         case "sdp":
-                            setTimeout(() => dispatch(handleSdp(data.description, fromId)), randomWait)
-
+                            setTimeout(() => dispatch(handleSdp(signal_content.description, fromId)), randomWait)
+                            break;
+                        case "message":
+                            dispatch(handleMessage(signal_content.message, fromId))
                             break;
                         default:
                             dispatch(handleError("Unknown signaling type."))
@@ -123,8 +135,23 @@ export const connectToServer = (): AppThunk => (dispatch, getState) => {
                 break
         }
     };
-
 };
+
+export const sendMessage = (message: string): AppThunk => (dispatch, getState) => {
+    getUsers(getState()).forEach(u => {
+        if (u.inProximity) {
+            dispatch(send({
+                type: "signal",
+                target_id: u.id,
+                content: {
+                    signal_type: "message",
+                    message
+                }
+            }))
+        }
+    })
+    dispatch(handleMessage(message, getUserID(getState())))
+}
 
 export const send = (message: { [key: string]: any }, target?: User): AppThunk => (dispatch, getState) => {
     //attach the other peer username to our messages
@@ -133,28 +160,27 @@ export const send = (message: { [key: string]: any }, target?: User): AppThunk =
         id: getUserID(getState()),
     }
 
+
     if (socket !== null)
         socket.send(JSON.stringify(msgObj));
 }
 
-export const requestLogin = (name: string): AppThunk => (dispatch) => {
-    if (name.length > 0) {
-        dispatch(send({
-            type: "login",
-            name: name,
-        }));
-    }
+export const requestLogin = (): AppThunk => (dispatch, getState) => {
+    dispatch(send({
+        type: "login",
+        user_secret: getState().auth.token,
+    }));
 }
 
 export const sendLogout = (): AppThunk => (dispatch) => {
     dispatch(send({type: "leave"}))
     dispatch(leftRoom())
-    destroySession()
+    dispatch(destroySession())
 }
 
 export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) => {
     dispatch(send({
-        type: "position_change",
+        type: "position",
         position,
     }));
 }
@@ -163,17 +189,8 @@ export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) 
     if (!success) {
         dispatch(handleError("Login failed. Try again later."))
     } else {
-        //**********************
-        //Starting a peer connection
-        //**********************
-
         dispatch(joined())
-        dispatch(requestUserMediaAndJoin())
     }
-}
-
-export const sendUsername = (name: string): AppThunk => dispatch => {
-    dispatch(send({type: "login", name: name}))
 }
 
 export default webSocketSlice.reducer;

@@ -26,7 +26,7 @@ export class RangeComponent extends Component<Props> {
         const offsetY = this.props.playgroundOffset.y * scale
 
         // range in pixels
-        const rangeInPx = 2 * maxRange * user.position.range * scale + userSize
+        const rangeInPx = 2 * maxRange * user.position.range / 100 * scale + userSize
 
         const rangeStyle = {
             width: rangeInPx,

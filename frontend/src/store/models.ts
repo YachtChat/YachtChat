@@ -1,9 +1,10 @@
 export interface User {
-    id: number
+    id: string
     name: string
     position: UserCoordinates
     userStream?: boolean
     inProximity?: boolean
+    message?: string
 }
 
 export interface UserCoordinates {
