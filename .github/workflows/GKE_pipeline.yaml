@@ -30,7 +30,7 @@ env:
   SIGNAL_URL: signal.gke.alphabibber.com
   WEBSOCKET_URL: websocket.gke.alphabibber.com
   WEBSOCKET_PORT: 8085
-  TAG: 1.0.0
+  TAG: 1.0.
 
 jobs:
   setup-build-publish-deploy:
@@ -41,20 +41,9 @@ jobs:
 
       - name: Checkout Repository
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
-#      - name: tag-version
-#        uses: juliansangillo/tag-version@v1.5
-#        with:
-#            production-branch: main
-#            test-branch: development
-#            dev-branch: devops/migrationtoGKEusingHELM
-
-      - name: Test text
-        run: echo "test $GITHUB_RUN_NUMBER"
-      - name: Test TAG
-        run: echo "<major>.<minor>.<build>[.<pre-release-tag>]"
+      - name: IMAGE TAG
+        run: echo "$TAG$GITHUB_RUN_NUMBER"
 
 #      - name: Setup JDK 1.8
 #        uses: actions/setup-java@v1
