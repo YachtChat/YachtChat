@@ -30,8 +30,8 @@ services:
       context: ./frontend
       dockerfile: ./Dockerfile
       args:
-        - REACT_APP_SIGNAL_URL=${SIGNAL_URL}
-        - REACT_APP_SIGNAL_PORT=${SIGNAL_PORT}
+        - REACT_APP_SIGNAL_URL=${WEBSOCKET_URL}
+        - REACT_APP_SIGNAL_PORT=${WEBSOCKET_URL}
         - REACT_APP_SPACES_URL=${SPACES_URL}
     environment:
       - VIRTUAL_HOST=${FRONTEND_URL}
