@@ -39,10 +39,10 @@ jobs:
 
     steps:
 
-#      - name: Dotenv Action
-#        uses: falti/dotenv-action@v0.2.5
-#        with:
-#          path: ./.env
+      - name: Dotenv Action
+        uses: falti/dotenv-action@v0.2.5
+        with:
+          path: /home/runner/work/NotZoom/NotZoom/.env
       - name: Checkout Repository
         uses: actions/checkout@v2
 
