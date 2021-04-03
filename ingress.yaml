@@ -56,5 +56,5 @@ metadata:
 spec:
   domains:
     - www.gke.alphabibber.com
-    - signal.gke.alphabibber.com
+    - websocket.gke.alphabibber.com
     - space.gke.alphabibber.com

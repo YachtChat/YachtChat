@@ -45,7 +45,7 @@ metadata:
     app: websocket-app
   name: websocket-service
   annotations:
-    cloud.google.com/backend-config: '{"ports": {"80":"service-backend-config","80":"http-hc-config"}}'
+    cloud.google.com/backend-config: '{"ports": {"80":"service-backend-config","8085":"http-hc-config"}}'
     cloud.google.com/neg: '{"ingress": true}'
 spec:
   selector:
@@ -60,7 +60,7 @@ kind: Service
 metadata:
   name: spacesservice-service
   annotations:
-    cloud.google.com/backend-config: '{"ports": {"80":"http-hc-config"}}'
+    cloud.google.com/backend-config: '{"ports": {"8081":"http-hc-config"}}'
     cloud.google.com/neg: '{"ingress": true}'
 spec:
   selector:
