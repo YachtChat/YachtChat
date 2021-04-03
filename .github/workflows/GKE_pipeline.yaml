@@ -42,7 +42,7 @@ jobs:
       - name: Dotenv Action
         uses: falti/dotenv-action@v0.2.5
         with:
-          path: ../.env
+          path: ./.env
       - name: Checkout Repository
         uses: actions/checkout@v2
 
