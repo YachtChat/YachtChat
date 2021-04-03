@@ -52,7 +52,7 @@ jobs:
 #            dev-branch: devops/migrationtoGKEusingHELM
 
       - name: Test text
-        run: echo "test"
+        run: echo "test $GITHUB_RUN_NUMBER"
       - name: Test TAG
         run: echo "<major>.<minor>.<build>[.<pre-release-tag>]"
 
