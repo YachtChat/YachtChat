@@ -44,12 +44,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: tag-version
-        uses: juliansangillo/tag-version@v1.5
-        with:
-            production-branch: main
-            test-branch: development
-            dev-branch: devops/migrationtoGKEusingHELM
+#      - name: tag-version
+#        uses: juliansangillo/tag-version@v1.5
+#        with:
+#            production-branch: main
+#            test-branch: development
+#            dev-branch: devops/migrationtoGKEusingHELM
 
       - name: Test text
         run: echo "test"
