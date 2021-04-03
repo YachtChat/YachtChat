@@ -3,7 +3,6 @@ package com.alphabibber.websocketservice.handler;
 import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.model.answer.PositionAnswer;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,6 @@ public class PositionChangeHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void handlePositinChange(Map<String, User> room, String roomId, Session session, Position position){
-        Gson gson = new Gson();
         room.get(session.getId()).setPosition(position);
         PositionAnswer answer = new PositionAnswer(position, session.getId());
         ArrayList<User> users = new ArrayList<>(room.values());
