@@ -38,6 +38,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: usermail
+        run: git config --global user.email "olli.lessly@arcor.de"
+
+      - name: username
+        run: git config --global user.name "dannlos"
 
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -49,7 +54,7 @@ jobs:
         uses: juliansangillo/tag-version@v1
         with:
             production-branch: main
-            test-branch: test
+            test-branch: development
             dev-branch: devops/migrationtoGKEusingHELM
 
       - name: Test text
