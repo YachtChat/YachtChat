@@ -63,8 +63,10 @@ export const userSlice = createSlice({
                 const id = u.id
                 if (id === state.activeUser.id) {
                     state.activeUser.position = u.position
+                    state.activeUser.picture = UserImage //next step, get picture from account/database
                 } else if (u.position) {
                     otherUsers[id] = {...u, name: ""}
+                    otherUsers[id].picture = UserImage //next step, get pictures from accounts/database
                 }
             })
             state.otherUsers = otherUsers

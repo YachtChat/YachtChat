@@ -111,6 +111,9 @@ export class UserComponent extends Component<Props> {
             opacity: nameOpacity
         }
 
+        let video = this.props.getStream(this.props.user.id)?.getVideoTracks()[0].enabled
+        console.log(this.props.user.id, this.props.getStream(this.props.user.id)?.getVideoTracks()[0])
+
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
@@ -120,7 +123,8 @@ export class UserComponent extends Component<Props> {
                             {!!this.props.user.userStream &&
                             <video data-id={(this.props.isActiveUser) ? "activeUser" : ""} key={this.props.camera}
                                    autoPlay muted={this.props.isActiveUser}
-                                   ref={this.videoObject}/>
+                                   ref={this.videoObject}
+                                   className={(!video) ? "profile-picture" : ""}/>
                             }
                         </div>
                     </Tooltip>
