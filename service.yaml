@@ -75,7 +75,7 @@ kind: BackendConfig
 metadata:
   name: service-backend-config
 spec:
-  timeoutSec: 3600
+  timeoutSec: 28800
   connectionDraining:
     drainingTimeoutSec: 1800
 ---
