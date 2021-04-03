@@ -58,7 +58,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
     if (!SOCKET_PORT)
         socket = new WebSocket("wss://" + SOCKET_URL + "/room/" + spaceID);
     else
-        socket = new WebSocket("wss://" + SOCKET_URL + ":" + SOCKET_PORT + "/room/" + spaceID);
+        socket = new WebSocket("ws://" + SOCKET_URL + ":" + SOCKET_PORT + "/room/" + spaceID);
 
 
     socket.onopen = () => {
@@ -96,6 +96,8 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 if (loggedIn) {
                     dispatch(setUser(data));
                     const count = Object.keys(getState().userState.otherUsers).length + 1;
+                    //TODO here the new_user case is treated exactly the same as the login case, however , there should
+                    // be a callee and a caller.
                     dispatch(handleRTCEvents(data.id, count));
                     dispatch(handlePositionUpdate({id: data.id, position: data.position}))
                 }
@@ -113,6 +115,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                     break;
                 const fromId: string = data.sender_id;
                 if (fromId !== getUserID(getState())) {
+                    // TODO check this random wait
                     const randomWait = Math.floor(Math.random() * Math.floor(200))
                     const signal_content = data.content
                     switch (signal_content.signal_type) {
@@ -120,7 +123,8 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                             setTimeout(() => dispatch(handleCandidate(signal_content.candidate, fromId)), randomWait)
                             break;
                         case "sdp":
-                            setTimeout(() => dispatch(handleSdp(signal_content.description, fromId)), randomWait)
+                            // TODO timeout here is not good, because a candidate would already be send form the caller
+                            dispatch(handleSdp(signal_content.description, fromId))
                             break;
                         case "message":
                             dispatch(handleMessage(signal_content.message, fromId))
