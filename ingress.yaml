@@ -1,10 +1,10 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: alphabibber-ingress
+  name: alphabibber-gke-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip2
-    networking.gke.io/managed-certificates: alphabibber-certificate
+    kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip
+    networking.gke.io/managed-certificates: alphabibber-cert
 #    kubernetes.io/ingress.class: "gce"
 #    kubernetes.io/ingress.allow-http: "false"
 spec:
@@ -52,7 +52,7 @@ spec:
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: alphabibber-certificate
+  name: alphabibber-cert
 spec:
   domains:
     - www.gke.alphabibber.com
