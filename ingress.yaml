@@ -6,7 +6,7 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip
     networking.gke.io/managed-certificates: alphabibber-cert2
 #    kubernetes.io/ingress.class: "gce"
-#    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
     - host: gke.alphabibber.com
