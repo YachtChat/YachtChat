@@ -41,12 +41,14 @@ jobs:
 
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Dotenv Action
-        uses: falti/dotenv-action@v0.2.5
-        with:
-          path: .env
-          id: dotenv
-          uses: ./.github/workflow/GKE_pipeline
+      - name: Import environment variables from a file
+        id: import-env
+        shell: bash
+        run: |
+          while read line; do
+            echo "$line" >> $GITHUB_ENV
+          done < ${{ env.env }}
+
 
       - name: IMAGE TAG
         run: echo "$TAG$GITHUB_RUN_NUMBER"
