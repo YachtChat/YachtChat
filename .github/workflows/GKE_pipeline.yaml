@@ -47,7 +47,7 @@ jobs:
         run: |
           while read line; do
             echo "$line" >> $GITHUB_ENV
-          done < ${{ env.env }}
+          done < ${{ env.ENV_FILE }}
 
 
       - name: IMAGE TAG
