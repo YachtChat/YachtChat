@@ -167,9 +167,6 @@ jobs:
 #          k8-config-file-paths: deployment.yaml service.yaml ingress.yaml
 #          replacement-method: defined
 
-
-
-
 #      - name: Deploy frontend Image to GKE cluster
 #        run: |-
 #          ./kustomize edit set image gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG=gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG
