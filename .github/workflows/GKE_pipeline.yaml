@@ -183,14 +183,14 @@ jobs:
           ./kustomize edit set domains GKE_SPACES_URL=$GKE_SPACES_URL
           ./kustomize build . | kubectl apply -f -
           kubectl rollout status deployment/$FRONTEND_DEPLOYMENT_NAME
+          kubectl get services -o wide
 #          ./kustomize edit set image gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG=gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG
 #          ./kustomize build . | kubectl apply -f -
 #          kubectl rollout status deployment/$WEBSOCKET_DEPLOYMENT_NAME
 #          ./kustomize edit set image gcr.io/PROJECT_ID/SPACES_IMAGE:TAG=gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG
 #          ./kustomize build . | kubectl apply -f -
 #          kubectl rollout status deployment/$SPACES_DEPLOYMENT_NAME
-          kubectl get services -o wide
-
+#
 #      - name: Deploy landingpage Image to GKE cluster
 #        run: |-
 #          ./kustomize edit set image gcr.io/PROJECT_ID/LANDINGPAGE_IMAGE:TAG=gcr.io/$PROJECT_ID/$LANDINGPAGE_IMAGE:$TAG
