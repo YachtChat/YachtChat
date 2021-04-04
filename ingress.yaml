@@ -58,3 +58,4 @@ spec:
     - GKE_FRONTEND_URL #gke.alphabibber.com
     - GKE_WEBSOCKET_URL #websocket.gke.alphabibber.com
     - GKE_SPACES_URL #spaces.gke.alphabibber.com
+---
