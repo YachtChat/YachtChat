@@ -149,8 +149,8 @@ jobs:
         run: |-
           docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
 
-      - name: Switch to staging cluster
-        run: kubectl config use-context staging
+#      - name: Switch to staging cluster
+#        run: kubectl config use-context staging
       - uses: swdotcom/update-and-apply-kubernetes-configs@v1.2.0
         with:
           k8-config-file-paths: deployment.yaml service.yaml ingress.yaml
