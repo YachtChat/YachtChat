@@ -51,7 +51,9 @@ jobs:
       - name: .env Var test
         run: echo "$SIGNAL_URL"
       - name: .env Var test
-        run: echo " ${{ steps.dotenv.outputs.auth_port }}"
+        run: echo " ${{ steps.dotenv.outputs.auth-port }}"
+      - name: .env Var test
+        run: echo " ${{ steps.dotenv.outputs.test }}"
 
 
 
