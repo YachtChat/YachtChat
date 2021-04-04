@@ -196,4 +196,3 @@ jobs:
 #          ./kustomize build . | kubectl apply -f -
 #          kubectl rollout status deployment/$PRESENTATION_DEPLOYMENT_NAME
 #          kubectl get services -o wide
-
