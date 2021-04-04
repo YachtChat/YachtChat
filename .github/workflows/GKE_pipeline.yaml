@@ -150,6 +150,8 @@ jobs:
 #        run: |-
 #          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
 
+      - name: Switch to staging cluster
+        run: kubectl config use-context $GKE_CLUSTER
 
       - name: pipe yaml files, replace env vars and apply to kubernetes
         run: cat deployment.yaml service.yaml ingress.yaml | sed "s/\bGKE_FRONTEND_URL\b/$GKE_FRONTEND_URL/g;
