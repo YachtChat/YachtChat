@@ -48,7 +48,11 @@ jobs:
       - name: IMAGE TAG
         run: echo "$TAG$GITHUB_RUN_NUMBER"
       - name: .env Var test
-        run: pwd
+        run: echo "$AUTH_PORT"
+      - name: .env Var test
+        run: echo $AUTH_PORT
+
+
 
 #      - name: Setup JDK 1.8
 #        uses: actions/setup-java@v1
