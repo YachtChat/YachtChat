@@ -53,7 +53,9 @@ jobs:
       - name: .env Var test
         run: echo " ${{ steps.dotenv.outputs.auth-port }}"
       - name: .env Var test
-        run: echo " ${{ steps.dotenv.outputs.test }}"
+        run: echo $AUTH_PORT
+      - name: .env Var test
+        run: echo "$TEST"
 
 
 
