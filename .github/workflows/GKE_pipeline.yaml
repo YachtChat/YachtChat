@@ -45,6 +45,8 @@ jobs:
         uses: falti/dotenv-action@v0.2.5
         with:
           path: .env
+          id: dotenv
+          uses: ./.github/workflow/GKE_pipeline
 
       - name: IMAGE TAG
         run: echo "$TAG$GITHUB_RUN_NUMBER"
