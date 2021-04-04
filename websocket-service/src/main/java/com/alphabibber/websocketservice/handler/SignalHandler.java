@@ -14,12 +14,14 @@ import java.util.Map;
 public class SignalHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public void handleSignal(Map<String, User> room, String roomId, Session session, JsonObject content, String target_id){
+    public void handleSignal(Map<String, User> room, String roomId, Session session, JsonObject content, User targetUser){
         SignalAnswer answer = new SignalAnswer(content, session.getId());
         try {
-            room.get(target_id).getSession().getBasicRemote().sendObject(answer);
+            synchronized (targetUser){
+                targetUser.getSession().getBasicRemote().sendObject(answer);
+            }
         } catch (IOException | EncodeException e) {
-            log.error("Could not send message from {} to {}", session.getId(), target_id);
+            log.error("Could not send message from {} to {}", session.getId(), targetUser.getId());
             log.error(String.valueOf(e.getStackTrace()));
         }
     }
