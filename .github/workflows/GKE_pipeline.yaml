@@ -61,94 +61,94 @@ jobs:
 
 
 
-      - name: Setup JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-          server-id: github
-          settings-path: ${{ github.workspace }}
-
-      - name: Build with Maven spaces-service
-        run: mvn clean -f ./spaces-service/pom.xml package -DskipTests
-      - name: Build with Maven websocket-server
-        run: mvn clean -f ./websocket-service/pom.xml package -DskipTests
-
-      # Setup gcloud CLI
-      - name: Setup gcloud CLI
-        uses: google-github-actions/setup-gcloud@v0.2.0
-        with:
-           service_account_key: ${{ secrets.GKE_SA_KEY }}
-           project_id: ${{ secrets.GKE_PROJECT }}
-
-      # Configure docker to use the gcloud command-line tool as a credential helper
-      - name: Configure docker
-        run: |-
-          gcloud --quiet auth configure-docker
-
-      # Get the GKE credentials so we can deploy to the cluster
-      - name: Get the GKE credentials to deploy
-        uses: google-github-actions/get-gke-credentials@v0.2.1
-        with:
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.GKE_ZONE }}
-          credentials: ${{ secrets.GKE_SA_KEY }}
-
-      # Build the Docker image
-      - name: Build frontend image
-        run: |-
-          docker build \
-          --file ./frontend/Dockerfile \
-          --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG" \
-          --build-arg REACT_APP_SIGNAL_URL=$GKE_WEBSOCKET_URL \
-          --build-arg REACT_APP_SPACES_URL=$GKE_SPACES_URL \
-          ./frontend
-      # Build the Docker image
-#      - name: Build landingpage image
+#      - name: Setup JDK 1.8
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: 11
+#          server-id: github
+#          settings-path: ${{ github.workspace }}
+#
+#      - name: Build with Maven spaces-service
+#        run: mvn clean -f ./spaces-service/pom.xml package -DskipTests
+#      - name: Build with Maven websocket-server
+#        run: mvn clean -f ./websocket-service/pom.xml package -DskipTests
+#
+#      # Setup gcloud CLI
+#      - name: Setup gcloud CLI
+#        uses: google-github-actions/setup-gcloud@v0.2.0
+#        with:
+#           service_account_key: ${{ secrets.GKE_SA_KEY }}
+#           project_id: ${{ secrets.GKE_PROJECT }}
+#
+#      # Configure docker to use the gcloud command-line tool as a credential helper
+#      - name: Configure docker
+#        run: |-
+#          gcloud --quiet auth configure-docker
+#
+#      # Get the GKE credentials so we can deploy to the cluster
+#      - name: Get the GKE credentials to deploy
+#        uses: google-github-actions/get-gke-credentials@v0.2.1
+#        with:
+#          cluster_name: ${{ env.GKE_CLUSTER }}
+#          location: ${{ env.GKE_ZONE }}
+#          credentials: ${{ secrets.GKE_SA_KEY }}
+#
+#      # Build the Docker image
+#      - name: Build frontend image
 #        run: |-
 #          docker build \
-#          --file ./landingpage/Dockerfile
-#          --tag "gcr.io/$PROJECT_ID/$LANDINGPAGE_IMAGE:$TAG" \
-#          .
-      # Build the Docker image
-#      - name: Build presentation image
+#          --file ./frontend/Dockerfile \
+#          --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG" \
+#          --build-arg REACT_APP_SIGNAL_URL=$GKE_WEBSOCKET_URL \
+#          --build-arg REACT_APP_SPACES_URL=$GKE_SPACES_URL \
+#          ./frontend
+#      # Build the Docker image
+##      - name: Build landingpage image
+##        run: |-
+##          docker build \
+##          --file ./landingpage/Dockerfile
+##          --tag "gcr.io/$PROJECT_ID/$LANDINGPAGE_IMAGE:$TAG" \
+##          .
+#      # Build the Docker image
+##      - name: Build presentation image
+##        run: |-
+##          docker build \
+##          --file ./presentation/Dockerfile
+##          --tag "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG" \
+##          .
+##       Build the Docker image
+#      - name: Build websocket-service image
 #        run: |-
 #          docker build \
-#          --file ./presentation/Dockerfile
-#          --tag "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG" \
-#          .
-#       Build the Docker image
-      - name: Build websocket-service image
-        run: |-
-          docker build \
-          --file ./websocket-service/Dockerfile \
-          --tag "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG" \
-          --build-arg SPACES_URL=$GKE_SPACES_URL \
-          --build-arg VIRTUAL_PORT=$GKE_WEBSOCKET_PORT \
-          ./websocket-service
-#       Build the Docker image
-      - name: Build spacesService image
-        run: |-
-          docker build \
-          --file ./spaces-service/Dockerfile \
-          --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
-          --build-arg VIRTUAL_PORT=$GKE_SPACES_PORT \
-          ./spaces-service
-
-      - name: Publish frontend Docker Image to GCR
-        run: |-
-          docker push "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG"
-#      - name: Publish landingpage Docker Image to GCR
+#          --file ./websocket-service/Dockerfile \
+#          --tag "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG" \
+#          --build-arg SPACES_URL=$GKE_SPACES_URL \
+#          --build-arg VIRTUAL_PORT=$GKE_WEBSOCKET_PORT \
+#          ./websocket-service
+##       Build the Docker image
+#      - name: Build spacesService image
 #        run: |-
-#          docker push "gcr.io/$PROJECT_ID/$LANDINGPAGE_IMAGE:$TAG"
-#      - name: Publish presentation Docker Image to GCR
+#          docker build \
+#          --file ./spaces-service/Dockerfile \
+#          --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
+#          --build-arg VIRTUAL_PORT=$GKE_SPACES_PORT \
+#          ./spaces-service
+#
+#      - name: Publish frontend Docker Image to GCR
 #        run: |-
-#          docker push "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG"
-      - name: Publish signalingServer Docker Image to GCR
-        run: |-
-          docker push "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG"
-      - name: Publish spacesServer Docker Image to GCR
-        run: |-
-          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
+#          docker push "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG"
+##      - name: Publish landingpage Docker Image to GCR
+##        run: |-
+##          docker push "gcr.io/$PROJECT_ID/$LANDINGPAGE_IMAGE:$TAG"
+##      - name: Publish presentation Docker Image to GCR
+##        run: |-
+##          docker push "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG"
+#      - name: Publish signalingServer Docker Image to GCR
+#        run: |-
+#          docker push "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG"
+#      - name: Publish spacesServer Docker Image to GCR
+#        run: |-
+#          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
 
 
       - name: pipe yaml files, replace env vars and apply to kubernetes
