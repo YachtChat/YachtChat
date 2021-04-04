@@ -34,8 +34,6 @@ env:
   GKE_FRONTEND_REPLICAS: 1
   GKE_WEBSOCKET_REPLICAS: 1
   GKE_SPACES_REPLICAS: 1
-  HEALTH_CHECK_WEBSOCKE: '{"ports": {"80":"service-backend-config","$GKE_WEBSOCKET_PORT":"http-hc-config"}}'
-  HEALTH_CHECK_SPACES: '{"ports": {"$GKE_SPACES_PORT":"http-hc-config"}}'
   TAG: 1.0.
 
 jobs:
@@ -168,11 +166,9 @@ jobs:
           s/\bGKE_WEBSOCKET_REPLICAS\b/$GKE_WEBSOCKET_REPLICAS/g;
           s/\bPROJECT_ID\b/$PROJECT_ID/g;
           s/\bFRONTEND_IMAGE\b/$FRONTEND_IMAGE/g;
-          s/\bSIGNALING_IMAGE\b/$SIGNALING_IMAGE/g;
+          s/\bWEBSOCKET_IMAGE\b/$WEBSOCKET_IMAGE/g;
           s/\bSPACES_IMAGE\b/$SPACES_IMAGE/g;
           s/\bTAG\b/$TAG$GITHUB_RUN_NUMBER/g;
-          s/\bHEALTH_CHECK_WEBSOCKE\b/HEALTH_CHECK_WEBSOCKE/g;
-          s/\bHEALTH_CHECK_SPACES\b/$HEALTH_CHECK_SPACES/g;
           s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" #| kubectl apply -f -
 
 #      - name: pipe yaml files, replace env vars and apply to kubernetes
