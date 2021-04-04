@@ -39,13 +39,12 @@ jobs:
 
     steps:
 
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Dotenv Action
         uses: falti/dotenv-action@v0.2.5
         with:
-          path: /home/runner/work/NotZoom/NotZoom/.env
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
+          path: .env
       - name: IMAGE TAG
         run: echo "$TAG$GITHUB_RUN_NUMBER"
       - name: .env Var test
