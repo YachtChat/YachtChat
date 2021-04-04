@@ -45,12 +45,15 @@ jobs:
         uses: falti/dotenv-action@v0.2.5
         with:
           path: .env
+      - name: like
+        id: dotenv
+        uses: ./.github/actions/GKE_pipeline
       - name: IMAGE TAG
         run: echo "$TAG$GITHUB_RUN_NUMBER"
       - name: .env Var test
         run: echo "$SIGNAL_URL"
       - name: .env Var test
-        run: echo $SIGNAL_URL
+        run: echo ${{ steps.dotenv.outputs.auth-port }}
 
 
 
