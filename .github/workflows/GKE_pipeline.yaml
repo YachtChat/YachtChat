@@ -169,7 +169,7 @@ jobs:
 #          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" | kubectl apply -f -
 
       - name: pipe yaml files, replace env vars and apply to kubernetes
-        run: cat deployment.yaml | sed "s/\bGKE_FRONTEND_URL\b/$GKE_FRONTEND_URL/g"| kubectl apply -f -
+        run: cat deployment.yaml | kubectl apply -f -
 
 #      - name: Switch to staging cluster
 #        run: kubectl config use-context alphabibber-gke-prod
