@@ -49,9 +49,9 @@ jobs:
       - name: IMAGE TAG
         run: echo "$TAG$GITHUB_RUN_NUMBER"
       - name: .env Var test
-        run: echo "$SIGNAL_URL"
+        run: echo "env.SIGNAL_URL"
       - name: .env Var test
-        run: echo env.AUTH_PORT
+        run: echo "env.AUTH_PORT"
 
 
 
