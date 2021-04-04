@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: frontend-app
 spec:
-  replicas: 1
+  replicas: ${GKE_FRONTEND_REPLICAS} #1
   selector:
     matchLabels:
       app: frontend-app
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend-app
-          image: gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG
+          image: gcr.io/${PROJECT_ID}/${FRONTEND_IMAGE}:${TAG}
           imagePullPolicy: Always
           ports:
             - containerPort: ${GKE_FRONTEND_PORT} #80
@@ -66,7 +66,7 @@ kind: Deployment
 metadata:
   name: websocket-app
 spec:
-  replicas: 1
+  replicas: ${GKE_WEBSOCKET_REPLICAS} #1
   selector:
     matchLabels:
       app: websocket-app
@@ -77,7 +77,7 @@ spec:
     spec:
       containers:
         - name: websocket-app
-          image: gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG
+          image: gcr.io/${PROJECT_ID}/${WEBSOCKET_IMAGE}:${TAG}
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
@@ -92,7 +92,7 @@ kind: Deployment
 metadata:
   name: spacesservice-app
 spec:
-  replicas: 1
+  replicas: ${GKE_SPACES_REPLICAS} #1
   selector:
     matchLabels:
       app: spacesservice-app
@@ -103,7 +103,7 @@ spec:
     spec:
       containers:
         - name: spacesservice-app
-          image: gcr.io/PROJECT_ID/SPACES_IMAGE:TAG
+          image: gcr.io/${PROJECT_ID}/${SPACES_IMAGE}:${TAG}
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
