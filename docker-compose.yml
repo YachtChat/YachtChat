@@ -64,19 +64,6 @@ services:
 
     network_mode: bridge
 
-  signaling_server:
-    build:
-      context: ./signalingServer
-      dockerfile: ./Dockerfile
-      args:
-        - VIRTUAL_HOST=${SIGNAL_URL}
-        - VIRTUAL_PORT=${SIGNAL_PORT}
-    environment:
-      - VIRTUAL_HOST=${SIGNAL_URL}
-      - LETSENCRYPT_HOST=${SIGNAL_URL}
-      - VIRTUAL_PORT=${SIGNAL_PORT}
-    network_mode: bridge
-
   websocket-service:
     build:
       context: ./websocket-service
