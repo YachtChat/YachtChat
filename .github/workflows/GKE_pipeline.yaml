@@ -152,7 +152,7 @@ jobs:
 #        run: |-
 #          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
       - name: pipe yaml files
-        run: cat deployment.yaml service.yaml ingress.yaml | sed 's/\bGKE_FRONTEND_URL\b/$GKE_FRONTEND_URL/g; \
+        run: cat deployment.yaml service.yaml ingress.yaml | sed "s/\bGKE_FRONTEND_URL\b/$GKE_FRONTEND_URL/g;
           s/\bGKE_SPACES_URL\b/$GKE_SPACES_URL/g; \
           s/\bGKE_WEBSOCKET_URL\b/$GKE_WEBSOCKET_URL/g; \
           s/\bGKE_WEBSOCKET_PORT\b/$GKE_WEBSOCKET_PORT/g; \
@@ -161,7 +161,7 @@ jobs:
           s/\bWEBSOCKET_TIMEOUT\b/$WEBSOCKET_TIMEOUT/g; \
           s/\bGKE_FRONTEND_REPLICAS\b/$GKE_FRONTEND_REPLICAS/g; \
           s/\bGKE_WEBSOCKET_REPLICAS\b/$GKE_WEBSOCKET_REPLICAS/g; \
-          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g'
+          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g"
 
 #      - name: Switch to staging cluster
 #        run: kubectl config use-context alphabibber-gke-prod
