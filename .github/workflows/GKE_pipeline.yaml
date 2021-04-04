@@ -178,17 +178,3 @@ jobs:
 #          ./kustomize build . | kubectl apply -f -
 #          kubectl rollout status deployment/$SPACES_DEPLOYMENT_NAME
 #          kubectl get services -o wide
-
-#      - name: Deploy landingpage Image to GKE cluster
-#        run: |-
-#          ./kustomize edit set image gcr.io/PROJECT_ID/LANDINGPAGE_IMAGE:TAG=gcr.io/$PROJECT_ID/$LANDINGPAGE_IMAGE:$TAG
-#          ./kustomize build . | kubectl apply -f -
-#          kubectl rollout status deployment/$LANDINGPAGE_DEPLOYMENT_NAME
-#          kubectl get services -o wide
-
-#      - name: Deploy presentation Image to GKE cluster
-#        run: |-
-#          ./kustomize edit set image gcr.io/PROJECT_ID/PRESENTATION_IMAGE:TAG=gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG
-#          ./kustomize build . | kubectl apply -f -
-#          kubectl rollout status deployment/$PRESENTATION_DEPLOYMENT_NAME
-#          kubectl get services -o wide
