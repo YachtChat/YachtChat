@@ -53,8 +53,6 @@ export const checkAuth = (id_token?: string,): AppThunk => (dispatch, getState) 
         axios.post("https://oauth2.googleapis.com/tokeninfo?id_token=" + existingToken).then(response => {
             dispatch(setLogin(true))
             dispatch(setName(response.data.name))
-            console.log(response.data.name)
-            console.log(response.data.name)
             dispatch(setUserId(response.data.sub))
             // load user info from there
         }).then(() =>

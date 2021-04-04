@@ -10,7 +10,9 @@ import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
 import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";
 import {setSessionEnded} from "../../store/connectionSlice";
-import {Redirect} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
+import {IoCamera, IoHome, IoMic} from "react-icons/all";
+import {applicationName} from "../../store/config";
 
 interface Props {
     activeUser: User
@@ -64,13 +66,26 @@ export class Playground extends Component<Props> {
     render() {
         if (this.props.cameras.length === 0 && this.props.microphones.length === 0)
             return (
-                <Wrapper className="spaces">
-                    <h1>Hey, {this.props.activeUser.name}.</h1>
-                    <p>AlphaBibber Chat is a video chatting app. So please click and confirm video to continue.</p>
-                    <button onClick={() => {
-                        this.props.requestUserMedia(this.props.match!.params.spaceID)
-                    }}>Request media
-                    </button>
+                <Wrapper className={"mediaPermission"}>
+                    <div className={"headlineBox"}>
+                        <div className={"buttons"}>
+                            <Link to={"/"}>
+                                <button className={"iconButton"}><IoHome/></button>
+                            </Link>
+                        </div>
+                        <h1><IoCamera/> <IoMic/></h1>
+                        <h1>Hey, {this.props.activeUser.name}</h1>
+                        <p>
+                            {applicationName} is a video chatting app.<br/>So please click and confirm video to
+                            continue.
+                        </p>
+                    </div>
+                    <div className={"content"}>
+                        <button onClick={() => {
+                            this.props.requestUserMedia(this.props.match!.params.spaceID)
+                        }}>Request media
+                        </button>
+                    </div>
                 </Wrapper>
             )
 

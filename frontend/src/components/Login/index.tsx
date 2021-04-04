@@ -6,7 +6,7 @@ import {setName} from "../../store/userSlice";
 import googleButton from "../../rsc/google_button.svg";
 import appleLogo from "../../rsc/apple.svg";
 import github from "../../rsc/github.svg";
-import {AUTH_SERVICE} from "../../store/config";
+import {applicationName, AUTH_SERVICE} from "../../store/config";
 import Wrapper from "../Wrapper";
 import {setLogin} from "../../store/authSlice";
 
@@ -50,7 +50,7 @@ export class Login extends Component<Props, State> {
         return (
             <Wrapper className="login-box">
                 <div className={"signin"}>
-                    <h2>AlphaBibber Chat</h2>
+                    <h2>{applicationName}</h2>
                     <h3>Sign in</h3>
                     <div className="login-buttons">
 

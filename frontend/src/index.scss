@@ -83,8 +83,7 @@ label {
 }
 
 .iconButton {
-  margin: 0;
-  margin-left: 0.5rem;
+  margin: 0 0 0 0.5rem;
   border-radius: 50%;
   padding: 0 0;
   font-size: 15px;
@@ -112,4 +111,21 @@ label {
       color: $headline_dark;
     }
   }
+
+  .buttons {
+    padding: 0 0 0.5rem 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      color: $button_font_dark;
+      border-color: $button_font_dark;
+    }
+  }
+}
+
+.content {
+  padding: 2rem;
 }

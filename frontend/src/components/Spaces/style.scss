@@ -8,21 +8,6 @@
   overflow: hidden;
   text-align: left;
 
-  .headlineBox {
-    .buttons {
-      padding: 0 0 0.5rem 0;
-      position: relative;
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;
-
-      button {
-        color: $button_font_dark;
-        border-color: $button_font_dark;
-      }
-    }
-  }
-
   .spacesWrapper {
     display: block;
     padding: 2rem;

@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
-import {IoAddOutline, IoLogInOutline, IoTrashOutline} from "react-icons/all";
+import {IoAddOutline, IoLogInOutline, IoPerson, IoTrashOutline} from "react-icons/all";
 import {Link} from "react-router-dom";
 import {FaCog, FaPowerOff} from "react-icons/fa";
 import {logout} from "../../store/authSlice";
@@ -30,6 +30,9 @@ export class Spaces extends Component<Props> {
                     <div className={"buttons"}>
                         <Link to={"/settings"}>
                             <button className={"iconButton"}><FaCog/></button>
+                        </Link>
+                        <Link to={"/friends"}>
+                            <button className={"iconButton"}><IoPerson/></button>
                         </Link>
                         <button onClick={this.props.logout} className={"iconButton"}><FaPowerOff/></button>
                     </div>

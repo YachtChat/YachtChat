@@ -1,5 +1,14 @@
 @import "src/variables.module";
 
+
+.mediaPermission {
+  text-align: left;
+
+  .content {
+    padding: 3rem;
+  }
+}
+
 .btn {
   margin: 1rem;
   position: fixed;
