@@ -98,7 +98,7 @@ jobs:
 #        run: |-
 #          docker build \
 #          --file ./frontend/Dockerfile \
-#          --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG" \
+#          --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
 #          --build-arg REACT_APP_SIGNAL_URL=$GKE_WEBSOCKET_URL \
 #          --build-arg REACT_APP_SPACES_URL=$GKE_SPACES_URL \
 #          ./frontend
@@ -121,7 +121,7 @@ jobs:
 #        run: |-
 #          docker build \
 #          --file ./websocket-service/Dockerfile \
-#          --tag "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG" \
+#          --tag "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
 #          --build-arg SPACES_URL=$GKE_SPACES_URL \
 #          --build-arg VIRTUAL_PORT=$GKE_WEBSOCKET_PORT \
 #          ./websocket-service
@@ -130,7 +130,7 @@ jobs:
 #        run: |-
 #          docker build \
 #          --file ./spaces-service/Dockerfile \
-#          --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
+#          --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
 #          --build-arg VIRTUAL_PORT=$GKE_SPACES_PORT \
 #          ./spaces-service
 #
@@ -166,8 +166,7 @@ jobs:
           s/\bSIGNALING_IMAGE\b/$SIGNALING_IMAGE/g;
           s/\bSPACES_IMAGE\b/$SPACES_IMAGE/g;
           s/\bTAG\b/$TAG$GITHUB_RUN_NUMBER/g;
-          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" \
-          | kubectl apply -f -
+          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" | kubectl apply -f -
 
 #      - name: Switch to staging cluster
 #        run: kubectl config use-context alphabibber-gke-prod
