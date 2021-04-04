@@ -150,8 +150,6 @@ jobs:
 #        run: |-
 #          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
 
-      - name: Switch to staging cluster
-        run: kubectl config use-context $GKE_CLUSTER
 
       - name: pipe yaml files, replace env vars and apply to kubernetes
         run: cat deployment.yaml service.yaml ingress.yaml | sed "s/\bGKE_FRONTEND_URL\b/$GKE_FRONTEND_URL/g;
@@ -168,7 +166,7 @@ jobs:
           s/\bSIGNALING_IMAGE\b/$SIGNALING_IMAGE/g;
           s/\bSPACES_IMAGE\b/$SPACES_IMAGE/g;
           s/\bTAG\b/$TAG$GITHUB_RUN_NUMBER/g;
-          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" | kubectl apply -f -
+          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" # | kubectl apply -f -
 
 #      - name: Switch to staging cluster
 #        run: kubectl config use-context alphabibber-gke-prod
