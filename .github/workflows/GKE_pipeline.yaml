@@ -47,7 +47,7 @@ jobs:
           path: .env
       - name: like
         id: dotenv
-        uses: ./.github/actions/GKE_pipeline
+        uses: ./.github/workflows/GKE_pipeline
       - name: IMAGE TAG
         run: echo "$TAG$GITHUB_RUN_NUMBER"
       - name: .env Var test
