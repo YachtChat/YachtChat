@@ -58,20 +58,7 @@ jobs:
       - name: .env Var test
         run: echo "$TEST"
 
-      - name: Switch to staging cluster
-        run: kubectl config use-context staging
-      - uses: swdotcom/update-and-apply-kubernetes-configs@v1.2.0
-        with:
-          k8-config-file-paths: deployment.yaml service.yaml ingress.yaml
-          replacement-method: defined
-        env:
-          GKE_FRONTEND_URL: gke.alphabibber.com
-          GKE_SPACES_URL: spaces.gke.alphabibber.com
-          GKE_WEBSOCKET_URL: websocket.gke.alphabibber.com
-          GKE_WEBSOCKET_PORT: 8085
-          GKE_SPACES_PORT: 8081
-          GKE_FRONTEND_PORT: 80
-          WEBSOCKET_TIMEOUT: 28800
+
 
       - name: Setup JDK 1.8
         uses: actions/setup-java@v1
@@ -161,6 +148,21 @@ jobs:
       - name: Publish spacesServer Docker Image to GCR
         run: |-
           docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
+
+      - name: Switch to staging cluster
+        run: kubectl config use-context staging
+      - uses: swdotcom/update-and-apply-kubernetes-configs@v1.2.0
+        with:
+          k8-config-file-paths: deployment.yaml service.yaml ingress.yaml
+          replacement-method: defined
+        env:
+          GKE_FRONTEND_URL: gke.alphabibber.com
+          GKE_SPACES_URL: spaces.gke.alphabibber.com
+          GKE_WEBSOCKET_URL: websocket.gke.alphabibber.com
+          GKE_WEBSOCKET_PORT: 8085
+          GKE_SPACES_PORT: 8081
+          GKE_FRONTEND_PORT: 80
+          WEBSOCKET_TIMEOUT: 28800
 
       - name: Set up Kustomize
         run: |-
