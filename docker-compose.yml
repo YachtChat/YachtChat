@@ -26,8 +26,6 @@ services:
     network_mode: bridge
 
   frontend:
-    ports:
-      - 8080:80
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
