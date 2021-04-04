@@ -190,11 +190,16 @@ export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk =
 
     if (Array.isArray(clients) && clients.length > 0) {
         clients.forEach((userId) => {
+            // no connection to yourself
+            if (localClient == userId) return;
+            // no connection to usr that are already connected
             if (!rtcConnections[userId]) {
                 // TODO isn't here a connection created from user a to user a
                 rtcConnections[userId] = new RTCPeerConnection(rtcConfiguration);
-                if (localClient === userId)
-                    return;
+                // TODO what about
+                // oniceconnectionstatechange
+                // onsignalingstatechange
+                // onnegotiationneeded
 
                 rtcConnections[userId].onicecandidate = (event) => {
                     if (event.candidate) {
@@ -218,41 +223,45 @@ export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk =
                     console.log("I HAVE A TRACK");
                 }
 
+                rtcConnections[userId].onicegatheringstatechange = (event) => {
+                    console.log(event)
+                }
+
+                // this event should get triggered after the tracks are added to the local stream and the client
+                // is ready to start sending the sdp offer
+                // on negotionneeded should only be part of the caller??
+                if (localClient == joinedUserId){
+                    rtcConnections[userId].onnegotiationneeded = (event) => {
+                        console.log(userId)
+                        rtcConnections[userId].createOffer(offerOptions).then((description) => {
+                            rtcConnections[userId].setLocalDescription(description).then(() => {
+                                console.log(localClient, ' Send offer to ', userId);
+                                dispatch(send({
+                                    type: 'signal',
+                                    target_id: userId,
+                                    content: {
+                                        signal_type: 'sdp',
+                                        // TODO shouldn't this here be the localClient
+                                        description: rtcConnections[userId].localDescription,
+                                    }
+                                }));
+                            }).catch(handleError);
+                        });
+                    };
+
+                }
                 rtpSender[userId] = []
 
                 if (!getStream(getState(), localClient)) {
                     dispatch(handleError("Could not access media."))
                     return
                 }
-
+                // todo maybe do not send the stream until the connection is established
                 getStream(getState(), localClient)!.getTracks().forEach((track, idx) => {
                     rtpSender[userId][idx] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
             }
         });
-
-        if (count >= 2 && joinedUserId !== localClient) {
-            //TODO Just the caller should send the offer
-            // The user that were already in the room seem to be the caller
-            // one could also think about creating the rtcConnection here
-            // Idea: it could be better to let the new user be the caller, otherwise all the clients send at once when
-            // a new user joins -> if joinedUserId == localClient then iterate over all user and send offers
-            // Mabey connect to all the user sequentially
-            rtcConnections[joinedUserId].createOffer(offerOptions).then((description) => {
-                rtcConnections[joinedUserId].setLocalDescription(description).then(() => {
-                    console.log(localClient, ' Send offer to ', joinedUserId);
-                    dispatch(send({
-                        type: 'signal',
-                        target_id: joinedUserId,
-                        content: {
-                            signal_type: 'sdp',
-                            // TODO shouldn't this here be the localClient
-                            description: rtcConnections[joinedUserId].localDescription,
-                        }
-                    }));
-                }).catch(handleError);
-            });
-        }
         dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position}))
     }
 }
@@ -273,6 +282,8 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
             return
         // TODO why is this existing here already?
         // here we get the description from the caller and set them to our remoteDescription
+        // maybe here not create the RTCSesseionDescription with the whole description but just with description.sdp
+        // TODO: Should we not already set out track to the connection here
         rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))
             .then(() => {
                  // TODO why description type offer here?
