@@ -23,7 +23,6 @@ env:
   PRESENTATION_IMAGE: presentation-image
   WEBSOCKET_IMAGE: websocket-image
   SPACES_IMAGE: spaces-image
-  # also used in yaml files
   GKE_FRONTEND_URL: gke.alphabibber.com
   GKE_SPACES_URL: spaces.gke.alphabibber.com
   GKE_WEBSOCKET_URL: websocket.gke.alphabibber.com
