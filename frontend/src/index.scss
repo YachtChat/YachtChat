@@ -104,6 +104,7 @@ label {
   background: $accent_light;
   box-sizing: border-box;
   color: $headline_light;
+  position: relative;
 
   @media (prefers-color-scheme: dark) {
     & {

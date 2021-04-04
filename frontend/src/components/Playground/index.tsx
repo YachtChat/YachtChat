@@ -9,6 +9,8 @@ import {User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
 import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";
+import {setSessionEnded} from "../../store/connectionSlice";
+import {Redirect} from "react-router-dom";
 
 interface Props {
     activeUser: User
@@ -19,19 +21,24 @@ interface Props {
         }
     }
     requestUserMedia: (spaceID: string) => void
-    loadMediaDevices: () => void
+    loadMediaDevices: (callback?: () => void) => void
+    startSession: () => void
     userMedia: boolean
     cameras: string[]
     microphones: string[]
     joinedSpace: boolean
+    sessionEnded: boolean
 }
 
 export class Playground extends Component<Props> {
 
     componentDidMount() {
-        this.props.loadMediaDevices()
-        if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
-            this.props.requestUserMedia(this.props.match!.params.spaceID)
+        this.props.startSession()
+        this.props.loadMediaDevices(() => {
+            console.log(this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
+            if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
+                this.props.requestUserMedia(this.props.match!.params.spaceID)
+        })
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
@@ -67,6 +74,8 @@ export class Playground extends Component<Props> {
                 </Wrapper>
             )
 
+        if (this.props.sessionEnded)
+            return <Redirect to={"/spaces"}/>
 
         return (
             <div className={"contentWrapper"}>
@@ -90,14 +99,16 @@ const mapStateToProps = (state: RootState) => ({
     microphones: state.rtc.microphones,
     cameras: state.rtc.cameras,
     userMedia: state.rtc.userMedia,
-    joinedSpace: state.webSocket.joinedRoom
+    joinedSpace: state.webSocket.joinedRoom,
+    sessionEnded: state.webSocket.sessionEnded
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     handleZoom: (z: number) => dispatch(handleZoom(z)),
     requestSpaces: () => dispatch(requestSpaces()),
     requestUserMedia: (spaceID: string) => dispatch(requestUserMediaAndJoin(spaceID)),
-    loadMediaDevices: () => dispatch(loadAllMediaDevices())
+    loadMediaDevices: (callback?: () => void) => dispatch(loadAllMediaDevices(callback)),
+    startSession: () => dispatch(setSessionEnded(false))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Playground)

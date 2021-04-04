@@ -6,7 +6,7 @@ import {setName} from "../../store/userSlice";
 import googleButton from "../../rsc/google_button.svg";
 import appleLogo from "../../rsc/apple.svg";
 import github from "../../rsc/github.svg";
-import {loginService} from "../../store/config";
+import {AUTH_SERVICE} from "../../store/config";
 import Wrapper from "../Wrapper";
 import {setLogin} from "../../store/authSlice";
 
@@ -46,6 +46,7 @@ export class Login extends Component<Props, State> {
     }
 
     render() {
+        const auth = "https://".concat((AUTH_SERVICE) ? AUTH_SERVICE : "")
         return (
             <Wrapper className="login-box">
                 <div className={"signin"}>
@@ -54,19 +55,19 @@ export class Login extends Component<Props, State> {
                     <div className="login-buttons">
 
                         <div style={{background: "black"}} className={"logoImage"}>
-                            <a href={loginService.concat("/oauth2/authorization/apple")}>
+                            <a href={auth.concat("/oauth2/authorization/apple")}>
                                 <img alt={"Sign in with Apple"} src={appleLogo}/>
                             </a>
                         </div>
 
                         <div style={{background: "white"}} className={"logoImage"}>
-                            <a href={loginService.concat("/oauth2/authorization/google")}>
+                            <a href={auth.concat("/oauth2/authorization/google")}>
                                 <img alt={"Sign in with Google"} src={googleButton}/>
                             </a>
                         </div>
 
                         <div id={"github"} className={"logoImage"}>
-                            <a href={loginService.concat("/oauth_login/?method=github")}>
+                            <a href={auth.concat("/oauth_login/?method=github")}>
                                 <img alt={"Sign in with Github"} src={github}/>
                             </a>
                         </div>

@@ -7,10 +7,13 @@ import {requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
 import {IoAddOutline, IoLogInOutline, IoTrashOutline} from "react-icons/all";
 import {Link} from "react-router-dom";
+import {FaCog, FaPowerOff} from "react-icons/fa";
+import {logout} from "../../store/authSlice";
 
 interface Props {
     activeUser: User
     spaces: Space[]
+    logout: () => void
     requestSpaces: () => void
 }
 
@@ -24,7 +27,13 @@ export class Spaces extends Component<Props> {
         return (
             <Wrapper className="spaces">
                 <div className={"headlineBox"}>
-                    <h1>Welcome back, {this.props.activeUser.name}.</h1>
+                    <div className={"buttons"}>
+                        <Link to={"/settings"}>
+                            <button className={"iconButton"}><FaCog/></button>
+                        </Link>
+                        <button onClick={this.props.logout} className={"iconButton"}><FaPowerOff/></button>
+                    </div>
+                    <h1>Welcome back, {this.props.activeUser.name}</h1>
                     <p>To join a space, select a space below, or create a new one.</p>
                 </div>
 
@@ -53,7 +62,6 @@ export class Spaces extends Component<Props> {
             </Wrapper>
         )
     }
-
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -63,6 +71,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     requestSpaces: () => dispatch(requestSpaces()),
+    logout: () => dispatch(logout()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Spaces)

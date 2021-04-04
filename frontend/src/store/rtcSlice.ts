@@ -88,7 +88,7 @@ export const {
     setUserMedia
 } = rtcSlice.actions;
 
-export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
+export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatch) => {
 
     navigator.mediaDevices.enumerateDevices().then(md => {
         const cameras: string[] = []
@@ -112,7 +112,7 @@ export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
             microphones,
             speakers
         }))
-    })
+    }).then(callback)
 
 }
 

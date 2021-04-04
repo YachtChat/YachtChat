@@ -3,27 +3,32 @@ import './App.scss';
 import Playground from "./components/Playground";
 import {RootState} from "./store/store";
 import Login from "./components/Login";
-import {connect, ConnectedComponent} from "react-redux";
+import {connect} from "react-redux";
 import StatusComponent from "./components/Status";
 import "webrtc-adapter";
 import Spaces from './components/Spaces';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
+import {checkAuth} from "./store/authSlice";
+import PrivateRoute from "./PrivateRoute";
+import Settings from './components/Settings';
 
 interface Props {
     loggedIn: boolean
+    authFlowReady: boolean
     joinedRoom: boolean
     connected: boolean
+    checkAuth: (token?: string) => void
 }
 
 interface State {
 }
 
 export class App extends Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            isUserAuthenticated: false
-        };
+
+    componentDidMount() {
+        const search = window.location.search;
+        const id_token = new URLSearchParams(search).get('id_token');
+        this.props.checkAuth((id_token) ? id_token : undefined)
     }
 
     render() {
@@ -34,23 +39,26 @@ export class App extends Component<Props, State> {
                     {/*<Login/>*/}
                     {/*}*/}
                     <Switch>
-                        <PrivateRoute authed={(this.props.joinedRoom && this.props.connected)} path='/spaces/:spaceID'
-                                      exact={false} component={Playground}/>
-                        <PrivateRoute authed={!this.props.joinedRoom && !this.props.loggedIn} exact path='/spaces'>
-                            <Spaces/>
-                        </PrivateRoute>
+                        <PrivateRoute path='/spaces/:spaceID' exact={false} component={Playground}/>
+                        <PrivateRoute exact path='/spaces' component={Spaces}/>
+                        <PrivateRoute exact path='/settings' component={Settings}/>
                         <Route path='/login'>
-                            {this.props.loggedIn ?
-                                <Redirect to={"/spaces"}/> :
-                                undefined
+                            {this.props.authFlowReady ?
+                                (this.props.loggedIn) ?
+                                    <Redirect to={"/"}/> :
+                                    <Login/>
+                                : <div/>
                             }
-                            <Login/>
                         </Route>
                         <Route path='/'>
-                            {this.props.loggedIn ?
-                                <Redirect to={"/spaces"}/> :
-                                <Redirect to={"/login"}/>
-                            }
+                            {(this.props.authFlowReady) ?
+                                ((this.props.loggedIn) ?
+                                    <Redirect to={"/spaces"}/> :
+                                    <Redirect to={"/login"}/>)
+                                : <div/>}
+                        </Route>
+                        <Route path="*">
+                            <Redirect to={"/"}/>
                         </Route>
                     </Switch>
                     <StatusComponent/>
@@ -61,25 +69,15 @@ export class App extends Component<Props, State> {
 
 }
 
-class PrivateRoute extends Component<{ authed: boolean, path: string, exact: boolean, render?: any, component?: ConnectedComponent<any, any> }> {
-    render() {
-        let {authed, ...rest} = this.props;
-        return (
-            <Route
-                {...rest}
-                render={(props) => authed
-                    ? <Component {...props} />
-                    : <Redirect to={{pathname: '/login', state: {from: props.location}}}/>}
-            />
-        )
-    }
-}
-
 const mapStateToProps = (state: RootState) => ({
     loggedIn: state.auth.loggedIn,
     joinedRoom: state.webSocket.joinedRoom,
-    connected: state.webSocket.connected
+    connected: state.webSocket.connected,
+    authFlowReady: state.auth.authFlow
 })
 
+const mapDispatchToProps = (dispatch: any) => ({
+    checkAuth: (token?: string) => dispatch(checkAuth(token))
+})
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

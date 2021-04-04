@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
 import {
@@ -19,13 +19,15 @@ import {SOCKET_PORT, SOCKET_URL} from "./config";
 interface WebSocketState {
     connected: boolean
     joinedRoom: boolean
+    sessionEnded: boolean
 }
 
 let socket: WebSocket | null = null;
 
 const initialState: WebSocketState = {
     connected: false,
-    joinedRoom: false
+    joinedRoom: false,
+    sessionEnded: true
 };
 
 export const webSocketSlice = createSlice({
@@ -44,10 +46,13 @@ export const webSocketSlice = createSlice({
         disconnect: (state) => {
             state.connected = false
         },
+        setSessionEnded: (state, action: PayloadAction<boolean>) => {
+            state.sessionEnded = action.payload
+        },
     },
 });
 
-export const {connect, disconnect, joined, leftRoom} = webSocketSlice.actions;
+export const {connect, disconnect, joined, leftRoom, setSessionEnded} = webSocketSlice.actions;
 
 export const connectToServer = (spaceID: string): AppThunk => (dispatch, getState) => {
     if (!SOCKET_URL) {
@@ -72,9 +77,19 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
 
     socket.onerror = (err) => {
         console.error("Got error", err);
-        dispatch(disconnect())
         dispatch(handleError("Connection failed"))
+        dispatch(disconnect())
+        dispatch(leftRoom())
+        dispatch(destroySession())
+        dispatch(setSessionEnded(true))
     };
+
+    socket.onclose = () => {
+        dispatch(disconnect())
+        dispatch(leftRoom())
+        dispatch(destroySession())
+        dispatch(setSessionEnded(true))
+    }
 
     socket.onmessage = function (msg) {
         // console.log("Got message", msg);
@@ -87,7 +102,6 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 dispatch(setUserId(data.id))
                 break;
             case "login":
-                dispatch(setUserId(data.id));
                 dispatch(handleLogin(data.success));
                 dispatch(setUsers(data.users));
                 const count = Object.keys(getState().userState.otherUsers).length + 1;
@@ -175,7 +189,8 @@ export const send = (message: { [key: string]: any }, target?: User): AppThunk =
 export const requestLogin = (): AppThunk => (dispatch, getState) => {
     dispatch(send({
         type: "login",
-        user_secret: getState().auth.token,
+        token: getState().auth.token,
+        user_id: getState().userState.activeUser.id
     }));
 }
 
