@@ -150,7 +150,7 @@ jobs:
           docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
 
       - name: Switch to staging cluster
-        run: kubectl config use-context $KUBECONFIG
+        run: kubectl config use-context $GKE_CLUSTER
       - uses: swdotcom/update-and-apply-kubernetes-configs@v1.2.0
         with:
           k8-config-file-paths: deployment.yaml service.yaml ingress.yaml
@@ -161,20 +161,23 @@ jobs:
           curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
           chmod u+x ./kustomize
 
+      - name: cat files
+        run: cat service.yaml
+      - name: kubectl try to deploy service
+        run: kubectl apply -f service.yaml
 
-
-      - name: Deploy frontend Image to GKE cluster
-        run: |-
-          ./kustomize edit set image gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG=gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG
-          ./kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment/$FRONTEND_DEPLOYMENT_NAME
-          ./kustomize edit set image gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG=gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG
-          ./kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment/$WEBSOCKET_DEPLOYMENT_NAME
-          ./kustomize edit set image gcr.io/PROJECT_ID/SPACES_IMAGE:TAG=gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG
-          ./kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment/$SPACES_DEPLOYMENT_NAME
-          kubectl get services -o wide
+#      - name: Deploy frontend Image to GKE cluster
+#        run: |-
+#          ./kustomize edit set image gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG=gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG
+#          ./kustomize build . | kubectl apply -f -
+#          kubectl rollout status deployment/$FRONTEND_DEPLOYMENT_NAME
+#          ./kustomize edit set image gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG=gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG
+#          ./kustomize build . | kubectl apply -f -
+#          kubectl rollout status deployment/$WEBSOCKET_DEPLOYMENT_NAME
+#          ./kustomize edit set image gcr.io/PROJECT_ID/SPACES_IMAGE:TAG=gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG
+#          ./kustomize build . | kubectl apply -f -
+#          kubectl rollout status deployment/$SPACES_DEPLOYMENT_NAME
+#          kubectl get services -o wide
 
 #      - name: Deploy landingpage Image to GKE cluster
 #        run: |-
