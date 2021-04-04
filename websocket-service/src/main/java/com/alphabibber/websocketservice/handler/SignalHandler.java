@@ -17,7 +17,9 @@ public class SignalHandler {
     public void handleSignal(Map<String, User> room, String roomId, User sender, JsonObject content, User target){
         SignalAnswer answer = new SignalAnswer(content, sender.getId());
         try {
-            target.getSession().getBasicRemote().sendObject(answer);
+            synchronized (target){
+                target.getSession().getBasicRemote().sendObject(answer);
+            }
         } catch (IOException | EncodeException e) {
             log.error("Could not send message from {} to {}", sender.getId(), target.getId());
             log.error(String.valueOf(e.getStackTrace()));

@@ -98,19 +98,19 @@ public class WsServerEndpoint {
                 sender = room.get(session.getId());
                 JsonObject content = jsonObject.getAsJsonObject("content");
                 String target_id = jsonObject.get("target_id").getAsString();
-                // iterate over all user and find the target if it exists
-                User target_user = null;
+                // check if the tagertUder.getSession().getId() field is in the room
+                User targetUser = null;
                 for (User user:room.values()){
                     if (user.getId().equals(target_id)){
-                        target_user = user;
+                        targetUser = user;
                         break;
                     }
                 }
-                if (target_user == null){
+                if (targetUser == null){
                     log.warn("User {} tried to signal to target {} but target does not exist", sender.getId(), target_id);
                     return;
                 }
-                signalHandler.handleSignal(roomMap.get(roomId), roomId, sender, content, target_user);
+                signalHandler.handleSignal(roomMap.get(roomId), roomId, sender, content, targetUser);
                 log.info("User {} send message to user {} in room {}", sender.getId(), target_id, roomId);
                 break;
             case "leave":

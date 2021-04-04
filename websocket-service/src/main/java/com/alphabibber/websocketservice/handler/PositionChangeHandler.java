@@ -3,7 +3,6 @@ package com.alphabibber.websocketservice.handler;
 import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.model.answer.PositionAnswer;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
