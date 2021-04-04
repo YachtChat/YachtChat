@@ -16,14 +16,12 @@ env:
   FRONTEND_DEPLOYMENT_NAME: frontend-app
   LANDINGPAGE_DEPLOYMENT_NAME: landingpage-app
   PRESENTATION_DEPLOYMENT_NAME: presentation-app
-  SIGNALING_DEPLOYMENT_NAME: signalingserver-app
   WEBSOCKET_DEPLOYMENT_NAME: websocket-app
   SPACES_DEPLOYMENT_NAME: spacesservice-app
   FRONTEND_IMAGE: frontend-image
   LANDINGPAGE_IMAGE: landingpage-image
   PRESENTATION_IMAGE: presentation-image
   WEBSOCKET_IMAGE: websocket-image
-  SIGNALING_IMAGE: signaling-image
   SPACES_IMAGE: spaces-image
   # also used in yaml files
   GKE_FRONTEND_URL: gke.alphabibber.com
@@ -161,6 +159,11 @@ jobs:
           s/\bWEBSOCKET_TIMEOUT\b/$WEBSOCKET_TIMEOUT/g;
           s/\bGKE_FRONTEND_REPLICAS\b/$GKE_FRONTEND_REPLICAS/g;
           s/\bGKE_WEBSOCKET_REPLICAS\b/$GKE_WEBSOCKET_REPLICAS/g;
+          s/\bPROJECT_ID\b/$PROJECT_ID/g;
+          s/\bFRONTEND_IMAGE\b/$FRONTEND_IMAGE/g;
+          s/\bSIGNALING_IMAGE\b/$SIGNALING_IMAGE/g;
+          s/\bSPACES_IMAGE\b/$SPACES_IMAGE/g;
+          s/\bTAG\b/$TAG$GITHUB_RUN_NUMBER/g;
           s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g"
 
 #      - name: Switch to staging cluster
