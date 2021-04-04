@@ -162,7 +162,7 @@ jobs:
           chmod u+x ./kustomize
 
       - name: cat files
-        run: cat service.yaml
+        run: cd $KUBECONFIG && cat service.yaml
       - name: kubectl try to deploy service
         run: kubectl apply -f service.yaml
 
