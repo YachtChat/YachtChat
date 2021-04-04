@@ -73,25 +73,25 @@ jobs:
 #      - name: Build with Maven websocket-server
 #        run: mvn clean -f ./websocket-service/pom.xml package -DskipTests
 #
-#      # Setup gcloud CLI
-#      - name: Setup gcloud CLI
-#        uses: google-github-actions/setup-gcloud@v0.2.0
-#        with:
-#           service_account_key: ${{ secrets.GKE_SA_KEY }}
-#           project_id: ${{ secrets.GKE_PROJECT }}
+      # Setup gcloud CLI
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v0.2.0
+        with:
+           service_account_key: ${{ secrets.GKE_SA_KEY }}
+           project_id: ${{ secrets.GKE_PROJECT }}
 #
 #      # Configure docker to use the gcloud command-line tool as a credential helper
 #      - name: Configure docker
 #        run: |-
 #          gcloud --quiet auth configure-docker
 #
-#      # Get the GKE credentials so we can deploy to the cluster
-#      - name: Get the GKE credentials to deploy
-#        uses: google-github-actions/get-gke-credentials@v0.2.1
-#        with:
-#          cluster_name: ${{ env.GKE_CLUSTER }}
-#          location: ${{ env.GKE_ZONE }}
-#          credentials: ${{ secrets.GKE_SA_KEY }}
+      # Get the GKE credentials so we can deploy to the cluster
+      - name: Get the GKE credentials to deploy
+        uses: google-github-actions/get-gke-credentials@v0.2.1
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+          credentials: ${{ secrets.GKE_SA_KEY }}
 #
 #      # Build the Docker image
 #      - name: Build frontend image
@@ -150,10 +150,10 @@ jobs:
 #        run: |-
 #          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
 
-      - name: Set up Kustomize
-        run: |-
-          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-          chmod u+x ./kustomize
+#      - name: Set up Kustomize
+#        run: |-
+#          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+#          chmod u+x ./kustomize
 
       - name: pipe yaml files, replace env vars and apply to kubernetes
         run: cat deployment.yaml service.yaml ingress.yaml | sed "s/\bGKE_FRONTEND_URL\b/$GKE_FRONTEND_URL/g;
@@ -170,7 +170,7 @@ jobs:
           s/\bSIGNALING_IMAGE\b/$SIGNALING_IMAGE/g;
           s/\bSPACES_IMAGE\b/$SPACES_IMAGE/g;
           s/\bTAG\b/$TAG$GITHUB_RUN_NUMBER/g;
-          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" | ./kustomize build . | kubectl apply -f -
+          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" | kubectl apply -f -
 
 #      - name: pipe yaml files, replace env vars and apply to kubernetes
 #        run: ./kustomize build . | kubectl apply -f service.yaml
