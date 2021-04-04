@@ -8,7 +8,7 @@ spec:
   type: NodePort
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: ${GKE_FRONTEND_PORT} #80
 ---
 #apiVersion: v1
 #kind: Service
@@ -45,7 +45,7 @@ metadata:
     app: websocket-app
   name: websocket-service
   annotations:
-    cloud.google.com/backend-config: '{"ports": {"80":"service-backend-config","8085":"http-hc-config"}}'
+    cloud.google.com/backend-config: '{"ports": {"80":"service-backend-config","${GKE_WEBSOCKET_PORT}":"http-hc-config"}}'
     cloud.google.com/neg: '{"ingress": true}'
 spec:
   selector:
@@ -53,14 +53,14 @@ spec:
   type: NodePort
   ports:
     - port: 80
-      targetPort: 8085
+      targetPort: ${GKE_WEBSOCKET_PORT} #8085
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: spacesservice-service
   annotations:
-    cloud.google.com/backend-config: '{"ports": {"8081":"http-hc-config"}}'
+    cloud.google.com/backend-config: '{"ports": {"${GKE_SPACES_PORT}":"http-hc-config"}}'
     cloud.google.com/neg: '{"ingress": true}'
 spec:
   selector:
@@ -68,14 +68,14 @@ spec:
   type: NodePort
   ports:
     - port: 80
-      targetPort: 8081
+      targetPort: ${GKE_SPACES_PORT} #8081
 ---
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
   name: service-backend-config
 spec:
-  timeoutSec: 28800
+  timeoutSec: ${WEBSOCKET_TIMEOUT} #28800
   connectionDraining:
     drainingTimeoutSec: 1800
 ---

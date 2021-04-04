@@ -9,7 +9,7 @@ metadata:
     kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
-    - host: gke.alphabibber.com
+    - host: ${GKE_FRONTEND_URL} #gke.alphabibber.com
       http:
         paths:
           - path: /*
@@ -33,7 +33,7 @@ spec:
 #              serviceName: presentation-service
 #              servicePort: 80
 
-    - host: websocket.gke.alphabibber.com
+    - host: ${GKE_WEBSOCKET_URL} #websocket.gke.alphabibber.com
       http:
         paths:
           - path: /*
@@ -41,7 +41,7 @@ spec:
               serviceName: websocket-service
               servicePort: 80
 
-    - host: spaces.gke.alphabibber.com
+    - host: ${GKE_SPACES_URL} #spaces.gke.alphabibber.com
       http:
         paths:
           - path: /*
@@ -55,6 +55,6 @@ metadata:
   name: alphabibber-cert2
 spec:
   domains:
-    - gke.alphabibber.com
-    - websocket.gke.alphabibber.com
-    - spaces.gke.alphabibber.com
+    - ${GKE_FRONTEND_URL} #gke.alphabibber.com
+    - ${GKE_WEBSOCKET_URL} #websocket.gke.alphabibber.com
+    - ${GKE_SPACES_URL} #spaces.gke.alphabibber.com
