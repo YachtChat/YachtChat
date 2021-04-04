@@ -121,7 +121,7 @@ jobs:
 
       - name: Publish frontend Docker Image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG"
+          docker push "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG$GITHUB_RUN_NUMBER"
 #      - name: Publish landingpage Docker Image to GCR
 #        run: |-
 #          docker push "gcr.io/$PROJECT_ID/$LANDINGPAGE_IMAGE:$TAG"
@@ -130,10 +130,10 @@ jobs:
 #          docker push "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG"
       - name: Publish signalingServer Docker Image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG"
+          docker push "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG$GITHUB_RUN_NUMBER"
       - name: Publish spacesServer Docker Image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
+          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG$GITHUB_RUN_NUMBER"
 
 #      - name: Set up Kustomize
 #        run: |-
