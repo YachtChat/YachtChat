@@ -33,6 +33,9 @@ env:
   GKE_SPACES_PORT: 8081
   GKE_FRONTEND_PORT: 80
   WEBSOCKET_TIMEOUT: 28800
+  GKE_FRONTEND_REPLICAS: 1
+  GKE_WEBSOCKET_REPLICAS: 1
+  GKE_SPACES_REPLICAS: 1
 
   TAG: 1.0.
 
@@ -149,35 +152,44 @@ jobs:
         run: |-
           docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
 
-      - name: Switch to staging cluster
-        run: kubectl config use-context $GKE_CLUSTER
-      - uses: swdotcom/update-and-apply-kubernetes-configs@v1.2.0
-        with:
-          k8-config-file-paths: deployment.yaml service.yaml ingress.yaml
-          replacement-method: defined
-
       - name: Set up Kustomize
         run: |-
           curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
           chmod u+x ./kustomize
 
-      - name: cat files
-        run: cd $KUBECONFIG && cat service.yaml
-      - name: kubectl try to deploy service
-        run: kubectl apply -f service.yaml
 
-#      - name: Deploy frontend Image to GKE cluster
-#        run: |-
-#          ./kustomize edit set image gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG=gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG
-#          ./kustomize build . | kubectl apply -f -
-#          kubectl rollout status deployment/$FRONTEND_DEPLOYMENT_NAME
+      - name: Deploy frontend Image to GKE cluster
+        run: |-
+          ./kustomize edit set image gcr.io/PROJECT_ID/FRONTEND_IMAGE:TAG=gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG$GITHUB_RUN_NUMBER
+          ./kustomize edit set image gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG=gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG$GITHUB_RUN_NUMBER
+          ./kustomize edit set image gcr.io/PROJECT_ID/SPACES_IMAGE:TAG=gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG$GITHUB_RUN_NUMBER
+          ./kustomize edit set replicas GKE_FRONTEND_REPLICAS=$GKE_FRONTEND_REPLICAS
+          ./kustomize edit set replicas GKE_WEBSOCKET_REPLICAS=$GKE_WEBSOCKET_REPLICAS
+          ./kustomize edit set replicas GKE_SPACES_REPLICAS=$GKE_SPACES_REPLICAS
+          ./kustomize edit set port GKE_FRONTEND_PORT=$GKE_FRONTEND_PORT
+          ./kustomize edit set port GKE_WEBSOCKET_PORT=$GKE_WEBSOCKET_PORT
+          ./kustomize edit set port GKE_SPACES_PORT=$GKE_SPACES_PORT
+          ./kustomize edit set targetPort GKE_FRONTEND_PORT=$GKE_FRONTEND_PORT
+          ./kustomize edit set targetPort GKE_WEBSOCKET_PORT=$GKE_WEBSOCKET_PORT
+          ./kustomize edit set targetPort GKE_SPACES_PORT=$GKE_SPACES_PORT
+          ./kustomize edit set cloud.google.com/backend-config HEALTH_CHECK_WEBSOCKE='{"ports": {"80":"service-backend-config","$GKE_WEBSOCKET_PORT":"http-hc-config"}}'
+          ./kustomize edit set cloud.google.com/backend-config HEALTH_CHECK_SPACES='{"ports": {"$GKE_SPACES_PORT":"http-hc-config"}}'
+          ./kustomize edit set timeoutSec WEBSOCKET_TIMEOUT=$WEBSOCKET_TIMEOUT
+          ./kustomize edit set host GKE_FRONTEND_URL=$GKE_FRONTEND_URL
+          ./kustomize edit set host GKE_WEBSOCKET_URL=$GKE_WEBSOCKET_URL
+          ./kustomize edit set host GKE_SPACES_URL=$GKE_SPACES_URL
+          ./kustomize edit set domains GKE_FRONTEND_URL=$GKE_FRONTEND_URL
+          ./kustomize edit set domains GKE_WEBSOCKET_URL=$GKE_WEBSOCKET_URL
+          ./kustomize edit set domains GKE_SPACES_URL=$GKE_SPACES_URL
+          ./kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment/$FRONTEND_DEPLOYMENT_NAME
 #          ./kustomize edit set image gcr.io/PROJECT_ID/WEBSOCKET_IMAGE:TAG=gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG
 #          ./kustomize build . | kubectl apply -f -
 #          kubectl rollout status deployment/$WEBSOCKET_DEPLOYMENT_NAME
 #          ./kustomize edit set image gcr.io/PROJECT_ID/SPACES_IMAGE:TAG=gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG
 #          ./kustomize build . | kubectl apply -f -
 #          kubectl rollout status deployment/$SPACES_DEPLOYMENT_NAME
-#          kubectl get services -o wide
+          kubectl get services -o wide
 
 #      - name: Deploy landingpage Image to GKE cluster
 #        run: |-
