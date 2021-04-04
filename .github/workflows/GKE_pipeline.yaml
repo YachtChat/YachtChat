@@ -151,13 +151,24 @@ jobs:
       - name: Publish spacesServer Docker Image to GCR
         run: |-
           docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
+      - name: pipe yaml files
+        run: cat deployment.yaml service.yaml ingress.yaml | sed 's/GKE_FRONTEND_URL/$GKE_FRONTEND_URL/g; \
+                                                                  s/GKE_SPACES_URL/$GKE_SPACES_URL/g; \
+                                                                  s/GKE_WEBSOCKET_URL/$GKE_WEBSOCKET_URL/g; \
+                                                                  s/GKE_WEBSOCKET_PORT/$GKE_WEBSOCKET_PORT/g; \
+                                                                  s/GKE_SPACES_PORT/$GKE_SPACES_PORT/g; \
+                                                                  s/GKE_FRONTEND_PORT/$GKE_FRONTEND_PORT/g; \
+                                                                  s/WEBSOCKET_TIMEOUT/$WEBSOCKET_TIMEOUT/g; \
+                                                                  s/GKE_FRONTEND_REPLICAS/$GKE_FRONTEND_REPLICAS/g; \
+                                                                  s/GKE_WEBSOCKET_REPLICAS/$GKE_WEBSOCKET_REPLICAS/g; \
+                                                                  s/GKE_SPACES_REPLICAS/$GKE_SPACES_REPLICAS/g'
 
-      - name: Switch to staging cluster
-        run: kubectl config use-context alphabibber-gke-prod
-      - uses: swdotcom/update-and-apply-kubernetes-configs@v1.2.0
-        with:
-          k8-config-file-paths: deployment.yaml service.yaml ingress.yaml
-          replacement-method: defined
+#      - name: Switch to staging cluster
+#        run: kubectl config use-context alphabibber-gke-prod
+#      - uses: swdotcom/update-and-apply-kubernetes-configs@v1.2.0
+#        with:
+#          k8-config-file-paths: deployment.yaml service.yaml ingress.yaml
+#          replacement-method: defined
 
 #      - name: Set up Kustomize
 #        run: |-
