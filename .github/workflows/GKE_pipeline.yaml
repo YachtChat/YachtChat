@@ -32,7 +32,7 @@ env:
   GKE_WEBSOCKET_REPLICAS: 1
   GKE_SPACES_REPLICAS: 1
   GKE_AUTH_REPLICAS: 1
-  TAG: 1.0.
+  TAG: 1.0.0
 
 jobs:
   setup-build-publish-deploy:
@@ -83,7 +83,7 @@ jobs:
         run: |-
           docker build \
           --file ./frontend/Dockerfile \
-          --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
+          --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG" \
           --build-arg REACT_APP_SIGNAL_URL=$GKE_WEBSOCKET_URL \
           --build-arg REACT_APP_SPACES_URL=$GKE_SPACES_URL \
           --build-arg REACT_APP_AUTH_URL=$GKE_AUTH_URL \
@@ -107,7 +107,7 @@ jobs:
         run: |-
           docker build \
           --file ./websocket-service/Dockerfile \
-          --tag "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
+          --tag "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG" \
           --build-arg SPACES_URL=$GKE_SPACES_URL \
           --build-arg VIRTUAL_PORT=$GKE_WEBSOCKET_PORT \
           ./websocket-service
@@ -116,14 +116,14 @@ jobs:
         run: |-
           docker build \
           --file ./spaces-service/Dockerfile \
-          --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
+          --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG" \
           --build-arg VIRTUAL_PORT=$GKE_SPACES_PORT \
           ./spaces-service
       - name: Build authService image
         run: |-
           docker build \
           --file ./auth-service/Dockerfile \
-          --tag "gcr.io/$PROJECT_ID/$AUTH_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
+          --tag "gcr.io/$PROJECT_ID/$AUTH_IMAGE:$TAG" \
           --build-arg VIRTUAL_PORT=$GKE_AUTH_PORT \
           --build-arg OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID }} \
           --build-arg OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET }} \
@@ -131,7 +131,7 @@ jobs:
 
       - name: Publish frontend Docker Image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG$GITHUB_RUN_NUMBER"
+          docker push "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG"
 #      - name: Publish landingpage Docker Image to GCR
 #        run: |-
 #          docker push "gcr.io/$PROJECT_ID/$LANDINGPAGE_IMAGE:$TAG"
@@ -140,13 +140,13 @@ jobs:
 #          docker push "gcr.io/$PROJECT_ID/$PRESENTATION_IMAGE:$TAG"
       - name: Publish signalingServer Docker Image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG$GITHUB_RUN_NUMBER"
+          docker push "gcr.io/$PROJECT_ID/$WEBSOCKET_IMAGE:$TAG"
       - name: Publish spacesServer Docker Image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG$GITHUB_RUN_NUMBER"
+          docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG"
       - name: Publish authServer Docker Image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$AUTH_IMAGE:$TAG$GITHUB_RUN_NUMBER"
+          docker push "gcr.io/$PROJECT_ID/$AUTH_IMAGE:$TAG"
 
       # inject data in yaml files and deploy them to gke
       - name: pipe yaml files, replace env vars and apply to kubernetes
