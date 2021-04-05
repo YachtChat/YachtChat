@@ -84,8 +84,6 @@ spec:
               port: GKE_WEBSOCKET_PORT #8085
               path: /actuator/health
             initialDelaySeconds: 10
-#          ports:
-#            - containerPort: 8085
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -110,6 +108,28 @@ spec:
               port: GKE_SPACES_PORT #8081
               path: /actuator/health
             initialDelaySeconds: 10
-#          ports:
-#            - containerPort: 8081
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authservice-app
+spec:
+  replicas: GKE_AUTH_REPLICAS #1
+  selector:
+    matchLabels:
+      app: authservice-app
+  template:
+    metadata:
+      labels:
+        app: authservice-app
+    spec:
+      containers:
+        - name: authservice-app
+          image: gcr.io/PROJECT_ID/AUTH_IMAGE:TAG
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              port: GKE_AUTH_PORT #8080
+              path: /actuator/health
+            initialDelaySeconds: 10
 ---

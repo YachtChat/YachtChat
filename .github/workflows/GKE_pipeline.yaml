@@ -13,26 +13,25 @@ env:
   PROJECT_ID: ${{secrets.GKE_PROJECT}}
   GKE_CLUSTER: alphabibber-gke-prod
   GKE_ZONE: europe-west3
-  FRONTEND_DEPLOYMENT_NAME: frontend-app
-  LANDINGPAGE_DEPLOYMENT_NAME: landingpage-app
-  PRESENTATION_DEPLOYMENT_NAME: presentation-app
-  WEBSOCKET_DEPLOYMENT_NAME: websocket-app
-  SPACES_DEPLOYMENT_NAME: spacesservice-app
   FRONTEND_IMAGE: frontend-image
   LANDINGPAGE_IMAGE: landingpage-image
   PRESENTATION_IMAGE: presentation-image
   WEBSOCKET_IMAGE: websocket-image
   SPACES_IMAGE: spaces-image
+  AUTH_IMAGE: auth-image
   GKE_FRONTEND_URL: gke.alphabibber.com
   GKE_SPACES_URL: spaces.gke.alphabibber.com
   GKE_WEBSOCKET_URL: websocket.gke.alphabibber.com
+  GKE_AUTH_URL: auth.gke.alphabibber.com
   GKE_WEBSOCKET_PORT: 8085
   GKE_SPACES_PORT: 8081
   GKE_FRONTEND_PORT: 80
+  GKE_AUTH_PORT: 8080
   WEBSOCKET_TIMEOUT: 28800
   GKE_FRONTEND_REPLICAS: 1
   GKE_WEBSOCKET_REPLICAS: 1
   GKE_SPACES_REPLICAS: 1
+  GKE_AUTH_REPLICAS: 1
   TAG: 1.0.
 
 jobs:
@@ -58,6 +57,8 @@ jobs:
         run: mvn clean -f ./spaces-service/pom.xml package -DskipTests
       - name: Build with Maven websocket-server
         run: mvn clean -f ./websocket-service/pom.xml package -DskipTests
+      - name: Build with Maven auth-server
+        run: mvn clean -f ./auth-service/pom.xml package -DskipTests
 
       # Setup gcloud CLI
       - name: Setup gcloud CLI
@@ -87,6 +88,7 @@ jobs:
           --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
           --build-arg REACT_APP_SIGNAL_URL=$GKE_WEBSOCKET_URL \
           --build-arg REACT_APP_SPACES_URL=$GKE_SPACES_URL \
+          --build-arg REACT_APP_AUTH_URL=$GKE_AUTH_URL \
           ./frontend
       # Build the Docker image
 #      - name: Build landingpage image
@@ -119,6 +121,13 @@ jobs:
           --tag "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
           --build-arg VIRTUAL_PORT=$GKE_SPACES_PORT \
           ./spaces-service
+      - name: Build authService image
+        run: |-
+          docker build \
+          --file ./auth-service/Dockerfile \
+          --tag "gcr.io/$PROJECT_ID/$AUTH_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
+          --build-arg VIRTUAL_PORT=$GKE_AUTH_PORT \
+          ./auth-service
 
       - name: Publish frontend Docker Image to GCR
         run: |-
@@ -135,22 +144,29 @@ jobs:
       - name: Publish spacesServer Docker Image to GCR
         run: |-
           docker push "gcr.io/$PROJECT_ID/$SPACES_IMAGE:$TAG$GITHUB_RUN_NUMBER"
+      - name: Publish authServer Docker Image to GCR
+        run: |-
+          docker push "gcr.io/$PROJECT_ID/$AUTH_IMAGE:$TAG$GITHUB_RUN_NUMBER"
 
-
+      # inject data in yaml files and deploy them to gke
       - name: pipe yaml files, replace env vars and apply to kubernetes
-        run: cat deployment.yaml service.yaml ingress.yaml | sed "s/\bGKE_FRONTEND_URL\b/$GKE_FRONTEND_URL/g;
+        run: cat ./kubernetes/deployment.yaml ./kubernetes/service.yaml ./kubernetes/ingress.yaml | sed "s/\bGKE_FRONTEND_URL\b/$GKE_FRONTEND_URL/g;
           s/\bGKE_SPACES_URL\b/$GKE_SPACES_URL/g;
           s/\bGKE_WEBSOCKET_URL\b/$GKE_WEBSOCKET_URL/g;
+          s/\bGKE_AUTH_URL\b/$GKE_AUTH_URL/g;
           s/\bGKE_WEBSOCKET_PORT\b/$GKE_WEBSOCKET_PORT/g;
           s/\bGKE_SPACES_PORT\b/$GKE_SPACES_PORT/g;
           s/\bGKE_FRONTEND_PORT\b/$GKE_FRONTEND_PORT/g;
+          s/\bGKE_AUTH_PORT\b/$GKE_AUTH_PORT/g;
           s/\bWEBSOCKET_TIMEOUT\b/$WEBSOCKET_TIMEOUT/g;
           s/\bGKE_FRONTEND_REPLICAS\b/$GKE_FRONTEND_REPLICAS/g;
           s/\bGKE_WEBSOCKET_REPLICAS\b/$GKE_WEBSOCKET_REPLICAS/g;
+          s/\bGKE_AUTH_REPLICAS\b/$GKE_AUTH_REPLICAS/g;
           s/\bPROJECT_ID\b/$PROJECT_ID/g;
           s/\bFRONTEND_IMAGE\b/$FRONTEND_IMAGE/g;
           s/\bWEBSOCKET_IMAGE\b/$WEBSOCKET_IMAGE/g;
           s/\bSPACES_IMAGE\b/$SPACES_IMAGE/g;
+          s/\bAUTH_IMAGE\b/$AUTH_IMAGE/g;
           s/\bTAG\b/$TAG$GITHUB_RUN_NUMBER/g;
           s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" | kubectl apply -f -
 

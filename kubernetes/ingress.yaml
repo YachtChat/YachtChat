@@ -5,7 +5,6 @@ metadata:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: alphabibber-ingress-ip
     networking.gke.io/managed-certificates: alphabibber-cert2
-#    kubernetes.io/ingress.class: "gce"
     kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
@@ -48,6 +47,14 @@ spec:
             backend:
               serviceName: spacesservice-service
               servicePort: 80
+
+    - host: GKE_AUTH_URL
+        http:
+          paths:
+              - path: /*
+                backend:
+                  serviceName: authservice-service
+                  servicePort: 80
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
@@ -58,4 +65,5 @@ spec:
     - GKE_FRONTEND_URL #gke.alphabibber.com
     - GKE_WEBSOCKET_URL #websocket.gke.alphabibber.com
     - GKE_SPACES_URL #spaces.gke.alphabibber.com
+    - GKE_AUTH_URL
 ---
