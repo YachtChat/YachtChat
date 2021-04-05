@@ -1,3 +1,4 @@
+---
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -49,12 +50,12 @@ spec:
               servicePort: 80
 
     - host: GKE_AUTH_URL
-        http:
-          paths:
-              - path: /*
-                backend:
-                  serviceName: authservice-service
-                  servicePort: 80
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: authservice-service
+              servicePort: 80
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
