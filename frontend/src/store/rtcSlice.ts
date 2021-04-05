@@ -2,7 +2,16 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {connectToServer, handleLeave, send} from "./connectionSlice";
 import {rtcConfiguration} from "./config";
-import {getUser, getUserID, getUsers, gotRemoteStream, handlePositionUpdate} from "./userSlice";
+import {
+    forgetUsers,
+    getUser,
+    getUserID,
+    getUsers,
+    gotRemoteStream,
+    handlePositionUpdate,
+    removeUser
+} from "./userSlice";
+import {resetPlayground} from "./playgroundSlice";
 import {handleError} from "./statusSlice";
 
 interface RTCState {
@@ -187,7 +196,7 @@ export const unsendAudio = (id: string): AppThunk => (dispatch, getState) => {
     })
 }
 
-export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk => (dispatch, getState) => {
+export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, getState) => {
     // get client ids
     const clients = getUsers(getState()).map(k => k.id)
     const localClient: string = getUserID(getState())
@@ -334,6 +343,7 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
     delete rtpSender[id]
     rtcConnections[id].close()
     delete rtcConnections[id]
+    dispatch(removeUser(id))
 }
 
 export const destroySession = (): AppThunk => (dispatch, getState) => {
@@ -355,6 +365,8 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
     rtpSender = {}
 
     dispatch(handleLeave())
+    dispatch(forgetUsers())
+    dispatch(resetPlayground())
 }
 
 export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {

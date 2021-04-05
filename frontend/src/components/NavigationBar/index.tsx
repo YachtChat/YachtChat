@@ -10,7 +10,6 @@ import {
     FaMicrophone,
     FaMicrophoneSlash,
     FaPlusCircle,
-    FaPowerOff,
     FaSignOutAlt,
     FaVideo,
     FaVideoSlash
@@ -115,7 +114,7 @@ export class NavigationBar extends Component<Props, State> {
         }
     }
 
-    handleClose(event: any) {
+    handleClose() {
         if (this.state.messagesOpen || this.state.settingsOpen) {
             this.setState({
                 settingsOpen: false,
@@ -240,23 +239,11 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                     </div>
                                 </li>
-                                <li className="menu-item">
-                                    <div className="inner-item">
-                                    <span className="icon-wrapper">
-                                        <span className="icon">
-                                            <FaSignOutAlt/>
-                                        </span>
-                                    </span>
-                                        <span className="item-content">
-                                        Leave Room
-                                    </span>
-                                    </div>
-                                </li>
                                 <li className="menu-item" onClick={this.props.logout}>
                                     <div className="inner-item">
                                     <span className="icon-wrapper">
                                         <span className="icon">
-                                            <FaPowerOff/>
+                                            <FaSignOutAlt/>
                                         </span>
                                     </span>
                                         <span className="item-content">

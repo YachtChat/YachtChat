@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
 import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import {connect} from "react-redux";
 import {sendMessage} from "../../store/connectionSlice";
 
 interface Props {
     open: boolean
-    onClose: (e: React.MouseEvent) => void
+    onClose: () => void
     sendMessage: (msg: string) => void
 }
 
@@ -24,19 +23,34 @@ export class MessageComponent extends Component<Props, State> {
         }
     }
 
+    handleSubmit() {
+        this.props.sendMessage(this.state.message)
+        this.setState({
+            message: ""
+        })
+        this.props.onClose()
+    }
+
     render() {
+        const style = {
+            display: (this.props.open) ? "block" : "none"
+        }
+
         return (
             <div>
-                <Dialog className={"messagePanel"} open={this.props.open} onClose={this.props.onClose}
-                        aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Send message</DialogTitle>
+                <Dialog className={"messagePanel messagePanel"} open={this.props.open} onClose={this.props.onClose}
+                        style={style}>
+                    <div className={"headlineBox"}>
+                        <h2>Send message</h2>
+                        <p>Send a message to everyone in your proximity</p>
+                    </div>
                     <div className={"message"}>
-                        <input onSubmit={() => this.props.sendMessage(this.state.message)} autoFocus={this.props.open}
+                        <input onSubmit={this.handleSubmit.bind(this)} autoFocus={this.props.open}
                                value={this.state.message}
                                onChange={({target: {value}}) => this.setState({message: value})}/>
                         <button onClick={e => {
                             this.props.sendMessage(this.state.message)
-                            this.props.onClose(e)
+                            this.props.onClose()
                         }} className={"Button"}>
                             send
                         </button>
