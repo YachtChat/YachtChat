@@ -125,6 +125,8 @@ jobs:
           --file ./auth-service/Dockerfile \
           --tag "gcr.io/$PROJECT_ID/$AUTH_IMAGE:$TAG$GITHUB_RUN_NUMBER" \
           --build-arg VIRTUAL_PORT=$GKE_AUTH_PORT \
+          --env OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID }} \
+          --env OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET }} \
           ./auth-service
 
       - name: Publish frontend Docker Image to GCR
@@ -166,6 +168,6 @@ jobs:
           s/\bSPACES_IMAGE\b/$SPACES_IMAGE/g;
           s/\bAUTH_IMAGE\b/$AUTH_IMAGE/g;
           s/\bTAG\b/$TAG$GITHUB_RUN_NUMBER/g;
-          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" | kubectl apply -f -
+          s/\bGKE_SPACES_REPLICAS\b/$GKE_SPACES_REPLICAS/g" #| kubectl apply -f -
 
 
