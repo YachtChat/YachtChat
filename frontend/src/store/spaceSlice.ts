@@ -23,12 +23,16 @@ export const spaceSlice = createSlice({
     }
 });
 
-export const requestSpaces = ():AppThunk => dispatch =>  {
-    if(!SPACES_URL){
+export const requestSpaces = (): AppThunk => (dispatch, getState) => {
+    if (!SPACES_URL) {
         dispatch(handleError("No spaces url defined for this environment"));
         return;
     }
-    axios.get("https://" + SPACES_URL + "/spaces/").then(response => {
+    axios.get("https://" + SPACES_URL + "/spaces/", {
+        headers: {
+            'Authorization': `Bearer ${getState().auth.token}`
+        }
+    }).then(response => {
         dispatch(setSpaces(response.data))
     }).catch(e => console.log(e.trace))
 }

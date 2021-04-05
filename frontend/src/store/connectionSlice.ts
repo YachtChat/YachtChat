@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
 import {
@@ -13,19 +13,21 @@ import {
     setUsers
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
-import {destroySession, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
+import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./config";
 
 interface WebSocketState {
     connected: boolean
     joinedRoom: boolean
+    sessionEnded: boolean
 }
 
 let socket: WebSocket | null = null;
 
 const initialState: WebSocketState = {
     connected: false,
-    joinedRoom: false
+    joinedRoom: false,
+    sessionEnded: true
 };
 
 export const webSocketSlice = createSlice({
@@ -44,10 +46,13 @@ export const webSocketSlice = createSlice({
         disconnect: (state) => {
             state.connected = false
         },
+        setSessionEnded: (state, action: PayloadAction<boolean>) => {
+            state.sessionEnded = action.payload
+        },
     },
 });
 
-export const {connect, disconnect, joined, leftRoom} = webSocketSlice.actions;
+export const {connect, disconnect, joined, leftRoom, setSessionEnded} = webSocketSlice.actions;
 
 export const connectToServer = (spaceID: string): AppThunk => (dispatch, getState) => {
     if (!SOCKET_URL) {
@@ -55,10 +60,13 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
         return;
     }
 
+
+    console.log("Try to connect to", spaceID)
+
     if (!SOCKET_PORT)
         socket = new WebSocket("wss://" + SOCKET_URL + "/room/" + spaceID);
     else
-        socket = new WebSocket("wss://" + SOCKET_URL + ":" + SOCKET_PORT + "/room/" + spaceID);
+        socket = new WebSocket("ws://" + SOCKET_URL + ":" + SOCKET_PORT + "/room/" + spaceID);
 
 
     socket.onopen = () => {
@@ -69,9 +77,19 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
 
     socket.onerror = (err) => {
         console.error("Got error", err);
-        dispatch(disconnect())
         dispatch(handleError("Connection failed"))
+        dispatch(disconnect())
+        dispatch(leftRoom())
+        dispatch(destroySession())
+        dispatch(setSessionEnded(true))
     };
+
+    socket.onclose = () => {
+        dispatch(disconnect())
+        dispatch(leftRoom())
+        dispatch(destroySession())
+        dispatch(setSessionEnded(true))
+    }
 
     socket.onmessage = function (msg) {
         // console.log("Got message", msg);
@@ -84,7 +102,6 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 dispatch(setUserId(data.id))
                 break;
             case "login":
-                dispatch(setUserId(data.id));
                 dispatch(handleLogin(data.success));
                 dispatch(setUsers(data.users));
                 const count = Object.keys(getState().userState.otherUsers).length + 1;
@@ -96,6 +113,8 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 if (loggedIn) {
                     dispatch(setUser(data));
                     const count = Object.keys(getState().userState.otherUsers).length + 1;
+                    //TODO here the new_user case is treated exactly the same as the login case, however , there should
+                    // be a callee and a caller.
                     dispatch(handleRTCEvents(data.id, count));
                     dispatch(handlePositionUpdate({id: data.id, position: data.position}))
                 }
@@ -103,6 +122,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
             case "leave":
                 if (loggedIn)
                     dispatch(removeUser(data.id))
+                dispatch(disconnectUser(data.id))
                 break;
             case "position":
                 if (loggedIn && data.id !== getUserID(getState()))
@@ -113,6 +133,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                     break;
                 const fromId: string = data.sender_id;
                 if (fromId !== getUserID(getState())) {
+                    // TODO check this random wait
                     const randomWait = Math.floor(Math.random() * Math.floor(200))
                     const signal_content = data.content
                     switch (signal_content.signal_type) {
@@ -120,7 +141,8 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                             setTimeout(() => dispatch(handleCandidate(signal_content.candidate, fromId)), randomWait)
                             break;
                         case "sdp":
-                            setTimeout(() => dispatch(handleSdp(signal_content.description, fromId)), randomWait)
+                            // TODO timeout here is not good, because a candidate would already be send form the caller
+                            dispatch(handleSdp(signal_content.description, fromId))
                             break;
                         case "message":
                             dispatch(handleMessage(signal_content.message, fromId))
@@ -160,7 +182,6 @@ export const send = (message: { [key: string]: any }, target?: User): AppThunk =
         id: getUserID(getState()),
     }
 
-
     if (socket !== null)
         socket.send(JSON.stringify(msgObj));
 }
@@ -168,7 +189,8 @@ export const send = (message: { [key: string]: any }, target?: User): AppThunk =
 export const requestLogin = (): AppThunk => (dispatch, getState) => {
     dispatch(send({
         type: "login",
-        user_secret: getState().auth.token,
+        token: getState().auth.token,
+        user_id: getState().userState.activeUser.id
     }));
 }
 
@@ -185,12 +207,18 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
     }));
 }
 
-export const handleLogin = (success: boolean): AppThunk => (dispatch, getState) => {
+export const handleLogin = (success: boolean): AppThunk => (dispatch) => {
     if (!success) {
         dispatch(handleError("Login failed. Try again later."))
     } else {
         dispatch(joined())
     }
+}
+
+export const handleLeave = (): AppThunk => (dispatch, getState) => {
+    dispatch(leftRoom())
+    socket?.close()
+    dispatch(disconnect())
 }
 
 export default webSocketSlice.reducer;

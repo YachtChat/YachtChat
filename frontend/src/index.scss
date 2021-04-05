@@ -81,3 +81,51 @@ label {
   margin-bottom: 0.5rem;
   display: block;
 }
+
+.iconButton {
+  margin: 0 0 0 0.5rem;
+  border-radius: 50%;
+  padding: 0 0;
+  font-size: 15px;
+  width: 35px;
+  min-width: 35px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.headlineBox {
+  margin: 0;
+  width: 100%;
+  padding: 4rem 2rem 4rem 2rem;
+  background: $accent_light;
+  box-sizing: border-box;
+  color: $headline_light;
+  position: relative;
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: $accent_dark;
+      color: $headline_dark;
+    }
+  }
+
+  .buttons {
+    padding: 0 0 0.5rem 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      color: $button_font_dark;
+      border-color: $button_font_dark;
+    }
+  }
+}
+
+.content {
+  padding: 2rem;
+}

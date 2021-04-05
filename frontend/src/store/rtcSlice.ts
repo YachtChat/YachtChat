@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {send} from "./connectionSlice";
+import {connectToServer, handleLeave, send} from "./connectionSlice";
 import {rtcConfiguration} from "./config";
 import {getUser, getUserID, getUsers, gotRemoteStream, handlePositionUpdate} from "./userSlice";
 import {handleError} from "./statusSlice";
@@ -88,7 +88,7 @@ export const {
     setUserMedia
 } = rtcSlice.actions;
 
-export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
+export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatch) => {
 
     navigator.mediaDevices.enumerateDevices().then(md => {
         const cameras: string[] = []
@@ -112,17 +112,22 @@ export const loadAllMediaDevices = (): AppThunk => (dispatch) => {
             microphones,
             speakers
         }))
-    })
+    }).then(callback)
 
 }
 
-export const requestUserMedia = (): AppThunk => (dispatch, getState) => {
+export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch, getState) => {
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
         localStream = e
+
+        console.log("HALT STOPP")
+
         dispatch(gotRemoteStream(localClient))
-    }).then(() =>
+        dispatch(loadAllMediaDevices())
         dispatch(setUserMedia(true))
+    }).then(() =>
+        dispatch(connectToServer(spaceID))
     ).catch(() => {
         dispatch(handleError("Unable to get media."))
         dispatch(setUserMedia(false))
@@ -190,10 +195,16 @@ export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk =
 
     if (Array.isArray(clients) && clients.length > 0) {
         clients.forEach((userId) => {
+            // no connection to yourself
+            if (localClient == userId) return;
+            // no connection to usr that are already connected
             if (!rtcConnections[userId]) {
+                // TODO isn't here a connection created from user a to user a
                 rtcConnections[userId] = new RTCPeerConnection(rtcConfiguration);
-                if (localClient === userId)
-                    return;
+                // TODO what about
+                // oniceconnectionstatechange
+                // onsignalingstatechange
+                // onnegotiationneeded
 
                 rtcConnections[userId].onicecandidate = (event) => {
                     if (event.candidate) {
@@ -217,34 +228,45 @@ export const handleRTCEvents = (joinedUserId: string, count: number): AppThunk =
                     console.log("I HAVE A TRACK");
                 }
 
+                rtcConnections[userId].onicegatheringstatechange = (event) => {
+                    console.log(event)
+                }
+
+                // this event should get triggered after the tracks are added to the local stream and the client
+                // is ready to start sending the sdp offer
+                // on negotionneeded should only be part of the caller??
+                if (localClient == joinedUserId){
+                    rtcConnections[userId].onnegotiationneeded = (event) => {
+                        console.log(userId)
+                        rtcConnections[userId].createOffer(offerOptions).then((description) => {
+                            rtcConnections[userId].setLocalDescription(description).then(() => {
+                                console.log(localClient, ' Send offer to ', userId);
+                                dispatch(send({
+                                    type: 'signal',
+                                    target_id: userId,
+                                    content: {
+                                        signal_type: 'sdp',
+                                        // TODO shouldn't this here be the localClient
+                                        description: rtcConnections[userId].localDescription,
+                                    }
+                                }));
+                            }).catch(handleError);
+                        });
+                    };
+
+                }
                 rtpSender[userId] = []
 
                 if (!getStream(getState(), localClient)) {
                     dispatch(handleError("Could not access media."))
                     return
                 }
-
+                // todo maybe do not send the stream until the connection is established
                 getStream(getState(), localClient)!.getTracks().forEach((track, idx) => {
                     rtpSender[userId][idx] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
             }
         });
-
-        if (count >= 2 && joinedUserId !== localClient) {
-            rtcConnections[joinedUserId].createOffer(offerOptions).then((description) => {
-                rtcConnections[joinedUserId].setLocalDescription(description).then(() => {
-                    console.log(localClient, ' Send offer to ', joinedUserId);
-                    dispatch(send({
-                        type: 'signal',
-                        target_id: joinedUserId,
-                        content: {
-                            signal_type: 'sdp',
-                            description: rtcConnections[joinedUserId].localDescription,
-                        }
-                    }));
-                }).catch(handleError);
-            });
-        }
         dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position}))
     }
 }
@@ -260,10 +282,16 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
         const clientId: string = getUserID(getState());
 
         console.log(clientId, ' Receive sdp from ', fromId);
+        // TODO this should happen in the first place
         if (clientId === fromId)
             return
+        // TODO why is this existing here already?
+        // here we get the description from the caller and set them to our remoteDescription
+        // maybe here not create the RTCSesseionDescription with the whole description but just with description.sdp
+        // TODO: Should we not already set out track to the connection here
         rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))
             .then(() => {
+                 // TODO why description type offer here?
                 if (description.type === 'offer') {
                     rtcConnections[fromId].createAnswer()
                         .then((desc) => {
@@ -280,16 +308,36 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
                                 }));
                             });
                         })
-                        .catch(dispatch(handleError("RTC Answer could not be created.")));
+                        .catch(
+                            (error) => {
+                            console.log(error)
+                            dispatch(handleError("RTC Answer could not be created."))
+                        }
+                        //     dispatch(handleError("RTC Answer could not be created."))
+                        );
                 }
             })
-            .catch(dispatch(handleError("RTC remote description could not be set.")));
+            .catch(
+                    (error) => {
+                    console.log(error)
+                    dispatch(handleError("RTC remote description could not be set."))
+                }
+                // dispatch(handleError("RTC remote description could not be set."))
+            );
     } else {
         dispatch(handleError("RTC Description was not set"))
     }
 }
 
+export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => {
+    rtpSender[id].forEach(r => r.track?.stop())
+    delete rtpSender[id]
+    rtcConnections[id].close()
+    delete rtcConnections[id]
+}
+
 export const destroySession = (): AppThunk => (dispatch, getState) => {
+    localStream?.getTracks().forEach(t => t.stop())
     Object.keys(streams).forEach(k => {
         getStream(getState(), k)!.getTracks().forEach(t => {
             t.enabled = false
@@ -297,13 +345,16 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
         })
     })
 
-    streams = {}
 
-    Object.keys(rtcConnections).forEach(k => {
-        rtcConnections[k].close()
+    getUsers(getState()).forEach(u => {
+        rtcConnections[u.id].close()
+        rtpSender[u.id].forEach(t => t.track?.stop())
     })
-
+    streams = {}
     rtcConnections = {}
+    rtpSender = {}
+
+    dispatch(handleLeave())
 }
 
 export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {

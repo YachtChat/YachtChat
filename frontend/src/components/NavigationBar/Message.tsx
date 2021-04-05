@@ -31,7 +31,8 @@ export class MessageComponent extends Component<Props, State> {
                         aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Send message</DialogTitle>
                     <div className={"message"}>
-                        <input value={this.state.message}
+                        <input onSubmit={() => this.props.sendMessage(this.state.message)} autoFocus={this.props.open}
+                               value={this.state.message}
                                onChange={({target: {value}}) => this.setState({message: value})}/>
                         <button onClick={e => {
                             this.props.sendMessage(this.state.message)

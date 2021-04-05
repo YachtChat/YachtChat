@@ -25,7 +25,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     network_mode: bridge
 
-  nginx-proxyed-container:
+  frontend:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
@@ -33,6 +33,7 @@ services:
         - REACT_APP_SIGNAL_URL=${WEBSOCKET_URL}
         - REACT_APP_SIGNAL_PORT=${WEBSOCKET_URL}
         - REACT_APP_SPACES_URL=${SPACES_URL}
+        - REACT_APP_AUTH_URL=${AUTH_URL}
     environment:
       - VIRTUAL_HOST=${FRONTEND_URL}
 #      - VIRTUAL_HOST=www.chat.alphabibber.com
@@ -62,19 +63,6 @@ services:
       - OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}
       - OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}
 
-    network_mode: bridge
-
-  signaling_server:
-    build:
-      context: ./signalingServer
-      dockerfile: ./Dockerfile
-      args:
-        - VIRTUAL_HOST=${SIGNAL_URL}
-        - VIRTUAL_PORT=${SIGNAL_PORT}
-    environment:
-      - VIRTUAL_HOST=${SIGNAL_URL}
-      - LETSENCRYPT_HOST=${SIGNAL_URL}
-      - VIRTUAL_PORT=${SIGNAL_PORT}
     network_mode: bridge
 
   websocket-service:

@@ -43,9 +43,8 @@ export const userSlice = createSlice({
             state.activeUser.id = action.payload
             state.activeUser.inProximity = true
         },
-        setName: (state, action: PayloadAction<any>) => {
-            if (action.payload.id)
-                state.activeUser.name = action.payload.name
+        setName: (state, action: PayloadAction<string>) => {
+            state.activeUser.name = action.payload
         },
         setUser: (state, action: PayloadAction<User>) => {
             state.otherUsers[action.payload.id] = {...action.payload, name: ""}
