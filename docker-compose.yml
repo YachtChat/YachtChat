@@ -63,7 +63,6 @@ services:
       - VIRTUAL_PORT=${AUTH_PORT}
       - OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}
       - OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}
-
     network_mode: bridge
 
   websocket-service:
@@ -85,10 +84,29 @@ services:
       dockerfile: ./Dockerfile
       args:
         - VIRTUAL_PORT=${SPACES_PORT}
+    depends_on:
+      - postgres
     environment:
       - VIRTUAL_HOST=${SPACES_URL}
       - LETSENCRYPT_HOST=${SPACES_URL}
       - VIRTUAL_PORT=${SPACES_PORT}
+      - DB_URL=${DB_URL}
+      - DB_PORT=${DB_PORT}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    network_mode: bridge
+
+  postgres:
+    image: library/postgres:13
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB}
+      - POSTGRES_USER=${DB_USER}
+    ports:
+      - "5432:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
     network_mode: bridge
 
   nginx-presentation:
@@ -106,3 +124,4 @@ volumes:
   certs: { }
   vhost: { }
   html: { }
+  data: { }

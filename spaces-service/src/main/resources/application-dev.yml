@@ -1,9 +1,6 @@
-server:
-  port: "${VIRTUAL_PORT:8081}"
-
 spring:
-  application:
-    name: spaces-service
+  profiles:
+    include: default
   datasource:
     url: "${DEV_DB:jdbc:h2:mem:spaces_db}"
     driver-class-name: org.h2.Driver
