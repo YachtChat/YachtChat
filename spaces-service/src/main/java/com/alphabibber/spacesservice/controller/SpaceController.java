@@ -73,12 +73,12 @@ public class SpaceController extends SpringBootServletInitializer {
 
     @GetMapping(path = "/{spaceId}/canUserJoin")
     public HashMap<String, Boolean> canUserJoinSpace(@PathVariable String spaceId, @RequestParam String userId) {
-        Space space = spaceService.getSpaceById(spaceId);
-        Boolean boolResponse = space.canUserSeeSpace(userId);
+        Boolean boolResponse = spaceService.getSpaceById(spaceId).getUsers()
+                        .stream()
+                        .anyMatch(user -> user.getId().equals(userId));
 
         HashMap<String, Boolean> map = new HashMap<>();
         map.put("valid", boolResponse);
-
         return map;
     }
 
