@@ -7,7 +7,6 @@ import {
     getUsers,
     handleMessage,
     handlePositionUpdate,
-    removeUser,
     setUser,
     setUserId,
     setUsers
@@ -78,17 +77,11 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
     socket.onerror = (err) => {
         console.error("Got error", err);
         dispatch(handleError("Connection failed"))
-        dispatch(disconnect())
-        dispatch(leftRoom())
         dispatch(destroySession())
-        dispatch(setSessionEnded(true))
     };
 
     socket.onclose = () => {
-        dispatch(disconnect())
-        dispatch(leftRoom())
         dispatch(destroySession())
-        dispatch(setSessionEnded(true))
     }
 
     socket.onmessage = function (msg) {
@@ -102,27 +95,20 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 dispatch(setUserId(data.id))
                 break;
             case "login":
-                dispatch(handleLogin(data.success));
-                dispatch(setUsers(data.users));
-                const count = Object.keys(getState().userState.otherUsers).length + 1;
-                dispatch(handleRTCEvents(getUserID(getState()), count));
-                const user = getUser(getState())
-                dispatch(handlePositionUpdate({id: user.id, position: user.position}))
+                dispatch(handleLogin(data.success, data.users));
                 break;
             case "new_user":
                 if (loggedIn) {
                     dispatch(setUser(data));
-                    const count = Object.keys(getState().userState.otherUsers).length + 1;
-                    //TODO here the new_user case is treated exactly the same as the login case, however , there should
+                    // TODO here the new_user case is treated exactly the same as the login case, however , there should
                     // be a callee and a caller.
-                    dispatch(handleRTCEvents(data.id, count));
+                    dispatch(handleRTCEvents(data.id));
                     dispatch(handlePositionUpdate({id: data.id, position: data.position}))
                 }
                 break;
             case "leave":
                 if (loggedIn)
-                    dispatch(removeUser(data.id))
-                dispatch(disconnectUser(data.id))
+                    dispatch(disconnectUser(data.id))
                 break;
             case "position":
                 if (loggedIn && data.id !== getUserID(getState()))
@@ -175,7 +161,7 @@ export const sendMessage = (message: string): AppThunk => (dispatch, getState) =
     dispatch(handleMessage(message, getUserID(getState())))
 }
 
-export const send = (message: { [key: string]: any }, target?: User): AppThunk => (dispatch, getState) => {
+export const send = (message: { [key: string]: any }): AppThunk => (dispatch, getState) => {
     //attach the other peer username to our messages
     const msgObj = {
         ...message,
@@ -196,7 +182,6 @@ export const requestLogin = (): AppThunk => (dispatch, getState) => {
 
 export const sendLogout = (): AppThunk => (dispatch) => {
     dispatch(send({type: "leave"}))
-    dispatch(leftRoom())
     dispatch(destroySession())
 }
 
@@ -207,18 +192,23 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
     }));
 }
 
-export const handleLogin = (success: boolean): AppThunk => (dispatch) => {
+export const handleLogin = (success: boolean, users: User[]): AppThunk => (dispatch, getState) => {
     if (!success) {
-        dispatch(handleError("Login failed. Try again later."))
+        dispatch(handleError("Join failed. Try again later."))
     } else {
+        dispatch(setUsers(users))
+        const user = getUser(getState())
+        dispatch(handleRTCEvents(getUserID(getState())));
+        dispatch(handlePositionUpdate({id: user.id, position: user.position}))
         dispatch(joined())
     }
 }
 
 export const handleLeave = (): AppThunk => (dispatch, getState) => {
-    dispatch(leftRoom())
     socket?.close()
     dispatch(disconnect())
+    dispatch(leftRoom())
+    dispatch(setSessionEnded(true))
 }
 
 export default webSocketSlice.reducer;
