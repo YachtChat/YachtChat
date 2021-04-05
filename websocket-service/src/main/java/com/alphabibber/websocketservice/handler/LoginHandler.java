@@ -32,7 +32,7 @@ public class LoginHandler {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(requestUrl))
-                .header("authorization", token)
+                .header("authorization", "Bearer " + token)
                 .build();
 
         HttpResponse<String> response;
