@@ -109,6 +109,9 @@ services:
       - POSTGRES_DB=keycloak
       - POSTGRES_USER=keycloak
       - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+    network_mode: bridge
+    networks:
+      - keycloak
 
   keycloak:
     image: jboss/keycloak
@@ -124,9 +127,15 @@ services:
       - LETSENCRYPT_HOST=${KEYCLOAK_URL}
     depends_on:
       - keycloak-postgres
+    network_mode: bridge
+    networks:
+      - keycloak
 
 volumes:
   certs: { }
   vhost: { }
   html: { }
   keycloak_postgres_data: { }
+
+networks:
+  keycloak:
