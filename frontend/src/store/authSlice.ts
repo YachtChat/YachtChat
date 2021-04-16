@@ -45,15 +45,15 @@ export const initAuth = (error: string): AppThunk => (dispatch, getState) => {
 export const checkAuth = (id_token?: string,): AppThunk => (dispatch, getState) => {
 
     if (id_token) {
-        dispatch(setToken(id_token))
+        dispatch(setToken(id_token)) // TODO: to be set to keycloak.token
     }
 
     const existingToken = getState().auth.token
     if (existingToken && existingToken !== "") {
         axios.post("https://oauth2.googleapis.com/tokeninfo?id_token=" + existingToken).then(response => {
-            dispatch(setLogin(true))
-            dispatch(setName(response.data.name))
-            dispatch(setUserId(response.data.sub))
+            dispatch(setLogin(true)) // TODO: to be set to keycloak.authenticated
+            dispatch(setName(response.data.name)) //TODO: to be set to keycloak.clientId.name?
+            dispatch(setUserId(response.data.sub)) //TODO: to be set to keycloak.clientd
             // load user info from there
         }).then(() =>
             dispatch(authFlowReady())
