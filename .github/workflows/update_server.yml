@@ -126,7 +126,7 @@ jobs:
         with:
           command: |
             cd /home/git_environment/NotZoom/
-            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}}  frontend spaces-service nginx-presentation websocket-service auth-service
+            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose up --no-deps -d frontend spaces-service nginx-presentation websocket-service auth-service
             sudo KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose up --no-deps -d keycloak-postgres keycloak
             sudo docker system prune --all --force
           host: ${{ secrets.HOST}}
