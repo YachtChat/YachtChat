@@ -129,5 +129,4 @@ volumes:
   certs: { }
   vhost: { }
   html: { }
-  keycloak_postgres_data:
-    driver: local
+  keycloak_postgres_data: { }
