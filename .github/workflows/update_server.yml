@@ -25,7 +25,7 @@ jobs:
         id: changed_files
         with:
           files: |
-            auth-servie
+            auth-service
             frontend
             landingpage
             presentation
