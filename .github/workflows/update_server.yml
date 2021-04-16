@@ -31,9 +31,9 @@ jobs:
             sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
             sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
             sudo mvn clean -f ./auth-service/pom.xml package -DskipTests
-            sudo docker-compose down frontend spaces-service nginx-presentation websocket-service auth-service
-            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose build frontend spaces-service nginx-presentation websocket-service auth-service
-            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose up --no-deps -d frontend spaces-service nginx-presentation websocket-service auth-service
+            sudo docker-compose down frontend spaces-service nginx-presentation websocket-service auth-service keycloak-postgres keycloak
+            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose build frontend spaces-service nginx-presentation websocket-service auth-servicez
+            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD }} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD }} docker-compose up --no-deps -d frontend spaces-service nginx-presentation websocket-service auth-service keycloak-postgres keycloak
             sudo docker system prune --all --force
           host: www.alphabibber.com #${{ secrets.HOST}}
           user: danilo_walenta #${{ secrets.USERNAME}}

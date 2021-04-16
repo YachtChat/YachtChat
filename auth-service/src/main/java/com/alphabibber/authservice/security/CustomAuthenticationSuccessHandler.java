@@ -97,16 +97,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         DefaultOidcUser myPrincipal = (DefaultOidcUser) authentication.getPrincipal();
 
         String idToken = myPrincipal.getIdToken().getTokenValue();
-        String accessToken = client.getAccessToken().getTokenValue();
 
         // TODO: Discuss correct Endpoint with Tristan and Marcel and then set this endpoint via an
         // environment variable
         String destinationHost = "https://www.alphabibber.com";
 
         final String targetUrl = String.format(
-                destinationHost + "?id_token=%s&access_token=%s&user_id=%s",
+                destinationHost + "?id_token=%s&user_id=%s",
                 idToken,
-                accessToken,
                 myPrincipal.getName()
         );
 

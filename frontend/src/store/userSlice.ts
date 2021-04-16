@@ -52,7 +52,7 @@ export const userSlice = createSlice({
         addUser: (state, action: PayloadAction<any>) => {
             state.otherUsers[action.payload.id] = {id: action.payload.id, position: action.payload.position, name: ""}
         },
-        removeUser: (state, action: PayloadAction<number>) => {
+        removeUser: (state, action: PayloadAction<string>) => {
             delete state.otherUsers[action.payload]
         },
         setUsers: (state, action: PayloadAction<User[]>) => {
@@ -70,6 +70,9 @@ export const userSlice = createSlice({
             // action.payload.filter(u => u.id !== state.activeUser.id && u.name !== null).forEach(u => {
             //     state.otherUsers[u.id] = u
             // })
+        },
+        forgetUsers: (state) => {
+            state.otherUsers = {}
         },
         setMessage: (state, action: PayloadAction<{ message: string, id: string }>) => {
             if (state.otherUsers[action.payload.id])
@@ -96,7 +99,8 @@ export const {
     removeUser,
     setUserId,
     setMessage,
-    destroyMessage
+    destroyMessage,
+    forgetUsers
 } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {

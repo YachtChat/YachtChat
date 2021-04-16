@@ -120,8 +120,34 @@ services:
       - LETSENCRYPT_HOST=${PRESENTATION_URL}
     network_mode: bridge
 
+  keycloak-postgres:
+    image: postgres
+    volumes:
+      - keycloak_postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      - DB_VENDOR=POSTGRES
+      - DB_ADDR=keycloak-postgres
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak
+      - DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
+      - VIRTUAL_HOST=${KEYCLOAK_URL}
+      - LETSENCRYPT_HOST=${KEYCLOAK_URL}
+    depends_on:
+      - keycloak-postgres
+
 volumes:
   certs: { }
   vhost: { }
   html: { }
   data: { }
+  keycloak_postgres_data:
+    driver: local

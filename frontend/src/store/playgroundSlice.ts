@@ -26,12 +26,16 @@ export const spaceSlice = createSlice({
             if (action.payload <= 2.0 && action.payload >= 0.5)
                 state.offset.scale = action.payload
         },
+        resetPlayground: (state) => {
+            state.offset = initialState.offset
+        }
     }
 });
 
 export const {
     movePlayground,
-    scalePlayground
+    scalePlayground,
+    resetPlayground
 } = spaceSlice.actions;
 
 export const centerUser = (): AppThunk => (dispatch, getState) => {

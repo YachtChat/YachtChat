@@ -78,7 +78,7 @@ public class WsServerEndpoint {
         switch (type){
             case "login":
                 String token = jsonObject.get("token").getAsString();
-                String userId = jsonObject.get("user_id").getAsString();
+                String userId = jsonObject.get("id").getAsString();
                 loginHandler.handleLogin(room, roomId, token, userId, session);
                 break;
             case "position":

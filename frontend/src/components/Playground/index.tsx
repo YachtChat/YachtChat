@@ -4,7 +4,7 @@ import './style.scss';
 import NavigationBar from "../NavigationBar";
 import {handleZoom} from "../../store/playgroundSlice";
 import Canvas from "./Canvas";
-import Wrapper from "../Wrapper";
+import Wrapper, {Loading} from "../Wrapper";
 import {User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
@@ -97,7 +97,10 @@ export class Playground extends Component<Props> {
                 <div className={"navwrapper"}>
                     <NavigationBar/>
                 </div>
-                <Canvas/>
+                {this.props.joinedSpace ?
+                    <Canvas/>
+                    : <Loading/>
+                }
                 <div className="btn">
                     <button onClick={this.handleZoomIn.bind(this)}>+</button>
                     <button onClick={this.handleZoomOut.bind(this)}>-</button>
