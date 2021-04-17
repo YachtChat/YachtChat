@@ -77,11 +77,6 @@ services:
     networks:
       - application
 
-volumes:
-  certs: { }
-  vhost: { }
-  html: { }
-
 networks:
   application:
     driver: bridge
