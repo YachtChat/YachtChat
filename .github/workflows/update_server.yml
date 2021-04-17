@@ -20,21 +20,115 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: connect via ssh and deploy services
+      - name: Verify Changed files
+        uses: tj-actions/verify-changed-files@v5.5
+        id: changed_files
+        with:
+          files: |
+            auth-servie
+            frontend
+            landingpage
+            presentation
+            spaces-service
+            websocket-service
+      - name: pull from git
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
             cd /home/git_environment/NotZoom/
             sudo git pull
-            sudo export OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}}
-            sudo export OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}}
-            sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
-            sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
+#            sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
+#            sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
+#            sudo mvn clean -f ./auth-service/pom.xml package -DskipTests
+#            sudo docker-compose down frontend spaces-service nginx-presentation websocket-service auth-service keycloak-postgres keycloak
+#            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose build frontend spaces-service nginx-presentation websocket-service auth-service
+#            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose up --no-deps -d frontend spaces-service nginx-presentation websocket-service auth-service keycloak-postgres keycloak
+#            sudo docker system prune --all --force
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+
+      - name: stop docker container
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            sudo docker-compose down frontend spaces-service nginx-presentation websocket-service auth-service
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+
+      - name: build frontend when changed
+        if: contains(steps.changed_files.outputs.changed_files, 'frontend')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo docker-compose build frontend
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+      - name: build auth-service when changed
+        if: contains(steps.changed_files.outputs.changed_files, 'auth-service')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
             sudo mvn clean -f ./auth-service/pom.xml package -DskipTests
-            sudo docker-compose down frontend spaces-service nginx-presentation websocket-service auth-service keycloak-postgres keycloak
-            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose build frontend spaces-service nginx-presentation websocket-service auth-servicez
-            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD }} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD }} docker-compose up --no-deps -d frontend spaces-service nginx-presentation websocket-service auth-service keycloak-postgres keycloak
+            sudo docker-compose build auth-service
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+      - name: build landingpage when changed
+        if: contains(steps.changed_files.outputs.changed_files, 'landingpage')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo docker-compose build landingpage
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+      - name: build presentation when changed
+        if: contains(steps.changed_files.outputs.changed_files, 'presentation')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo docker-compose build presentation
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+      - name: build spaces-service when changed
+        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
+            sudo docker-compose build spaces-service
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+      - name: build websocket-service when changed
+        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
+            sudo docker-compose build websocket-service
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+
+      - name: start all docker container again and delete the old images
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose up --no-deps -d frontend spaces-service nginx-presentation websocket-service auth-service
+            sudo KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose up --no-deps -d keycloak-postgres keycloak
             sudo docker system prune --all --force
-          host: www.alphabibber.com #${{ secrets.HOST}}
-          user: danilo_walenta #${{ secrets.USERNAME}}
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
