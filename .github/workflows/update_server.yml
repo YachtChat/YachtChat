@@ -57,7 +57,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build frontend when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'frontend') || "$INIT_NEW_SERVER"
+        if: "contains(steps.changed_files.outputs.changed_files, 'frontend') || $INIT_NEW_SERVER"
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
