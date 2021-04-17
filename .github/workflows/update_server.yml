@@ -42,7 +42,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: start all init docker container
-        if: "false"
+        if: ${INIT_NEW_SERVER}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -53,7 +53,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build frontend when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'frontend')
+        if: contains(steps.changed_files.outputs.changed_files, 'frontend') || ${INIT_NEW_SERVER}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -66,7 +66,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build auth-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'auth-service')
+        if: contains(steps.changed_files.outputs.changed_files, 'auth-service') || ${INIT_NEW_SERVER}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -80,7 +80,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build landingpage when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'landingpage')
+        if: contains(steps.changed_files.outputs.changed_files, 'landingpage') || ${INIT_NEW_SERVER}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -93,7 +93,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build presentation when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'presentation')
+        if: contains(steps.changed_files.outputs.changed_files, 'presentation') || ${INIT_NEW_SERVER}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -106,7 +106,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build spaces-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service')
+        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service') || ${INIT_NEW_SERVER}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -120,7 +120,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build websocket-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service')
+        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service') || ${INIT_NEW_SERVER}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
