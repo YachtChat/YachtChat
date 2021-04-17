@@ -37,22 +37,17 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo git pull
-#            sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
-#            sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
-#            sudo mvn clean -f ./auth-service/pom.xml package -DskipTests
-#            sudo docker-compose down frontend spaces-service nginx-presentation websocket-service auth-service keycloak-postgres keycloak
-#            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose build frontend spaces-service nginx-presentation websocket-service auth-service
-#            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose up --no-deps -d frontend spaces-service nginx-presentation websocket-service auth-service keycloak-postgres keycloak
-#            sudo docker system prune --all --force
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
 
-      - name: stop docker container
+      - name: start all init docker container
+        if: "false"
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
-            sudo docker-compose down frontend spaces-service nginx-presentation websocket-service auth-service
+            cd /home/git_environment/NotZoom/
+            sudo KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose -f docker-compose-init.yml up --no-deps -d
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
@@ -63,10 +58,13 @@ jobs:
         with:
           command: |
             cd /home/git_environment/NotZoom/
+            sudo docker-compose down frontend
             sudo docker-compose build frontend
+            sudo docker-compose up --no-deps -d frontend
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+
       - name: build auth-service when changed
         if: contains(steps.changed_files.outputs.changed_files, 'auth-service')
         uses: tarunjangra/ssh-remote-cmd@v1
@@ -74,30 +72,39 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo mvn clean -f ./auth-service/pom.xml package -DskipTests
+            sudo docker-compose down auth-service
             sudo docker-compose build auth-service
+            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose up --no-deps -d auth-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+
       - name: build landingpage when changed
         if: contains(steps.changed_files.outputs.changed_files, 'landingpage')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
             cd /home/git_environment/NotZoom/
-            sudo docker-compose build landingpage
+            sudo docker-compose down nginx-landingpage
+            sudo docker-compose build nginx-landingpage
+            sudo docker-compose up --no-deps -d nginx-landingpage
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+
       - name: build presentation when changed
         if: contains(steps.changed_files.outputs.changed_files, 'presentation')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
             cd /home/git_environment/NotZoom/
-            sudo docker-compose build presentation
+            sudo docker-compose down nginx-presentation
+            sudo docker-compose build nginx-presentation
+            sudo docker-compose up --no-deps -d nginx-presentation
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+
       - name: build spaces-service when changed
         if: contains(steps.changed_files.outputs.changed_files, 'spaces-service')
         uses: tarunjangra/ssh-remote-cmd@v1
@@ -105,10 +112,13 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
+            sudo docker-compose down spaces-service
             sudo docker-compose build spaces-service
+            sudo docker-compose up --no-deps -d spaces-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+
       - name: build websocket-service when changed
         if: contains(steps.changed_files.outputs.changed_files, 'websocket-service')
         uses: tarunjangra/ssh-remote-cmd@v1
@@ -116,18 +126,17 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
+            sudo docker-compose down websocket-service
             sudo docker-compose build websocket-service
+            sudo docker-compose up --no-deps -d websocket-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
 
-      - name: start all docker container again and delete the old images
+      - name: delete the old images
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
-            cd /home/git_environment/NotZoom/
-            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose up --no-deps -d frontend spaces-service nginx-presentation websocket-service auth-service
-            sudo KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose up --no-deps -d keycloak-postgres keycloak
             sudo docker system prune --all --force
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
