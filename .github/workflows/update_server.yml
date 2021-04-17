@@ -46,7 +46,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: start all init docker container
-        if: ${{ INIT_NEW_SERVER }}
+        if: ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
