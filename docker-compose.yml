@@ -11,7 +11,8 @@ services:
       - html:/usr/share/nginx/html
       - /etc/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    network_mode: bridge
+    networks:
+      - application
 
   letsencrypt-nginx-proxy-companion:
     image: jrcs/letsencrypt-nginx-proxy-companion
@@ -24,7 +25,8 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    network_mode: bridge
+    networks:
+      - application
 
   frontend:
     build:
@@ -40,7 +42,8 @@ services:
 #      - VIRTUAL_HOST=www.chat.alphabibber.com
       - LETSENCRYPT_HOST=${FRONTEND_URL}
 #      - LETSENCRYPT_HOST=www.chat.alphabibber.com
-    network_mode: bridge
+    networks:
+      - application
 
   nginx-landingpage:
     build:
@@ -49,7 +52,8 @@ services:
     environment:
         - VIRTUAL_HOST=${LANDINGPAGE_URL}
         - LETSENCRYPT_HOST=${LANDINGPAGE_URL}
-    network_mode: bridge
+    networks:
+      - application
 
   auth-service:
     build:
@@ -63,7 +67,8 @@ services:
       - VIRTUAL_PORT=${AUTH_PORT}
       - OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}
       - OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}
-    network_mode: bridge
+    networks:
+      - application
 
   websocket-service:
     build:
@@ -76,7 +81,8 @@ services:
       - LETSENCRYPT_HOST=${WEBSOCKET_URL}
       - VIRTUAL_PORT=${WEBSOCKET_PORT}
       - VIRTUAL_HOST=${WEBSOCKET_URL}
-    network_mode: bridge
+    networks:
+      - application
 
   spaces-service:
     build:
@@ -88,7 +94,8 @@ services:
       - VIRTUAL_HOST=${SPACES_URL}
       - LETSENCRYPT_HOST=${SPACES_URL}
       - VIRTUAL_PORT=${SPACES_PORT}
-    network_mode: bridge
+    networks:
+      - application
 
   nginx-presentation:
     build:
@@ -99,7 +106,8 @@ services:
 #      - LETSENCRYPT_HOST=presentation.alphabibber.com
       - VIRTUAL_HOST=${PRESENTATION_URL}
       - LETSENCRYPT_HOST=${PRESENTATION_URL}
-    network_mode: bridge
+    networks:
+      - application
 
   keycloak-postgres:
     image: postgres
@@ -109,9 +117,12 @@ services:
       - POSTGRES_DB=keycloak
       - POSTGRES_USER=keycloak
       - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+    networks:
+      - application
 
   keycloak:
     image: jboss/keycloak
+#    image: wizzn/keycloak:12
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-postgres
@@ -123,6 +134,8 @@ services:
       - VIRTUAL_HOST=${KEYCLOAK_URL}
       - LETSENCRYPT_HOST=${KEYCLOAK_URL}
       - VIRTUAL_PORT=${KEYCLOAK_PORT}
+    networks:
+      - application
     depends_on:
       - keycloak-postgres
 
@@ -133,4 +146,5 @@ volumes:
   keycloak_postgres_data: { }
 
 networks:
-  keycloak:
+  application:
+    driver: bridge
