@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 env:
-  INIT_NEW_SERVER: false
+  INIT_NEW_SERVER: "false"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -46,7 +46,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: start all init docker container
-        if: "false"
+        if: ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -57,7 +57,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build frontend when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'frontend') || ${{ env.INIT_NEW_SERVER }} == true
+        if: contains(steps.changed_files.outputs.changed_files, 'frontend') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -70,7 +70,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build auth-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'auth-service') || ${{ env.INIT_NEW_SERVER }} == true
+        if: contains(steps.changed_files.outputs.changed_files, 'auth-service') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -84,7 +84,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build landingpage when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'landingpage') || ${{ env.INIT_NEW_SERVER }} == true
+        if: contains(steps.changed_files.outputs.changed_files, 'landingpage') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -97,7 +97,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build presentation when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'presentation') || ${{ env.INIT_NEW_SERVER }} == true
+        if: contains(steps.changed_files.outputs.changed_files, 'presentation') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -110,7 +110,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build spaces-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service') || ${{ env.INIT_NEW_SERVER }} == true
+        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -124,7 +124,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build websocket-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service') || ${{ env.INIT_NEW_SERVER }} == true
+        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
