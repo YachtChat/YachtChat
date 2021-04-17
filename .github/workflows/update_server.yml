@@ -57,7 +57,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build frontend when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'frontend') || $INIT_NEW_SERVER
+        if: contains(steps.changed_files.outputs.changed_files, 'frontend') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -70,7 +70,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build auth-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'auth-service') || $INIT_NEW_SERVER
+        if: contains(steps.changed_files.outputs.changed_files, 'auth-service') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -84,7 +84,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build landingpage when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'landingpage') || $INIT_NEW_SERVER
+        if: contains(steps.changed_files.outputs.changed_files, 'landingpage') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -97,7 +97,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build presentation when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'presentation') || $INIT_NEW_SERVER
+        if: contains(steps.changed_files.outputs.changed_files, 'presentation') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -110,7 +110,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build spaces-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service') || $INIT_NEW_SERVER
+        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -124,7 +124,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build websocket-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service') || $INIT_NEW_SERVER
+        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service') || ${{ env.INIT_NEW_SERVER }}
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
