@@ -1,33 +1,5 @@
 version: "2"
 services:
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - certs:/etc/nginx/certs:ro
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - /etc/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-    networks:
-      - application
-
-  letsencrypt-nginx-proxy-companion:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    volumes_from:
-      - nginx-proxy
-    environment:
-      - DEFAULT_EMAIL=ole.sen@gmx.de
-    volumes:
-      - certs:/etc/nginx/certs:rw
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - application
-
   frontend:
     build:
       context: ./frontend
@@ -39,9 +11,7 @@ services:
         - REACT_APP_AUTH_URL=${AUTH_URL}
     environment:
       - VIRTUAL_HOST=${FRONTEND_URL}
-#      - VIRTUAL_HOST=www.chat.alphabibber.com
       - LETSENCRYPT_HOST=${FRONTEND_URL}
-#      - LETSENCRYPT_HOST=www.chat.alphabibber.com
     networks:
       - application
 
@@ -102,48 +72,15 @@ services:
       context: ./presentation
       dockerfile: ./Dockerfile
     environment:
-#      - VIRTUAL_HOST=presentation.alphabibber.com
-#      - LETSENCRYPT_HOST=presentation.alphabibber.com
       - VIRTUAL_HOST=${PRESENTATION_URL}
       - LETSENCRYPT_HOST=${PRESENTATION_URL}
     networks:
       - application
 
-  keycloak-postgres:
-    image: postgres
-    volumes:
-      - keycloak_postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=keycloak
-      - POSTGRES_USER=keycloak
-      - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
-    networks:
-      - application
-
-  keycloak:
-    image: jboss/keycloak
-#    image: wizzn/keycloak:12
-    environment:
-      - DB_VENDOR=POSTGRES
-      - DB_ADDR=keycloak-postgres
-      - DB_DATABASE=keycloak
-      - DB_USER=keycloak
-      - DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
-      - VIRTUAL_HOST=${KEYCLOAK_URL}
-      - LETSENCRYPT_HOST=${KEYCLOAK_URL}
-      - VIRTUAL_PORT=${KEYCLOAK_PORT}
-    networks:
-      - application
-    depends_on:
-      - keycloak-postgres
-
 volumes:
   certs: { }
   vhost: { }
   html: { }
-  keycloak_postgres_data: { }
 
 networks:
   application:
