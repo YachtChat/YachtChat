@@ -59,6 +59,9 @@ services:
       - keycloak-postgres
 
 volumes:
+  certs: { }
+  vhost: { }
+  html: { }
   keycloak_postgres_data: { }
 
 networks:

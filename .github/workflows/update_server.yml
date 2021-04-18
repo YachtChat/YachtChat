@@ -6,13 +6,11 @@ name: update_server
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: #[ main ]
+      - devops/updatePipeline
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
-env:
-  INIT_NEW_SERVER: false
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -44,19 +42,8 @@ jobs:
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
 
-      - name: start all init docker container
-        if: ${INIT_NEW_SERVER}
-        uses: tarunjangra/ssh-remote-cmd@v1
-        with:
-          command: |
-            cd /home/git_environment/NotZoom/
-            sudo KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose -f docker-compose-init.yml up --no-deps -d
-          host: ${{ secrets.HOST}}
-          user: ${{ secrets.USERNAME}}
-          key: ${{ secrets.KEY}}
-
       - name: build frontend when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'frontend') || ${INIT_NEW_SERVER}
+        if: contains(steps.changed_files.outputs.changed_files, 'frontend')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -69,7 +56,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build auth-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'auth-service') || ${INIT_NEW_SERVER}
+        if: contains(steps.changed_files.outputs.changed_files, 'auth-service')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -83,7 +70,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build landingpage when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'landingpage') || ${INIT_NEW_SERVER}
+        if: contains(steps.changed_files.outputs.changed_files, 'landingpage')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -96,7 +83,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build presentation when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'presentation') || ${INIT_NEW_SERVER}
+        if: contains(steps.changed_files.outputs.changed_files, 'presentation')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -109,7 +96,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build spaces-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service') || ${INIT_NEW_SERVER}
+        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -123,7 +110,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: build websocket-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service') || ${INIT_NEW_SERVER}
+        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
