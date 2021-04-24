@@ -9,9 +9,11 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: create
-
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://accounts.google.com
+keycloak:
+  realm: Application
+  auth-server-url: http://${KEYCLOAK_URL}/auth
+  ssl-required: external
+  resource: Spaces-service
+  credentials.secret: 6d4a68d8-a61f-4d7e-b7a6-afad435c8bb8
+  use-resource-role-mappings: true
+  bearer-only: true

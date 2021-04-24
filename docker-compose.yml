@@ -61,29 +61,32 @@ services:
       args:
         - VIRTUAL_PORT=${SPACES_PORT}
     depends_on:
-      - postgres
+      - spaces-postgres
+    ports:
+      - "8081:8081"
     environment:
+      - PROFILE=prod
       - VIRTUAL_HOST=${SPACES_URL}
       - LETSENCRYPT_HOST=${SPACES_URL}
       - VIRTUAL_PORT=${SPACES_PORT}
-      - DB_URL=${DB_URL}
-      - DB_PORT=${DB_PORT}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+      - DB_URL=spaces-postgres
+      - DB_PORT=5432
+      - DB_PASSWORD=${SPACES_DB_PASSWORD}
+      - DB_NAME=db
+      - DB_USER=admin
+      - KEYCLOAK_URL=localhost:8080
     networks:
       - application
 
-  postgres:
-    image: library/postgres:13
+  spaces-postgres:
+    image: postgres
     restart: always
     environment:
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB}
-      - POSTGRES_USER=${DB_USER}
-    ports:
-      - "5432:5432"
+      - POSTGRES_PASSWORD=${SPACES_DB_PASSWORD}
+      - POSTGRES_DB=db
+      - POSTGRES_USER=admin
     volumes:
-      - data:/var/lib/postgresql/data
+      - spaces_postgres_data:/var/lib/postgresql/data
     networks:
       - application
 
@@ -97,12 +100,18 @@ services:
     networks:
       - application
 
-networks:
-  application:
-    driver: bridge
+  keycloak-postgres:
+    image: postgres
+    volumes:
+      - keycloak_postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
 
   keycloak:
-    image: jboss/keycloak
+#    image: jboss/keycloak
+    image: wizzn/keycloak:12
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-postgres
@@ -113,12 +122,18 @@ networks:
       - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
       - VIRTUAL_HOST=${KEYCLOAK_URL}
       - LETSENCRYPT_HOST=${KEYCLOAK_URL}
+    ports:
+      - "8080:8080"
     depends_on:
       - keycloak-postgres
+
+networks:
+  application:
+    driver: bridge
 
 volumes:
   certs: { }
   vhost: { }
   html: { }
-  data: { }
+  spaces_postgres_data: { }
   keycloak_postgres_data: { }
