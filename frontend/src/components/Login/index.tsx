@@ -49,9 +49,9 @@ export class Login extends Component<Props, State> {
         const auth = "https://".concat((AUTH_SERVICE) ? AUTH_SERVICE : "")
         return (
             <Wrapper className="login-box">
-                <div className={"signin"}>
-                    <h2>{applicationName}</h2>
-                    <h3>Sign in</h3>
+                <header className={"signin"}>
+                    <h1 id={"loginHeadline"}>{applicationName}</h1>
+                    <label>Sign in</label>
                     <div className="login-buttons">
 
                         <div style={{background: "black"}} className={"logoImage"}>
@@ -72,11 +72,11 @@ export class Login extends Component<Props, State> {
                             </a>
                         </div>
                     </div>
-                </div>
+                </header>
 
-                <form>
-                    <div className="user-box">
-                        <h3>Or join public space</h3>
+                <div className="user-box">
+                    <form>
+                        <h2>Or sign into your account</h2>
                         <div className="inputPair">
                             <label>Username</label>
                             <input type="text" value={this.state.value}
@@ -93,16 +93,15 @@ export class Login extends Component<Props, State> {
                         <button onClick={this.handleSubmit.bind(this)}>
                             Join
                         </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </Wrapper>
         )
     }
 
 }
 
-const mapStateToProps = (state: RootState) => ({
-})
+const mapStateToProps = (state: RootState) => ({})
 
 const mapDispatchToProps = (dispatch: any) => ({
     setName: (name: string) => dispatch(setName(name)),
