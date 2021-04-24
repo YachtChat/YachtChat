@@ -1,0 +1,397 @@
+:export {
+    background_light: white;
+    background_dark: #0a0a0a;
+    background_2_light: #f6f6f6;
+    background_2_dark: #141414;
+    foreground_light: white;
+    foreground_dark: #171717;
+    focus_light: #eee;
+    focus_dark: #090909;
+    accent_light: #b9c2d0;
+    accent_dark: #204359;
+    font_dark: #ccc;
+    font_light: #ccc;
+    headline_light: white;
+    headline_dark: white;
+    headline_2_light: gray;
+    headline_2_dark: white;
+    button_font_light: black;
+    button_font_hover: gray;
+    button_font_dark: white;
+    border_radius: 0.5rem;
+}
+
+:export {
+    background_light: white;
+    background_dark: #0a0a0a;
+    background_2_light: #f6f6f6;
+    background_2_dark: #141414;
+    foreground_light: white;
+    foreground_dark: #171717;
+    focus_light: #eee;
+    focus_dark: #090909;
+    accent_light: #b9c2d0;
+    accent_dark: #204359;
+    font_dark: #ccc;
+    font_light: #ccc;
+    headline_light: white;
+    headline_dark: white;
+    headline_2_light: gray;
+    headline_2_dark: white;
+    button_font_light: black;
+    button_font_hover: gray;
+    button_font_dark: white;
+    border_radius: 0.5rem;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Canltarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+button, input[type=submit] {
+    position: relative;
+    display: inline-block;
+    padding: 1rem 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    transition: 0.2s;
+    background-color: transparent;
+    border: 1px solid #b9c2d0;
+    color: black;
+    border-radius: 0.5rem;
+    outline: none;
+}
+
+button:hover, input[type=submit]:hover {
+    background: rgba(125, 125, 125, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+    button, input[type=submit] {
+        color: white;
+        border: 1px solid #204359;
+    }
+}
+
+input, select {
+    width: 100%;
+    font-size: 0.8rem;
+    color: gray;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 1rem;
+    background: #eee;
+    border-radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    input, select {
+        background: #090909;
+        color: #4e4e4e;
+        border: 1px solid #204359;
+    }
+}
+
+input:focus ~ label, input:valid ~ label, select:focus ~ label, select:valid ~ label {
+    top: -20px;
+    left: 0;
+    font-size: 12px;
+}
+
+label, .required {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #ccc;
+    text-transform: uppercase;
+    padding: 0 1rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.iconButton {
+    margin: 0 0 0 0.5rem;
+    border-radius: 50%;
+    padding: 0 0;
+    font-size: 15px;
+    width: 35px;
+    min-width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.headlineBox {
+    margin: 0;
+    width: 100%;
+    padding: 4rem 2rem 4rem 2rem;
+    background: #b9c2d0;
+    box-sizing: border-box;
+    color: white;
+    position: relative;
+}
+
+@media (prefers-color-scheme: dark) {
+    .headlineBox {
+        background: #204359;
+        color: white;
+    }
+}
+
+.headlineBox .buttons {
+    padding: 0 0 0.5rem 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.headlineBox .buttons button {
+    color: white;
+    border-color: white;
+}
+
+.content {
+    padding: 2rem;
+}
+
+.contentWrapper {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: white;
+}
+
+@media (prefers-color-scheme: dark) {
+    .contentWrapper {
+        background: #0a0a0a;
+    }
+}
+
+.contentWrapper .backgroundBall {
+    display: block;
+    position: absolute;
+    width: 200vw;
+    height: 200vw;
+    background: #f6f6f6;
+    margin-right: 0;
+    right: 0;
+    border-radius: 50%;
+    transform: translate(50%, -40vh);
+}
+
+@media (prefers-color-scheme: dark) {
+    .contentWrapper .backgroundBall {
+        background: #141414;
+    }
+}
+
+.contentBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    box-sizing: border-box;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+    .contentBox {
+        background: #171717;
+        color: #ccc;
+    }
+}
+
+.loadingAnimation {
+    padding: 2rem;
+}
+
+.login-box {
+    width: 400px;
+}
+
+.login-box form {
+    padding: 2rem;
+}
+
+.login-box h1#loginHeadline {
+    color: white;
+    text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+    .login-box h1#loginHeadline {
+        color: white;
+    }
+}
+
+.login-box .checkbox input {
+    height: 0.7rem;
+    width: 0.7rem;
+}
+
+.login-box .signin label, .login-box h2, .login-box a:link, .login-box a:visited {
+    font-style: normal;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: gray;
+    transition: opacity 0.2s;
+    text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .login-box .signin label, .login-box h2, .login-box a:link, .login-box a:visited {
+        color: white;
+    }
+}
+
+.login-box a:link:hover {
+    opacity: 0.5;
+}
+
+.login-box h2 {
+    text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+    .login-box {
+        background: #171717;
+        color: #ccc;
+    }
+}
+
+.login-box .user-box {
+    position: relative;
+    text-align: left;
+}
+
+.login-box .user-box .inputPair {
+    margin-top: 0.5rem;
+}
+
+.login-box .user-box h2 {
+    text-align: center;
+}
+
+.login-box .user-box p {
+    padding: 2rem;
+}
+
+.login-box .user-box button {
+    margin-top: 2rem;
+}
+
+.login-box .user-box #input-error {
+    border-radius: 0.5rem;
+    background: #fdc2c2;
+    padding: 1rem;
+    text-align: center;
+    color: white;
+}
+
+.login-box .user-box #input-error i {
+    margin: 0 0.5rem;
+}
+
+.login-box .user-box .required {
+    color: #fdc2c2;
+}
+
+.login-box .info {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    padding: 15px 2rem;
+    box-sizing: border-box;
+    background-color: #f6f6f6;
+    bottom: 0;
+    text-align: right;
+    color: gray;
+}
+
+@media (prefers-color-scheme: dark) {
+    .login-box .info {
+        background-color: #141414;
+        color: white;
+    }
+}
+
+.signin {
+    margin: 0;
+    width: 100%;
+    padding: 4rem 2rem 4rem 2rem;
+    background: #b9c2d0;
+    box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+    .signin {
+        background: #204359;
+    }
+}
+
+.signin .login-buttons {
+    position: relative;
+    width: auto;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: 0 auto;
+    cursor: pointer;
+    padding: 0;
+}
+
+.signin .login-buttons .logoImage, .signin .login-buttons .social-button {
+    height: 40px;
+    width: 40px;
+    border-radius: 2px;
+    margin: 0 1rem;
+    overflow: hidden;
+    background: black;
+    transition: 0.2s opacity;
+}
+
+.signin .login-buttons .logoImage i, .signin .login-buttons .social-button i {
+    width: 100%;
+    height: 100%;
+    padding: 7.5px;
+    box-sizing: border-box;
+    font-size: 25px;
+    text-align: center;
+}
+
+.signin .login-buttons .logoImage:hover, .signin .login-buttons .social-button:hover {
+    opacity: 0.5;
+}
+
+.signin .login-buttons .logoImage#github img, .signin .login-buttons .social-button#github img {
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.signin .login-buttons .logoImage img, .signin .login-buttons .social-button img {
+    height: 40px;
+    width: 40px;
+    fill: white;
+    stroke: white;
+}
+
+/*# sourceMappingURL=style.css.map */
