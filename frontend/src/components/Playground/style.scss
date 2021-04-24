@@ -153,6 +153,10 @@
 
     .User {
       background-color: cadetblue;
+
+      video {
+        transform: rotateY(180deg);
+      }
     }
   }
 
