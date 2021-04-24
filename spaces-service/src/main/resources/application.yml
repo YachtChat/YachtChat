@@ -13,7 +13,7 @@ keycloak:
   realm: Application
   auth-server-url: https://keycloak.alphabibber.com/auth/
   ssl-required: external
-  resource: Spaces-service
+  resource: spaces-service
   credentials.secret: 9efde360-40e6-467c-bfdd-0b747d6e27ac
   use-resource-role-mappings: true
   bearer-only: true
