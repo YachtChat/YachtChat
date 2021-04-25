@@ -12,6 +12,7 @@
       </ENTRIES>
     </extension>
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.alphabibber.spacesservice.SpacesServiceApplication" />
+    <option name="ACTIVE_PROFILES" value="prod" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <option name="SHORTEN_COMMAND_LINE" value="NONE" />
     <additionalParameters>
@@ -41,6 +42,13 @@
         <option name="value" value="9efde360-40e6-467c-bfdd-0b747d6e27ac" />
       </param>
     </additionalParameters>
+    <envs>
+      <env name="DB_URL" value="localhost" />
+      <env name="DB_PORT" value="5432" />
+      <env name="DB_NAME" value="db" />
+      <env name="DB_USER" value="admin" />
+      <env name="DB_PASSWORD" value="13d2Y82eq836u41o" />
+    </envs>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

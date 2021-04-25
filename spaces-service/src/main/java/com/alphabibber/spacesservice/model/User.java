@@ -3,6 +3,7 @@ package com.alphabibber.spacesservice.model;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -14,13 +15,11 @@ public class User {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="space")
-    private Space space;
-
+    @ManyToMany
+    private List<Space> spaces;
 
     protected User() {
 
@@ -42,11 +41,11 @@ public class User {
         this.name = name;
     }
 
-    public Space getSpace() {
-        return space;
+    public List<Space> getSpaces() {
+        return spaces;
     }
 
-    public void setSpace(Space space) {
-        this.space = space;
+    public void setSpaces(List<Space> spaces) {
+        this.spaces = spaces;
     }
 }
