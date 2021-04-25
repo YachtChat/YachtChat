@@ -58,11 +58,24 @@ services:
     depends_on:
       - keycloak-postgres
 
+  spaces-postgres:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${SPACES_DB_PASSWORD}
+      - POSTGRES_DB=db
+      - POSTGRES_USER=admin
+    volumes:
+      - spaces_postgres_data:/var/lib/postgresql/data
+    networks:
+      - application
+
 volumes:
   certs: { }
   vhost: { }
   html: { }
   keycloak_postgres_data: { }
+  spaces_postgres_data: { }
 
 networks:
   application:

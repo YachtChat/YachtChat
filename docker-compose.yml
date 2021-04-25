@@ -63,18 +63,6 @@ services:
     networks:
       - application
 
-  spaces-postgres:
-    image: postgres
-    restart: always
-    environment:
-      - POSTGRES_PASSWORD=${SPACES_DB_PASSWORD}
-      - POSTGRES_DB=db
-      - POSTGRES_USER=admin
-    volumes:
-      - spaces_postgres_data:/var/lib/postgresql/data
-    networks:
-      - application
-
   nginx-presentation:
     build:
       context: ./presentation
@@ -95,8 +83,8 @@ services:
       - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
 
   keycloak:
-    image: jboss/keycloak
-#    image: wizzn/keycloak:12
+#    image: jboss/keycloak
+    image: wizzn/keycloak:12
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-postgres
@@ -118,5 +106,4 @@ volumes:
   certs: { }
   vhost: { }
   html: { }
-  spaces_postgres_data: { }
   keycloak_postgres_data: { }
