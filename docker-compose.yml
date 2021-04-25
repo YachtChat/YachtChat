@@ -62,8 +62,6 @@ services:
         - VIRTUAL_PORT=${SPACES_PORT}
     depends_on:
       - spaces-postgres
-    ports:
-      - "8081:8081"
     environment:
       - PROFILE=prod
       - VIRTUAL_HOST=${SPACES_URL}
@@ -74,7 +72,9 @@ services:
       - DB_PASSWORD=${SPACES_DB_PASSWORD}
       - DB_NAME=db
       - DB_USER=admin
-      - KEYCLOAK_URL=localhost:8080
+      - KEYCLOAK_URL=${KEYCLOAK_URL}
+      - KEYCLOAK_PROTOCOL=https
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
     networks:
       - application
 

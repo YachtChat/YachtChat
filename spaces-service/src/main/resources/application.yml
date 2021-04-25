@@ -1,19 +1,19 @@
 server:
-  port: "${VIRTUAL_PORT:8081}"
+  port: ${VIRTUAL_PORT}
 
 spring:
   main:
     allow-bean-definition-overriding: true
   profiles:
-    active: "${PROFILE: dev}"
+    active: ${PROFILE}
   application:
     name: spaces-service
 
 keycloak:
   realm: Application
-  auth-server-url: https://keycloak.alphabibber.com/auth/
+  auth-server-url: ${KEYCLOAK_PROTOCOL}://${KEYCLOAK_URL}/auth/
   ssl-required: external
   resource: spaces-service
-  credentials.secret: 9efde360-40e6-467c-bfdd-0b747d6e27ac
+  credentials.secret: ${KEYCLOAK_CLIENT_SECRET}
   use-resource-role-mappings: true
   bearer-only: true

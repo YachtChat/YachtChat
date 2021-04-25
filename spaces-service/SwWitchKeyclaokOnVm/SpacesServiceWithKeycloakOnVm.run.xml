@@ -1,0 +1,48 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SpacesServiceWithKeycloakOnVm" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="spaces-service" />
+    <extension name="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+      </ENTRIES>
+    </extension>
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.alphabibber.spacesservice.SpacesServiceApplication" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+    <additionalParameters>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="VIRTUAL_PORT" />
+        <option name="value" value="8081" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="PROFILE" />
+        <option name="value" value="dev" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="KEYCLOAK_PROTOCOL" />
+        <option name="value" value="https" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="KEYCLOAK_URL" />
+        <option name="value" value="keycloak.alphabibber.com" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="KEYCLOAK_CLIENT_SECRET" />
+        <option name="value" value="9efde360-40e6-467c-bfdd-0b747d6e27ac" />
+      </param>
+    </additionalParameters>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
