@@ -40,8 +40,8 @@ services:
       - application
 
   keycloak:
-#    image: jboss/keycloak
-    image: wizzn/keycloak:12
+    image: jboss/keycloak
+#    image: wizzn/keycloak:12
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-postgres
@@ -53,6 +53,7 @@ services:
       - VIRTUAL_HOST=${KEYCLOAK_URL}
       - LETSENCRYPT_HOST=${KEYCLOAK_URL}
       - PROXY_ADDRESS_FORWARDING=true
+      - VIRTUAL_PORT=${KEYCLOAK_PORT}
     networks:
       - application
     depends_on:
