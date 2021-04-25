@@ -80,19 +80,19 @@ jobs:
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
 
-        - name: build spaces-service when changed
-          if: contains(steps.changed_files.outputs.changed_files, 'spaces-service')
-          uses: tarunjangra/ssh-remote-cmd@v1
-          with:
-            command: |
-              cd /home/git_environment/NotZoom/
-              sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
-              sudo docker-compose down spaces-service
-              sudo docker-compose build spaces-service
-              sudo docker-compose up --no-deps -d spaces-service
-            host: ${{ secrets.HOST}}
-            user: ${{ secrets.USERNAME}}
-            key: ${{ secrets.KEY}}
+      - name: build spaces-service when changed
+        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
+            sudo docker-compose down spaces-service
+            sudo docker-compose build spaces-service
+            sudo docker-compose up --no-deps -d spaces-service
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
 
       - name: build websocket-service when changed
         if: contains(steps.changed_files.outputs.changed_files, 'websocket-service')
