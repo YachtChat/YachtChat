@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: update_server
+name: init_server
 
 # Controls when the action will run.
 on:
@@ -31,7 +31,7 @@ jobs:
         with:
           command: |
             cd /home/git_environment/NotZoom/
-            sudo KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose -f docker-compose-init.yml up -d
+            sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose -f docker-compose-init.yml up -d
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}

@@ -26,7 +26,6 @@ jobs:
         id: changed_files
         with:
           files: |
-            auth-service
             frontend
             landingpage
             presentation
@@ -51,20 +50,6 @@ jobs:
             sudo docker-compose down frontend
             sudo docker-compose build frontend
             sudo docker-compose up --no-deps -d frontend
-          host: ${{ secrets.HOST}}
-          user: ${{ secrets.USERNAME}}
-          key: ${{ secrets.KEY}}
-
-      - name: build auth-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'auth-service')
-        uses: tarunjangra/ssh-remote-cmd@v1
-        with:
-          command: |
-            cd /home/git_environment/NotZoom/
-            sudo mvn clean -f ./auth-service/pom.xml package -DskipTests
-            sudo docker-compose down auth-service
-            sudo docker-compose build auth-service
-            sudo OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID}} OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET}} docker-compose up --no-deps -d auth-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
@@ -95,19 +80,19 @@ jobs:
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
 
-      - name: build spaces-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service')
-        uses: tarunjangra/ssh-remote-cmd@v1
-        with:
-          command: |
-            cd /home/git_environment/NotZoom/
-            sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
-            sudo docker-compose down spaces-service
-            sudo docker-compose build spaces-service
-            sudo docker-compose up --no-deps -d spaces-service
-          host: ${{ secrets.HOST}}
-          user: ${{ secrets.USERNAME}}
-          key: ${{ secrets.KEY}}
+        - name: build spaces-service when changed
+          if: contains(steps.changed_files.outputs.changed_files, 'spaces-service')
+          uses: tarunjangra/ssh-remote-cmd@v1
+          with:
+            command: |
+              cd /home/git_environment/NotZoom/
+              sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
+              sudo docker-compose down spaces-service
+              sudo docker-compose build spaces-service
+              sudo docker-compose up --no-deps -d spaces-service
+            host: ${{ secrets.HOST}}
+            user: ${{ secrets.USERNAME}}
+            key: ${{ secrets.KEY}}
 
       - name: build websocket-service when changed
         if: contains(steps.changed_files.outputs.changed_files, 'websocket-service')

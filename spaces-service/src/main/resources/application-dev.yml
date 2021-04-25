@@ -1,20 +1,12 @@
-server:
-  port: "${VIRTUAL_PORT:8081}"
-
 spring:
-  application:
-    name: spaces-service
+  profiles:
+    include: default
   datasource:
     url: "${DEV_DB:jdbc:h2:mem:spaces_db}"
     driver-class-name: org.h2.Driver
     username: "${DEV_DB_USER:admin}"
-    password: "${DEV_DB_PASSWORD:password}"
+    password: "${DEV_DB_PASSWORD:admin}"
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://accounts.google.com

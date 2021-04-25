@@ -1,20 +1,19 @@
 server:
-  port: "${VIRTUAL_PORT:8081}"
+  port: ${VIRTUAL_PORT}
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: ${PROFILE}
   application:
     name: spaces-service
-  datasource:
-    url: "${PROD_DB:jdbc:h2:mem:spaces_db}"
-    driver-class-name: org.h2.Driver
-    username: "${PROD_DB_USER:sa}"
-    password: "${PROD_DB_PASSWORD:}"
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: update
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: https://accounts.google.com
+
+keycloak:
+  realm: Application
+  auth-server-url: ${KEYCLOAK_PROTOCOL}://${KEYCLOAK_URL}/auth/
+  ssl-required: external
+  resource: spaces-service
+  credentials.secret: ${KEYCLOAK_CLIENT_SECRET}
+  use-resource-role-mappings: true
+  bearer-only: true
