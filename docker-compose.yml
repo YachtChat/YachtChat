@@ -73,32 +73,6 @@ services:
     networks:
       - application
 
-  keycloak-postgres:
-    image: postgres
-    volumes:
-      - keycloak_postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=keycloak
-      - POSTGRES_USER=keycloak
-      - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
-
-  keycloak:
-#    image: jboss/keycloak
-    image: wizzn/keycloak:12
-    environment:
-      - DB_VENDOR=POSTGRES
-      - DB_ADDR=keycloak-postgres
-      - DB_DATABASE=keycloak
-      - DB_USER=keycloak
-      - DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
-      - VIRTUAL_HOST=${KEYCLOAK_URL}
-      - LETSENCRYPT_HOST=${KEYCLOAK_URL}
-      - PROXY_ADDRESS_FORWARDING=true
-    depends_on:
-      - keycloak-postgres
-
 networks:
   application:
     driver: bridge

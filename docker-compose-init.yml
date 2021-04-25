@@ -52,7 +52,7 @@ services:
       - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
       - VIRTUAL_HOST=${KEYCLOAK_URL}
       - LETSENCRYPT_HOST=${KEYCLOAK_URL}
-      - VIRTUAL_PORT=${KEYCLOAK_PORT}
+      - PROXY_ADDRESS_FORWARDING=true
     networks:
       - application
     depends_on:
