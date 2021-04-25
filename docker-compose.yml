@@ -45,8 +45,6 @@ services:
       dockerfile: ./Dockerfile
       args:
         - VIRTUAL_PORT=${SPACES_PORT}
-    depends_on:
-      - spaces-postgres
     environment:
       - PROFILE=prod
       - VIRTUAL_HOST=${SPACES_URL}
