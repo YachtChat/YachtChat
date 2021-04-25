@@ -95,6 +95,7 @@ services:
       - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
       - VIRTUAL_HOST=${KEYCLOAK_URL}
       - LETSENCRYPT_HOST=${KEYCLOAK_URL}
+      - PROXY_ADDRESS_FORWARDING=true
     depends_on:
       - keycloak-postgres
 
