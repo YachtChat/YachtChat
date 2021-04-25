@@ -30,7 +30,7 @@ public class SpacesServiceApplication implements CommandLineRunner {
 	public void run(String... args) {
 		log.info("DataSource = " + dataSource);
 
-		Space freeForAll = new Space("Free For All");
+		Space freeForAll = new Space("Free for all");
 		spaceService.createSpace(freeForAll);
 	}
 
