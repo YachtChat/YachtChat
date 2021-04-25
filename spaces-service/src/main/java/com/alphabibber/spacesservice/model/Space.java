@@ -17,16 +17,14 @@ public class Space {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner")
-    private User owner;
+    @ManyToMany
+    private List<User> owners;
 
-    @OneToMany(mappedBy = "space", cascade = CascadeType.REMOVE)
-    @JsonIgnore // this annotation is needed to prevent infinite recursion when retrieving all spaces/users
-    private List<User> users;
+    @ManyToMany
+    private List<User> participants;
 
     protected Space() {
 
@@ -34,17 +32,16 @@ public class Space {
 
     public Space(String name) {
         this.name = name;
-        this.setUsers(new ArrayList<>());
-    }
-
-    public Space(String name, User owner) {
-        this.name = name;
-        this.owner = owner;
-        this.setUsers(new ArrayList<>());
+        this.owners = new ArrayList<>();
+        this.participants = new ArrayList<>();
     }
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -55,31 +52,34 @@ public class Space {
         this.name = name;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<User> getOwners() {
+        return owners;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setOwners(List<User> owners) {
+        this.owners = owners;
     }
 
-    public void addUser(User user) {
-        this.users.add(user);
+    public void addOwner(User owner) {
+        this.owners.add(owner);
     }
 
-    public void removeUser(User user) {
-        this.users.remove(user);
+    public List<User> getParticipants() {
+        return participants;
     }
 
-    public User getOwner() {
-        return owner;
+    public void setParticipants(List<User> participants) {
+        this.participants = participants;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void addParticipant(User participant) {
+        this.participants.add(participant);
     }
 
-    public Boolean canUserSeeSpace(String userId) {
-        return (this.getOwner() == null || this.getOwner().getId().equals(userId));
+    public List<User> getAllUsers() {
+        List<User> result = new ArrayList<>();
+        result.addAll(this.owners);
+        result.addAll(this.participants);
+        return result;
     }
 }

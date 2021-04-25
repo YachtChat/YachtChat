@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -45,7 +44,7 @@ public class SpaceController extends SpringBootServletInitializer {
     public Space createSpace(@RequestParam String name, @RequestParam(required = false) String ownerId) {
         if (ownerId != null) {
             User user = userService.getUserById(ownerId);
-            return spaceService.createSpace(new Space(name, user));
+            return spaceService.createSpace(new Space(name));
         }
         return spaceService.createSpace(new Space(name));
     }
@@ -68,13 +67,14 @@ public class SpaceController extends SpringBootServletInitializer {
     @GetMapping(path = "/{spaceId}/getUsers")
     public List<User> getSpaceUsers(@PathVariable String spaceId) {
         Space space = spaceService.getSpaceById(spaceId);
-        return space.getUsers();
+        return space.getAllUsers();
     }
 
     @GetMapping(path = "/{spaceId}/canUserJoin")
     public HashMap<String, Boolean> canUserJoinSpace(@PathVariable String spaceId, @RequestParam String userId) {
         Space space = spaceService.getSpaceById(spaceId);
-        Boolean boolResponse = space.canUserSeeSpace(userId);
+//        Boolean boolResponse = space.canUserSeeSpace(userId);
+        Boolean boolResponse = Boolean.TRUE;
 
         HashMap<String, Boolean> map = new HashMap<>();
         map.put("valid", boolResponse);
@@ -87,8 +87,8 @@ public class SpaceController extends SpringBootServletInitializer {
         User foundUser = userService.getUserById(userId);
         Space space = spaceService.getSpaceById(spaceId);
 
-        space.addUser(foundUser);
-        foundUser.setSpace(space);
+        space.addParticipant(foundUser);
+        foundUser.setSpaces(Collections.singletonList(space));
 
         spaceRepository.save(space);
         userRepository.save(foundUser);
