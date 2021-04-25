@@ -40,8 +40,8 @@ services:
       - application
 
   keycloak:
-    image: jboss/keycloak
-    #    image: wizzn/keycloak:12
+#    image: jboss/keycloak
+    image: wizzn/keycloak:12
     environment:
       - DB_VENDOR=POSTGRES
       - DB_ADDR=keycloak-postgres
