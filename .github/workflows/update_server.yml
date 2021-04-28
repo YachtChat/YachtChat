@@ -56,7 +56,8 @@ jobs:
       - name: test if condition
         if: contains(${{ github.workspace }}/added_modified_files, '.github')
         run: |
-          cat '${{ github.workspace }}/added_modified_files'
+          ls -a
+          ls -a ${{ github.workspace }}
 
       - name: build frontend when changed
         if: contains(steps.changed_files.outputs.changed_files, 'frontend')
