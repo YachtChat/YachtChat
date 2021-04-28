@@ -50,7 +50,7 @@ jobs:
       - name: test if condition
         if: contains(${{ github.workspace }}/files.json, '.github')
         run: |
-          echo "test successfull"
+          echo "cat ${{ github.workspace }}/files.json"
 
       - name: build frontend when changed
         if: contains(steps.changed_files.outputs.changed_files, 'frontend')
