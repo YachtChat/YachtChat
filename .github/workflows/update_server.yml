@@ -8,6 +8,7 @@ on:
   push:
     branches: #[ main ]
       - main
+      - devops/fixchangedfiles
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -21,16 +22,18 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Verify Changed files
-        uses: tj-actions/verify-changed-files@v5.5
-        id: changed_files
-        with:
-          files: |
-            frontend
-            landingpage
-            presentation
-            spaces-service
-            websocket-service
+      - uses: actions/checkout@v2
+      - name: Get changed files using defaults
+        id: changed-files
+        uses: tj-actions/changed-files@v4.2
+
+
+      - name: List all added files
+        run: |
+          for file in "${{ steps.changed-files.outputs.added_files }}"; do
+            echo "$file was added"
+          done
+
       - name: pull from git
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
