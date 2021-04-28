@@ -48,7 +48,7 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: test if condition
-        if: contains(${HOME}/files.json, '.github')
+        if: contains(${{ github.workspace }}/files.json, '.github')
         run: |
           echo "test successfull"
 
