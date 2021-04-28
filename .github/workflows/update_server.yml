@@ -59,9 +59,11 @@ jobs:
         run: |
           echo ${{ steps.files.outputs.added_modified }}
       - name: test if condition
-        if: contains(${{ steps.files.outputs.added_modified }}, '.github')
+        if: contains(env.TEST_STATEMENT, '.github')
         run: |
-          echo ${{ steps.files.outputs.added_modified }}
+          echo $TEST_STATEMENT
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
       - name: build frontend when changed
         if: contains(steps.changed_files.outputs.changed_files, 'frontend')
