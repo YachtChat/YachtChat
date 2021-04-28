@@ -42,6 +42,11 @@ jobs:
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
 
+      - name: test if condition
+        if: contains(${added_modified_file}, '.github')
+        run: |
+          echo "test successfull"
+
       - name: build frontend when changed
         if: contains(steps.changed_files.outputs.changed_files, 'frontend')
         uses: tarunjangra/ssh-remote-cmd@v1
