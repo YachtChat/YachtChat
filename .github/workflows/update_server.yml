@@ -59,7 +59,7 @@ jobs:
       - name: test if condition
         if: contains(env.CHANGED_FILES, '.github')
         run: |
-          echo env.CHANGED_FILES
+          echo $CHANGED_FILES
 
       - name: build frontend when changed
         if: contains(steps.changed_files.outputs.changed_files, 'frontend')
