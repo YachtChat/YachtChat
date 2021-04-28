@@ -22,20 +22,14 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: fix git reposetory
-        run: |
-          git commit --allow-empty -n -m "Initial commit".
-
-      - uses: actions/checkout@v2
-      - name: Get changed files using defaults
-        id: changed-files
-        uses: tj-actions/changed-files@v4.2
-
-
-      - name: List all added files
-        run: |
-          for file in "${{ steps.changed-files.outputs.added_files }}"; do
-            echo "$file was added"
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'csv'
+      - run: |
+          mapfile -d ',' -t added_modified_files < <(printf '%s,' '${{ steps.files.outputs.added_modified }}')
+          for added_modified_file in "${added_modified_files[@]}"; do
+            echo "Do something with this ${added_modified_file}."
           done
 
       - name: pull from git
