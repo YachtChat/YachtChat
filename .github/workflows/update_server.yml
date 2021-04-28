@@ -41,7 +41,6 @@ jobs:
           mapfile -d ',' -t added_modified_files < <(printf '%s,' '${{ steps.files.outputs.added_modified }}')
           for added_modified_file in "${added_modified_files[@]}"; do
             echo "Do something with this ${added_modified_file}."
-            echo CHANGED_FILES=$CHANGED_FILES,${added_modified_file} >> $GITHUB_ENV
           done
         env:
           CHANGED_FILES: test
@@ -56,10 +55,13 @@ jobs:
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
 
-      - name: test if condition
-        if: contains(env.CHANGED_FILES, '.github')
+      - name: print all changed files
         run: |
-          echo $CHANGED_FILES
+          echo ${{ steps.files.outputs.added_modified }}
+      - name: test if condition
+        if: contains(${{ steps.files.outputs.added_modified }}, '.github')
+        run: |
+          echo ${{ steps.files.outputs.added_modified }}
 
       - name: build frontend when changed
         if: contains(steps.changed_files.outputs.changed_files, 'frontend')
