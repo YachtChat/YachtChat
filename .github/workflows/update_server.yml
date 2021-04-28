@@ -40,8 +40,11 @@ jobs:
       - run: |
           mapfile -d ',' -t added_modified_files < <(printf '%s,' '${{ steps.files.outputs.added_modified }}')
           for added_modified_file in "${added_modified_files[@]}"; do
-            echo CHANGED_FILES=env.CHANGED_FILES,${added_modified_file} >> $GITHUB_ENV
+            echo "Do something with this ${added_modified_file}."
+            echo CHANGED_FILES=$CHANGED_FILES,${added_modified_file} >> $GITHUB_ENV
           done
+        env:
+          CHANGED_FILES: test
 
       - name: pull from git
         uses: tarunjangra/ssh-remote-cmd@v1
