@@ -54,10 +54,9 @@ jobs:
           key: ${{ secrets.KEY}}
 
       - name: test if condition
-        if: contains(${{ github.workspace }}/added_modified_files, '.github')
+        if: contains(added_modified_files, '.github')
         run: |
-          ls -a
-          ls -a ${{ github.workspace }}
+          cat added_modified_files
 
       - name: build frontend when changed
         if: contains(steps.changed_files.outputs.changed_files, 'frontend')
