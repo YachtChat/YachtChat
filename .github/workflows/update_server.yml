@@ -27,7 +27,7 @@ jobs:
         with:
           format: 'csv'
       - run: |
-          echo "done"
+          echo "Get changes: done"
 
       - name: pull from git
         uses: tarunjangra/ssh-remote-cmd@v1
@@ -42,12 +42,6 @@ jobs:
       - name: print all changed files
         run: |
           echo ${{ steps.files.outputs.added_modified }}
-      - name: test if condition
-        if: contains(env.TEST_STATEMENT, '.github/')
-        run: |
-          echo $TEST_STATEMENT
-        env:
-          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
       - name: build frontend when changed
         if: contains(env.TEST_STATEMENT, 'frontend/')
