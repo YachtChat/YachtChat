@@ -22,6 +22,10 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: fix git reposetory
+        run: |
+          git commit --allow-empty -n -m "Initial commit".
+
       - uses: actions/checkout@v2
       - name: Get changed files using defaults
         id: changed-files
