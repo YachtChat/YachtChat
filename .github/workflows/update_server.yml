@@ -21,16 +21,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Verify Changed files
-        uses: tj-actions/verify-changed-files@v5.5
-        id: changed_files
+      - id: files
+        uses: jitterbit/get-changed-files@v1
         with:
-          files: |
-            frontend
-            landingpage
-            presentation
-            spaces-service
-            websocket-service
+          format: 'csv'
+      - run: |
+          echo "Get changes: done"
+
       - name: pull from git
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
@@ -41,8 +38,12 @@ jobs:
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
 
+      - name: print all changed files
+        run: |
+          echo ${{ steps.files.outputs.added_modified }}
+
       - name: build frontend when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'frontend')
+        if: contains(env.TEST_STATEMENT, 'frontend/')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -53,9 +54,11 @@ jobs:
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
       - name: build landingpage when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'landingpage')
+        if: contains(env.TEST_STATEMENT, 'landingpage/')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -66,9 +69,11 @@ jobs:
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
       - name: build presentation when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'presentation')
+        if: contains(env.TEST_STATEMENT, 'presentation/')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -79,9 +84,11 @@ jobs:
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
       - name: build spaces-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'spaces-service')
+        if: contains(env.TEST_STATEMENT, 'spaces-service/')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -93,9 +100,11 @@ jobs:
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
       - name: build websocket-service when changed
-        if: contains(steps.changed_files.outputs.changed_files, 'websocket-service')
+        if: contains(env.TEST_STATEMENT, 'websocket-service/')
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
@@ -103,10 +112,12 @@ jobs:
             sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
             sudo docker-compose down websocket-service
             sudo docker-compose build websocket-service
-            sudo docker-compose up --no-deps -d websocket-service
+            sudo --env SPACES_DB_PASSWORD=${{SPACES_DB_PASSWORD}} --env KEYCLOAK_CLIENT_SECRET=${{KEYCLOAK_CLIENT_SECRET}} docker-compose up --no-deps -d websocket-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
       - name: delete the old images
         uses: tarunjangra/ssh-remote-cmd@v1

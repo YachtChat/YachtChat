@@ -26,6 +26,6 @@ jobs:
           command: |
             cd /home/git_environment/DevNotZoom/
             sudo git pull
-          host: www.alphabibber.com #${{ secrets.HOST}}
-          user: danilo_walenta #${{ secrets.USERNAME}}
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
