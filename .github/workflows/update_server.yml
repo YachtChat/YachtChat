@@ -112,7 +112,7 @@ jobs:
             sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
             sudo docker-compose down websocket-service
             sudo docker-compose build websocket-service
-            sudo SPACES_DB_PASSWORD=${{SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{KEYCLOAK_CLIENT_SECRET}} docker-compose up --no-deps -d websocket-service
+            sudo SPACES_DB_PASSWORD=${{secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{secrets.KEYCLOAK_CLIENT_SECRET}} docker-compose up --no-deps -d websocket-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
