@@ -23,14 +23,19 @@ export class Wrapper extends Component<Props> {
 
 }
 
-export class Loading extends Component {
+interface LoadingProps {
+    icon?: any,
+    loadingText?: string
+}
+
+export class Loading extends Component<LoadingProps> {
 
     render() {
         return (
             <Wrapper className={"Loading"}>
                 <div className={"headlineBox"}>
-                    <h1><IoWifi/></h1>
-                    <h1>Connecting...</h1>
+                    <h1>{this.props.icon ? this.props.icon : <IoWifi/>}</h1>
+                    <h1>{this.props.loadingText ? this.props.loadingText : "Loading..."}</h1>
                     <CircularProgress color={"inherit"}/>
                 </div>
             </Wrapper>

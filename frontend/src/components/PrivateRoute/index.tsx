@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {connect, ConnectedComponent} from "react-redux";
 import {Redirect, Route} from "react-router-dom";
-import {RootState} from "./store/store";
+import {RootState} from "../../store/store";
 
 interface Props {
     authed: boolean,

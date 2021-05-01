@@ -9,6 +9,8 @@ import {IoAddOutline, IoLogInOutline, IoPerson, IoTrashOutline} from "react-icon
 import {Link} from "react-router-dom";
 import {FaCog, FaPowerOff} from "react-icons/fa";
 import {logout} from "../../store/authSlice";
+import keycloak from "../../store/keycloak";
+import {AUTH_SERVICE} from "../../store/config";
 
 interface Props {
     activeUser: User
@@ -28,7 +30,7 @@ export class Spaces extends Component<Props> {
             <Wrapper className="spaces">
                 <div className={"headlineBox"}>
                     <div className={"buttons"}>
-                        <Link to={"/settings"}>
+                        <Link to={AUTH_SERVICE + "/" + keycloak.createAccountUrl()}>
                             <button className={"iconButton"}><FaCog/></button>
                         </Link>
                         <Link to={"/friends"}>
