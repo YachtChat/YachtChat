@@ -54,6 +54,8 @@ services:
       - LETSENCRYPT_HOST=${KEYCLOAK_URL}
       - PROXY_ADDRESS_FORWARDING=true
       - VIRTUAL_PORT=${KEYCLOAK_PORT}
+    volumes:
+      - ./frontend/login-theme:/opt/jboss/keycloak/themes/login
     networks:
       - application
     depends_on:
