@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
-import axios from "axios";
 import {setName, setUserId} from './userSlice';
+import keycloak from "./keycloak";
 
 interface AuthState {
     loggedIn: boolean
@@ -42,35 +42,43 @@ export const initAuth = (error: string): AppThunk => (dispatch, getState) => {
 
 }
 
-export const checkAuth = (id_token?: string,): AppThunk => (dispatch, getState) => {
+export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) => {
 
-    if (id_token) {
-        dispatch(setToken(id_token)) // TODO: to be set to keycloak.token
-    }
+    keycloak.init({
+        onLoad: 'login-required',
+    }).then((auth) => {
+        if (auth) {
+            dispatch(setToken(keycloak.token!)) // TODO: to be set to keycloak.token
+        }
 
-    const existingToken = getState().auth.token
-    if (existingToken && existingToken !== "") {
-        axios.post("https://oauth2.googleapis.com/tokeninfo?id_token=" + existingToken).then(response => {
-            dispatch(setLogin(true)) // TODO: to be set to keycloak.authenticated
-            dispatch(setName(response.data.name)) //TODO: to be set to keycloak.clientId.name?
-            dispatch(setUserId(response.data.sub)) //TODO: to be set to keycloak.clientd
-            // load user info from there
-        }).then(() =>
+        const existingToken = getState().auth.token
+        if (existingToken && existingToken !== "") {
+            dispatch(setLogin(auth)) // TODO: to be set to keycloak.authenticated
+
+            // @ts-ignore
+            dispatch(setName(keycloak.tokenParsed!.name))
+
+            // @ts-ignore
+            dispatch(setUserId(keycloak.tokenParsed!.sub))
+        } else {
             dispatch(authFlowReady())
-        ).catch(() => {
+            keycloak.login()
+        }
+    })
+        .then(() => dispatch(authFlowReady()))
+        .catch(() => {
             dispatch(logout())
             dispatch(authFlowReady())
             // redirect to get a new token
         })
-    } else {
-        dispatch(authFlowReady())
-    }
+
 }
 
 export const logout = (): AppThunk => (dispatch, getState) => {
     dispatch(setToken(""))
     localStorage.removeItem("token")
     dispatch(setLogin(false))
+    keycloak.logout()
 }
 
 export default authSlice.reducer;

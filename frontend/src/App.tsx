@@ -2,15 +2,16 @@ import React, {Component} from 'react';
 import './App.scss';
 import Playground from "./components/Playground";
 import {RootState} from "./store/store";
-import Login from "./components/Login";
 import {connect} from "react-redux";
 import StatusComponent from "./components/Status";
 import "webrtc-adapter";
 import Spaces from './components/Spaces';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import {checkAuth} from "./store/authSlice";
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "./components/PrivateRoute";
 import Settings from './components/Settings';
+import {Loading} from "./components/Wrapper";
+import {IoCogOutline} from "react-icons/all";
 
 interface Props {
     loggedIn: boolean
@@ -42,19 +43,11 @@ export class App extends Component<Props, State> {
                         <PrivateRoute path='/spaces/:spaceID' exact={false} component={Playground}/>
                         <PrivateRoute exact path='/spaces' component={Spaces}/>
                         <PrivateRoute exact path='/settings' component={Settings}/>
-                        <Route path='/login'>
-                            {this.props.authFlowReady ?
-                                (this.props.loggedIn) ?
-                                    <Redirect to={"/"}/> :
-                                    <Login/>
-                                : <div/>
-                            }
-                        </Route>
                         <Route path='/'>
                             {(this.props.authFlowReady) ?
                                 ((this.props.loggedIn) ?
                                     <Redirect to={"/spaces"}/> :
-                                    <Redirect to={"/login"}/>)
+                                    <Loading loadingText="Loading" icon={<IoCogOutline/>}/>)
                                 : <div/>}
                         </Route>
                         <Route path="*">
