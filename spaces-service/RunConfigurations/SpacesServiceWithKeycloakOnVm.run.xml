@@ -40,6 +40,11 @@
         <option name="name" value="KEYCLOAK_CLIENT_SECRET" />
         <option name="value" value="9efde360-40e6-467c-bfdd-0b747d6e27ac" />
       </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="KEYCLOAK_PASSWORD" />
+        <option name="value" value="<KEYCLOAK_PASSWORD>" />
+      </param>
     </additionalParameters>
     <method v="2">
       <option name="Make" enabled="true" />
