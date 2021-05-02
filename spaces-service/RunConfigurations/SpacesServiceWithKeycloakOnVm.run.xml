@@ -12,7 +12,6 @@
       </ENTRIES>
     </extension>
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.alphabibber.spacesservice.SpacesServiceApplication" />
-    <option name="ACTIVE_PROFILES" value="prod" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <option name="SHORTEN_COMMAND_LINE" value="NONE" />
     <additionalParameters>
@@ -24,7 +23,7 @@
       <param>
         <option name="enabled" value="true" />
         <option name="name" value="PROFILE" />
-        <option name="value" value="dev" />
+        <option name="value" value="prod" />
       </param>
       <param>
         <option name="enabled" value="true" />

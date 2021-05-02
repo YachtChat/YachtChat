@@ -17,6 +17,10 @@ public class SpaceService {
         return spaceRepository.save(space);
     }
 
+    public Space saveSpace(Space space) {
+        return spaceRepository.save(space);
+    }
+
     public List<Space> getSpaces() {
         return spaceRepository.findAll();
     }

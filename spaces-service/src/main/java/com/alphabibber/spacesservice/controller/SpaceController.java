@@ -88,7 +88,7 @@ public class SpaceController extends SpringBootServletInitializer {
         Space space = spaceService.getSpaceById(spaceId);
 
         space.addParticipant(foundUser);
-        foundUser.setSpaces(Collections.singletonList(space));
+//        foundUser.setHostSpaces(Collections.singletonList(space));
 
         spaceRepository.save(space);
         userRepository.save(foundUser);

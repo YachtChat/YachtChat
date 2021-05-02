@@ -1,6 +1,5 @@
 package com.alphabibber.spacesservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -20,10 +19,41 @@ public class Space {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToMany
-    private List<User> owners;
+    @ManyToMany(
+            cascade = {
+                    // If a space with actualized host information (in Java) is saved, then the user and her actualized
+                    // hostSpaces information (which is modeled correctly in Java but not yet saved to the DB)
+                    // is saved to the database as well
+                    CascadeType.PERSIST,
+                    // Merging means syncing the changes to the DB.
+                    // Example: We add an existing user to the current space and save it. Then
+                    // the existing user in the DB will be updated and the current space will
+                    // be added to her hostSpaces.
+                    CascadeType.MERGE
+            }
+    )
+    @JoinTable(
+        name = "users_spaces_hosts",
+        // The foreign key columns of the join table which reference the primary table of the entity owning
+        // the association. (I.e. the owning side of the association).
+        joinColumns = @JoinColumn(name = "space_host_id", insertable = false, updatable = false),
+        // The foreign key columns of the join table which reference the primary table of the entity that does
+        // not own the association. (I.e. the inverse side of the association).
+        inverseJoinColumns = @JoinColumn(name = "user_host_id", insertable = false, updatable = false)
+    )
+    private List<User> hosts;
 
-    @ManyToMany
+    @ManyToMany(
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            }
+    )
+    @JoinTable(
+        name = "users_spaces_participants",
+        joinColumns = @JoinColumn(name = "space_participant_id", insertable = false, updatable = false),
+        inverseJoinColumns = @JoinColumn(name = "user_participant_id", insertable = false, updatable = false)
+    )
     private List<User> participants;
 
     protected Space() {
@@ -32,7 +62,7 @@ public class Space {
 
     public Space(String name) {
         this.name = name;
-        this.owners = new ArrayList<>();
+        this.hosts = new ArrayList<>();
         this.participants = new ArrayList<>();
     }
 
@@ -52,16 +82,20 @@ public class Space {
         this.name = name;
     }
 
-    public List<User> getOwners() {
-        return owners;
+    public List<User> getHosts() {
+        return hosts;
     }
 
-    public void setOwners(List<User> owners) {
-        this.owners = owners;
+    public void setHosts(List<User> owners) {
+        this.hosts = owners;
     }
 
-    public void addOwner(User owner) {
-        this.owners.add(owner);
+    public void addHost(User host) {
+        this.hosts.add(host);
+    }
+
+    public void removeHost(User host) {
+        this.hosts.remove(host);
     }
 
     public List<User> getParticipants() {
@@ -76,9 +110,13 @@ public class Space {
         this.participants.add(participant);
     }
 
+    public void removeParticipant(User participant) {
+        this.participants.remove(participant);
+    }
+
     public List<User> getAllUsers() {
         List<User> result = new ArrayList<>();
-        result.addAll(this.owners);
+        result.addAll(this.hosts);
         result.addAll(this.participants);
         return result;
     }
