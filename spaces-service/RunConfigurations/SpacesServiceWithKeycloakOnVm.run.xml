@@ -23,7 +23,7 @@
       <param>
         <option name="enabled" value="true" />
         <option name="name" value="PROFILE" />
-        <option name="value" value="dev" />
+        <option name="value" value="prod" />
       </param>
       <param>
         <option name="enabled" value="true" />
