@@ -117,7 +117,8 @@ export class UserComponent extends Component<Props> {
                              title={(this.props.user.message) ? this.props.user.message : ""} placement="top" arrow>
                         <div>
                             {!!this.props.user.userStream &&
-                            <video key={this.props.camera} autoPlay muted={this.props.isActiveUser}
+                            <video data-id={(this.props.isActiveUser) ? "activeUser" : ""} key={this.props.camera}
+                                   autoPlay muted={this.props.isActiveUser}
                                    ref={this.videoObject}/>
                             }
                         </div>
