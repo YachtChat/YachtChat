@@ -7,15 +7,16 @@
             <h2>${msg("doLogIn")}</h2>
             <ul id="kc-social-providers" class="${properties.kcFormSocialAccountSectionClass!} login-buttons">
                 <#list social.providers as p>
-                    <div id="social-${p.alias}"
-                         class="social-button ${properties.kcFormSocialAccountListButtonClass!} <#if social.providers?size gt 3>${properties.kcFormSocialAccountGridItem!}</#if>"
-                         type="button" href="${p.loginUrl}">
-                        <#if p.iconClasses?has_content>
-                            <i class="${properties.kcCommonLogoIdP!} ${p.iconClasses!}" aria-hidden="true"></i>
-                        <#else>
-                            <span class="${properties.kcFormSocialAccountNameClass!}">${p.displayName!}</span>
-                        </#if>
-                    </div>
+                    <a href="${p.loginUrl}">
+                        <div id="social-${p.alias}"
+                             class="social-button ${properties.kcFormSocialAccountListButtonClass!} <#if social.providers?size gt 3>${properties.kcFormSocialAccountGridItem!}</#if>">
+                            <#if p.iconClasses?has_content>
+                                <i class="${properties.kcCommonLogoIdP!} ${p.iconClasses!}" aria-hidden="true"></i>
+                            <#else>
+                                <span class="${properties.kcFormSocialAccountNameClass!}">${p.displayName!}</span>
+                            </#if>
+                        </div>
+                    </a>
                 </#list>
             </ul>
         </#if>
