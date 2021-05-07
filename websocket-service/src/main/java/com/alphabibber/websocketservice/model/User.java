@@ -10,10 +10,12 @@ public class User {
     public User(Session session, String id){
         this.session = session;
         this.position = new Position(0, 0, 20);
+        this.image = true;
         this.id = id;
     }
     @Getter @Setter @Expose(serialize = false)
     private Session session;
     @Getter @Setter @Expose private String id;
     @Getter @Setter @Expose  private Position position;
+    @Getter @Setter @Expose private Boolean image;
 }
