@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 // See here for a documentation of the API
 // https://www.keycloak.org/docs-api/5.0/rest-api/index.html#_users_resource
@@ -27,24 +29,44 @@ public class KeycloakService {
     public KeycloakService(){
     }
 
-    public JSONObject getClientById(String id) {
+    public JSONObject getUserById(String id) {
         checkTokens();
         HttpResponse<JsonNode> response = Unirest
-                .get("https://keycloak.alphabibber.com/auth/admin/realms/" + REALM + "/users/" + id)
+                .get(URL + "/admin/realms/" + REALM + "/users/" + id)
                 .header("Authorization", "Bearer " + accessToken)
                 .asJson();
+        if(response.getStatus() == 404){
+//            User not found
+        }
         return response.getBody().getObject();
     }
 
 
-    private JSONObject getClientByEmail(String mail) {
+    public JSONObject getUserByEmail(String mail) {
         checkTokens();
         HttpResponse<JsonNode> response = Unirest
-                .get("https://keycloak.alphabibber.com/auth/admin/realms/" + REALM + "/users?email=" + mail)
+                .get(URL + "/admin/realms/" + REALM + "/users?email=" + mail)
                 .header("Authorization", "Bearer " + accessToken)
                 .asJson();
+        if(response.getStatus() == 404){
+//            User not found
+        }
         return response.getBody().getObject();
     }
+
+    public void updateUserById(String id){
+        Map<String, String> data = new HashMap<>();
+        data.put("username", "testnew");
+        JSONObject body = new JSONObject(data);
+
+        checkTokens();
+        HttpResponse<JsonNode> response = Unirest
+                .put(URL + "admin/realms/" + REALM + "users/" + id)
+                .header("Authorization", "Bearer " + accessToken)
+                .field(body)
+                .asJson();
+    }
+
 
     private void getNewTokens(){
         HttpResponse<JsonNode> response = Unirest.post(URL + "realms/master/protocol/openid-connect/token")
