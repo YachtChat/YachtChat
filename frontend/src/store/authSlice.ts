@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppThunk} from './store';
+import {AppThunk, RootState} from './store';
 import {setName, setUserId} from './userSlice';
 import keycloak from "./keycloak";
 
@@ -48,7 +48,9 @@ export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) =
         onLoad: 'login-required',
     }).then((auth) => {
         if (auth) {
-            dispatch(setToken(keycloak.token!)) // TODO: to be set to keycloak.token
+            keycloak.updateToken(30).then(() =>
+                dispatch(setToken(keycloak.token!)) // TODO: to be set to keycloak.token
+            ).catch(() => keycloak.login())
         }
 
         const existingToken = getState().auth.token
@@ -79,6 +81,16 @@ export const logout = (): AppThunk => (dispatch, getState) => {
     localStorage.removeItem("token")
     dispatch(setLogin(false))
     keycloak.logout()
+}
+
+export const getToken = (state: RootState): Promise<string> => {
+    return new Promise<string>((resolve, reject) => {
+        keycloak.updateToken(30).then(() =>
+            resolve(keycloak.token!)
+        ).catch(() =>
+            keycloak.login()
+        )
+    })
 }
 
 export default authSlice.reducer;
