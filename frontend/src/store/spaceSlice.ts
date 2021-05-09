@@ -4,6 +4,7 @@ import {AppThunk} from "./store";
 import axios from "axios";
 import {handleError} from "./statusSlice";
 import {SPACES_URL} from "./config";
+import {getToken} from "./authSlice";
 
 interface SpaceState {
     spaces: Space[]
@@ -28,13 +29,15 @@ export const requestSpaces = (): AppThunk => (dispatch, getState) => {
         dispatch(handleError("No spaces url defined for this environment"));
         return;
     }
-    axios.get("https://" + SPACES_URL + "/spaces/", {
-        headers: {
-            'Authorization': `Bearer ${getState().auth.token}`
-        }
-    }).then(response => {
-        dispatch(setSpaces(response.data))
-    }).catch(e => console.log(e.trace))
+    getToken(getState()).then(token =>
+        axios.get("https://" + SPACES_URL + "/spaces/", {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => {
+            dispatch(setSpaces(response.data))
+        }).catch(e => console.log(e.trace))
+    )
 }
 
 export const {
