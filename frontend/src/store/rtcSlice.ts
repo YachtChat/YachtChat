@@ -9,10 +9,12 @@ import {
     getUsers,
     gotRemoteStream,
     handlePositionUpdate,
-    removeUser
+    removeUser,
+    setMedia
 } from "./userSlice";
 import {resetPlayground} from "./playgroundSlice";
 import {handleError} from "./statusSlice";
+import {MediaType} from "./models";
 
 interface RTCState {
     muted: boolean
@@ -162,13 +164,22 @@ export const mute = (): AppThunk => (dispatch, getState) => {
 export const displayVideo = (): AppThunk => (dispatch, getState) => {
     dispatch(toggleVideo())
 
-    if (!getStream(getState(), getUserID(getState())))
+    const state = getState()
+    const userID = getUserID(state)
+
+    if (!getStream(state, userID)) {
+        dispatch(send({'type': 'media', 'id': userID, 'media': 'image', 'event': false}))
         return
-    getStream(getState(), getUserID(getState()))!.getVideoTracks()[0].enabled = getState().rtc.video
-    getUsers(getState()).forEach(u => {
+    }
+
+    getStream(state, userID)!.getVideoTracks()[0].enabled = state.rtc.video
+
+    dispatch(send({'type': 'media', 'media': 'image', 'event': state.rtc.video}))
+    dispatch(setMedia({id: userID, type: MediaType.VIDEO, state: state.rtc.video}))
+    getUsers(state).forEach(u => {
         rtpSender[u.id].forEach(rtp => {
             if (rtp.track && rtp.track.kind === 'video') {
-                rtp.track.enabled = getState().rtc.video
+                rtp.track.enabled = state.rtc.video
             }
         })
     })

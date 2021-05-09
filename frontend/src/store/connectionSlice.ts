@@ -7,6 +7,7 @@ import {
     getUsers,
     handleMessage,
     handlePositionUpdate,
+    setMedia,
     setUser,
     setUserId,
     setUsers
@@ -113,6 +114,10 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
             case "position":
                 if (loggedIn && data.id !== getUserID(getState()))
                     dispatch(handlePositionUpdate(data));
+                break;
+            case "media":
+                if (loggedIn)
+                    dispatch(setMedia({id: data.id, type: data.medium, state: data.event}));
                 break;
             case "signal":
                 if (!loggedIn)
