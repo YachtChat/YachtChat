@@ -44,7 +44,9 @@ export class Spaces extends Component<Props> {
                 <div className={"spacesWrapper"}>
                     <h2>Spaces.
                         <div className={"buttons"}>
-                            <button className={"iconButton"}><IoAddOutline/></button>
+                            <Link to={"/create-space"}>
+                                <button className={"iconButton"}><IoAddOutline/></button>
+                            </Link>
                         </div>
                     </h2>
                     {this.props.spaces.map((s, idx) => (
