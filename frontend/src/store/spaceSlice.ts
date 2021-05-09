@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Space} from "./models";
 import {AppThunk} from "./store";
 import axios from "axios";
-import {handleError} from "./statusSlice";
+import {handleError, handleSuccess} from "./statusSlice";
 import {SPACES_URL} from "./config";
 import {getToken} from "./authSlice";
 
@@ -24,24 +24,39 @@ export const spaceSlice = createSlice({
     }
 });
 
+export const {
+    setSpaces
+} = spaceSlice.actions;
+
 export const requestSpaces = (): AppThunk => (dispatch, getState) => {
     if (!SPACES_URL) {
         dispatch(handleError("No spaces url defined for this environment"));
         return;
     }
     getToken(getState()).then(token =>
-        axios.get("https://" + SPACES_URL + "/api/v1/spaces/", {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        }).then(response => {
+        axios.get("https://" + SPACES_URL + "/api/v1/spaces/", getHeaders(token)).then(response => {
             dispatch(setSpaces(response.data))
         }).catch(e => console.log(e.trace))
     )
 }
 
-export const {
-    setSpaces
-} = spaceSlice.actions;
+export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
+    axios.post("https://" + SPACES_URL + "/createSpaces/", getHeaders(getState().auth.token!)).then(response => {
+        dispatch(handleSuccess("Space successfully created"))
+        dispatch(requestSpaces())
+    }).catch(e => {
+        dispatch(handleError("Space could not be created"))
+        console.log(e.trace)
+    })
+}
 
-export default spaceSlice.reducer;
+
+const getHeaders = (token: string): any => {
+    return {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    }
+}
+
+export default spaceSlice.reducer
