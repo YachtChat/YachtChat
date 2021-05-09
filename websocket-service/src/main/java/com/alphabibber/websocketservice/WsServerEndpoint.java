@@ -1,12 +1,9 @@
 package com.alphabibber.websocketservice;
 
 import com.alphabibber.websocketservice.encoder.*;
-import com.alphabibber.websocketservice.handler.LeaveHandler;
-import com.alphabibber.websocketservice.handler.PositionChangeHandler;
-import com.alphabibber.websocketservice.handler.SignalHandler;
+import com.alphabibber.websocketservice.handler.*;
 import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
-import com.alphabibber.websocketservice.handler.LoginHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -25,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @ServerEndpoint(value = "/room/{roomID}", encoders = { LoginAnswerEncoder.class, NewUserAnswerEncoder.class,
-        PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class})
+        PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class, MediaAnswerEncoder.class})
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     Gson gson = new GsonBuilder().create();
@@ -33,6 +30,7 @@ public class WsServerEndpoint {
     private final PositionChangeHandler positionChangeHandler = new PositionChangeHandler();
     private final LeaveHandler leaveHandler = new LeaveHandler();
     private final SignalHandler signalHandler = new SignalHandler();
+    private final MediaHandler mediaHandler = new MediaHandler();
 
 
     // Have a look at the ConcurrentHashMap here:
@@ -120,8 +118,19 @@ public class WsServerEndpoint {
                 }
                 sender = room.get(session.getId());
                 leaveHandler.handleLeave(roomMap.get(roomId), sender);
-                log.info("User {} has left the room {}", session.getId(), roomId);
+                log.info("User {} has left the room {}", sender.getId(), roomId);
                 break;
+            case "media":
+                if (! room.containsKey(session.getId())){
+                    log.warn("User tried to leave while not being logged in");
+                    return;
+                }
+                sender = room.get(session.getId());
+                String media = jsonObject.get("media").getAsString();
+                Boolean event = jsonObject.get("event").getAsBoolean();
+                mediaHandler.handleMedia(roomMap.get(roomId), session, media, event);
+                log.info("User {} changed his media type for {} to {}", sender.getId(), media, event);
+                return;
             default:
                 log.warn("The {} type is not defined", type);
         }
