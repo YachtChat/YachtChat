@@ -101,6 +101,7 @@ export class UserComponent extends Component<Props> {
             opacity: userOpacity,
             transform: userScale,
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
+            backgroundImage: `url(${user.profilePic})`,
         }
 
         const userNameStyle = {
@@ -119,7 +120,8 @@ export class UserComponent extends Component<Props> {
                             {!!this.props.user.userStream &&
                             <video data-id={(this.props.isActiveUser) ? "activeUser" : ""} key={this.props.camera}
                                    autoPlay muted={this.props.isActiveUser}
-                                   ref={this.videoObject}/>
+                                   ref={this.videoObject}
+                                   className={(!user.image) ? "profile-picture" : ""}/>
                             }
                         </div>
                     </Tooltip>

@@ -1,8 +1,9 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {User, UserCoordinates} from "./models";
+import {MediaType, User, UserCoordinates} from "./models";
 import {sendPosition} from "./connectionSlice";
 import {sendAudio, unsendAudio} from "./rtcSlice";
+import UserImage from "../rsc/Download.png"
 
 interface UserState {
     activeUser: User
@@ -10,7 +11,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-    activeUser: {id: "-1", name: "name", position: {x: 0, y: 0, range: 0.2}},
+    activeUser: {id: "-1", name: "name", position: {x: 0, y: 0, range: 0.2}, profilePic: UserImage, image: true},
     otherUsers: {},
 };
 
@@ -49,9 +50,6 @@ export const userSlice = createSlice({
         setUser: (state, action: PayloadAction<User>) => {
             state.otherUsers[action.payload.id] = {...action.payload, name: ""}
         },
-        addUser: (state, action: PayloadAction<any>) => {
-            state.otherUsers[action.payload.id] = {id: action.payload.id, position: action.payload.position, name: ""}
-        },
         removeUser: (state, action: PayloadAction<string>) => {
             delete state.otherUsers[action.payload]
         },
@@ -62,8 +60,10 @@ export const userSlice = createSlice({
                 const id = u.id
                 if (id === state.activeUser.id) {
                     state.activeUser.position = u.position
+                    state.activeUser.profilePic = UserImage //next step, get picture from account/database
                 } else if (u.position) {
                     otherUsers[id] = {...u, name: ""}
+                    otherUsers[id].profilePic = UserImage //next step, get pictures from accounts/database
                 }
             })
             state.otherUsers = otherUsers
@@ -85,6 +85,14 @@ export const userSlice = createSlice({
                 state.otherUsers[action.payload].message = undefined
             if (state.activeUser.id === action.payload)
                 state.activeUser.message = undefined
+        },
+        setMedia: (state, action: PayloadAction<{ id: string, type: MediaType, state: boolean }>) => {
+            if (action.payload.id === state.activeUser.id) {
+                state.activeUser.image = action.payload.state
+                return
+            }
+            if (state.otherUsers[action.payload.id])
+                state.otherUsers[action.payload.id].image = action.payload.state
         }
     },
 });
@@ -100,7 +108,8 @@ export const {
     setUserId,
     setMessage,
     destroyMessage,
-    forgetUsers
+    forgetUsers,
+    setMedia
 } = userSlice.actions;
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {

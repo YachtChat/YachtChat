@@ -156,11 +156,16 @@
 
       video {
         transform: rotateY(180deg);
+        right: -50%;
+        bottom: 0;
+        top: 0;
+        left: 0;
       }
     }
   }
 
   .User {
+    background-size: cover;
     background-color: gray;
     position: absolute;
     border-radius: 50%;
@@ -171,10 +176,10 @@
 
     video {
       position: absolute;
-      right: -50%;
+      right: 0;
       bottom: 0;
-      top: 0;
-      left: 0;
+      top: 50%;
+      left: 50%;
       margin-right: -50%;
       transform: translate(-50%, -50%);
       min-width: 100%;
@@ -185,4 +190,8 @@
       overflow: hidden;
     }
   }
+}
+
+.profile-picture {
+  display: none;
 }
