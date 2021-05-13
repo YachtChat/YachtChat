@@ -3,7 +3,7 @@ import {AppThunk, RootState} from './store';
 import {MediaType, User, UserCoordinates} from "./models";
 import {sendPosition} from "./connectionSlice";
 import {sendAudio, unsendAudio} from "./rtcSlice";
-import UserImage from "../rsc/Download.png"
+import UserImage from "../rsc/profile.png"
 
 interface UserState {
     activeUser: User
