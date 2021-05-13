@@ -48,8 +48,8 @@ jobs:
         with:
           command: |
             cd /home/git_environment/NotZoom/
-            sudo docker-compose down frontend
             sudo docker-compose build frontend
+            sudo docker-compose down frontend
             sudo docker-compose up --no-deps -d frontend
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
@@ -63,8 +63,8 @@ jobs:
         with:
           command: |
             cd /home/git_environment/NotZoom/
-            sudo docker-compose down nginx-landingpage
             sudo docker-compose build nginx-landingpage
+            sudo docker-compose down nginx-landingpage
             sudo docker-compose up --no-deps -d nginx-landingpage
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
@@ -78,8 +78,8 @@ jobs:
         with:
           command: |
             cd /home/git_environment/NotZoom/
-            sudo docker-compose down nginx-presentation
             sudo docker-compose build nginx-presentation
+            sudo docker-compose down nginx-presentation
             sudo docker-compose up --no-deps -d nginx-presentation
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
@@ -94,8 +94,8 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
-            sudo docker-compose down spaces-service
             sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} docker-compose build spaces-service
+            sudo docker-compose down spaces-service
             sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} docker-compose up --no-deps -d spaces-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
@@ -110,8 +110,8 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
-            sudo docker-compose down websocket-service
             sudo docker-compose build websocket-service
+            sudo docker-compose down websocket-service
             sudo docker-compose up --no-deps -d websocket-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
