@@ -46,6 +46,8 @@ export class Canvas extends Component<Props, State> {
     dragStart(event: React.MouseEvent | React.TouchEvent) {
         event.stopPropagation()
         const activeUser = ((event.target as HTMLVideoElement).dataset.id === "activeUser")
+        const message = ((event.target as HTMLDivElement).dataset.id === "message")
+        const canvas = !(activeUser || message)
 
         let x, y;
 
@@ -62,7 +64,7 @@ export class Canvas extends Component<Props, State> {
                 userDragActive: true,
                 dragStart: {x, y}
             })
-        else
+        else if (canvas)
             this.setState({
                 mapDragActive: true,
                 previousOffset: this.props.offset,

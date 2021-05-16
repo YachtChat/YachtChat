@@ -114,8 +114,13 @@ export class UserComponent extends Component<Props> {
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
-                    <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message} interactive
-                             title={(this.props.user.message) ? this.props.user.message : ""} placement="top" arrow>
+                    <Tooltip data-id={"message"} TransitionComponent={Zoom} open={!!this.props.user.message} interactive
+                             title={
+                                 (this.props.user.message) ?
+                                     (this.props.user.message.toLocaleLowerCase().startsWith("http")) ?
+                                         <a href={this.props.user.message}>{this.props.user.message}</a> :
+                                         this.props.user.message
+                                     : ""} placement="top" arrow>
                         <div>
                             {!!this.props.user.userStream &&
                             <video data-id={(this.props.isActiveUser) ? "activeUser" : ""} key={this.props.camera}
