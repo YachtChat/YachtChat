@@ -41,6 +41,9 @@
         <option name="value" value="9efde360-40e6-467c-bfdd-0b747d6e27ac" />
       </param>
     </additionalParameters>
+    <envs>
+      <env name="GOOGLE_APPLICATION_CREDENTIALS" value="$PROJECT_DIR$/../central-hangar-308715-3a62c3e89b6f.json" />
+    </envs>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
