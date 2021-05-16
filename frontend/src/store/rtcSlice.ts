@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {connectToServer, handleLeave, send} from "./connectionSlice";
+import {connectToServer, handleLeave, send} from "./webSocketSlice";
 import {rtcConfiguration} from "./config";
 import {
     forgetUsers,
@@ -131,8 +131,6 @@ export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch,
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
         localStream = e
-
-        console.log("HALT STOPP")
 
         dispatch(gotRemoteStream(localClient))
         dispatch(loadAllMediaDevices())

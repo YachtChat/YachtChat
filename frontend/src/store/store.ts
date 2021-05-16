@@ -1,6 +1,6 @@
 import {Action, configureStore, ThunkAction} from '@reduxjs/toolkit';
 import userReducer from './userSlice';
-import webSocketSlice from "./connectionSlice";
+import webSocketSlice from "./webSocketSlice";
 import rtcSlice from "./rtcSlice";
 import spaceSlice from "./spaceSlice";
 import statusSlice from "./statusSlice";
