@@ -207,9 +207,10 @@ export class NavigationBar extends Component<Props, State> {
                         </div>
                         <div className="menu bottom">
                             <ul>
-                                <li className="menu-item"
-                                    onClick={() => this.setState(this.handleMessagesOpen.bind(this))}>
-                                    <div className="inner-item">
+                                <li className="menu-item">
+                                    <div
+                                        onClick={() => this.setState(this.handleMessagesOpen.bind(this))}
+                                        className="inner-item">
                                         <span className="icon-wrapper">
                                             <span className="icon">
                                                 <IoChatbubble/>
@@ -217,11 +218,11 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                         <span className="item-content">
                                             Message
-                                            <div>
-                                                <MessageComponent open={this.state.messagesOpen}
-                                                                  onClose={this.handleClose.bind(this)}/>
-                                            </div>
                                         </span>
+                                    </div>
+                                    <div>
+                                        <MessageComponent open={this.state.messagesOpen}
+                                                          onClose={this.handleClose.bind(this)}/>
                                     </div>
                                 </li>
                                 <li className="menu-item" onClick={this.handleSettingsOpen.bind(this)}>

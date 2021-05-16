@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
 import {sendMessage} from "../../store/webSocketSlice";
+import {IoCloseOutline} from "react-icons/all";
 
 interface Props {
     open: boolean
@@ -25,6 +26,10 @@ export class MessageComponent extends Component<Props, State> {
 
     handleSubmit() {
         this.props.sendMessage(this.state.message)
+        this.handleClose()
+    }
+
+    handleClose() {
         this.setState({
             message: ""
         })
@@ -38,20 +43,23 @@ export class MessageComponent extends Component<Props, State> {
 
         return (
             <div>
-                <Dialog className={"messagePanel messagePanel"} open={this.props.open} onClose={this.props.onClose}
+                <Dialog className={"messagePanel"}
+                        open={this.props.open}
+                        onClose={this.handleClose.bind(this)}
                         style={style}>
                     <div className={"headlineBox"}>
+                        <div className={"buttons"}>
+                            <button onClick={this.handleClose.bind(this)} className={"iconButton"}><IoCloseOutline/>
+                            </button>
+                        </div>
                         <h2>Send message</h2>
-                        <p>Send a message to everyone in your proximity</p>
+                        Send a message to everyone in your proximity
                     </div>
                     <div className={"message"}>
                         <input onSubmit={this.handleSubmit.bind(this)} autoFocus={this.props.open}
                                value={this.state.message}
                                onChange={({target: {value}}) => this.setState({message: value})}/>
-                        <button onClick={e => {
-                            this.props.sendMessage(this.state.message)
-                            this.props.onClose()
-                        }} className={"Button"}>
+                        <button onClick={this.handleSubmit.bind(this)} className={"Button"}>
                             send
                         </button>
                     </div>
