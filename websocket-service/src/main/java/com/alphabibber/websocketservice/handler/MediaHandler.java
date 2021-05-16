@@ -14,13 +14,12 @@ import java.util.Map;
 
 public class MediaHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    public void handleMedia(Map<String, User> room, Session session, String media, Boolean event) {
+    public void handleMedia(Map<String, User> room, User sender, String media, Boolean event) {
         MediaAnswer answer;
-        User changedUser = room.get(session.getId());
         switch (media){
             case "image":
-                changedUser.setImage(event);
-                answer = new MediaAnswer(session.getId(), media, event);
+                sender.setImage(event);
+                answer = new MediaAnswer(sender.getId(), media, event);
                 break;
             default:
                 log.error("The media " + media + " is not known.");
@@ -29,7 +28,7 @@ public class MediaHandler {
 
         ArrayList<User> users = new ArrayList<>(room.values());
         users.forEach(user -> {
-            if (user.getId() == changedUser.getId()){return;}
+            if (user.getId() == sender.getId()){return;}
             synchronized (user){
                 try{
                     user.getSession().getBasicRemote().sendObject(answer);

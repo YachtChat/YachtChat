@@ -128,7 +128,7 @@ public class WsServerEndpoint {
                 sender = room.get(session.getId());
                 String media = jsonObject.get("media").getAsString();
                 Boolean event = jsonObject.get("event").getAsBoolean();
-                mediaHandler.handleMedia(roomMap.get(roomId), session, media, event);
+                mediaHandler.handleMedia(roomMap.get(roomId), sender, media, event);
                 log.info("User {} changed his media type for {} to {}", sender.getId(), media, event);
                 return;
             default:
