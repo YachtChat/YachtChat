@@ -11,7 +11,7 @@ import {handleZoom, movePlayground, scalePlayground} from "../../store/playgroun
 
 interface Props {
     activeUser: User
-    otherUsers: User[]
+    spaceUsers: User[]
     move: (userCoordinates: UserCoordinates) => void
     offset: PlaygroundOffset
     changeSizeMultiplier: (size: number) => void
@@ -195,12 +195,12 @@ export class Canvas extends Component<Props, State> {
                  onMouseDown={this.dragStart.bind(this)}
                  onTouchStart={this.dragStart.bind(this)}
                  tabIndex={0}>
-                {this.props.otherUsers.map(user => <RangeComponent key={user.id} isActiveUser={false}
+                {this.props.spaceUsers.map(user => <RangeComponent key={user.id} isActiveUser={false}
                                                                    selected={false} user={user}/>)}
                 <RangeComponent user={this.props.activeUser}
                                 selected={this.state.mapDragActive || this.state.userDragActive}
                                 isActiveUser={true}/>
-                {this.props.otherUsers.map(user => <UserComponent key={user.id} isActiveUser={false}
+                {this.props.spaceUsers.map(user => <UserComponent key={user.id} isActiveUser={false}
                                                                   selected={false} user={user}/>)}
                 <UserComponent user={this.props.activeUser}
                                selected={this.state.mapDragActive || this.state.userDragActive}
@@ -212,7 +212,7 @@ export class Canvas extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
-    otherUsers: getUsers(state),
+    spaceUsers: getUsers(state),
     offset: state.playground.offset,
     video: state.rtc.video,
     muted: state.rtc.muted

@@ -1,18 +1,20 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, User, UserCoordinates} from "./models";
-import {sendPosition} from "./connectionSlice";
+import {sendPosition} from "./webSocketSlice";
 import {sendAudio, unsendAudio} from "./rtcSlice";
 import UserImage from "../rsc/profile.png"
 
 interface UserState {
     activeUser: User
-    otherUsers: { [key: string]: User }
+    spaceUsers: { [key: string]: User },
+    friends: { [key: string]: User }
 }
 
 const initialState: UserState = {
     activeUser: {id: "-1", name: "name", position: {x: 0, y: 0, range: 0.2}, profilePic: UserImage, image: true},
-    otherUsers: {},
+    spaceUsers: {},
+    friends: {}
 };
 
 export const userProportion = 100
@@ -27,9 +29,9 @@ export const userSlice = createSlice({
             if (state.activeUser.id === action.payload.id) {
                 state.activeUser.position = action.payload.position;
             }
-            if (!state.otherUsers[action.payload.id])
+            if (!state.spaceUsers[action.payload.id])
                 return
-            state.otherUsers[action.payload.id].position = action.payload.position
+            state.spaceUsers[action.payload.id].position = action.payload.position
         },
         changeRadius: (state, action: PayloadAction<number>) => {
             state.activeUser.position.range = action.payload;
@@ -38,7 +40,7 @@ export const userSlice = createSlice({
             if (state.activeUser.id === action.payload)
                 state.activeUser.userStream = true
             else
-                state.otherUsers[action.payload].userStream = true
+                state.spaceUsers[action.payload].userStream = true
         },
         setUserId: (state, action: PayloadAction<string>) => {
             state.activeUser.id = action.payload
@@ -48,13 +50,13 @@ export const userSlice = createSlice({
             state.activeUser.name = action.payload
         },
         setUser: (state, action: PayloadAction<User>) => {
-            state.otherUsers[action.payload.id] = {...action.payload, name: ""}
+            state.spaceUsers[action.payload.id] = {...action.payload, name: ""}
         },
         removeUser: (state, action: PayloadAction<string>) => {
-            delete state.otherUsers[action.payload]
+            delete state.spaceUsers[action.payload]
         },
         setUsers: (state, action: PayloadAction<User[]>) => {
-            const otherUsers: { [key: string]: User } = {}
+            const spaceUsers: { [key: string]: User } = {}
 
             action.payload.forEach(u => {
                 const id = u.id
@@ -62,27 +64,27 @@ export const userSlice = createSlice({
                     state.activeUser.position = u.position
                     state.activeUser.profilePic = UserImage //next step, get picture from account/database
                 } else if (u.position) {
-                    otherUsers[id] = {...u, name: ""}
-                    otherUsers[id].profilePic = UserImage //next step, get pictures from accounts/database
+                    spaceUsers[id] = {...u, name: "", image: true}
+                    spaceUsers[id].profilePic = UserImage //next step, get pictures from accounts/database
                 }
             })
-            state.otherUsers = otherUsers
+            state.spaceUsers = spaceUsers
             // action.payload.filter(u => u.id !== state.activeUser.id && u.name !== null).forEach(u => {
             //     state.otherUsers[u.id] = u
             // })
         },
         forgetUsers: (state) => {
-            state.otherUsers = {}
+            state.spaceUsers = {}
         },
         setMessage: (state, action: PayloadAction<{ message: string, id: string }>) => {
-            if (state.otherUsers[action.payload.id])
-                state.otherUsers[action.payload.id].message = action.payload.message
+            if (state.spaceUsers[action.payload.id])
+                state.spaceUsers[action.payload.id].message = action.payload.message
             if (state.activeUser.id === action.payload.id)
                 state.activeUser.message = action.payload.message
         },
         destroyMessage: (state, action: PayloadAction<string>) => {
-            if (state.otherUsers[action.payload])
-                state.otherUsers[action.payload].message = undefined
+            if (state.spaceUsers[action.payload])
+                state.spaceUsers[action.payload].message = undefined
             if (state.activeUser.id === action.payload)
                 state.activeUser.message = undefined
         },
@@ -91,8 +93,8 @@ export const userSlice = createSlice({
                 state.activeUser.image = action.payload.state
                 return
             }
-            if (state.otherUsers[action.payload.id])
-                state.otherUsers[action.payload.id].image = action.payload.state
+            if (state.spaceUsers[action.payload.id])
+                state.spaceUsers[action.payload.id].image = action.payload.state
         }
     },
 });
@@ -177,10 +179,10 @@ export const getUserID = (state: RootState) => state.userState.activeUser.id;
 export const getUserById = (state: RootState, id: string) => {
     if (state.userState.activeUser.id === id)
         return state.userState.activeUser
-    return state.userState.otherUsers[id];
+    return state.userState.spaceUsers[id];
 }
-export const getUsers = (state: RootState) => Object.keys(state.userState.otherUsers).map(
-    id => state.userState.otherUsers[id]
+export const getUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
+    id => state.userState.spaceUsers[id]
 );
 
 export default userSlice.reducer;

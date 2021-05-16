@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
-import {sendMessage} from "../../store/connectionSlice";
+import {sendMessage} from "../../store/webSocketSlice";
 
 interface Props {
     open: boolean

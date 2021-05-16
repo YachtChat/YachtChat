@@ -1,4 +1,4 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 import {User, UserCoordinates} from "./models";
 import {
@@ -19,7 +19,6 @@ import {SOCKET_PORT, SOCKET_URL} from "./config";
 interface WebSocketState {
     connected: boolean
     joinedRoom: boolean
-    sessionEnded: boolean
 }
 
 let socket: WebSocket | null = null;
@@ -27,7 +26,6 @@ let socket: WebSocket | null = null;
 const initialState: WebSocketState = {
     connected: false,
     joinedRoom: false,
-    sessionEnded: true
 };
 
 export const webSocketSlice = createSlice({
@@ -45,21 +43,17 @@ export const webSocketSlice = createSlice({
         },
         disconnect: (state) => {
             state.connected = false
-        },
-        setSessionEnded: (state, action: PayloadAction<boolean>) => {
-            state.sessionEnded = action.payload
-        },
+        }
     },
 });
 
-export const {connect, disconnect, joined, leftRoom, setSessionEnded} = webSocketSlice.actions;
+export const {connect, disconnect, joined, leftRoom} = webSocketSlice.actions;
 
 export const connectToServer = (spaceID: string): AppThunk => (dispatch, getState) => {
     if (!SOCKET_URL) {
         dispatch(handleError("No websocket url defined for this environment"));
         return;
     }
-
 
     console.log("Try to connect to", spaceID)
 
@@ -213,7 +207,6 @@ export const handleLeave = (): AppThunk => (dispatch, getState) => {
     socket?.close()
     dispatch(disconnect())
     dispatch(leftRoom())
-    dispatch(setSessionEnded(true))
 }
 
 export default webSocketSlice.reducer;
