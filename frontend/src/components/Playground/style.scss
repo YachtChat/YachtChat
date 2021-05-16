@@ -152,7 +152,13 @@
     }
 
     .User {
-      background-color: cadetblue;
+      background-color: $focus_light;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          background: $focus_dark;
+        }
+      }
 
       video {
         transform: rotateY(180deg);
@@ -166,13 +172,20 @@
 
   .User {
     background-size: cover;
-    background-color: gray;
     position: absolute;
     border-radius: 50%;
     display: block;
     user-select: none;
     overflow: hidden;
     transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s;
+
+    background-color: $foreground_light;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        background: $foreground_dark;
+      }
+    }
 
     video {
       position: absolute;

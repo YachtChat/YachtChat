@@ -16,12 +16,13 @@ import {
 } from 'react-icons/fa';
 import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
-import {sendLogout} from "../../store/connectionSlice";
+import {sendLogout} from "../../store/webSocketSlice";
 import {displayVideo, mute} from "../../store/rtcSlice";
 import Settings from "../Settings";
 import {centerUser} from "../../store/playgroundSlice";
 import {IoChatbubble} from "react-icons/all";
 import MessageComponent from "./Message";
+import {Link} from "react-router-dom";
 
 interface Props {
     activeUser: User
@@ -239,18 +240,20 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                     </div>
                                 </li>
-                                <li className="menu-item" onClick={this.props.logout}>
-                                    <div className="inner-item">
-                                    <span className="icon-wrapper">
-                                        <span className="icon">
-                                            <FaSignOutAlt/>
-                                        </span>
-                                    </span>
-                                        <span className="item-content">
-                                        Log Out
-                                    </span>
-                                    </div>
-                                </li>
+                                <Link to={"/spaces/"}>
+                                    <li className="menu-item" onClick={this.props.logout}>
+                                        <div className="inner-item">
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <FaSignOutAlt/>
+                                                </span>
+                                            </span>
+                                            <span className="item-content">
+                                                Log Out
+                                            </span>
+                                        </div>
+                                    </li>
+                                </Link>
                             </ul>
                         </div>
                     </div>
