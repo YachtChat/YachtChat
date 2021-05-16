@@ -9,8 +9,7 @@ import {User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
 import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";
-import {setSessionEnded} from "../../store/connectionSlice";
-import {Link, Redirect} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {IoCamera, IoHome, IoMic} from "react-icons/all";
 import {applicationName} from "../../store/config";
 
@@ -29,7 +28,6 @@ interface Props {
     cameras: string[]
     microphones: string[]
     joinedSpace: boolean
-    sessionEnded: boolean
 }
 
 export class Playground extends Component<Props> {
@@ -89,9 +87,6 @@ export class Playground extends Component<Props> {
                 </Wrapper>
             )
 
-        if (this.props.sessionEnded)
-            return <Redirect to={"/spaces"}/>
-
         return (
             <div className={"contentWrapper"}>
                 <div className={"navwrapper"}>
@@ -118,7 +113,6 @@ const mapStateToProps = (state: RootState) => ({
     cameras: state.rtc.cameras,
     userMedia: state.rtc.userMedia,
     joinedSpace: state.webSocket.joinedRoom,
-    sessionEnded: state.webSocket.sessionEnded
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -126,7 +120,6 @@ const mapDispatchToProps = (dispatch: any) => ({
     requestSpaces: () => dispatch(requestSpaces()),
     requestUserMedia: (spaceID: string) => dispatch(requestUserMediaAndJoin(spaceID)),
     loadMediaDevices: (callback?: () => void) => dispatch(loadAllMediaDevices(callback)),
-    startSession: () => dispatch(setSessionEnded(false))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Playground)
