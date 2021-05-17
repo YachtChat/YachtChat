@@ -60,6 +60,7 @@ services:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
       - KEYCLOAK_PROTOCOL=https
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
     networks:
       - application
 
