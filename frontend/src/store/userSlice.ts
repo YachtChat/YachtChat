@@ -50,7 +50,7 @@ export const userSlice = createSlice({
             state.activeUser.name = action.payload
         },
         setUser: (state, action: PayloadAction<User>) => {
-            state.spaceUsers[action.payload.id] = {...action.payload, name: ""}
+            state.spaceUsers[action.payload.id] = {...action.payload, name: "", image: true}
         },
         removeUser: (state, action: PayloadAction<string>) => {
             delete state.spaceUsers[action.payload]
@@ -64,7 +64,7 @@ export const userSlice = createSlice({
                     state.activeUser.position = u.position
                     state.activeUser.profilePic = UserImage //next step, get picture from account/database
                 } else if (u.position) {
-                    spaceUsers[id] = {...u, name: "", image: true}
+                    spaceUsers[id] = {...u, name: ""}
                     spaceUsers[id].profilePic = UserImage //next step, get pictures from accounts/database
                 }
             })
