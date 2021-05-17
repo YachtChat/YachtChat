@@ -23,7 +23,6 @@ interface Props {
     }
     requestUserMedia: (spaceID: string) => void
     loadMediaDevices: (callback?: () => void) => void
-    startSession: () => void
     userMedia: boolean
     cameras: string[]
     microphones: string[]
@@ -33,7 +32,6 @@ interface Props {
 export class Playground extends Component<Props> {
 
     componentDidMount() {
-        this.props.startSession()
         this.props.loadMediaDevices(() => {
             console.log(this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
             if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
