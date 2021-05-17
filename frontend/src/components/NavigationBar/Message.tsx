@@ -55,14 +55,15 @@ export class MessageComponent extends Component<Props, State> {
                         <h2>Send message</h2>
                         Send a message to everyone in your proximity
                     </div>
-                    <div className={"message"}>
-                        <input onSubmit={this.handleSubmit.bind(this)} autoFocus={this.props.open}
+                    <form onSubmit={this.handleSubmit.bind(this)}
+                          className={"message"}>
+                        <input autoFocus={this.props.open}
                                value={this.state.message}
                                onChange={({target: {value}}) => this.setState({message: value})}/>
-                        <button onClick={this.handleSubmit.bind(this)} className={"Button"}>
+                        <button type={"submit"} className={"Button"}>
                             send
                         </button>
-                    </div>
+                    </form>
                 </Dialog>
             </div>
         );
