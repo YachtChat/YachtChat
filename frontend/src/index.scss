@@ -20,7 +20,7 @@ a:link, a:visited {
   color: inherit;
   @media (prefers-color-scheme: dark) {
     & {
-      $button_font_dark;
+      color: inherit;
     }
   }
 }

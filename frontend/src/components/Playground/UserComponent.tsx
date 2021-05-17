@@ -118,7 +118,9 @@ export class UserComponent extends Component<Props> {
                              title={
                                  (this.props.user.message) ?
                                      (this.props.user.message.toLocaleLowerCase().startsWith("http")) ?
-                                         <a href={this.props.user.message}>{this.props.user.message}</a> :
+                                         <a href={this.props.user.message}
+                                            target="_blank" rel="noopener noreferrer"
+                                         >{this.props.user.message}</a> :
                                          this.props.user.message
                                      : ""} placement="top" arrow>
                         <div>
