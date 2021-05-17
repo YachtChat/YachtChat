@@ -12,7 +12,17 @@ body {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  monospace;
+}
+
+a:link, a:visited {
+  text-decoration: none;
+  color: inherit;
+  @media (prefers-color-scheme: dark) {
+    & {
+      $button_font_dark;
+    }
+  }
 }
 
 button, input[type=submit] {

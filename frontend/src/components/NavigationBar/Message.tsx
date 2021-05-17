@@ -55,7 +55,10 @@ export class MessageComponent extends Component<Props, State> {
                         <h2>Send message</h2>
                         Send a message to everyone in your proximity
                     </div>
-                    <form onSubmit={this.handleSubmit.bind(this)}
+                    <form onSubmit={e => {
+                        e.preventDefault()
+                        this.handleSubmit()
+                    }}
                           className={"message"}>
                         <input autoFocus={this.props.open}
                                value={this.state.message}

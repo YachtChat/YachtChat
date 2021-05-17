@@ -100,7 +100,7 @@
       }
     }
 
-    > .navbar-layout {
+    .navbar-layout {
       height: 100%;
       overflow-y: auto;
       overflow-x: hidden;
@@ -109,25 +109,25 @@
       flex-direction: column;
       z-index: 101;
 
-      > .menu {
+      .menu {
         padding-top: 10px;
         padding-bottom: 10px;
 
-        > ul {
+        ul {
           margin: 0;
           padding: 0;
           list-style-type: none;
 
-          > .menu-item {
+          .menu-item {
             position: relative;
             font-size: 15px;
             transition: 0.2s color;
 
-            &:hover {
+            &:hover, a:link:hover {
               color: $button_font_hover;
             }
 
-            > .inner-item {
+            .inner-item {
               position: relative;
               display: flex;
               align-items: center;
@@ -135,7 +135,7 @@
               cursor: pointer;
               margin: auto auto;
 
-              > .icon-wrapper {
+              .icon-wrapper {
                 margin-right: 10px;
                 font-size: 14px;
                 width: 35px;
@@ -153,7 +153,7 @@
                   }
                 }
 
-                > .icon {
+                .icon {
                   display: flex;
                   height: 100%;
                   align-items: center;
@@ -161,7 +161,7 @@
                 }
               }
 
-              > .item-content {
+              .item-content {
                 flex-grow: 1;
                 flex-shrink: 1;
                 overflow: hidden;
@@ -178,25 +178,25 @@
               display: none;
             }
 
-            > .react-slidedown {
+            .react-slidedown {
               height: auto;
               transition-property: none;
               transition-duration: 0.2s;
               transition-timing-function: ease-in-out;
             }
 
-            > .rangeslider {
+            .rangeslider {
               padding: 0;
             }
           }
 
-          > .spacer-50 {
+          .spacer-50 {
             height: 50px;
           }
         }
       }
 
-      > .bottom {
+      .bottom {
         margin-top: auto;
       }
     }
