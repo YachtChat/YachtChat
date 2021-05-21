@@ -1,4 +1,4 @@
-package com.alphabibber.spacesservice.service;
+package chat.yacht.accountservice.service;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -6,11 +6,8 @@ import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 // See here for a documentation of the API
 // https://www.keycloak.org/docs-api/5.0/rest-api/index.html#_users_resource
@@ -21,54 +18,62 @@ public class KeycloakService {
     private String refreshToken = null;
     private Timestamp expiryDateAccessToken = null;
     private Timestamp expiryDateRefreshToken = null;
-    private String URL = "https://keycloak.alphabibber.com/auth/";
-    private String REALM = "Application";
+    private String URL = System.getenv("KEYCLOAK_URL") + "/auth/";
+    private String REALM = System.getenv("KEYCLOAK_REALM");
     private String PASSWORD = System.getenv("KEYCLOAK_PASSWORD");
-    private String NAME = "Admin";
+    private String NAME = System.getenv("KEYCLOAK_USER");
+
+// TODO: Create a user that we do not need to use the admin user to make the changes for the user
 
     public KeycloakService(){
     }
 
-    public JSONObject getUserById(String id) {
+    public HttpResponse<JsonNode> getUserById(String id) {
         checkTokens();
         HttpResponse<JsonNode> response = Unirest
-                .get(URL + "/admin/realms/" + REALM + "/users/" + id)
+                .get(URL + "admin/realms/" + REALM + "/users/" + id)
                 .header("Authorization", "Bearer " + accessToken)
                 .asJson();
-        if(response.getStatus() == 404){
-//            User not found
-        }
-        return response.getBody().getObject();
+        return response;
     }
 
-
-    public JSONObject getUserByEmail(String mail) {
+    public HttpResponse<JsonNode> getUserByEmail(String mail) {
         checkTokens();
         HttpResponse<JsonNode> response = Unirest
-                .get(URL + "/admin/realms/" + REALM + "/users?email=" + mail)
+                .get(URL + "admin/realms/" + REALM + "/users?email=" + mail)
                 .header("Authorization", "Bearer " + accessToken)
                 .asJson();
-        if(response.getStatus() == 404){
-//            User not found
-        }
-        return response.getBody().getObject();
+        return response;
     }
 
-    public void updateUserById(String id){
-        Map<String, String> data = new HashMap<>();
-        data.put("username", "testnew");
-        JSONObject body = new JSONObject(data);
-
+    public HttpResponse<JsonNode> updateUserById(String data, String id){
         checkTokens();
+        JsonNode user = new JsonNode(data);
         HttpResponse<JsonNode> response = Unirest
-                .put(URL + "admin/realms/" + REALM + "users/" + id)
+                .put(URL + "admin/realms/" + REALM + "/users/" + id)
                 .header("Authorization", "Bearer " + accessToken)
-                .field(body)
+                .header("Content-Type", "application/json")
+                .body(user)
                 .asJson();
+        return response;
     }
 
+    public HttpResponse<JsonNode> updateUserImageById(String url, String id){
+        checkTokens();
+        String jsonString = new JSONObject()
+                .put("attributes", new JSONObject().put("profile_image", url))
+                .toString();
+        JsonNode data = new JsonNode(jsonString);
+        HttpResponse<JsonNode> response = Unirest
+                .put(URL + "admin/realms/" + REALM + "/users/" + id)
+                .header("Authorization", "Bearer " + accessToken)
+                .header("Content-Type", "application/json")
+                .body(data)
+                .asJson();
+        return response;
+    }
 
-    private void getNewTokens(){
+    private void getNewToken(){
         HttpResponse<JsonNode> response = Unirest.post(URL + "realms/master/protocol/openid-connect/token")
                 .header("content-type", "application/x-www-form-urlencoded")
                 .field("username", NAME)
@@ -107,7 +112,7 @@ public class KeycloakService {
         Calendar now = Calendar.getInstance();
         if (accessToken == null || expiryDateAccessToken.before(new Timestamp(now.getTimeInMillis()))){
             if (refreshToken == null || expiryDateRefreshToken.before(new Timestamp(now.getTimeInMillis()))){
-                getNewTokens();
+                getNewToken();
             }
             else{
                 getNewAccessToken();
@@ -115,3 +120,4 @@ public class KeycloakService {
         }
     }
 }
+

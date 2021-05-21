@@ -1,0 +1,17 @@
+server:
+  port: ${VIRTUAL_PORT}
+
+spring:
+  profiles:
+    active: ${PROFILE}
+  application:
+    name: account-service
+
+keycloak:
+  realm: Application
+  auth-server-url: ${KEYCLOAK_PROTOCOL}://${KEYCLOAK_URL}/auth/
+  ssl-required: external
+  resource: account-service
+  credentials.secret: ${KEYCLOAK_CLIENT_SECRET}
+  use-resource-role-mappings: true
+  bearer-only: true
