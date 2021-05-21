@@ -69,9 +69,13 @@ services:
       context: ./account-service
       dockerfile: ./Dockerfile
       args:
-        - VIRTUAL_PORT=${ACCOUNT_SERVICE_PORT}
+        - VIRTUAL_PORT=${ACCOUNT_PORT}
     environment:
+      - VIRTUAL_HOST=${ACCOUNT_URL}
+      - LETSENCRYPT_HOST=${ACCOUNT_URL}
+      - VIRTUAL_PORT=${ACCOUNT_PORT}
       - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_URL=${KEYCLOAK_URL}
       - KEYCLOAK_REALM=Application
       - KEYCLOAK_USER=Admin
