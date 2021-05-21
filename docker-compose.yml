@@ -60,8 +60,26 @@ services:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
       - KEYCLOAK_PROTOCOL=https
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
     networks:
       - application
+
+  account-service:
+    build:
+      context: ./account-service
+      dockerfile: ./Dockerfile
+      args:
+        - VIRTUAL_PORT=${ACCOUNT_SERVICE_PORT}
+    environment:
+      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
+      - KEYCLOAK_URL=${KEYCLOAK_URL}
+      - KEYCLOAK_REALM=Application
+      - KEYCLOAK_USER=Admin
+      - GCP_PROJECT_NAME=central-hangar-308715
+      - GCP_BUCKET_NAME=yacht.chat
+    networks:
+      - application
+
 
   nginx-presentation:
     build:
