@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import {connect, ConnectedComponent} from "react-redux";
 import {Redirect, Route} from "react-router-dom";
 import {RootState} from "../../store/store";
+import {IoCogOutline} from "react-icons/all";
+import {Loading} from "../Wrapper";
 
 interface Props {
     authed: boolean,
@@ -22,7 +24,7 @@ class PrivateRoute extends Component<Props> {
                     (authed) ?
                         <Component {...props} />
                         : <Redirect to={{pathname: '/login', state: {from: props.location}}}/>
-                    : <div/>
+                    : <Loading loadingText="Authenticating" icon={<IoCogOutline/>}/>
                 }
             />
         )

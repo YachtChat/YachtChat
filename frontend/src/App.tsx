@@ -48,7 +48,7 @@ export class App extends Component<Props, State> {
                                 ((this.props.loggedIn) ?
                                     <Redirect to={"/spaces"}/> :
                                     <Loading loadingText="Loading" icon={<IoCogOutline/>}/>)
-                                : <div/>}
+                                : <Loading loadingText="Authenticating" icon={<IoCogOutline/>}/>}
                         </Route>
                         <Route path="*">
                             <Redirect to={"/"}/>
