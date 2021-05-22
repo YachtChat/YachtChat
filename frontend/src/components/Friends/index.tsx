@@ -4,10 +4,11 @@ import {User} from "../../store/models";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import Wrapper from "../Wrapper";
-import {FaChevronLeft, IoLogInOutline, IoTrashOutline} from "react-icons/all";
+import {FaChevronLeft} from "react-icons/all";
 import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
 import {getFriends, requestFriends} from "../../store/userSlice";
+import UserList from "./UserList";
 
 interface Props {
     activeUser: User
@@ -34,23 +35,7 @@ export class Friends extends Component<Props> {
                     <p>Here you can see all your friends.</p>
                 </div>
 
-                <div className={"spacesWrapper"}>
-                    {this.props.friends.map((u, idx) => (
-                        <div className={"space " + ((idx > 0) ? "separator" : "")}>
-                            {u.name}
-                            <div className={"buttons"}>
-                                <button className={"iconButton"}>
-                                    <IoTrashOutline/></button>
-                                <Link to={`/spaces/${u.id}`}>
-                                    <button className={"iconButton"}>
-                                        <IoLogInOutline/>
-                                    </button>
-                                </Link>
-                            </div>
-                        </div>
-                    ))}
-
-                </div>
+                <UserList users={this.props.friends} type={"friends"}/>
             </Wrapper>
         )
     }
