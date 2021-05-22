@@ -1,47 +1,42 @@
 package com.alphabibber.spacesservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+//    @GeneratedValue(generator = "system-uuid")
+//    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @Column(name = "id")
     private String id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToMany(
-            // adding "mappedBy" here makes the Space (not the User!) the owner of the relation between hosts
-            // and spaces. This means that the cascading operations by Space to the association will be propagated
-            // towards User and not the other way around, e.g. when persisting to the DB.
-            // Changes made to the User entry directly will still be propagated to the Space and their relationship,
-            // e.g. when a user is deleted the space will adjust its hosts/participants list as well (because of
-            // the merge cascade type).
-            mappedBy = "hosts",
+    @OneToMany(
+            mappedBy = "host",
             cascade = {
-                    CascadeType.MERGE,
-                    CascadeType.PERSIST
+                    CascadeType.REMOVE
             }
     )
-    private List<Space> hostSpaces;
+    @JsonIgnore
+    private Set<SpaceHost> hostSpaces;
 
-    @ManyToMany(
-            mappedBy = "participants",
+    @OneToMany(
+            mappedBy = "member",
             cascade = {
-                    CascadeType.MERGE,
-                    CascadeType.PERSIST
+                    CascadeType.REMOVE
             }
     )
-    private List<Space> participantSpaces;
+    @JsonIgnore
+    private Set<SpaceMember> memberSpaces;
 
     protected User() {
 
@@ -49,8 +44,15 @@ public class User {
 
     public User(String name) {
         this.name = name;
-        this.hostSpaces = new ArrayList<>();
-        this.participantSpaces = new ArrayList<>();
+        this.hostSpaces = new HashSet<>();
+        this.memberSpaces = new HashSet<>();
+    }
+
+    public User(String id, String name) {
+        this.id = id;
+        this.name = name;
+        this.hostSpaces = new HashSet<>();
+        this.memberSpaces = new HashSet<>();
     }
 
     public String getId() {
@@ -65,15 +67,27 @@ public class User {
         this.name = name;
     }
 
-    public void addParticipantSpace(Space space) {
-        this.participantSpaces.add(space);
+    public void addHostSpace(SpaceHost spaceHost) {
+        hostSpaces.add(spaceHost);
     }
 
-    public void removeParticipantSpace(Space space) {
-        this.participantSpaces.remove(space);
+    public void removeHostSpace(SpaceHost spaceHost) {
+        hostSpaces.remove(spaceHost);
     }
 
-    public void addHostSpace(Space space) {
-        this.hostSpaces.add(space);
+    public void addMemberSpace(SpaceMember spaceMember) {
+        memberSpaces.add(spaceMember);
+    }
+
+    public void removeMemberSpace(SpaceMember spaceMember) {
+        memberSpaces.remove(spaceMember);
+    }
+
+    public Set<SpaceHost> getHostSpaces() {
+        return hostSpaces;
+    }
+
+    public Set<SpaceMember> getMemberSpaces() {
+        return memberSpaces;
     }
 }

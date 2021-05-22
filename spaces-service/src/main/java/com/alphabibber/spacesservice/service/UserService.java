@@ -30,7 +30,7 @@ public class UserService {
     }
 
     public void deleteUserById(String id) {
-        User userToDelete = userRepository.findById(id).orElse(null);
+        var userToDelete = userRepository.findById(id).orElse(null);
         assert userToDelete != null;
         userRepository.delete(userToDelete);
     }
