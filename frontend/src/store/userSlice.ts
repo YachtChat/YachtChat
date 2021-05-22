@@ -169,10 +169,13 @@ export const submitRadius = (radius: number): AppThunk => (dispatch, getState) =
     dispatch(handlePositionUpdate({id: getUserID(getState()), position}))
 };
 
-
 export const submitNameChange = (name: string): AppThunk => dispatch => {
     dispatch(setName(name))
 };
+
+export const requestFriends = (): AppThunk => dispatch => {
+    // request and commit friends here
+}
 
 export const getUser = (state: RootState) => state.userState.activeUser;
 export const getUserID = (state: RootState) => state.userState.activeUser.id;
@@ -183,6 +186,9 @@ export const getUserById = (state: RootState, id: string) => {
 }
 export const getUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
     id => state.userState.spaceUsers[id]
+);
+export const getFriends = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
+    id => state.userState.friends[id]
 );
 
 export default userSlice.reducer;

@@ -1,0 +1,53 @@
+@import "src/variables.module";
+
+.spaces {
+  width: 50%;
+  height: 50%;
+  min-width: 400px;
+  min-height: 600px;
+  overflow: hidden;
+  text-align: left;
+
+  .spacesWrapper {
+    display: block;
+    padding: 2rem;
+
+    h2 {
+      position: relative;
+      font-size: 1.5rem;
+      line-height: 2rem;
+      padding: 0 0 0 1rem;
+      margin: 0;
+    }
+
+    .buttons {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      justify-items: center;
+      width: auto;
+      display: flex;
+      flex-direction: row;
+      padding-right: 1rem;
+    }
+
+    .separator {
+      border-top: solid gray 1px;
+    }
+
+    .space {
+      position: relative;
+      padding: 1.5rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: $border_radius;
+      margin-top: 0.5rem;
+
+      &:hover {
+        background: $background_2_light;
+      }
+    }
+  }
+}
