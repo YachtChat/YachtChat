@@ -1,11 +1,11 @@
 package com.alphabibber.spacesservice.controller;
 
 import com.alphabibber.spacesservice.model.Space;
+import com.alphabibber.spacesservice.model.SpaceMember;
 import com.alphabibber.spacesservice.model.User;
-import com.alphabibber.spacesservice.repository.SpaceRepository;
+import com.alphabibber.spacesservice.repository.SpaceMemberRepository;
 import com.alphabibber.spacesservice.repository.UserRepository;
 import com.alphabibber.spacesservice.service.SpaceService;
-import com.alphabibber.spacesservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.bind.annotation.*;
@@ -14,91 +14,80 @@ import java.util.*;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(path="/spaces")
+@RequestMapping(path="/api/spaces")
 public class SpaceController extends SpringBootServletInitializer {
 
-    @Autowired
-    private SpaceService spaceService;
+    private final SpaceService spaceService;
+
+    private final UserRepository userRepository;
+    private final SpaceMemberRepository spaceMemberRepository;
 
     @Autowired
-    private SpaceRepository spaceRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
+    public SpaceController(
+            SpaceService spaceService,
+            UserRepository userRepository,
+            SpaceMemberRepository spaceMemberRepository
+    ) {
+        this.spaceService = spaceService;
+        this.userRepository = userRepository;
+        this.spaceMemberRepository = spaceMemberRepository;
+    }
 
     @GetMapping("/")
-    public List<Space> getAllSpaces() {
-
+    public Set<Space> getAllSpaces() {
         return spaceService.getSpaces();
     }
 
-    @GetMapping("/users/")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    @PostMapping("/createSpace")
-    public Space createSpace(@RequestParam String name, @RequestParam(required = false) String ownerId) {
-        if (ownerId != null) {
-            User user = userService.getUserById(ownerId);
-            return spaceService.createSpace(new Space(name));
-        }
+    @PostMapping("/")
+    public Space createSpace(@RequestParam String name) {
         return spaceService.createSpace(new Space(name));
     }
 
-    @DeleteMapping("/{spaceId}/deleteSpace")
+    @DeleteMapping("/{spaceId}/")
     public void deleteSpace(@PathVariable String spaceId) {
         spaceService.deleteSpaceById(spaceId);
     }
 
-    @PostMapping("/users/createUser")
-    public User createUser(@RequestParam String name) {
-        return userService.createUser(new User(name));
-    }
-
-    @DeleteMapping("/users/{userId}/deleteUser")
-    public void deleteUser(@PathVariable String userId) {
-        userService.deleteUserById(userId);
-    }
-
-    @GetMapping(path = "/{spaceId}/getUsers")
-    public List<User> getSpaceUsers(@PathVariable String spaceId) {
-        Space space = spaceService.getSpaceById(spaceId);
+    @GetMapping(path = "/{spaceId}/allUsers/")
+    public Set<User> getSpaceUsers(@PathVariable String spaceId) {
+        var space = spaceService.getSpaceById(spaceId);
         return space.getAllUsers();
     }
 
-    @GetMapping(path = "/{spaceId}/canUserJoin")
-    public HashMap<String, Boolean> canUserJoinSpace(@PathVariable String spaceId, @RequestParam String userId) {
-        Space space = spaceService.getSpaceById(spaceId);
-//        Boolean boolResponse = space.canUserSeeSpace(userId);
-        Boolean boolResponse = Boolean.TRUE;
+    @GetMapping(path = "/{spaceId}/members/")
+    public Set<User> getSpaceMembers(@PathVariable String spaceId) {
+        var space = spaceService.getSpaceById(spaceId);
 
-        HashMap<String, Boolean> map = new HashMap<>();
-        map.put("valid", boolResponse);
+        var members = new HashSet<User>();
+        space.getSpaceMembers().forEach(spaceMember -> members.add(spaceMember.getMember()));
 
-        return map;
+        return members;
     }
 
-    @PostMapping(path = "/{spaceId}/addParticipant")
-    public User addParticipant(@PathVariable String spaceId, @RequestParam String userId) {
-        User foundUser = userService.getUserById(userId);
-        Space space = spaceService.getSpaceById(spaceId);
+    @GetMapping(path = "/{spaceId}/hosts/")
+    public Set<User> getSpaceHosts(@PathVariable String spaceId) {
+        var space = spaceService.getSpaceById(spaceId);
 
-        space.addParticipant(foundUser);
-//        foundUser.setHostSpaces(Collections.singletonList(space));
+        var hosts = new HashSet<User>();
+        space.getSpaceHosts().forEach(spaceHost -> hosts.add(spaceHost.getHost()));
 
-        spaceRepository.save(space);
-        userRepository.save(foundUser);
-
-        return foundUser;
+        return hosts;
     }
 
-    @DeleteMapping(path = "/{spaceId}/removeParticipant")
-    public void removeParticipant(@PathVariable String spaceId, @RequestParam String userId) {
-        userService.deleteUserById(userId);
+    @PostMapping(path = "/{spaceId}/members/")
+    public User addSpaceMember(@PathVariable String spaceId, @RequestBody User member) {
+        var space = spaceService.getSpaceById(spaceId);
+
+        var spaceMember = new SpaceMember(member, space);
+
+        space.addSpaceMember(spaceMember);
+        member.addMemberSpace(spaceMember);
+
+        spaceService.saveSpace(space);
+        member = userRepository.save(member);
+        spaceMemberRepository.save(spaceMember);
+
+        return member;
     }
 
 }
