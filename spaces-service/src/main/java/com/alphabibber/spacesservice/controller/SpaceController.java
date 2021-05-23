@@ -1,10 +1,7 @@
 package com.alphabibber.spacesservice.controller;
 
 import com.alphabibber.spacesservice.model.Space;
-import com.alphabibber.spacesservice.model.SpaceMember;
 import com.alphabibber.spacesservice.model.User;
-import com.alphabibber.spacesservice.repository.SpaceMemberRepository;
-import com.alphabibber.spacesservice.repository.UserRepository;
 import com.alphabibber.spacesservice.service.SpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -19,18 +16,11 @@ public class SpaceController extends SpringBootServletInitializer {
 
     private final SpaceService spaceService;
 
-    private final UserRepository userRepository;
-    private final SpaceMemberRepository spaceMemberRepository;
-
     @Autowired
     public SpaceController(
-            SpaceService spaceService,
-            UserRepository userRepository,
-            SpaceMemberRepository spaceMemberRepository
+            SpaceService spaceService
     ) {
         this.spaceService = spaceService;
-        this.userRepository = userRepository;
-        this.spaceMemberRepository = spaceMemberRepository;
     }
 
     @GetMapping("/")
@@ -64,6 +54,16 @@ public class SpaceController extends SpringBootServletInitializer {
         return members;
     }
 
+    @PostMapping(path = "/{spaceId}/members/")
+    public Space addSpaceMember(@PathVariable String spaceId, @RequestParam String memberId) {
+        return spaceService.addSpaceMember(spaceId, memberId);
+    }
+
+    @DeleteMapping(path = "/{spaceId}/members/")
+    public Space removeSpaceMember(@PathVariable String spaceId, @RequestParam String memberId) {
+        return spaceService.removeSpaceMember(spaceId, memberId);
+    }
+
     @GetMapping(path = "/{spaceId}/hosts/")
     public Set<User> getSpaceHosts(@PathVariable String spaceId) {
         var space = spaceService.getSpaceById(spaceId);
@@ -74,20 +74,14 @@ public class SpaceController extends SpringBootServletInitializer {
         return hosts;
     }
 
-    @PostMapping(path = "/{spaceId}/members/")
-    public User addSpaceMember(@PathVariable String spaceId, @RequestBody User member) {
-        var space = spaceService.getSpaceById(spaceId);
+    @PostMapping(path = "/{spaceId}/hosts/")
+    public Space addSpaceHost(@PathVariable String spaceId, @RequestParam String hostId) {
+        return spaceService.addSpaceHost(spaceId, hostId);
+    }
 
-        var spaceMember = new SpaceMember(member, space);
-
-        space.addSpaceMember(spaceMember);
-        member.addMemberSpace(spaceMember);
-
-        spaceService.saveSpace(space);
-        member = userRepository.save(member);
-        spaceMemberRepository.save(spaceMember);
-
-        return member;
+    @DeleteMapping(path = "/{spaceId}/hosts/")
+    public Space removeSpaceHost(@PathVariable String spaceId, @RequestParam String hostId) {
+        return spaceService.removeSpaceHost(spaceId, hostId);
     }
 
 }
