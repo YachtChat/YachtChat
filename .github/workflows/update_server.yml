@@ -119,6 +119,22 @@ jobs:
         env:
           TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
+      - name: build account-servie when changed
+        if: contains(env.TEST_STATEMENT, 'account-service/')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo mvn clean -f ./account-service/pom.xml package -DskipTests
+            sudo docker-compose build account-service
+            sudo docker-compose down account-service
+            sudo KEYCLOAK_PASSWORD=${{ KEYCLOAK_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE}} docker-compose up --no-deps -d account-service
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
+
       - name: delete the old images
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
