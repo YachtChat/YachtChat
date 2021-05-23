@@ -2,13 +2,12 @@ package com.alphabibber.spacesservice.service;
 
 import com.alphabibber.spacesservice.model.Space;
 import com.alphabibber.spacesservice.model.SpaceHost;
-import com.alphabibber.spacesservice.model.User;
+import com.alphabibber.spacesservice.model.SpaceMember;
 import com.alphabibber.spacesservice.repository.SpaceHostRepository;
+import com.alphabibber.spacesservice.repository.SpaceMemberRepository;
 import com.alphabibber.spacesservice.repository.SpaceRepository;
 import com.alphabibber.spacesservice.repository.UserRepository;
-import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,51 +26,23 @@ public class SpaceService {
     private final SpaceRepository spaceRepository;
     private final UserRepository userRepository;
     private final SpaceHostRepository spaceHostRepository;
+    private final SpaceMemberRepository spaceMemberRepository;
+    private final UserService userService;
 
     @Autowired
     public SpaceService(
             SpaceRepository spaceRepository,
             UserRepository userRepository,
-            SpaceHostRepository spaceHostRepository
+            SpaceHostRepository spaceHostRepository,
+            SpaceMemberRepository spaceMemberRepository,
+            UserService userService
     ) {
         this.spaceRepository = spaceRepository;
         this.userRepository = userRepository;
         this.spaceHostRepository = spaceHostRepository;
+        this.userService = userService;
+        this.spaceMemberRepository = spaceMemberRepository;
     }
-
-    public Space createSpace(Space space) {
-        // assumption: Space does not contain spaceHosts or spaceMembers after init
-        var user = getUserIfExistsElseCreate();
-
-        var spaceHost = new SpaceHost(user, space);
-        user.addHostSpace(spaceHost);
-        space.addSpaceHost(spaceHost);
-
-        // order matters here!
-        userRepository.save(user);
-        space = spaceRepository.save(space);
-        spaceHostRepository.save(spaceHost);
-
-        return space;
-    }
-
-    public void saveSpace(Space space) {
-        spaceRepository.save(space);
-    }
-
-    private User getUserIfExistsElseCreate() {
-        Principal principal = SecurityContextHolder.getContext().getAuthentication();
-        AccessToken token = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal())
-                .getKeycloakSecurityContext().getToken();
-
-        Optional<User> userResult = userRepository.findById(token.getSubject());
-        if (userResult.isPresent()) {
-            return userResult.get();
-        }
-        var newUser = new User(token.getSubject(), token.getGivenName());
-        return userRepository.save(newUser);
-    }
-
 
     public Set<Space> getSpaces() {
         Principal principal = SecurityContextHolder.getContext().getAuthentication();
@@ -79,7 +50,7 @@ public class SpaceService {
         boolean isNotAnonymousUser = ((KeycloakAuthenticationToken) principal).getAuthorities().stream().noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ANONYMOUS"));
 
         if (isNotAnonymousUser) {
-            var user = this.getUserIfExistsElseCreate();
+            var user = userService.getUserIfExistsElseCreate();
 
             var result = new HashSet<Space>();
 
@@ -97,6 +68,26 @@ public class SpaceService {
         return spaceRepository.findAllByPublicAccessIsTrue();
     }
 
+    public Space createSpace(Space space) {
+        // assumption: Space does not contain spaceHosts or spaceMembers after init
+        var user = userService.getUserIfExistsElseCreate();
+
+        var spaceHost = new SpaceHost(user, space);
+        user.addHostSpace(spaceHost);
+        space.addSpaceHost(spaceHost);
+
+        // order matters here!
+        userRepository.save(user);
+        space = spaceRepository.save(space);
+        spaceHostRepository.save(spaceHost);
+
+        return space;
+    }
+
+    public void saveSpace(Space space) {
+        spaceRepository.save(space);
+    }
+
     public Space getSpaceById(String id) {
         Optional<Space> spaceResult = spaceRepository.findById(id);
 
@@ -104,7 +95,7 @@ public class SpaceService {
                 throw new EntityNotFoundException("Space not Found");
 
         var space = spaceResult.get();
-        var user = getUserIfExistsElseCreate();
+        var user = userService.getUserIfExistsElseCreate();
 
         boolean userIsUserInSpace = space.getAllUsers().contains(user);
 
@@ -116,7 +107,7 @@ public class SpaceService {
 
     public void deleteSpaceById(String id) throws AccessDeniedException {
         var spaceToDelete = spaceRepository.getOne(id);
-        var user = getUserIfExistsElseCreate();
+        var user = userService.getUserIfExistsElseCreate();
 
         boolean userIsNotHostInSpace = Collections.disjoint(spaceToDelete.getSpaceHosts(), user.getHostSpaces());
 
@@ -125,4 +116,107 @@ public class SpaceService {
 
         spaceRepository.delete(spaceToDelete);
     }
+
+    public Space addSpaceMember(String spaceId, String memberId) {
+        var space = this.getSpaceById(spaceId);
+        var invitor = userService.getUserIfExistsElseCreate();
+
+        var member = userService.getUserById(memberId);
+
+        boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), invitor.getHostSpaces());
+
+        if (userIsNotHostInSpace)
+            throw new AccessDeniedException("Not host of space");
+
+        boolean inviteeNotYetMember = Collections.disjoint(space.getSpaceMembers(), member.getMemberSpaces());
+
+        if (inviteeNotYetMember) {
+            var spaceMember = new SpaceMember(member, space);
+            member.addMemberSpace(spaceMember);
+            space.addSpaceMember(spaceMember);
+
+            // order matters here!
+            userRepository.save(member);
+            space = spaceRepository.save(space);
+            spaceMemberRepository.save(spaceMember);
+
+            return space;
+        }
+
+        return space;
+    }
+
+    public Space removeSpaceMember(String spaceId, String memberId) {
+        var space = this.getSpaceById(spaceId);
+        var remover = userService.getUserIfExistsElseCreate();
+        var member = userService.getUserById(memberId);
+
+        boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), remover.getHostSpaces());
+
+        if (userIsNotHostInSpace)
+            throw new AccessDeniedException("Not host of space");
+
+        var spaceMember = spaceMemberRepository.findSpaceMemberBySpaceIsAndMemberIs(space, member);
+
+        member.removeMemberSpace(spaceMember);
+        space.removeSpaceMember(spaceMember);
+
+        userRepository.save(member);
+        space = spaceRepository.save(space);
+        spaceMemberRepository.delete(spaceMember);
+
+        return space;
+    }
+
+    public Space addSpaceHost(String spaceId, String hostId) {
+        var space = this.getSpaceById(spaceId);
+        var invitor = userService.getUserIfExistsElseCreate();
+
+        var host = userService.getUserById(hostId);
+
+        boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), invitor.getHostSpaces());
+
+        if (userIsNotHostInSpace)
+            throw new AccessDeniedException("Not host of space");
+
+        boolean inviteeNotYetMember = Collections.disjoint(space.getSpaceHosts(), host.getHostSpaces());
+
+        if (inviteeNotYetMember) {
+            var spaceHost = new SpaceHost(host, space);
+            host.addHostSpace(spaceHost);
+            space.addSpaceHost(spaceHost);
+
+            // order matters here!
+            userRepository.save(host);
+            space = spaceRepository.save(space);
+            spaceHostRepository.save(spaceHost);
+
+            return space;
+        }
+
+        return space;
+    }
+
+    public Space removeSpaceHost(String spaceId, String hostId) {
+        var space = this.getSpaceById(spaceId);
+        var remover = userService.getUserIfExistsElseCreate();
+        var host = userService.getUserById(hostId);
+
+        boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), remover.getHostSpaces());
+
+        if (userIsNotHostInSpace)
+            throw new AccessDeniedException("Not host of space");
+
+        var spaceHost = spaceHostRepository.findSpaceHostBySpaceIsAndHostIs(space, host);
+
+        host.removeHostSpace(spaceHost);
+        space.removeSpaceHost(spaceHost);
+
+        userRepository.save(host);
+        space = spaceRepository.save(space);
+        spaceHostRepository.delete(spaceHost);
+
+        return space;
+    }
+
 }
