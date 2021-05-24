@@ -62,7 +62,7 @@ public class Space {
         return id;
     }
 
-    public Boolean getPublicAccess() {
+    public Boolean isPublic() {
         return publicAccess;
     }
 

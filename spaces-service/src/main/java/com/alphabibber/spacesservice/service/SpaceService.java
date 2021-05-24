@@ -125,8 +125,11 @@ public class SpaceService {
 
         boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), invitor.getHostSpaces());
 
-        if (userIsNotHostInSpace)
+        if (userIsNotHostInSpace && !space.isPublic())
             throw new AccessDeniedException("Not host of space");
+
+        if (space.isPublic() && !memberId.equals(invitor.getId()))
+            throw new AccessDeniedException("You can only add yourself to public spaces");
 
         boolean inviteeNotYetMember = Collections.disjoint(space.getSpaceMembers(), member.getMemberSpaces());
 
@@ -153,8 +156,11 @@ public class SpaceService {
 
         boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), remover.getHostSpaces());
 
-        if (userIsNotHostInSpace)
+        if (userIsNotHostInSpace && !space.isPublic())
             throw new AccessDeniedException("Not host of space");
+
+        if (space.isPublic() && !memberId.equals(remover.getId()))
+            throw new AccessDeniedException("You can only remove yourself from public spaces");
 
         var spaceMember = spaceMemberRepository.findSpaceMemberBySpaceIsAndMemberIs(space, member);
 
