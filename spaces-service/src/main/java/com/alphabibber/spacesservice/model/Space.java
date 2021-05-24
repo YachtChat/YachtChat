@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "spaces")
@@ -17,16 +17,29 @@ public class Space {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner")
-    private User owner;
+    @Column(name = "public_access", nullable = false)
+    private Boolean publicAccess;
 
-    @OneToMany(mappedBy = "space", cascade = CascadeType.REMOVE)
-    @JsonIgnore // this annotation is needed to prevent infinite recursion when retrieving all spaces/users
-    private List<User> users;
+    @OneToMany(
+            mappedBy = "space",
+            cascade = {
+                    CascadeType.REMOVE
+            }
+    )
+    @JsonIgnore
+    private Set<SpaceHost> spaceHosts;
+
+    @OneToMany(
+            mappedBy = "space",
+            cascade = {
+                    CascadeType.REMOVE
+            }
+    )
+    @JsonIgnore
+    private Set<SpaceMember> spaceMembers;
 
     protected Space() {
 
@@ -34,17 +47,27 @@ public class Space {
 
     public Space(String name) {
         this.name = name;
-        this.setUsers(new ArrayList<>());
+        this.spaceHosts = new HashSet<>();
+        this.spaceMembers = new HashSet<>();
+        this.publicAccess = false;
     }
 
-    public Space(String name, User owner) {
+    public Space(String name, Boolean publicAccess) {
         this.name = name;
-        this.owner = owner;
-        this.setUsers(new ArrayList<>());
+        this.spaceHosts = new HashSet<>();
+        this.publicAccess = publicAccess;
     }
 
     public String getId() {
         return id;
+    }
+
+    public Boolean isPublic() {
+        return publicAccess;
+    }
+
+    public void setPublicAccess(Boolean publicAccess) {
+        this.publicAccess = publicAccess;
     }
 
     public String getName() {
@@ -55,31 +78,45 @@ public class Space {
         this.name = name;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public Set<SpaceHost> getSpaceHosts() {
+        return spaceHosts;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setSpaceHosts(Set<SpaceHost> spaceHosts) {
+        this.spaceHosts = spaceHosts;
     }
 
-    public void addUser(User user) {
-        this.users.add(user);
+    public void addSpaceHost(SpaceHost spaceHost) {
+        spaceHosts.add(spaceHost);
     }
 
-    public void removeUser(User user) {
-        this.users.remove(user);
+    public void removeSpaceHost(SpaceHost spaceHost) {
+        spaceHosts.remove(spaceHost);
     }
 
-    public User getOwner() {
-        return owner;
+    public Set<SpaceMember> getSpaceMembers() {
+        return spaceMembers;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setSpaceMembers(Set<SpaceMember> spaceMembers) {
+        this.spaceMembers = spaceMembers;
     }
 
-    public Boolean canUserSeeSpace(String userId) {
-        return (this.getOwner() == null || this.getOwner().getId().equals(userId));
+    public void addSpaceMember(SpaceMember spaceMember) {
+        spaceMembers.add(spaceMember);
+    }
+
+    public void removeSpaceMember(SpaceMember spaceMember) {
+        spaceMembers.remove(spaceMember);
+    }
+
+    @JsonIgnore
+    public Set<User> getAllUsers() {
+        Set<User> result = new HashSet<>();
+
+        spaceMembers.forEach(spaceMember -> result.add(spaceMember.member));
+        spaceHosts.forEach(spaceHost -> result.add(spaceHost.host));
+
+        return result;
     }
 }
