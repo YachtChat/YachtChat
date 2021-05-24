@@ -11,7 +11,7 @@ import java.util.*;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(path="/api/spaces")
+@RequestMapping(path="/api/v1/spaces")
 public class SpaceController extends SpringBootServletInitializer {
 
     private final SpaceService spaceService;

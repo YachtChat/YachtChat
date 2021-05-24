@@ -30,7 +30,7 @@ export const requestSpaces = (): AppThunk => (dispatch, getState) => {
         return;
     }
     getToken(getState()).then(token =>
-        axios.get("https://" + SPACES_URL + "/spaces/", {
+        axios.get("https://" + SPACES_URL + "/api/v1/spaces/", {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
