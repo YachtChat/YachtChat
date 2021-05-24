@@ -128,7 +128,7 @@ jobs:
             sudo mvn clean -f ./account-service/pom.xml package -DskipTests
             sudo docker-compose build account-service
             sudo docker-compose down account-service
-            sudo KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE}} docker-compose up --no-deps -d account-service
+            sudo KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE=${{ secrets.KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE}} docker-compose up --no-deps -d account-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
