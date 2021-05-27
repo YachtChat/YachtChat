@@ -28,7 +28,7 @@ public class LoginHandler {
     public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session) {
 
         // Check if the user is allowed to enter the room
-        String requestUrl = "https://" + URL + "/api/v1/spaces/" + roomId + "/canUserJoin?userId=" + userId;
+        String requestUrl = "https://" + URL + "/api/v1/spaces/" + roomId + "/canUserJoin/";
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(requestUrl))
