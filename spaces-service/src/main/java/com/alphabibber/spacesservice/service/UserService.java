@@ -27,7 +27,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User getUserIfExistsElseCreate() {
+    public User getContextUserIfExistsElseCreate() {
         Principal principal = SecurityContextHolder.getContext().getAuthentication();
         AccessToken token = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal())
                 .getKeycloakSecurityContext().getToken();
@@ -63,7 +63,7 @@ public class UserService {
             return userRepository.findAll();
 
         var selfList = new ArrayList<User>();
-        selfList.add(getUserIfExistsElseCreate());
+        selfList.add(getContextUserIfExistsElseCreate());
         return selfList;
     }
 

@@ -50,7 +50,7 @@ public class SpaceService {
         boolean isNotAnonymousUser = ((KeycloakAuthenticationToken) principal).getAuthorities().stream().noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ANONYMOUS"));
 
         if (isNotAnonymousUser) {
-            var user = userService.getUserIfExistsElseCreate();
+            var user = userService.getContextUserIfExistsElseCreate();
 
             var result = new HashSet<Space>();
 
@@ -70,7 +70,7 @@ public class SpaceService {
 
     public Space createSpace(Space space) {
         // assumption: Space does not contain spaceHosts or spaceMembers after init
-        var user = userService.getUserIfExistsElseCreate();
+        var user = userService.getContextUserIfExistsElseCreate();
 
         var spaceHost = new SpaceHost(user, space);
         user.addHostSpace(spaceHost);
@@ -95,7 +95,7 @@ public class SpaceService {
                 throw new EntityNotFoundException("Space not Found");
 
         var space = spaceResult.get();
-        var user = userService.getUserIfExistsElseCreate();
+        var user = userService.getContextUserIfExistsElseCreate();
 
         boolean userIsUserInSpace = space.getAllUsers().contains(user);
 
@@ -107,7 +107,7 @@ public class SpaceService {
 
     public void deleteSpaceById(String id) throws AccessDeniedException {
         var spaceToDelete = spaceRepository.getOne(id);
-        var user = userService.getUserIfExistsElseCreate();
+        var user = userService.getContextUserIfExistsElseCreate();
 
         boolean userIsNotHostInSpace = Collections.disjoint(spaceToDelete.getSpaceHosts(), user.getHostSpaces());
 
@@ -119,7 +119,7 @@ public class SpaceService {
 
     public Space addSpaceMember(String spaceId, String memberId) {
         var space = this.getSpaceById(spaceId);
-        var invitor = userService.getUserIfExistsElseCreate();
+        var invitor = userService.getContextUserIfExistsElseCreate();
 
         var member = userService.getUserById(memberId);
 
@@ -149,9 +149,13 @@ public class SpaceService {
         return space;
     }
 
+    public Space addSpaceMemberWithInvitorId(String spaceId, String inviteeId, String invitorId) {
+        return null;
+    }
+
     public Space removeSpaceMember(String spaceId, String memberId) {
         var space = this.getSpaceById(spaceId);
-        var remover = userService.getUserIfExistsElseCreate();
+        var remover = userService.getContextUserIfExistsElseCreate();
         var member = userService.getUserById(memberId);
 
         boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), remover.getHostSpaces());
@@ -176,7 +180,7 @@ public class SpaceService {
 
     public Space addSpaceHost(String spaceId, String hostId) {
         var space = this.getSpaceById(spaceId);
-        var invitor = userService.getUserIfExistsElseCreate();
+        var invitor = userService.getContextUserIfExistsElseCreate();
 
         var host = userService.getUserById(hostId);
 
@@ -205,7 +209,7 @@ public class SpaceService {
 
     public Space removeSpaceHost(String spaceId, String hostId) {
         var space = this.getSpaceById(spaceId);
-        var remover = userService.getUserIfExistsElseCreate();
+        var remover = userService.getContextUserIfExistsElseCreate();
         var host = userService.getUserById(hostId);
 
         boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), remover.getHostSpaces());
