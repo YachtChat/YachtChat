@@ -56,7 +56,7 @@ public class SpaceController extends SpringBootServletInitializer {
 
     @PostMapping(path = "/{spaceId}/members/")
     public Space addSpaceMember(@PathVariable String spaceId, @RequestParam String memberId) {
-        return spaceService.addSpaceMember(spaceId, memberId);
+        return spaceService.addSpaceMemberWithContextUser(spaceId, memberId);
     }
 
     @DeleteMapping(path = "/{spaceId}/members/")

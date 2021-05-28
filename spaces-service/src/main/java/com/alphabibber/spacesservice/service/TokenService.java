@@ -1,5 +1,6 @@
 package com.alphabibber.spacesservice.service;
 
+import com.alphabibber.spacesservice.model.Space;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -11,7 +12,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Service
@@ -63,7 +63,7 @@ public class TokenService {
                 .compact();
     }
 
-    public void parseInviteToken(String jwtString, Function<Claims, String> callback) {
+    public void parseInviteToken(String jwtString, Function<Claims, Space> callback) {
         var hmacKey = getSignature();
 
         // If the JWT Token is expired (exp claim value is less than current system time), the
