@@ -225,4 +225,14 @@ public class SpaceService {
         return space;
     }
 
+    public Boolean canCurrentUserJoinSpace(String spaceId) {
+        var space = this.getSpaceById(spaceId);
+
+        if (space.isPublic())
+            return true;
+
+        var currentUser = userService.getUserIfExistsElseCreate();
+        return space.getAllUsers().contains(currentUser);
+    }
+
 }

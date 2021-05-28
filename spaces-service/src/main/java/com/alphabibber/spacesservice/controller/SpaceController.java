@@ -84,4 +84,14 @@ public class SpaceController extends SpringBootServletInitializer {
         return spaceService.removeSpaceHost(spaceId, hostId);
     }
 
+    @GetMapping(path = "/{spaceId}/canUserJoin/}")
+    public HashMap<String, Boolean> canUserJoin(@PathVariable String spaceId) {
+        var boolResponse = spaceService.canCurrentUserJoinSpace(spaceId);
+
+        HashMap<String, Boolean> map = new HashMap<>();
+        map.put("valid", boolResponse);
+
+        return map;
+    }
+
 }
