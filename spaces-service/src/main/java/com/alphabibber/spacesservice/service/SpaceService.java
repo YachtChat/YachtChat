@@ -99,7 +99,7 @@ public class SpaceService {
 
         boolean userIsUserInSpace = space.getAllUsers().contains(user);
 
-        if (!userIsUserInSpace)
+        if (!userIsUserInSpace && !space.isPublic())
             throw new AccessDeniedException("Not user in space");
 
         return space;
