@@ -18,7 +18,7 @@ public class KeycloakService {
     private String refreshToken = null;
     private Timestamp expiryDateAccessToken = null;
     private Timestamp expiryDateRefreshToken = null;
-    private String URL = "https://" + System.getenv("KEYCLOAK_URL") + "/auth/";
+    private String URL = System.getenv("KEYCLOAK_PROTOCOL") + "://" + System.getenv("KEYCLOAK_URL") + "/auth/";
     private String REALM = System.getenv("KEYCLOAK_REALM");
     private String PASSWORD = System.getenv("KEYCLOAK_PASSWORD");
     private String NAME = System.getenv("KEYCLOAK_USER");
