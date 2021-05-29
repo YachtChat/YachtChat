@@ -82,7 +82,12 @@ services:
       - KEYCLOAK_USER=Admin
       - GCP_PROJECT_NAME=yacht-chat
       - GCP_BUCKET_NAME=yacht-chat
-      - GOOGLE_APPLICATION_CREDENTIALS=/home/git_environment/secret/central-hangar-308715-7507fedf0ff4.json
+      - GOOGLE_APPLICATION_CREDENTIALS=tmp/keys/yacht-chat-c542c660cc1b.json
+#    ports:
+#      - 8082:8082
+    volumes:
+#      - /Users/marc/Development/yacht-chat-9b0254d39af7.json:/tmp/keys/yacht-chat-9b0254d39af7.json
+      - tmp/keys/yacht-chat-c542c660cc1b.json:/tmp/keys/yacht-chat-c542c660cc1b.json
     networks:
       - application
 
