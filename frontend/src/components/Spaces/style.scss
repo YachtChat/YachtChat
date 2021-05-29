@@ -8,6 +8,11 @@
   overflow: hidden;
   text-align: left;
 
+  &.create {
+    height: auto;
+    min-height: auto;
+  }
+
   .spacesWrapper {
     display: block;
     padding: 2rem;
@@ -34,19 +39,20 @@
       padding-right: 1rem;
     }
 
-    .separator {
-      border-top: solid gray 1px;
-    }
-
     .space {
       position: relative;
       padding: 1.5rem 1rem;
-      margin-bottom: 0.5rem;
       border-radius: $border_radius;
       margin-top: 0.5rem;
 
       &:hover {
         background: $background_2_light;
+
+        @media (prefers-color-scheme: dark) {
+          & {
+            background: $background_2_dark;
+          }
+        }
       }
     }
   }

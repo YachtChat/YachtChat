@@ -44,7 +44,7 @@ export class App extends Component<Props, State> {
                         <PrivateRoute path='/spaces/:spaceID' exact={false} component={Playground}/>
                         <PrivateRoute exact path='/spaces' component={Spaces}/>
                         <PrivateRoute exact path='/settings' component={Settings}/>
-                        <PrivateRoute exact path='/create-spaces' component={CreateSpace}/>
+                        <PrivateRoute exact path='/create-space' component={CreateSpace}/>
                         <Route path='/'>
                             {(this.props.authFlowReady) ?
                                 ((this.props.loggedIn) ?

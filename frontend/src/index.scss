@@ -63,6 +63,7 @@ input, select {
   outline: none;
   background: transparent;
   padding: 1rem;
+  margin-bottom: 1rem;
   background: $focus_light;
   border-radius: $border_radius;
 
@@ -109,7 +110,7 @@ label, .required {
 .headlineBox {
   margin: 0;
   width: 100%;
-  padding: 4rem 2rem 4rem 2rem;
+  padding: 4rem 2rem 2rem 2rem;
   background: $accent_light;
   box-sizing: border-box;
   color: $headline_light;
@@ -120,6 +121,10 @@ label, .required {
       background: $accent_dark;
       color: $headline_dark;
     }
+  }
+
+  h1 {
+    margin-top: 0;
   }
 
   .buttons {

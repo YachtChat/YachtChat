@@ -24,6 +24,7 @@ export interface PlaygroundOffset {
 export interface Space {
     name: string
     id: string
+    public: boolean
 }
 
 export enum MediaType {

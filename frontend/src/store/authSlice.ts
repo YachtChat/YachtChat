@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {setName, setUserId} from './userSlice';
 import keycloak from "./keycloak";
+import {AxiosRequestConfig} from "axios";
 
 interface AuthState {
     loggedIn: boolean
@@ -89,6 +90,20 @@ export const getToken = (state: RootState): Promise<string> => {
             resolve(keycloak.token!)
         ).catch(() =>
             keycloak.login()
+        )
+    })
+}
+
+export const getHeaders = (state: RootState): Promise<AxiosRequestConfig> => {
+    return new Promise<AxiosRequestConfig>((resolve, reject) => {
+        getToken(state).then(token =>
+            resolve({
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+        ).catch(() =>
+            reject()
         )
     })
 }
