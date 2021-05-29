@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -18,32 +19,30 @@ import java.util.function.Function;
 public class TokenService {
 
     private final UserService userService;
-    private final SpaceService spaceService;
+
+    @Value("${JWT_SECRET}")
+    private String jwtSecret;
 
     @Autowired
     public TokenService(
-            UserService userService,
-            SpaceService spaceService
+            UserService userService
     ) {
         this.userService = userService;
-        this.spaceService = spaceService;
     }
 
     private Key getSignature() {
-        // TODO: Change secret and add to env vars
-        var secret = "asdfSFS34wfsdfsdfSDSD32dfsddDDerQSNCK34SOWEK5354fdgdf4";
-
         return new SecretKeySpec(
-                Base64.getDecoder().decode(secret),
-                SignatureAlgorithm.HS256.getJcaName()
+                Base64
+                        .getDecoder()
+                        .decode(jwtSecret),
+                SignatureAlgorithm
+                        .HS256
+                        .getJcaName()
         );
     }
 
     public String getInviteTokenForSpaceAndExistingUser(String inviteeId, String spaceId) {
-        // TODO: Should only hosts be able to create invites?
-        // TODO: Should we add a space role to the jwt (member, host)?
         var user = userService.getContextUserIfExistsElseCreate();
-        //  If YES: Check if current user has host permission on Space
 
         // Check if invited user is user in database (currently necessary since later on
         // that user will need to communicate with the spaces api and thus needs a valid
@@ -73,17 +72,13 @@ public class TokenService {
                 .build()
                 .parseClaimsJws(jwtString);
 
-        try {
-            var claims = jwt.getBody();
-            // validated that necessary information is in token
-            String inviteeId = (String) claims.get("invitee");
-            String spaceId = (String) claims.get("space");
+        var claims = jwt.getBody();
 
-            if (inviteeId != null && spaceId != null)
-                callback.apply(claims);
+        // validated that necessary information is in token
+        String inviteeId = (String) claims.get("invitee");
+        String spaceId = (String) claims.get("space");
 
-        } catch(Exception e) {
-            System.err.println(Arrays.toString(e.getStackTrace()));
-        }
+        if (inviteeId != null && spaceId != null)
+            callback.apply(claims);
     }
 }
