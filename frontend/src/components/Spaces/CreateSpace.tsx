@@ -16,9 +16,16 @@ interface State {
 
 export class CreateSpace extends Component<Props, State> {
 
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            spaceName: ""
+        }
+    }
+
     render() {
         return (
-            <Wrapper className={"spaces"}>
+            <Wrapper className={"create spaces"}>
                 <div className={"headlineBox"}>
                     <div className={"buttons"}>
                         <Link to={"/spaces"}>
@@ -26,11 +33,13 @@ export class CreateSpace extends Component<Props, State> {
                         </Link>
                     </div>
 
-                    <h1><IoPeopleOutline/></h1>
-                    <h1>Create a space</h1>
-                    <p>A space is a private location where you can meet with every member of a space.</p>
+                    <h1>
+                        <IoPeopleOutline/><br/>
+                        Create a space
+                    </h1>
+                    A space is a private location where you can meet with every member of a space.
                 </div>
-                <form>
+                <form className={"spacesWrapper"}>
                     <input value={this.state.spaceName}
                            onChange={({target: {value}}) => this.setState({spaceName: value})} type={"text"}/>
                     <Link to={"/spaces"}>
@@ -48,4 +57,4 @@ const mapDispatchToProps = (dispatch: any) => ({
     createSpace: (name: string) => dispatch(createSpace(name))
 })
 
-export default connect(mapDispatchToProps)(CreateSpace)
+export default connect(undefined, mapDispatchToProps)(CreateSpace)

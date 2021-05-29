@@ -3,7 +3,7 @@ import './style.scss';
 import {Space, User} from "../../store/models";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
-import {requestSpaces} from "../../store/spaceSlice";
+import {deleteSpace, requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
 import {IoAddOutline, IoLogInOutline, IoPerson, IoTrashOutline} from "react-icons/all";
 import {Link} from "react-router-dom";
@@ -16,6 +16,7 @@ interface Props {
     spaces: Space[]
     logout: () => void
     requestSpaces: () => void
+    deleteSpace: (id: string) => void
 }
 
 export class Spaces extends Component<Props> {
@@ -37,7 +38,7 @@ export class Spaces extends Component<Props> {
                         </Link>
                         <button onClick={this.props.logout} className={"iconButton"}><FaPowerOff/></button>
                     </div>
-                    <h1>Welcome back, {this.props.activeUser.name}</h1>
+                    <h1>Hello, {this.props.activeUser.name}</h1>
                     <p>To join a space, select a space below, or create a new one.</p>
                 </div>
 
@@ -53,8 +54,11 @@ export class Spaces extends Component<Props> {
                         <div className={"space " + ((idx > 0) ? "separator" : "")}>
                             {s.name}
                             <div className={"buttons"}>
-                                <button className={"iconButton"}>
-                                    <IoTrashOutline/></button>
+                                {!s.public &&
+                                <button onClick={() => this.props.deleteSpace(s.id)} className={"iconButton"}>
+                                    <IoTrashOutline/>
+                                </button>
+                                }
                                 <Link to={`/spaces/${s.id}`}>
                                     <button className={"iconButton"}>
                                         <IoLogInOutline/>
@@ -78,6 +82,7 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     requestSpaces: () => dispatch(requestSpaces()),
     logout: () => dispatch(logout()),
+    deleteSpace: (id: string) => dispatch(deleteSpace(id)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Spaces)

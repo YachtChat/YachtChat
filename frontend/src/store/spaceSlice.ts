@@ -4,7 +4,7 @@ import {AppThunk} from "./store";
 import axios from "axios";
 import {handleError, handleSuccess} from "./statusSlice";
 import {SPACES_URL} from "./config";
-import {getToken} from "./authSlice";
+import {getHeaders} from "./authSlice";
 
 interface SpaceState {
     spaces: Space[]
@@ -21,11 +21,15 @@ export const spaceSlice = createSlice({
         setSpaces: (state, action: PayloadAction<Space[]>) => {
             state.spaces = action.payload
         },
+        addSpace: (state, action: PayloadAction<Space>) => {
+            state.spaces.push(action.payload)
+        },
     }
 });
 
 export const {
-    setSpaces
+    setSpaces,
+    addSpace
 } = spaceSlice.actions;
 
 export const requestSpaces = (): AppThunk => (dispatch, getState) => {
@@ -33,30 +37,37 @@ export const requestSpaces = (): AppThunk => (dispatch, getState) => {
         dispatch(handleError("No spaces url defined for this environment"));
         return;
     }
-    getToken(getState()).then(token =>
-        axios.get("https://" + SPACES_URL + "/api/v1/spaces/", getHeaders(token)).then(response => {
+    getHeaders(getState()).then(header =>
+        axios.get("https://" + SPACES_URL + "/api/v1/spaces/", header).then(response => {
             dispatch(setSpaces(response.data))
         }).catch(e => console.log(e.trace))
     )
 }
 
 export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
-    axios.post("https://" + SPACES_URL + "/createSpaces/", getHeaders(getState().auth.token!)).then(response => {
-        dispatch(handleSuccess("Space successfully created"))
-        dispatch(requestSpaces())
-    }).catch(e => {
-        dispatch(handleError("Space could not be created"))
-        console.log(e.trace)
-    })
+    getHeaders(getState()).then(header =>
+        axios.post("https://" + SPACES_URL + "/api/v1/spaces/?name=" + name, undefined, header).then(response => {
+            dispatch(handleSuccess("Space successfully created"))
+            dispatch(addSpace(response.data))
+        }).catch(e => {
+            console.log("https://" + SPACES_URL + "/api/v1/spaces/?name=" + name)
+            dispatch(handleError("Space could not be created"))
+            console.log(e.trace)
+        })
+    )
 }
 
-
-const getHeaders = (token: string): any => {
-    return {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    }
+export const deleteSpace = (id: string): AppThunk => (dispatch, getState) => {
+    getHeaders(getState()).then(header =>
+        axios.delete("https://" + SPACES_URL + "/api/v1/spaces/" + id + "/", header).then(response => {
+            dispatch(handleSuccess("Space successfully deleted"))
+            dispatch(requestSpaces())
+        }).catch(e => {
+            console.log("https://" + SPACES_URL + "/api/v1/spaces/" + id)
+            dispatch(handleError("Space could not be deleted"))
+            console.log(e.trace)
+        })
+    )
 }
 
 export default spaceSlice.reducer
