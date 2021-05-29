@@ -214,7 +214,7 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
     if (Array.isArray(clients) && clients.length > 0) {
         clients.forEach((userId) => {
             // no connection to yourself
-            if (localClient == userId) return;
+            if (localClient === userId) return;
             // no connection to usr that are already connected
             if (!rtcConnections[userId]) {
                 // TODO isn't here a connection created from user a to user a
@@ -253,7 +253,7 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                 // this event should get triggered after the tracks are added to the local stream and the client
                 // is ready to start sending the sdp offer
                 // on negotionneeded should only be part of the caller??
-                if (localClient == joinedUserId){
+                if (localClient === joinedUserId) {
                     rtcConnections[userId].onnegotiationneeded = (event) => {
                         console.log(userId)
                         rtcConnections[userId].createOffer(offerOptions).then((description) => {
