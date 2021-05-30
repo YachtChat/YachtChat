@@ -7,7 +7,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
@@ -56,7 +58,7 @@ public class TokenService {
                 .compact();
     }
 
-    public void parseInviteToken(String jwtString, Function<Claims, Space> callback) {
+    public Space parseInviteToken(String jwtString, Function<Claims, Space> callback) {
         var hmacKey = getSignature();
 
         // If the JWT Token is expired (exp claim value is less than current system time), the
@@ -71,7 +73,9 @@ public class TokenService {
         // validated that necessary information is in token
         String spaceId = (String) claims.get("space");
 
-        if (spaceId != null)
-            callback.apply(claims);
+        if (spaceId == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is not valid");
+
+        return callback.apply(claims);
     }
 }

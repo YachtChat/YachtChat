@@ -1,5 +1,6 @@
 package com.alphabibber.spacesservice.controller;
 
+import com.alphabibber.spacesservice.model.Space;
 import com.alphabibber.spacesservice.service.SpaceService;
 import com.alphabibber.spacesservice.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,8 @@ public class TokenController {
     }
 
     @PostMapping(path = "/joinWithInvitation")
-    public void joinWithInviteToken(@RequestParam String inviteToken) {
-        tokenService.parseInviteToken(inviteToken, spaceService::addSpaceMemberWithJwtClaims);
+    public Space joinWithInviteToken(@RequestParam String inviteToken) {
+        return tokenService.parseInviteToken(inviteToken, spaceService::addSpaceMemberWithJwtClaims);
     }
 
 }
