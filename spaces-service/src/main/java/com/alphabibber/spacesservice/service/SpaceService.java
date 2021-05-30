@@ -168,18 +168,13 @@ public class SpaceService {
         var invitorId = claims.getSubject();
         var invitor = userService.getUserById(invitorId);
 
-        // TODO: Add claim object to Model
         var spaceId = (String) claims.get("space");
         var space = getSpaceByIdWithJwtHostId(spaceId);
 
         boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), invitor.getHostSpaces());
         assert !userIsNotHostInSpace;
 
-        var inviteeId = (String) claims.get("space");
         var invitee = userService.getContextUserIfExistsElseCreate();
-
-        // make sure that invitee from json web token is the same as the currently logged in user is
-        assert inviteeId.equals(invitee.getId());
 
         return addSpaceMember(space, invitee);
     }

@@ -41,24 +41,18 @@ public class TokenService {
         );
     }
 
-    public String getInviteTokenForSpaceAndExistingUser(String inviteeId, String spaceId) {
+    public String getInviteTokenForSpaceAndExistingUser(String spaceId) {
         var user = userService.getContextUserIfExistsElseCreate();
-
-        // Check if invited user is user in database (currently necessary since later on
-        // that user will need to communicate with the spaces api and thus needs a valid
-        // access token)
-        var invitee = userService.getUserById(inviteeId);
 
         // Create token with claims inviteeId and spaceId, signing etc. and return
         long jwtDurationInSeconds = (long) 60 * 60 * 24; // 1 DAY
         return Jwts.builder()
-                .claim("invitee", invitee.getId())
                 .claim("space", spaceId)
                 .setSubject(user.getId())
                 .setId(UUID.randomUUID().toString())
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plusSeconds(jwtDurationInSeconds)))
-                .signWith(this.getSignature())
+                .signWith(getSignature())
                 .compact();
     }
 
@@ -75,10 +69,9 @@ public class TokenService {
         var claims = jwt.getBody();
 
         // validated that necessary information is in token
-        String inviteeId = (String) claims.get("invitee");
         String spaceId = (String) claims.get("space");
 
-        if (inviteeId != null && spaceId != null)
+        if (spaceId != null)
             callback.apply(claims);
     }
 }

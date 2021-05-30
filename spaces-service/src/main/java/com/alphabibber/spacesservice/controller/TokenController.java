@@ -23,8 +23,8 @@ public class TokenController {
     }
 
     @GetMapping(path = "/invitation")
-    public String getInviteToken(@RequestParam String inviteeId, @RequestParam String spaceId) {
-        return tokenService.getInviteTokenForSpaceAndExistingUser(inviteeId, spaceId);
+    public String getInviteToken(@RequestParam String spaceId) {
+        return tokenService.getInviteTokenForSpaceAndExistingUser(spaceId);
     }
 
     @PostMapping(path = "/joinWithInvitation")
