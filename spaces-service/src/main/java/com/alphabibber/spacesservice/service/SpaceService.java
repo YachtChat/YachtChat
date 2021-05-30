@@ -68,7 +68,12 @@ public class SpaceService {
         return spaceRepository.findAllByPublicAccessIsTrue();
     }
 
-    public Space createSpace(Space space) {
+    public Space createSpace(Space spaceDTO) {
+        String spaceName = spaceDTO.getName();
+        Boolean publicAccess = spaceDTO.isPublic() != null ? spaceDTO.isPublic() : false;
+        // initial save to set id
+        var space = spaceRepository.save(new Space(spaceName, publicAccess));
+
         // assumption: Space does not contain spaceHosts or spaceMembers after init
         var user = userService.getUserIfExistsElseCreate();
 
