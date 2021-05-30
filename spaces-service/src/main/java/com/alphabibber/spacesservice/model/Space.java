@@ -55,6 +55,7 @@ public class Space {
     public Space(String name, Boolean publicAccess) {
         this.name = name;
         this.spaceHosts = new HashSet<>();
+        this.spaceMembers = new HashSet<>();
         this.publicAccess = publicAccess;
     }
 
