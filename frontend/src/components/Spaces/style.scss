@@ -8,22 +8,43 @@
   overflow: hidden;
   text-align: left;
 
+  .headlineBox .buttons .profilePic {
+    background-position: center center;
+    background-size: cover;
+  }
+
   &.create {
     height: auto;
     min-height: auto;
   }
 
+  h2 {
+    position: relative;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 2rem 3rem 0 3rem;
+
+    .minimalButton {
+      position: absolute;
+      right: 0;
+      transition: 0.5s opacity;
+
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+  }
+
+  &.create .spacesWrapper {
+    padding: 2rem 2rem;
+  }
+
   .spacesWrapper {
     display: block;
-    padding: 2rem;
+    padding: 0 2rem;
 
-    h2 {
-      position: relative;
-      font-size: 1.5rem;
-      line-height: 2rem;
-      padding: 0 0 0 1rem;
-      margin: 0;
-    }
 
     .buttons {
       position: absolute;
