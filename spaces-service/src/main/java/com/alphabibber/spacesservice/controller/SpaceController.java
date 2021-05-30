@@ -29,8 +29,8 @@ public class SpaceController extends SpringBootServletInitializer {
     }
 
     @PostMapping("/")
-    public Space createSpace(@RequestParam String name) {
-        return spaceService.createSpace(new Space(name));
+    public Space createSpace(@RequestBody Space spaceDTO) {
+        return spaceService.createSpace(spaceDTO);
     }
 
     @DeleteMapping("/{spaceId}/")
