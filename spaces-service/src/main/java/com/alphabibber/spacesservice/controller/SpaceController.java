@@ -3,6 +3,7 @@ package com.alphabibber.spacesservice.controller;
 import com.alphabibber.spacesservice.model.Space;
 import com.alphabibber.spacesservice.model.User;
 import com.alphabibber.spacesservice.service.SpaceService;
+import com.alphabibber.spacesservice.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +16,15 @@ import java.util.*;
 public class SpaceController extends SpringBootServletInitializer {
 
     private final SpaceService spaceService;
+    private final TokenService tokenService;
 
     @Autowired
     public SpaceController(
-            SpaceService spaceService
+            SpaceService spaceService,
+            TokenService tokenService
     ) {
         this.spaceService = spaceService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping("/")
@@ -92,6 +96,16 @@ public class SpaceController extends SpringBootServletInitializer {
         map.put("valid", boolResponse);
 
         return map;
+    }
+
+    @GetMapping(path = "/invitation")
+    public String getInviteToken(@RequestParam String spaceId) {
+        return tokenService.getInviteTokenForSpaceAndExistingUser(spaceId);
+    }
+
+    @PostMapping(path = "/joinWithInvitation")
+    public Space joinWithInviteToken(@RequestParam String inviteToken) {
+        return tokenService.parseInviteToken(inviteToken, spaceService::addSpaceMemberWithJwtClaims);
     }
 
 }
