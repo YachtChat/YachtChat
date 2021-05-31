@@ -65,7 +65,7 @@ export class CreateSpace extends Component<Props, State> {
                 <form className={"spacesWrapper"}>
                     {(!!this.state.token) ?
                         <input
-                            value={"https://" + FRONTEND_URL + "/spaces/" + this.props.match?.params.spaceID + "/" + this.state.token}
+                            value={"https://" + FRONTEND_URL + "/join/" + this.state.token}
                             type={"text"}/> :
                         <CircularProgress className={"loadingAnimation"} color={"inherit"}/>
                     }
