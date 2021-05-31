@@ -43,8 +43,8 @@ export class App extends Component<Props, State> {
                     {/*}*/}
                     <Switch>
                         <PrivateRoute path='/spaces/:spaceID' exact={false} component={Playground}/>
-                        <PrivateRoute path='/spaces/:spaceID/:token' exact={false} component={InviteSpace}/>
-                        <PrivateRoute exact path='/invite/:spaceID' component={InviteSpace}/>
+                        <PrivateRoute path='/spaces/:spaceID/:token' exact={false} component={Playground}/>
+                        <PrivateRoute path='/invite/:spaceID' exact={false} component={InviteSpace}/>
                         <PrivateRoute exact path='/spaces' component={Spaces}/>
                         <PrivateRoute exact path='/settings' component={Settings}/>
                         <PrivateRoute exact path='/create-space' component={CreateSpace}/>

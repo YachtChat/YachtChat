@@ -4,23 +4,45 @@ import {Link} from "react-router-dom";
 import {FaChevronLeft} from "react-icons/fa";
 import {IoPeopleOutline} from "react-icons/all";
 import {connect} from "react-redux";
-import {createSpace} from "../../store/spaceSlice";
+import {getInvitationToken} from "../../store/spaceSlice";
+import {RootState} from "../../store/store";
+import {CircularProgress} from "@material-ui/core";
+import {FRONTEND_URL} from "../../store/config";
+import {push} from "connected-react-router";
+import {Space} from "../../store/models";
 
 interface Props {
-    createSpace: (name: string) => void
+    getToken: (spaceID: string) => Promise<string>
+    match?: {
+        params: {
+            spaceID: string
+        }
+    }
+    goBack: () => void
+    spaces: Space[]
 }
 
 interface State {
-    spaceName: string
+    token?: string
 }
 
 export class CreateSpace extends Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            spaceName: ""
-        }
+        this.state = {}
+    }
+
+    componentDidMount() {
+        if (!this.props.match)
+            return
+        this.props.getToken(this.props.match.params.spaceID).then(token => {
+                console.log(token)
+                this.setState({
+                    token
+                })
+            }
+        ).catch(() => this.props.goBack())
     }
 
     render() {
@@ -35,16 +57,24 @@ export class CreateSpace extends Component<Props, State> {
 
                     <h1>
                         <IoPeopleOutline/><br/>
-                        Create a space
+                        Invite people
+                        to <i>{this.props.spaces.find(s => s.id === this.props.match?.params.spaceID)?.name}</i>
                     </h1>
-                    A space is a private location where you can meet with every member of a space.
+                    Let people join your private Space with an invitation link.
                 </div>
                 <form className={"spacesWrapper"}>
-                    <input value={this.state.spaceName}
-                           onChange={({target: {value}}) => this.setState({spaceName: value})} type={"text"}/>
+                    {(!!this.state.token) ?
+                        <input
+                            value={"https://" + FRONTEND_URL + "/spaces/" + this.props.match?.params.spaceID + "/" + this.state.token}
+                            type={"text"}/> :
+                        <CircularProgress className={"loadingAnimation"} color={"inherit"}/>
+                    }
+                    <button>
+                        Copy
+                    </button>
                     <Link to={"/spaces"}>
-                        <button onClick={() => this.props.createSpace(this.state.spaceName)}>
-                            Create Space
+                        <button>
+                            Go back
                         </button>
                     </Link>
                 </form>
@@ -53,8 +83,13 @@ export class CreateSpace extends Component<Props, State> {
     }
 }
 
-const mapDispatchToProps = (dispatch: any) => ({
-    createSpace: (name: string) => dispatch(createSpace(name))
+const mapStateToProps = (state: RootState) => ({
+    getToken: (spaceID: string) => getInvitationToken(state, spaceID),
+    spaces: state.space.spaces
 })
 
-export default connect(undefined, mapDispatchToProps)(CreateSpace)
+const mapDispatchToProps = (dispatch: any) => ({
+    goBack: () => dispatch(push("/spaces"))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateSpace)

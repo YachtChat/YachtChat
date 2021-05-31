@@ -106,7 +106,7 @@ export class Spaces extends Component<Props, State> {
                     <p>To join a space, select a space below, or create a new one.</p>
                 </div>
 
-                <h2>Spaces.
+                <h2>Spaces
                     <Link to={"/create-space"}>
                             <span className={"minimalButton"}>
                             <IoAddOutline/>
@@ -150,7 +150,9 @@ export class Spaces extends Component<Props, State> {
                         <IoTrashOutline/> Delete
                     </MenuItem>
                     }
-                    <MenuItem onClick={this.handleClose}>Invite</MenuItem>
+                    <Link to={"/invite/" + this.state.space?.id}>
+                        <MenuItem onClick={this.handleClose.bind(this)}>Invite</MenuItem>
+                    </Link>
                 </Menu>
             </Wrapper>
         )

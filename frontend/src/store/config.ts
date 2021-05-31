@@ -5,6 +5,7 @@ export const SOCKET_PORT: string | undefined = process.env.REACT_APP_SIGNAL_PORT
 export const AUTH_SERVICE: string | undefined = process.env.REACT_APP_AUTH_URL
 export const REALM: string | undefined = process.env.REACT_APP_REALM
 export const CLIENT_ID: string | undefined = process.env.REACT_APP_KEYCLOAK_CLIENT
+export const FRONTEND_URL: string | undefined = process.env.REACT_APP_FRONTEND_URL
 export const applicationName: string = "Yacht Chat"
 
 export const rtcConfiguration = {

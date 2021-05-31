@@ -13,6 +13,12 @@
     background-size: cover;
   }
 
+  .loadingAnimation {
+    margin: auto auto;
+    display: block;
+    padding: 1rem;
+  }
+
   &.create {
     height: auto;
     min-height: auto;
