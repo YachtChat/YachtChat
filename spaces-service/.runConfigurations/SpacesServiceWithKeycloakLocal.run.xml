@@ -33,7 +33,7 @@
       <param>
         <option name="enabled" value="true" />
         <option name="name" value="KEYCLOAK_URL" />
-        <option name="value" value="keycloak.alphabibber.com" />
+        <option name="value" value="auth.yacht.chat" />
       </param>
       <param>
         <option name="enabled" value="true" />
@@ -47,6 +47,7 @@
       <env name="DB_NAME" value="db" />
       <env name="DB_USER" value="admin" />
       <env name="DB_PASSWORD" value="13d2Y82eq836u41o" />
+      <env name="JWT_SECRET" value="H19UIrmYCka+s5JuhdF0aOlDx4lQdcbCCiF4QN1jfYw7tTfD" />
     </envs>
     <method v="2">
       <option name="Make" enabled="true" />

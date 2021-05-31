@@ -56,7 +56,7 @@ public class SpaceController extends SpringBootServletInitializer {
 
     @PostMapping(path = "/{spaceId}/members/")
     public Space addSpaceMember(@PathVariable String spaceId, @RequestParam String memberId) {
-        return spaceService.addSpaceMember(spaceId, memberId);
+        return spaceService.addSpaceMemberWithContextUser(spaceId, memberId);
     }
 
     @DeleteMapping(path = "/{spaceId}/members/")
@@ -85,7 +85,7 @@ public class SpaceController extends SpringBootServletInitializer {
     }
 
     @GetMapping(path = "/{spaceId}/canUserJoin/")
-    public HashMap<String, Boolean> canUserJoin(@PathVariable String spaceId) {
+    public Map<String, Boolean> canUserJoin(@PathVariable String spaceId) {
         var boolResponse = spaceService.canCurrentUserJoinSpace(spaceId);
 
         HashMap<String, Boolean> map = new HashMap<>();
