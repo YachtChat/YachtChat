@@ -1,10 +1,11 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Space} from "./models";
-import {AppThunk} from "./store";
+import {AppThunk, RootState} from "./store";
 import axios from "axios";
 import {handleError, handleSuccess} from "./statusSlice";
 import {SPACES_URL} from "./config";
 import {getHeaders} from "./authSlice";
+import {push} from "connected-react-router";
 
 interface SpaceState {
     spaces: Space[]
@@ -49,10 +50,11 @@ export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
         axios.post("https://" + SPACES_URL + "/api/v1/spaces/", {name}, header).then(response => {
             dispatch(handleSuccess("Space successfully created"))
             dispatch(addSpace(response.data))
-
+            dispatch(push("/invite/" + response.data.id))
         }).catch(e => {
             console.log("https://" + SPACES_URL + "/api/v1/spaces/?name=" + name)
             dispatch(handleError("Space could not be created"))
+            dispatch(push("/create-space"))
             console.log(e.trace)
         })
     )
@@ -69,6 +71,21 @@ export const deleteSpace = (id: string): AppThunk => (dispatch, getState) => {
             console.log(e.trace)
         })
     )
+}
+
+export const getInvitationToken = (state: RootState, spaceID: string): Promise<string> => {
+    return new Promise<string>((resolve, reject) => {
+        getHeaders(state).then(headers => {
+                console.log(headers)
+                axios.get("https://" + SPACES_URL + "/api/v1/tokens/invitation?spaceId=" + spaceID, headers).then(response => {
+                    resolve(response.data)
+                }).catch((e) => {
+                    console.log(e.trace)
+                    reject()
+                })
+            }
+        )
+    })
 }
 
 export default spaceSlice.reducer
