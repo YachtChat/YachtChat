@@ -14,6 +14,7 @@ import {Loading} from "./components/Wrapper";
 import {IoCogOutline} from "react-icons/all";
 import CreateSpace from "./components/Spaces/CreateSpace";
 import InviteSpace from "./components/Spaces/InviteSpace";
+import JoinSpace from "./components/Spaces/JoinSpace";
 
 interface Props {
     loggedIn: boolean
@@ -45,6 +46,7 @@ export class App extends Component<Props, State> {
                         <PrivateRoute path='/spaces/:spaceID' exact={false} component={Playground}/>
                         <PrivateRoute path='/spaces/:spaceID/:token' exact={false} component={Playground}/>
                         <PrivateRoute path='/invite/:spaceID' exact={false} component={InviteSpace}/>
+                        <PrivateRoute path='/join/:token' exact={false} component={JoinSpace}/>
                         <PrivateRoute exact path='/spaces' component={Spaces}/>
                         <PrivateRoute exact path='/settings' component={Settings}/>
                         <PrivateRoute exact path='/create-space' component={CreateSpace}/>

@@ -60,6 +60,22 @@ export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
     )
 }
 
+export const joinSpace = (token: string): AppThunk => (dispatch, getState) => {
+    getHeaders(getState()).then(header =>
+        axios.post("https://" + SPACES_URL + "/api/v1/tokens/joinWithInvitation/", {
+            inviteToken: token
+        }, header).then(response => {
+            dispatch(addSpace(response.data))
+            dispatch(handleSuccess("Space successfully joined"))
+            dispatch(push("/spaces/" + response.data.id))
+        }).catch(e => {
+            dispatch(handleError("Space could not be joined"))
+            dispatch(push("/spaces"))
+            console.log(e.trace)
+        })
+    )
+}
+
 export const deleteSpace = (id: string): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
         axios.delete("https://" + SPACES_URL + "/api/v1/spaces/" + id + "/", header).then(response => {
