@@ -46,9 +46,10 @@ export const requestSpaces = (): AppThunk => (dispatch, getState) => {
 
 export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
-        axios.post("https://" + SPACES_URL + "/api/v1/spaces/?name=" + name, undefined, header).then(response => {
+        axios.post("https://" + SPACES_URL + "/api/v1/spaces/", {name}, header).then(response => {
             dispatch(handleSuccess("Space successfully created"))
             dispatch(addSpace(response.data))
+
         }).catch(e => {
             console.log("https://" + SPACES_URL + "/api/v1/spaces/?name=" + name)
             dispatch(handleError("Space could not be created"))

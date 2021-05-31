@@ -13,6 +13,7 @@ import Settings from './components/Settings';
 import {Loading} from "./components/Wrapper";
 import {IoCogOutline} from "react-icons/all";
 import CreateSpace from "./components/Spaces/CreateSpace";
+import InviteSpace from "./components/Spaces/InviteSpace";
 
 interface Props {
     loggedIn: boolean
@@ -42,6 +43,8 @@ export class App extends Component<Props, State> {
                     {/*}*/}
                     <Switch>
                         <PrivateRoute path='/spaces/:spaceID' exact={false} component={Playground}/>
+                        <PrivateRoute path='/spaces/:spaceID/:token' exact={false} component={InviteSpace}/>
+                        <PrivateRoute exact path='/invite/:spaceID' component={InviteSpace}/>
                         <PrivateRoute exact path='/spaces' component={Spaces}/>
                         <PrivateRoute exact path='/settings' component={Settings}/>
                         <PrivateRoute exact path='/create-space' component={CreateSpace}/>

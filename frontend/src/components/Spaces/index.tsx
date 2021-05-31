@@ -81,7 +81,7 @@ export class Spaces extends Component<Props, State> {
                             {({TransitionProps, placement}) => (
                                 <Grow
                                     {...TransitionProps}
-                                    style={{transformOrigin: placement === 'bottom' ? 'center top' : 'right bottom'}}
+                                    style={{transformOrigin: placement === 'bottom' ? 'right top' : 'right top'}}
                                 >
                                     <Paper>
                                         <ClickAwayListener onClickAway={this.handleClose.bind(this)}>
