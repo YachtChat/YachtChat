@@ -28,9 +28,12 @@ interface State {
 
 export class CreateSpace extends Component<Props, State> {
 
+    copyText: React.RefObject<HTMLInputElement>
+
     constructor(props: Props) {
         super(props);
         this.state = {}
+        this.copyText = React.createRef()
     }
 
     componentDidMount() {
@@ -64,12 +67,22 @@ export class CreateSpace extends Component<Props, State> {
                 </div>
                 <form className={"spacesWrapper"}>
                     {(!!this.state.token) ?
-                        <input
-                            value={"https://" + FRONTEND_URL + "/join/" + this.state.token}
-                            type={"text"}/> :
+                        <input ref={this.copyText}
+                               value={"https://" + FRONTEND_URL + "/join/" + this.state.token}
+                               type={"text"}/> :
                         <CircularProgress className={"loadingAnimation"} color={"inherit"}/>
                     }
-                    <button>
+                    <button onClick={e => {
+                        e.preventDefault()
+
+                        if (this.copyText.current) {
+                            this.copyText.current.select();
+                            this.copyText.current.setSelectionRange(0, 99999); /* For mobile devices */
+
+                            /* Copy the text inside the text field */
+                            document.execCommand("copy");
+                        }
+                    }}>
                         Copy
                     </button>
                     <Link to={"/spaces"}>
