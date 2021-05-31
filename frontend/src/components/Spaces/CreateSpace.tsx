@@ -42,11 +42,12 @@ export class CreateSpace extends Component<Props, State> {
                 <form className={"spacesWrapper"}>
                     <input value={this.state.spaceName}
                            onChange={({target: {value}}) => this.setState({spaceName: value})} type={"text"}/>
-                    <Link to={"/spaces"}>
-                        <button onClick={() => this.props.createSpace(this.state.spaceName)}>
-                            Create Space
-                        </button>
-                    </Link>
+                    <button onClick={e => {
+                        e.preventDefault()
+                        this.props.createSpace(this.state.spaceName)
+                    }}>
+                        Create Space
+                    </button>
                 </form>
             </Wrapper>
         );

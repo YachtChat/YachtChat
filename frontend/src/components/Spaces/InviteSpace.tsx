@@ -10,6 +10,7 @@ import {CircularProgress} from "@material-ui/core";
 import {FRONTEND_URL} from "../../store/config";
 import {push} from "connected-react-router";
 import {Space} from "../../store/models";
+import {handleSuccess} from "../../store/statusSlice";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -20,6 +21,7 @@ interface Props {
     }
     goBack: () => void
     spaces: Space[]
+    success: (s: string) => void
 }
 
 interface State {
@@ -81,13 +83,19 @@ export class CreateSpace extends Component<Props, State> {
 
                             /* Copy the text inside the text field */
                             document.execCommand("copy");
+                            this.props.success("Invite link copied")
                         }
                     }}>
-                        Copy
+                        Copy Link
                     </button>
+                    <Link to={"/spaces/" + this.props.match?.params.spaceID}>
+                        <button>
+                            Join space
+                        </button>
+                    </Link>
                     <Link to={"/spaces"}>
                         <button>
-                            Go back
+                            Go back to spaces
                         </button>
                     </Link>
                 </form>
@@ -102,7 +110,8 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    goBack: () => dispatch(push("/spaces"))
+    goBack: () => dispatch(push("/spaces")),
+    success: (s: string) => dispatch(handleSuccess(s))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateSpace)

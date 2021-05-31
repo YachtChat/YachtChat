@@ -22,7 +22,7 @@ export const store = configureStore({
     playground: playgroundSlice,
     auth: authSlice,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(routerMiddleware(history))
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(routerMiddleware(history)),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
