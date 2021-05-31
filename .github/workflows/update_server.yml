@@ -94,9 +94,9 @@ jobs:
           command: |
             cd /home/git_environment/NotZoom/
             sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
-            sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} docker-compose build spaces-service
+            sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} JWT_SECRET=${{ secrets.SPACES_JWT_SECRET}} docker-compose build spaces-service
             sudo docker-compose down spaces-service
-            sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} docker-compose up --no-deps -d spaces-service
+            sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} JWT_SECRET=${{ secrets.SPACES_JWT_SECRET}} docker-compose up --no-deps -d spaces-service
           host: ${{ secrets.HOST}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
