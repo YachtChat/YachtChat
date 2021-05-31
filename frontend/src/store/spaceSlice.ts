@@ -80,7 +80,6 @@ export const deleteSpace = (id: string): AppThunk => (dispatch, getState) => {
             dispatch(handleSuccess("Space successfully deleted"))
             dispatch(requestSpaces())
         }).catch(e => {
-            console.log("https://" + SPACES_URL + "/api/v1/spaces/" + id)
             dispatch(handleError("Space could not be deleted"))
             console.log(e.trace)
         })
