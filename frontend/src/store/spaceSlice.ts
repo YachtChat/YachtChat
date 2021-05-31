@@ -62,9 +62,7 @@ export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
 
 export const joinSpace = (token: string): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
-        axios.post("https://" + SPACES_URL + "/api/v1/tokens/joinWithInvitation/", {
-            inviteToken: token
-        }, header).then(response => {
+        axios.post("https://" + SPACES_URL + "/api/v1/spaces/invitation", {token}, header).then(response => {
             dispatch(addSpace(response.data))
             dispatch(handleSuccess("Space successfully joined"))
             dispatch(push("/spaces/" + response.data.id))
@@ -93,9 +91,9 @@ export const getInvitationToken = (state: RootState, spaceID: string): Promise<s
     return new Promise<string>((resolve, reject) => {
         getHeaders(state).then(headers => {
                 console.log(headers)
-                axios.get("https://" + SPACES_URL + "/api/v1/tokens/invitation?spaceId=" + spaceID, headers).then(response => {
-                    resolve(response.data)
-                }).catch((e) => {
+            axios.get("https://" + SPACES_URL + "/api/v1/spaces/invitation?spaceId=" + spaceID, headers).then(response => {
+                resolve(response.data)
+            }).catch((e) => {
                     console.log(e.trace)
                     reject()
                 })
