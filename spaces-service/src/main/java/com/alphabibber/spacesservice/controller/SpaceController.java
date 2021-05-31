@@ -103,6 +103,7 @@ public class SpaceController extends SpringBootServletInitializer {
         return tokenService.getInviteTokenForSpaceAndExistingUser(spaceId);
     }
 
+
     @PostMapping(path = "/joinWithInvitation")
     public Space joinWithInviteToken(@RequestParam String inviteToken) {
         return tokenService.parseInviteToken(inviteToken, spaceService::addSpaceMemberWithJwtClaims);
