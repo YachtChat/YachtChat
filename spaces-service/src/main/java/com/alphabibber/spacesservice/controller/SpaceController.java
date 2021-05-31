@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.BadRequestException;
 import java.util.*;
 
 @CrossOrigin(origins = "*")
@@ -104,8 +105,13 @@ public class SpaceController extends SpringBootServletInitializer {
     }
 
 
-    @PostMapping(path = "/joinWithInvitation")
-    public Space joinWithInviteToken(@RequestParam String inviteToken) {
+    @PostMapping(path = "/invitation")
+    public Space joinWithInviteToken(@RequestBody Map<String, String> tokenRequest) {
+        var inviteToken = tokenRequest.get("token");
+
+        if (inviteToken == null)
+            throw new BadRequestException("Invalid Token Request");
+
         return tokenService.parseInviteToken(inviteToken, spaceService::addSpaceMemberWithJwtClaims);
     }
 
