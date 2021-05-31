@@ -98,12 +98,12 @@ public class SpaceController extends SpringBootServletInitializer {
         return map;
     }
 
-    @GetMapping(path = "/invitation/")
+    @GetMapping(path = "/invitation")
     public String getInviteToken(@RequestParam String spaceId) {
         return tokenService.getInviteTokenForSpaceAndExistingUser(spaceId);
     }
 
-    @PostMapping(path = "/joinWithInvitation/")
+    @PostMapping(path = "/joinWithInvitation")
     public Space joinWithInviteToken(@RequestParam String inviteToken) {
         return tokenService.parseInviteToken(inviteToken, spaceService::addSpaceMemberWithJwtClaims);
     }
