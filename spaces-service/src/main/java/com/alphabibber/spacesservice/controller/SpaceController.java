@@ -106,7 +106,7 @@ public class SpaceController extends SpringBootServletInitializer {
 
 
     @PostMapping(path = "/invitation")
-    public Space joinWithInviteToken(@RequestParam Map<String, String> tokenRequest) {
+    public Space joinWithInviteToken(@RequestBody Map<String, String> tokenRequest) {
         var inviteToken = tokenRequest.get("token");
 
         if (inviteToken == null)
