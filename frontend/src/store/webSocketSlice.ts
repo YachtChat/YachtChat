@@ -9,12 +9,12 @@ import {
     handlePositionUpdate,
     setMedia,
     setUser,
-    setUserId,
     setUsers
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
 import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./config";
+import {getToken} from "./authSlice";
 
 interface WebSocketState {
     connected: boolean
@@ -86,9 +86,6 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
         // console.log("Object", data);
         const loggedIn = getState().webSocket.joinedRoom
         switch (data.type) {
-            case "id":
-                dispatch(setUserId(data.id))
-                break;
             case "login":
                 dispatch(handleLogin(data.success, data.users));
                 break;
@@ -172,11 +169,13 @@ export const send = (message: { [key: string]: any }): AppThunk => (dispatch, ge
 }
 
 export const requestLogin = (): AppThunk => (dispatch, getState) => {
-    dispatch(send({
-        type: "login",
-        token: getState().auth.token,
-        user_id: getState().userState.activeUser.id
-    }));
+    getToken(getState()).then(token =>
+        dispatch(send({
+            type: "login",
+            token: token,
+            user_id: getState().userState.activeUser.id
+        }))
+    ).catch(() => dispatch(destroySession()))
 }
 
 export const sendLogout = (): AppThunk => (dispatch) => {
