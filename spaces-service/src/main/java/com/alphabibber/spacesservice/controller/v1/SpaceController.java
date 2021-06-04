@@ -1,4 +1,4 @@
-package com.alphabibber.spacesservice.controller;
+package com.alphabibber.spacesservice.controller.v1;
 
 import com.alphabibber.spacesservice.model.Space;
 import com.alphabibber.spacesservice.model.User;
