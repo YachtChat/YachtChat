@@ -39,7 +39,7 @@ public class UserService {
 
         // since the user needs a certified jwt from our auth server we can safely assume that this is a legit
         // user so we can create one
-        var newUser = new User(token.getSubject(), token.getGivenName());
+        var newUser = new User(token.getSubject());
         return userRepository.save(newUser);
     }
 
