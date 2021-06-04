@@ -1,4 +1,4 @@
-package com.alphabibber.spacesservice;
+package com.alphabibber.spacesservice.security;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
