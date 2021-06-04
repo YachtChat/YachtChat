@@ -14,9 +14,6 @@ public class User {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @OneToMany(
             mappedBy = "host",
             cascade = {
@@ -39,29 +36,14 @@ public class User {
 
     }
 
-    public User(String name) {
-        this.name = name;
-        this.hostSpaces = new HashSet<>();
-        this.memberSpaces = new HashSet<>();
-    }
-
-    public User(String id, String name) {
+    public User(String id) {
         this.id = id;
-        this.name = name;
         this.hostSpaces = new HashSet<>();
         this.memberSpaces = new HashSet<>();
     }
 
     public String getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void addHostSpace(SpaceHost spaceHost) {
