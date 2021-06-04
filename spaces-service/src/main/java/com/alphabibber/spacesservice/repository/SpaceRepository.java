@@ -17,4 +17,6 @@ public interface SpaceRepository extends JpaRepository<Space, String> {
 
     Set<Space> findAllBySpaceHostsContains(SpaceHost spaceHost);
 
+    Set<Space> findAllByName(String name);
+
 }
