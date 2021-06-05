@@ -1,7 +1,0 @@
-FROM node:alpine as build-deps
-ARG VIRTUAL_PORT
-
-WORKDIR /home/landingpage
-
-EXPOSE ${VIRTUAL_PORT}
-CMD yarn && yarn run start

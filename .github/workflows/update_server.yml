@@ -57,36 +57,6 @@ jobs:
         env:
           TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
-      - name: build landingpage when changed
-        if: contains(env.TEST_STATEMENT, 'landingpage/')
-        uses: tarunjangra/ssh-remote-cmd@v1
-        with:
-          command: |
-            cd /home/git_environment/NotZoom/
-            sudo docker-compose build nginx-landingpage
-            sudo docker-compose down nginx-landingpage
-            sudo docker-compose up --no-deps -d nginx-landingpage
-          host: ${{ secrets.HOST}}
-          user: ${{ secrets.USERNAME}}
-          key: ${{ secrets.KEY}}
-        env:
-          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
-
-      - name: build presentation when changed
-        if: contains(env.TEST_STATEMENT, 'presentation/')
-        uses: tarunjangra/ssh-remote-cmd@v1
-        with:
-          command: |
-            cd /home/git_environment/NotZoom/
-            sudo docker-compose build nginx-presentation
-            sudo docker-compose down nginx-presentation
-            sudo docker-compose up --no-deps -d nginx-presentation
-          host: ${{ secrets.HOST}}
-          user: ${{ secrets.USERNAME}}
-          key: ${{ secrets.KEY}}
-        env:
-          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
-
       - name: build spaces-service when changed
         if: contains(env.TEST_STATEMENT, 'spaces-service/')
         uses: tarunjangra/ssh-remote-cmd@v1

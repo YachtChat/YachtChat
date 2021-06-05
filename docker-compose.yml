@@ -18,16 +18,6 @@ services:
     networks:
       - application
 
-  nginx-landingpage:
-    build:
-      context: ./landingpage
-      dockerfile: ./Dockerfile
-    environment:
-        - VIRTUAL_HOST=${LANDINGPAGE_URL}
-        - LETSENCRYPT_HOST=${LANDINGPAGE_URL}
-    networks:
-      - application
-
   websocket-service:
     build:
       context: ./websocket-service
@@ -89,16 +79,6 @@ services:
     volumes:
 #      - /Users/marc/Development/yacht-chat-9b0254d39af7.json:/tmp/keys/yacht-chat-9b0254d39af7.json
       - /tmp/keys/yacht-chat-c542c660cc1b.json:/tmp/keys/yacht-chat-c542c660cc1b.json
-    networks:
-      - application
-
-  nginx-presentation:
-    build:
-      context: ./presentation
-      dockerfile: ./Dockerfile
-    environment:
-      - VIRTUAL_HOST=${PRESENTATION_URL}
-      - LETSENCRYPT_HOST=${PRESENTATION_URL}
     networks:
       - application
 
