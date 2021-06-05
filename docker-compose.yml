@@ -91,3 +91,4 @@ volumes:
   vhost: { }
   html: { }
   keycloak_postgres_data: { }
+  
