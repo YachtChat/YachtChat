@@ -75,7 +75,7 @@ export class Spaces extends Component<Props, State> {
                             className={"iconButton profilePic"}
                             ref={this.anchorRef}
                             onClick={() => this.setState({profileOpen: true})}
-                            style={{backgroundImage: `url(${this.props.activeUser.profilePic})`}}/>
+                            style={{backgroundImage: `url(${this.props.activeUser.profile_image})`}}/>
                         <Popper open={open} anchorEl={this.anchorRef.current} role={undefined} placement={"bottom-end"}
                                 transition disablePortal>
                             {({TransitionProps, placement}) => (
@@ -102,7 +102,7 @@ export class Spaces extends Component<Props, State> {
                             )}
                         </Popper>
                     </div>
-                    <h1>Hello, {this.props.activeUser.name}</h1>
+                    <h1>Hello, {this.props.activeUser.firstName}</h1>
                     <p>To join a space, select a space below, or create a new one.</p>
                 </div>
 

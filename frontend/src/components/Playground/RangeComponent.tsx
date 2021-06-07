@@ -15,18 +15,18 @@ interface Props {
 export class RangeComponent extends Component<Props> {
     render() {
         const scale = this.props.playgroundOffset.scale
-        if (this.props.user.name === null)
+        if (this.props.user.firstName === null)
             return (<div/>);
 
         const user = this.props.user
         const userSize = userProportion * scale
-        const x = user.position.x * scale
-        const y = user.position.y * scale
+        const x = user.position!.x * scale
+        const y = user.position!.y * scale
         const offsetX = this.props.playgroundOffset.x * scale
         const offsetY = this.props.playgroundOffset.y * scale
 
         // range in pixels
-        const rangeInPx = 2 * maxRange * user.position.range / 100 * scale + userSize
+        const rangeInPx = 2 * maxRange * user.position!.range / 100 * scale + userSize
 
         const rangeStyle = {
             width: rangeInPx,

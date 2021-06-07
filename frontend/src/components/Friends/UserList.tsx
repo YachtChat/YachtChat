@@ -27,7 +27,7 @@ export class UserList extends Component<Props> {
             <div className={"userList"}>
                 {users.map((u, idx) => (
                     <div className={"user " + ((idx > 0) ? "separator" : "")}>
-                        {u.name}
+                        {u.firstName}
                         <div className={"buttons"}>
                             <button className={"iconButton"}>
                                 <IoTrashOutline/></button>

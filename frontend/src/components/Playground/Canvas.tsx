@@ -69,8 +69,8 @@ export class Canvas extends Component<Props, State> {
                 mapDragActive: true,
                 previousOffset: this.props.offset,
                 previousPosition: {
-                    x: this.props.activeUser.position.x,
-                    y: this.props.activeUser.position.y
+                    x: this.props.activeUser.position!.x,
+                    y: this.props.activeUser.position!.y
                 },
                 dragStart: {x, y}
             })
@@ -87,7 +87,7 @@ export class Canvas extends Component<Props, State> {
             this.props.move({
                 x: e.clientX / scaling - x + this.props.offset.x,
                 y: e.clientY / scaling - y + this.props.offset.y,
-                range: this.props.activeUser.position.range
+                range: this.props.activeUser.position!.range
             })
         }
         this.dragEnd(e)
@@ -114,7 +114,7 @@ export class Canvas extends Component<Props, State> {
             this.props.move({
                 x: e.clientX / scaling - x + this.props.offset.x,
                 y: e.clientY / scaling - y + this.props.offset.y,
-                range: this.props.activeUser.position.range
+                range: this.props.activeUser.position!.range
             })
         }
         if (this.state.mapDragActive) {
@@ -128,7 +128,7 @@ export class Canvas extends Component<Props, State> {
             this.props.move({
                 x: this.state.previousPosition!.x + (start.x - e.clientX) / scaling,
                 y: this.state.previousPosition!.y + (start.y - e.clientY) / scaling,
-                range: this.props.activeUser.position.range
+                range: this.props.activeUser.position!.range
             })
         }
     }
@@ -141,7 +141,7 @@ export class Canvas extends Component<Props, State> {
             this.props.move({
                 x: e.touches[0].clientX / scaling,
                 y: e.touches[0].clientY / scaling,
-                range: this.props.activeUser.position.range
+                range: this.props.activeUser.position!.range
             })
         }
     }
@@ -197,13 +197,21 @@ export class Canvas extends Component<Props, State> {
                  onMouseDown={this.dragStart.bind(this)}
                  onTouchStart={this.dragStart.bind(this)}
                  tabIndex={0}>
-                {this.props.spaceUsers.map(user => <RangeComponent key={user.id} isActiveUser={false}
-                                                                   selected={false} user={user}/>)}
+                {this.props.spaceUsers.map(user => {
+                    if (!user.online)
+                        return
+                    return <RangeComponent key={user.id} isActiveUser={false}
+                                           selected={false} user={user}/>
+                })}
                 <RangeComponent user={this.props.activeUser}
                                 selected={this.state.mapDragActive || this.state.userDragActive}
                                 isActiveUser={true}/>
-                {this.props.spaceUsers.map(user => <UserComponent key={user.id} isActiveUser={false}
-                                                                  selected={false} user={user}/>)}
+                {this.props.spaceUsers.map(user => {
+                    if (!user.online)
+                        return
+                    return <UserComponent key={user.id} isActiveUser={false}
+                                          selected={false} user={user}/>
+                })}
                 <UserComponent user={this.props.activeUser}
                                selected={this.state.mapDragActive || this.state.userDragActive}
                                isActiveUser={true}/>

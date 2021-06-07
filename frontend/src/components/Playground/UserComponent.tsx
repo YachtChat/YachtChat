@@ -49,12 +49,12 @@ export class UserComponent extends Component<Props> {
 
     render() {
         const scale = this.props.playgroundOffset.scale
-        if (this.props.user.name === null)
+        if (this.props.user.firstName === null)
             return (<div/>);
         const user = this.props.user
         const userSize = userProportion * scale
-        const x = user.position.x * scale
-        const y = user.position.y * scale
+        const x = user.position!.x * scale
+        const y = user.position!.y * scale
         const offsetX = this.props.playgroundOffset.x * scale
         const offsetY = this.props.playgroundOffset.y * scale
         let userOpacity = ((!!user.inProximity && !this.props.muted) || this.props.selected) ? 1 : 0.5
@@ -101,7 +101,7 @@ export class UserComponent extends Component<Props> {
             opacity: userOpacity,
             transform: userScale,
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
-            backgroundImage: `url(${user.profilePic})`,
+            backgroundImage: `url(${user.profile_image})`,
         }
 
         const userNameStyle = {
@@ -134,7 +134,7 @@ export class UserComponent extends Component<Props> {
                     </Tooltip>
                 </div>
                 <span ref={this.myName} className={"userName"}
-                      style={userNameStyle}>{(this.props.isActiveUser) ? "You" : user.name}</span>
+                      style={userNameStyle}>{(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
             </div>
         )
     }

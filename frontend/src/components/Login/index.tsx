@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import './style.scss';
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
-import {setName} from "../../store/userSlice";
 import googleButton from "../../rsc/google_button.svg";
 import appleLogo from "../../rsc/apple.svg";
 import github from "../../rsc/github.svg";
@@ -11,7 +10,6 @@ import Wrapper from "../Wrapper";
 import {setLogin} from "../../store/authSlice";
 
 interface Props {
-    setName: (name: string) => void
     login: () => void
 }
 
@@ -34,13 +32,13 @@ export class Login extends Component<Props, State> {
 
     handleSubmit(event: any) {
         event.preventDefault();
-        this.props.setName(this.state.value)
+        //this.props.setName(this.state.value)
         this.props.login()
     }
 
     handleKeySubmit(event: React.KeyboardEvent) {
         if (event.key === "13") {
-            this.props.setName(this.state.value)
+            //this.props.setName(this.state.value)
             this.props.login()
         }
     }
@@ -104,7 +102,6 @@ export class Login extends Component<Props, State> {
 const mapStateToProps = (state: RootState) => ({})
 
 const mapDispatchToProps = (dispatch: any) => ({
-    setName: (name: string) => dispatch(setName(name)),
     login: () => dispatch(setLogin(true)),
 })
 

@@ -1,15 +1,15 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
-import {User, UserCoordinates} from "./models";
+import {UserCoordinates, UserPayload} from "./models";
 import {
     getUser,
     getUserID,
     getUsers,
     handleMessage,
     handlePositionUpdate,
-    setMedia,
-    setUser,
-    setUsers
+    handleSpaceUser,
+    handleSpaceUsers,
+    setMedia
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
 import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
@@ -81,17 +81,17 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
 
     socket.onmessage = function (msg) {
         // console.log("Got message", msg);
-        var data = JSON.parse(msg.data);
+        const data = JSON.parse(msg.data);
         // if (data.type !== "position_change")
         // console.log("Object", data);
         const loggedIn = getState().webSocket.joinedRoom
         switch (data.type) {
             case "login":
-                dispatch(handleLogin(data.success, data.users));
+                dispatch(handleLogin(data.success, spaceID, data.users));
                 break;
             case "new_user":
                 if (loggedIn) {
-                    dispatch(setUser(data));
+                    dispatch(handleSpaceUser(data));
                     // TODO here the new_user case is treated exactly the same as the login case, however , there should
                     // be a callee and a caller.
                     dispatch(handleRTCEvents(data.id));
@@ -190,14 +190,15 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
     }));
 }
 
-export const handleLogin = (success: boolean, users: User[]): AppThunk => (dispatch, getState) => {
+
+export const handleLogin = (success: boolean, spaceid: string, users: UserPayload[]): AppThunk => (dispatch, getState) => {
     if (!success) {
         dispatch(handleError("Join failed. Try again later."))
     } else {
-        dispatch(setUsers(users))
+        dispatch(handleSpaceUsers(spaceid, users))
         const user = getUser(getState())
         dispatch(handleRTCEvents(getUserID(getState())));
-        dispatch(handlePositionUpdate({id: user.id, position: user.position}))
+        dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
         dispatch(joined())
     }
 }
