@@ -1,6 +1,7 @@
-package com.alphabibber.spacesservice.controller;
+package com.alphabibber.spacesservice.controller.v1;
 
 import com.alphabibber.spacesservice.model.Space;
+import com.alphabibber.spacesservice.model.SpaceHost;
 import com.alphabibber.spacesservice.model.User;
 import com.alphabibber.spacesservice.service.SpaceService;
 import com.alphabibber.spacesservice.service.TokenService;
@@ -9,6 +10,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAllowedException;
 import java.util.*;
 
 @CrossOrigin(origins = "*")
@@ -99,11 +101,30 @@ public class SpaceController extends SpringBootServletInitializer {
         return map;
     }
 
+    @PutMapping(path = "/{spaceId}/promote")
+    public SpaceHost promoteMemberToHost(@PathVariable String spaceId, @RequestParam String memberId) {
+        var space = spaceService.getSpaceById(spaceId);
+        var userIsMemberInSpace = space.getSpaceMembers()
+                .stream()
+                .anyMatch(spaceMember -> spaceMember.getMember().getId().equals(memberId));
+
+        var userIsNotAlreadyHostInSpace = space.getSpaceHosts()
+                .stream()
+                .noneMatch(spaceHost -> spaceHost.getHost().getId().equals(memberId));
+
+        if (userIsMemberInSpace && userIsNotAlreadyHostInSpace) {
+            return spaceService.promoteMemberToHost(spaceId, memberId);
+        } else if (userIsMemberInSpace) {
+            throw new NotAllowedException("User to be promoted is not member of Space");
+        } else {
+            throw new NotAllowedException("User is already host in Space");
+        }
+    }
+
     @GetMapping(path = "/invitation")
     public String getInviteToken(@RequestParam String spaceId) {
         return tokenService.getInviteTokenForSpaceAndExistingUser(spaceId);
     }
-
 
     @PostMapping(path = "/invitation")
     public Space joinWithInviteToken(@RequestBody Map<String, String> tokenRequest) {

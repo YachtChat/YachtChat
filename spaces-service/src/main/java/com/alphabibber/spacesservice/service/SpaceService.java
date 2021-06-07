@@ -192,7 +192,7 @@ public class SpaceService {
         boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), remover.getHostSpaces());
 
         if (userIsNotHostInSpace && !space.isPublic())
-            throw new AccessDeniedException("Not host of space");
+            throw new AccessDeniedException("Not host of space. Only hosts can remove other members.");
 
         if (space.isPublic() && !memberId.equals(remover.getId()))
             throw new AccessDeniedException("You can only remove yourself from public spaces");
@@ -236,6 +236,43 @@ public class SpaceService {
         }
 
         return space;
+    }
+
+    public SpaceHost promoteMemberToHost(String spaceId, String memberId) {
+        // already verified: user is member in space
+        // already verified: user is not already host in space
+        var space = getSpaceById(spaceId);
+        var member = userService.getUserById(memberId);
+        var promoter = userService.getContextUserIfExistsElseCreate();
+
+        boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), promoter.getHostSpaces());
+
+        if (userIsNotHostInSpace)
+            throw new AccessDeniedException("Not host of space");
+
+        var spaceMember = member.getMemberSpaces()
+                .stream()
+                .filter(spaceMem -> spaceMem.getSpace().getId().equals(spaceId))
+                .findFirst();
+
+        if (spaceMember.isPresent()) {
+            member.removeMemberSpace(spaceMember.get());
+            space.removeSpaceMember(spaceMember.get());
+
+            var spaceHost = new SpaceHost(member, space);
+            member.addHostSpace(spaceHost);
+            space.addSpaceHost(spaceHost);
+
+            // order matters here!
+            userRepository.save(member);
+            spaceRepository.save(space);
+            spaceHost = spaceHostRepository.save(spaceHost);
+            spaceMemberRepository.delete(spaceMember.get());
+
+            return spaceHost;
+        } else {
+            throw new EntityNotFoundException("Space Membership of user not found");
+        }
     }
 
     public Space removeSpaceHost(String spaceId, String hostId) {
