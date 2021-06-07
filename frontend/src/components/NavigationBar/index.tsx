@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import './style.scss';
 import {User} from "../../store/models";
 import {RootState} from "../../store/store";
-import {submitNameChange} from "../../store/userSlice";
 import {connect} from "react-redux";
 import {
     FaBars,
@@ -26,7 +25,6 @@ import {Link} from "react-router-dom";
 
 interface Props {
     activeUser: User
-    setName: (name: string) => void
     logout: () => void
     toggleAudio: () => void
     toggleVideo: () => void
@@ -66,12 +64,6 @@ export class NavigationBar extends Component<Props, State> {
     // function that changes the state of value, used in the username input
     handleChange(event: any) {
         this.setState({value: event.target.value});
-    }
-
-    // function that sets the username after the login is submitted
-    handleSubmit(event: any) {
-        this.props.setName(this.state.value)
-        event.preventDefault();
     }
 
     // function that switches the state of the navigationbar bar (collapsed/not collapsed)
@@ -271,7 +263,6 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    setName: (name: string) => dispatch(submitNameChange(name)),
     toggleAudio: () => dispatch(mute()),
     toggleVideo: () => dispatch(displayVideo()),
     logout: () => dispatch(sendLogout()),

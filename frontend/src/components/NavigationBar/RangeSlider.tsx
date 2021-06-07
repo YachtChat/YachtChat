@@ -25,7 +25,7 @@ export class RangeSlider extends Component<Props> {
                     className={"slider"}
                     orientation="vertical"
                     color={"primary"}
-                    value={this.props.activeUser.position.range}
+                    value={this.props.activeUser.position?.range}
                     max={100}
                     min={10}
                     step={5}

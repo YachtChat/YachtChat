@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {setName, setUserId} from './userSlice';
+import {handleSpaceUser} from './userSlice';
 import keycloak from "./keycloak";
 import {AxiosRequestConfig} from "axios";
 
@@ -59,10 +59,9 @@ export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) =
             dispatch(setLogin(auth)) // TODO: to be set to keycloak.authenticated
 
             // @ts-ignore
-            dispatch(setName(keycloak.tokenParsed!.name))
+            const tokenParsed: string = keycloak.tokenParsed!.sub
 
-            // @ts-ignore
-            dispatch(setUserId(keycloak.tokenParsed!.sub))
+            dispatch(handleSpaceUser({id: tokenParsed}, true))
         } else {
             dispatch(authFlowReady())
             keycloak.login()

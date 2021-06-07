@@ -9,8 +9,8 @@ import {
     getUsers,
     gotRemoteStream,
     handlePositionUpdate,
-    removeUser,
-    setMedia
+    setMedia,
+    setUserOffline
 } from "./userSlice";
 import {resetPlayground} from "./playgroundSlice";
 import {handleError} from "./statusSlice";
@@ -285,7 +285,7 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                 })
             }
         });
-        dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position}))
+        dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position!}))
     }
 }
 
@@ -352,7 +352,7 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
     delete rtpSender[id]
     rtcConnections[id].close()
     delete rtcConnections[id]
-    dispatch(removeUser(id))
+    dispatch(setUserOffline(id))
 }
 
 export const destroySession = (): AppThunk => (dispatch, getState) => {

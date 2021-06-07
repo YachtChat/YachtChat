@@ -70,7 +70,7 @@ export class Playground extends Component<Props> {
                             </Link>
                         </div>
                         <h1><IoCamera/> <IoMic/></h1>
-                        <h1>Hey, {this.props.activeUser.name}</h1>
+                        <h1>Hey, {this.props.activeUser.firstName}</h1>
                         <p>
                             {applicationName} is a video chatting app.<br/>So please click and confirm video to
                             continue.
