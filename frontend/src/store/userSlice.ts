@@ -1,9 +1,12 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {MediaType, User, UserCoordinates} from "./models";
+import {MediaType, User, UserCoordinates, UserPayload} from "./models";
 import {sendPosition} from "./webSocketSlice";
 import {sendAudio, unsendAudio} from "./rtcSlice";
-import UserImage from "../rsc/profile.png"
+import {getHeaders} from "./authSlice";
+import axios from "axios";
+import {ACCOUNT_URL, SPACES_URL} from "./config";
+import {keycloakUserToUser} from "./utils";
 
 interface UserState {
     activeUser: User
@@ -12,7 +15,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-    activeUser: {id: "-1", name: "name", position: {x: 0, y: 0, range: 0.2}, profilePic: UserImage, image: true},
+    activeUser: {id: "-1", online: true},
     spaceUsers: {},
     friends: {}
 };
@@ -34,7 +37,7 @@ export const userSlice = createSlice({
             state.spaceUsers[action.payload.id].position = action.payload.position
         },
         changeRadius: (state, action: PayloadAction<number>) => {
-            state.activeUser.position.range = action.payload;
+            state.activeUser.position!.range = action.payload;
         },
         gotRemoteStream: (state, action: PayloadAction<string>) => {
             if (state.activeUser.id === action.payload)
@@ -46,11 +49,18 @@ export const userSlice = createSlice({
             state.activeUser.id = action.payload
             state.activeUser.inProximity = true
         },
-        setName: (state, action: PayloadAction<string>) => {
-            state.activeUser.name = action.payload
+        initUser: (state, action: PayloadAction<User>) => {
+            state.activeUser = action.payload
         },
         setUser: (state, action: PayloadAction<User>) => {
-            state.spaceUsers[action.payload.id] = {...action.payload, name: "", image: true}
+            if (action.payload.id === state.activeUser.id) {
+                state.activeUser = action.payload
+            } else {
+                state.spaceUsers[action.payload.id] = action.payload
+            }
+        },
+        setUserOffline: (state, action: PayloadAction<string>) => {
+            state.spaceUsers[action.payload].online = false
         },
         removeUser: (state, action: PayloadAction<string>) => {
             delete state.spaceUsers[action.payload]
@@ -58,20 +68,16 @@ export const userSlice = createSlice({
         setUsers: (state, action: PayloadAction<User[]>) => {
             const spaceUsers: { [key: string]: User } = {}
 
+            // create a map out of users
             action.payload.forEach(u => {
                 const id = u.id
                 if (id === state.activeUser.id) {
-                    state.activeUser.position = u.position
-                    state.activeUser.profilePic = UserImage //next step, get picture from account/database
+                    state.activeUser = u
                 } else if (u.position) {
-                    spaceUsers[id] = {...u, name: ""}
-                    spaceUsers[id].profilePic = UserImage //next step, get pictures from accounts/database
+                    spaceUsers[id] = u
                 }
             })
             state.spaceUsers = spaceUsers
-            // action.payload.filter(u => u.id !== state.activeUser.id && u.name !== null).forEach(u => {
-            //     state.otherUsers[u.id] = u
-            // })
         },
         forgetUsers: (state) => {
             state.spaceUsers = {}
@@ -103,9 +109,10 @@ export const {
     move,
     changeRadius,
     gotRemoteStream,
+    initUser,
     setUser,
-    setName,
     setUsers,
+    setUserOffline,
     removeUser,
     setUserId,
     setMessage,
@@ -113,6 +120,50 @@ export const {
     forgetUsers,
     setMedia
 } = userSlice.actions;
+
+export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThunk => (dispatch, getState) => {
+    const userIDs: string[] = users.map(u => u.id)
+    getHeaders(getState()).then(headers =>
+        // load user ids from all users in space
+        axios.get("https://" + SPACES_URL + "/api/v1/spaces/" + spaceId + "/allUsers/", headers).then((response) =>
+            response.data.forEach((u: { id: string }) =>
+                userIDs.push(u.id)
+            )
+        ).finally(() => {
+            console.log(userIDs)
+            // axios load user info from all users in userids
+            axios.get("https://" + ACCOUNT_URL + "/account/userslist", {...headers, data: userIDs}).then(response => {
+                // transform into users with util-function
+                const userObjects = response.data.map((user: any) => {
+                    const userPayload = users.find(u => u.id === user.id)
+                    // set all users online and position of users in "users" (maybe also image)
+                    return keycloakUserToUser(user, !!userPayload, userPayload?.position)
+                })
+                // finally call set users with user list
+                dispatch(setUsers(userObjects))
+            })
+        })
+    )
+}
+
+// when new user joins
+export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppThunk => (dispatch, getState) => {
+    console.log("Hello")
+    getHeaders(getState()).then(headers =>
+        // axios load user info
+        axios.get("https://" + ACCOUNT_URL + "/account/" + user.id, headers).then(response => {
+            console.log(headers)
+            console.log(response)
+            // transform into user with util-function
+            // finally set user
+            if (isActiveUser) {
+                dispatch(initUser(keycloakUserToUser(user, true)))
+            } else {
+                dispatch(setUser(keycloakUserToUser(user, true, user?.position)))
+            }
+        })
+    )
+}
 
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {
     const user = getState().userState.activeUser
@@ -133,7 +184,7 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
 export const handlePositionUpdate = (object: { id: string, position: UserCoordinates }): AppThunk => (dispatch, getState) => {
     dispatch(move(object))
     const user = getState().userState.activeUser
-    const currentRange = maxRange * user.position.range / 100
+    const currentRange = maxRange * user.position!.range / 100
 
     let users: User[] = []
 
@@ -144,9 +195,11 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
 
     // if (getUser(getState()).position === user.position)
     users.forEach(u => {
+        if (!u.position)
+            return
         const dist = Math.sqrt(
-            Math.pow(((u.position.x) - (user.position.x)), 2) +
-            Math.pow(((u.position.y) - (user.position.y)), 2)
+            Math.pow(((u.position.x) - (user.position!.x)), 2) +
+            Math.pow(((u.position.y) - (user.position!.y)), 2)
         )
         if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
             // console.log(user.id, "in Range - sending audio to", u.id)
@@ -164,13 +217,9 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
 
 export const submitRadius = (radius: number): AppThunk => (dispatch, getState) => {
     dispatch(changeRadius(radius))
-    const position = getUser(getState()).position
+    const position = getUser(getState()).position!
     dispatch(sendPosition(position))
     dispatch(handlePositionUpdate({id: getUserID(getState()), position}))
-};
-
-export const submitNameChange = (name: string): AppThunk => dispatch => {
-    dispatch(setName(name))
 };
 
 export const requestFriends = (): AppThunk => dispatch => {

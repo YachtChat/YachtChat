@@ -1,13 +1,26 @@
 export interface User {
     id: string
-    name: string
-    position: UserCoordinates
-    image: boolean // if a user sends video or not
-    userStream?: boolean
-    inProximity?: boolean
+    online: boolean
+
+    firstName?: string
+    lastName?: string
+    username?: string
+    email?: string
+    profile_image?: string // The actual URL to the image if available
+
+    image?: boolean // if a user sends video or not
     message?: string
-    profilePic?: string // The actual URL to the image if available
+    inProximity?: boolean
+    userStream?: boolean
+    position?: UserCoordinates
 }
+
+// What the websocket sends to the Frontend
+export interface UserPayload {
+    id: string
+    position?: UserCoordinates
+}
+
 
 export interface UserCoordinates {
     x: number
