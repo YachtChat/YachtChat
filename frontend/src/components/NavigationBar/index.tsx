@@ -23,8 +23,14 @@ import {centerUser} from "../../store/playgroundSlice";
 import {IoChatbubble} from "react-icons/all";
 import MessageComponent from "./Message";
 import {Link} from "react-router-dom";
+import {FRONTEND_URL} from "../../store/config";
+import {getInvitationToken} from "../../store/spaceSlice";
+import {handleSuccess} from "../../store/statusSlice";
 
 interface Props {
+    getToken: (spaceID: string) => Promise<string>
+    spaceID: string
+    success: (s: string) => void
     activeUser: User
     setName: (name: string) => void
     logout: () => void
@@ -36,6 +42,7 @@ interface Props {
 }
 
 interface State {
+    token?: string
     value: string
     collapsed: boolean
     className: string
@@ -61,6 +68,15 @@ export class NavigationBar extends Component<Props, State> {
             settingsOpen: false,
             messagesOpen: false
         }
+    }
+
+    componentDidMount() {
+        this.props.getToken(this.props.spaceID).then(token => {
+            console.log(token)
+            this.setState({
+                token: token
+            })
+        }).catch(() => console.log("NOPE"))
     }
 
     // function that changes the state of value, used in the username input
@@ -171,7 +187,12 @@ export class NavigationBar extends Component<Props, State> {
                                     </span>
                                     </div>
                                 </li>
-                                <li className="menu-item">
+                                <li className="menu-item"
+                                    onClick={e => {
+                                        e.preventDefault()
+                                        navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + this.state.token)
+                                        this.props.success("Invite link copied")
+                                        console.log(this.state)}}>
                                     <div className="inner-item">
                                     <span className="icon-wrapper">
                                         <span className="icon">
@@ -265,12 +286,15 @@ export class NavigationBar extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
+    getToken: (spaceID: string) => getInvitationToken(state, spaceID),
+    spaces: state.space.spaces,
     activeUser: state.userState.activeUser,
     video: state.rtc.video,
     muted: state.rtc.muted
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
+    success: (s: string) => dispatch(handleSuccess(s)),
     setName: (name: string) => dispatch(submitNameChange(name)),
     toggleAudio: () => dispatch(mute()),
     toggleVideo: () => dispatch(displayVideo()),

@@ -88,7 +88,7 @@ export class Playground extends Component<Props> {
         return (
             <div className={"contentWrapper"}>
                 <div className={"navwrapper"}>
-                    <NavigationBar/>
+                    <NavigationBar spaceID={this.props.match!.params.spaceID}/>
                 </div>
                 {this.props.joinedSpace ?
                     <Canvas/>
