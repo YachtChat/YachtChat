@@ -32,11 +32,11 @@ public class GcpService {
     private final String BUCKET_NAME = System.getenv("GCP_BUCKET_NAME");
     private static Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_NAME).build().getService();
 
-    public String uploadImageToBucket(String filename, MultipartFile file){
+    public String uploadImageToBucket(String filename, MultipartFile file, String extension){
         try{
             BlobInfo blobInfo = storage.create(
-                    BlobInfo.newBuilder(BUCKET_NAME, filename).build(), //get original file name
-                    file.getBytes() // the file
+                    BlobInfo.newBuilder(BUCKET_NAME, filename).setContentType("image/" + extension).build(), //get original file name
+                    file.getBytes()// the file
             );
             return blobInfo.getMediaLink();
         } catch (IOException e) {

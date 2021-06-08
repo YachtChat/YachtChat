@@ -64,12 +64,12 @@ public class AccountController extends SpringBootServletInitializer{
         // upload file to gcp
         String mimeType = file.getContentType();
         if(! mimeType.startsWith("image")){
-            new ResponseEntity<>("The File tha was provided was not an image", HttpStatus.BAD_REQUEST);
+            new ResponseEntity<>("The File that was provided was not an image", HttpStatus.BAD_REQUEST);
         }
 //      TODO: resize image to smaller resolution
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         String uniqueID = UUID.randomUUID() + "." + extension;
-        String image_url = gcpService.uploadImageToBucket(uniqueID, file);
+        String image_url = gcpService.uploadImageToBucket(uniqueID, file, extension);
         HttpResponse<JsonNode> response = keycloakService.updateUserImageById(image_url, token.getSubject());
         return new ResponseEntity<>("", HttpStatus.valueOf(response.getStatus()));
     }
