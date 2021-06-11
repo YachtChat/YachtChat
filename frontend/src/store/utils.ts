@@ -30,18 +30,17 @@ export function resetCookie(cname: string) {
 }
 
 export function keycloakUserToUser(data: any, online: boolean, position?: UserCoordinates): User {
-    const image = data["attributes"]["profile_image"]
+    const image = data.attributes?.profile_image
     return {
         id: data["id"],
         online: online,
+        image: online,
 
-        firstName: data["firstName"],
-        lastName: data["lastName"],
-        username: data["username"],
-        email: data["email"],
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
+        email: data.email,
         profile_image: (!!image && data.image !== "") ? image : default_image, // The actual URL to the image if available
-
-        image: false,
 
         position
     }

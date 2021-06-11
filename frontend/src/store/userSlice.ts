@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, User, UserCoordinates, UserPayload} from "./models";
-import {sendPosition} from "./webSocketSlice";
+import {sendPosition, userSetupReady} from "./webSocketSlice";
 import {sendAudio, unsendAudio} from "./rtcSlice";
 import {getHeaders} from "./authSlice";
 import axios from "axios";
@@ -40,9 +40,10 @@ export const userSlice = createSlice({
             state.activeUser.position!.range = action.payload;
         },
         gotRemoteStream: (state, action: PayloadAction<string>) => {
-            if (state.activeUser.id === action.payload)
+            if (state.activeUser.id === action.payload) {
                 state.activeUser.userStream = true
-            else
+                state.activeUser.inProximity = true
+            } else
                 state.spaceUsers[action.payload].userStream = true
         },
         setUserId: (state, action: PayloadAction<string>) => {
@@ -141,6 +142,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
                 })
                 // finally call set users with user list
                 dispatch(setUsers(userObjects))
+                dispatch(userSetupReady())
             })
         })
     )
@@ -148,18 +150,17 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
 
 // when new user joins
 export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppThunk => (dispatch, getState) => {
-    console.log("Hello")
     getHeaders(getState()).then(headers =>
         // axios load user info
         axios.get("https://" + ACCOUNT_URL + "/account/" + user.id + "/", headers).then(response => {
-            console.log(headers)
-            console.log(response)
             // transform into user with util-function
             // finally set user
             if (isActiveUser) {
-                dispatch(initUser(keycloakUserToUser(user, true)))
+                const user = keycloakUserToUser(response.data, true)
+                console.log("ActiveUser", user)
+                dispatch(initUser(user))
             } else {
-                dispatch(setUser(keycloakUserToUser(user, true, user?.position)))
+                dispatch(setUser(keycloakUserToUser(response.data, true, user?.position)))
             }
         })
     )
@@ -189,7 +190,7 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
     let users: User[] = []
 
     if (user.id === object.id)
-        users = getUsers(getState())
+        users = getOnlineUsers(getState())
     else
         users.push(getUserById(getState(), object.id))
 
@@ -236,6 +237,9 @@ export const getUserById = (state: RootState, id: string) => {
 export const getUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
     id => state.userState.spaceUsers[id]
 );
+export const getOnlineUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
+    id => state.userState.spaceUsers[id]
+).filter(u => u.online);
 export const getFriends = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
     id => state.userState.friends[id]
 );
