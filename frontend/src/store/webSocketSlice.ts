@@ -5,6 +5,7 @@ import {
     getUser,
     getUserID,
     getUsers,
+    gotRemoteStream,
     handleMessage,
     handlePositionUpdate,
     handleSpaceUser,
@@ -196,11 +197,15 @@ export const handleLogin = (success: boolean, spaceid: string, users: UserPayloa
         dispatch(handleError("Join failed. Try again later."))
     } else {
         dispatch(handleSpaceUsers(spaceid, users))
-        const user = getUser(getState())
-        dispatch(handleRTCEvents(getUserID(getState())));
-        dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
-        dispatch(joined())
     }
+}
+
+export const userSetupReady = (): AppThunk => (dispatch, getState) => {
+    const user = getUser(getState())
+    dispatch(gotRemoteStream(getUserID(getState())));
+    dispatch(handleRTCEvents(getUserID(getState())));
+    dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
+    dispatch(joined())
 }
 
 export const handleLeave = (): AppThunk => (dispatch, getState) => {
