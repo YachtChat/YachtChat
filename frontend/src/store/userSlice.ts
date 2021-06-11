@@ -132,7 +132,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
         ).finally(() => {
             console.log(userIDs)
             // axios load user info from all users in userids
-            axios.get("https://" + ACCOUNT_URL + "/account/userslist", {...headers, data: userIDs}).then(response => {
+            axios.post("https://" + ACCOUNT_URL + "/account/userslist/", userIDs, headers).then(response => {
                 // transform into users with util-function
                 const userObjects = response.data.map((user: any) => {
                     const userPayload = users.find(u => u.id === user.id)
@@ -151,7 +151,7 @@ export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppT
     console.log("Hello")
     getHeaders(getState()).then(headers =>
         // axios load user info
-        axios.get("https://" + ACCOUNT_URL + "/account/" + user.id, headers).then(response => {
+        axios.get("https://" + ACCOUNT_URL + "/account/" + user.id + "/", headers).then(response => {
             console.log(headers)
             console.log(response)
             // transform into user with util-function

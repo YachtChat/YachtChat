@@ -26,7 +26,7 @@ export function setCookie(cname: string, cvalue: string, exdays: number) {
 
 export function resetCookie(cname: string) {
     const expires = "expires=Thu, 01 Jan 1970 00:00:00 UTC";
-    document.cookie = cname + "=" + ";" + expires + ";path=/";
+    document.cookie = cname + "=;" + expires + ";path=/";
 }
 
 export function keycloakUserToUser(data: any, online: boolean, position?: UserCoordinates): User {
@@ -39,7 +39,7 @@ export function keycloakUserToUser(data: any, online: boolean, position?: UserCo
         lastName: data["lastName"],
         username: data["username"],
         email: data["email"],
-        profile_image: (!!image && data.image != "") ? image : default_image, // The actual URL to the image if available
+        profile_image: (!!image && data.image !== "") ? image : default_image, // The actual URL to the image if available
 
         image: false,
 

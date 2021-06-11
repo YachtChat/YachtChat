@@ -199,7 +199,7 @@ export class Canvas extends Component<Props, State> {
                  tabIndex={0}>
                 {this.props.spaceUsers.map(user => {
                     if (!user.online)
-                        return
+                        return null
                     return <RangeComponent key={user.id} isActiveUser={false}
                                            selected={false} user={user}/>
                 })}
@@ -208,7 +208,7 @@ export class Canvas extends Component<Props, State> {
                                 isActiveUser={true}/>
                 {this.props.spaceUsers.map(user => {
                     if (!user.online)
-                        return
+                        return null
                     return <UserComponent key={user.id} isActiveUser={false}
                                           selected={false} user={user}/>
                 })}
