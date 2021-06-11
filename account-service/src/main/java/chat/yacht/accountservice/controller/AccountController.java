@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(path="/account")
+@RequestMapping(path="/account", produces = "application/json")
 public class AccountController extends SpringBootServletInitializer{
     @Autowired
     private GcpService gcpService;
@@ -46,7 +46,7 @@ public class AccountController extends SpringBootServletInitializer{
         return new ResponseEntity<>(response.getBody().toString(), HttpStatus.valueOf(response.getStatus()));
     }
 
-    @GetMapping("/userslist")
+    @PostMapping("/userslist")
     public ResponseEntity<String> getUserListByIds(@RequestBody ArrayList<String> ids){
         ArrayList<String> answer = new ArrayList<>();
         ids.forEach(id -> {
