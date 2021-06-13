@@ -32,6 +32,7 @@ export interface PlaygroundOffset {
     x: number
     y: number
     scale: number
+    trueScale: number
 }
 
 export interface Space {
