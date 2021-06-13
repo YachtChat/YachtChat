@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {connect} from "react-redux";
 import './style.scss';
 import NavigationBar from "../NavigationBar";
-import {handleZoom} from "../../store/playgroundSlice";
+import {handleZoom, initPlayground} from "../../store/playgroundSlice";
 import Canvas from "./Canvas";
 import Wrapper, {Loading} from "../Wrapper";
 import {User} from "../../store/models";
@@ -22,6 +22,7 @@ interface Props {
         }
     }
     requestUserMedia: (spaceID: string) => void
+    initPlayground: () => void
     loadMediaDevices: (callback?: () => void) => void
     userMedia: boolean
     cameras: string[]
@@ -32,6 +33,7 @@ interface Props {
 export class Playground extends Component<Props> {
 
     componentDidMount() {
+        this.props.initPlayground()
         this.props.loadMediaDevices(() => {
             console.log(this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
             if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
@@ -116,6 +118,7 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     handleZoom: (z: number) => dispatch(handleZoom(z)),
     requestSpaces: () => dispatch(requestSpaces()),
+    initPlayground: () => dispatch(initPlayground()),
     requestUserMedia: (spaceID: string) => dispatch(requestUserMediaAndJoin(spaceID)),
     loadMediaDevices: (callback?: () => void) => dispatch(loadAllMediaDevices(callback)),
 })
