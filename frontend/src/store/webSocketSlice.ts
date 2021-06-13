@@ -2,9 +2,9 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
 import {UserCoordinates, UserPayload} from "./models";
 import {
+    getOnlineUsers,
     getUser,
     getUserID,
-    getUsers,
     gotRemoteStream,
     handleMessage,
     handlePositionUpdate,
@@ -93,10 +93,6 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
             case "new_user":
                 if (loggedIn) {
                     dispatch(handleSpaceUser(data));
-                    // TODO here the new_user case is treated exactly the same as the login case, however , there should
-                    // be a callee and a caller.
-                    dispatch(handleRTCEvents(data.id));
-                    dispatch(handlePositionUpdate({id: data.id, position: data.position}))
                 }
                 break;
             case "leave":
@@ -143,7 +139,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
 };
 
 export const sendMessage = (message: string): AppThunk => (dispatch, getState) => {
-    getUsers(getState()).forEach(u => {
+    getOnlineUsers(getState()).forEach(u => {
         if (u.inProximity) {
             dispatch(send({
                 type: "signal",

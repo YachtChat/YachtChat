@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, User, UserCoordinates, UserPayload} from "./models";
 import {sendPosition, userSetupReady} from "./webSocketSlice";
-import {sendAudio, unsendAudio} from "./rtcSlice";
+import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
 import {getHeaders} from "./authSlice";
 import axios from "axios";
 import {ACCOUNT_URL, SPACES_URL} from "./config";
@@ -161,6 +161,12 @@ export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppT
                 dispatch(initUser(user))
             } else {
                 dispatch(setUser(keycloakUserToUser(response.data, true, user?.position)))
+                if (getUser(getState()).id !== user.id) {
+                    // TODO here the new_user case is treated exactly the same as the login case, however , there should
+                    // be a callee and a caller.
+                    dispatch(handleRTCEvents(user.id));
+                    dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
+                }
             }
         })
     )
@@ -184,7 +190,7 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
 
 export const handlePositionUpdate = (object: { id: string, position: UserCoordinates }): AppThunk => (dispatch, getState) => {
     dispatch(move(object))
-    const user = getState().userState.activeUser
+    const user = getUser(getState())
     const currentRange = maxRange * user.position!.range / 100
 
     let users: User[] = []
@@ -196,7 +202,7 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
 
     // if (getUser(getState()).position === user.position)
     users.forEach(u => {
-        if (!u.position)
+        if (!u || !u.position)
             return
         const dist = Math.sqrt(
             Math.pow(((u.position.x) - (user.position!.x)), 2) +
@@ -237,9 +243,7 @@ export const getUserById = (state: RootState, id: string) => {
 export const getUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
     id => state.userState.spaceUsers[id]
 );
-export const getOnlineUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
-    id => state.userState.spaceUsers[id]
-).filter(u => u.online);
+export const getOnlineUsers = (state: RootState) => getUsers(state).filter(u => u.online);
 export const getFriends = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
     id => state.userState.friends[id]
 );
