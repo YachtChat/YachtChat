@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, User, UserCoordinates, UserPayload} from "./models";
 import {sendPosition, userSetupReady} from "./webSocketSlice";
-import {sendAudio, unsendAudio} from "./rtcSlice";
+import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
 import {getHeaders} from "./authSlice";
 import axios from "axios";
 import {ACCOUNT_URL, SPACES_URL} from "./config";
@@ -122,6 +122,7 @@ export const {
     setMedia
 } = userSlice.actions;
 
+// Called on initial login to retrieve the user information for all users
 export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThunk => (dispatch, getState) => {
     const userIDs: string[] = users.map(u => u.id)
     getHeaders(getState()).then(headers =>
@@ -146,9 +147,10 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
             })
         })
     )
+    // TODO Place call for API everytime after new user joint or after interval to filter user wich are not part of space anymore
 }
 
-// when new user joins
+// called when new user joins / including the activeUser in order to get user information for the user
 export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         // axios load user info
@@ -161,34 +163,53 @@ export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppT
                 dispatch(initUser(user))
             } else {
                 dispatch(setUser(keycloakUserToUser(response.data, true, user?.position)))
+                // If the user is not the active user, init RTC Events
+                if (getUser(getState()).id !== user.id) {
+                    // TODO here the new_user case is treated exactly the same as the login case, however , there should
+                    // be a callee and a caller.
+                    dispatch(handleRTCEvents(user.id));
+                    dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
+                }
             }
         })
     )
 }
 
+// When the user moves to send the position to the other users
 export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {
-    const user = getState().userState.activeUser
+    const user = getUser(getState())
     if (user.position !== coordinates) {
+        // Position will be send over Websocket
         dispatch(sendPosition(coordinates))
+        // Execute proximity check
         dispatch(handlePositionUpdate({id: user.id, position: coordinates}))
     }
 }
 
+// When a user sends a message
 export const handleMessage = (message: string, fromId: string): AppThunk => (dispatch, getState) => {
     const user = getUserById(getState(), fromId)
     if (user) {
+        // Set message in order to display it
         dispatch(setMessage({message, id: fromId}))
+        // After timeout message will be deleted
         setTimeout(() => dispatch(destroyMessage(fromId)), 5000)
     }
 }
 
+// Is called everytime a range or position changes in order to calculate distances and trigger the right rtc events
 export const handlePositionUpdate = (object: { id: string, position: UserCoordinates }): AppThunk => (dispatch, getState) => {
+    // Set user position
     dispatch(move(object))
-    const user = getState().userState.activeUser
+
+    // Get range of user
+    const user = getUser(getState())
     const currentRange = maxRange * user.position!.range / 100
 
     let users: User[] = []
 
+    //  If moving user is activeUser the proximity has to be compared to every user
+    //  Else: The moving user has only to be compared to the active user
     if (user.id === object.id)
         users = getOnlineUsers(getState())
     else
@@ -196,12 +217,15 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
 
     // if (getUser(getState()).position === user.position)
     users.forEach(u => {
-        if (!u.position)
+        if (!u || !u.position)
             return
+        // Calculate the euclidean distance
         const dist = Math.sqrt(
             Math.pow(((u.position.x) - (user.position!.x)), 2) +
             Math.pow(((u.position.y) - (user.position!.y)), 2)
         )
+        // If the user is not marked as in proximity, but actually is, set flag and send audio
+        // Else: If the user is marked as in proximity, but actually is not, reset flag and unsend audio
         if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
             // console.log(user.id, "in Range - sending audio to", u.id)
             dispatch(setUser({...u, inProximity: true}))
@@ -216,10 +240,16 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
     })
 }
 
+// Sends the radius to the other users and triggers the distance routine
 export const submitRadius = (radius: number): AppThunk => (dispatch, getState) => {
+    // Sets the radius
     dispatch(changeRadius(radius))
+
+    // Sends the radius
     const position = getUser(getState()).position!
     dispatch(sendPosition(position))
+
+    // Dispatches distance calculation update
     dispatch(handlePositionUpdate({id: getUserID(getState()), position}))
 };
 
@@ -237,9 +267,7 @@ export const getUserById = (state: RootState, id: string) => {
 export const getUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
     id => state.userState.spaceUsers[id]
 );
-export const getOnlineUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
-    id => state.userState.spaceUsers[id]
-).filter(u => u.online);
+export const getOnlineUsers = (state: RootState) => getUsers(state).filter(u => u.online);
 export const getFriends = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
     id => state.userState.friends[id]
 );

@@ -4,9 +4,9 @@ import {connectToServer, handleLeave, send} from "./webSocketSlice";
 import {rtcConfiguration} from "./config";
 import {
     forgetUsers,
+    getOnlineUsers,
     getUser,
     getUserID,
-    getUsers,
     gotRemoteStream,
     handlePositionUpdate,
     setMedia,
@@ -150,7 +150,7 @@ export const mute = (): AppThunk => (dispatch, getState) => {
         return
 
     getStream(getState(), getUserID(getState()))!.getAudioTracks()[0].enabled = !getState().rtc.muted
-    getUsers(getState()).forEach(u => {
+    getOnlineUsers(getState()).forEach(u => {
         rtpSender[u.id].forEach(rtp => {
             if (rtp.track && rtp.track.kind === 'audio') {
                 rtp.track.enabled = (!getState().rtc.muted && !!u.inProximity)
@@ -174,7 +174,7 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
 
     dispatch(send({'type': 'media', 'media': 'image', 'event': state.rtc.video}))
     dispatch(setMedia({id: userID, type: MediaType.VIDEO, state: state.rtc.video}))
-    getUsers(state).forEach(u => {
+    getOnlineUsers(state).forEach(u => {
         rtpSender[u.id].forEach(rtp => {
             if (rtp.track && rtp.track.kind === 'video') {
                 rtp.track.enabled = state.rtc.video
@@ -207,7 +207,7 @@ export const unsendAudio = (id: string): AppThunk => (dispatch, getState) => {
 
 export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, getState) => {
     // get client ids
-    const clients = getUsers(getState()).map(k => k.id)
+    const clients = getOnlineUsers(getState()).map(k => k.id)
     const localClient: string = getUserID(getState())
     clients.push(localClient)
 
@@ -365,7 +365,7 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
     })
 
 
-    getUsers(getState()).forEach(u => {
+    getOnlineUsers(getState()).forEach(u => {
         rtcConnections[u.id].close()
         rtpSender[u.id].forEach(t => t.track?.stop())
     })
@@ -383,6 +383,7 @@ export const changeVideoInput = (camera: string): AppThunk => (dispatch, getStat
     dispatch(setCamera(camera))
     dispatch(handleInputChange())
 }
+
 export const changeAudioInput = (microphone: string): AppThunk => (dispatch, getState) => {
     dispatch(setMediaChangeOngoing(true))
     dispatch(setMicrophone(microphone))
@@ -397,7 +398,7 @@ export const handleInputChange = (): AppThunk => (dispatch, getState) => {
         localStream = e
         dispatch(setMediaChangeOngoing(false))
         getStream(getState(), localClient)!.getTracks().forEach(s => {
-            getUsers(getState()).forEach(u => {
+            getOnlineUsers(getState()).forEach(u => {
                 rtpSender[u.id].forEach(rs => {
                     if (rs.track && rs.track.kind === s.kind)
                         rs.replaceTrack(s.clone())
