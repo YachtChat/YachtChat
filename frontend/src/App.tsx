@@ -15,6 +15,7 @@ import {IoCogOutline} from "react-icons/all";
 import CreateSpace from "./components/Spaces/CreateSpace";
 import InviteSpace from "./components/Spaces/InviteSpace";
 import JoinSpace from "./components/Spaces/JoinSpace";
+import {Typeform} from "./components/Typeform";
 
 interface Props {
     loggedIn: boolean
@@ -61,6 +62,7 @@ export class App extends Component<Props, State> {
                     </Route>
                 </Switch>
                 <StatusComponent/>
+                <Typeform/>
             </div>
         );
     }
