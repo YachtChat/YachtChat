@@ -4,6 +4,9 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
+import org.keycloak.representations.AccessToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -14,6 +17,8 @@ import java.util.Calendar;
 
 @Service
 public class KeycloakService {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     private String accessToken = null;
     private String refreshToken = null;
     private Timestamp expiryDateAccessToken = null;
@@ -73,6 +78,13 @@ public class KeycloakService {
         return response;
     }
 
+    public String getLinkedInToken(AccessToken token, String plainToken) {
+        HttpResponse<JsonNode> response = Unirest.get(URL + "realms/Application/broker/linkedin/token")
+                .header("Authorization", "Bearer " + plainToken)
+                .asJson();
+        return response.getBody().getObject().getString("access_token");
+    }
+
     private void getNewToken(){
         HttpResponse<JsonNode> response = Unirest.post(URL + "realms/master/protocol/openid-connect/token")
                 .header("content-type", "application/x-www-form-urlencoded")
@@ -81,6 +93,8 @@ public class KeycloakService {
                 .field("client_id", "admin-cli")
                 .field("grant_type", "password")
                 .asJson();
+
+        log.info("Account Service got new Access Tokens");
 
         JSONObject res = response.getBody().getObject();
         accessToken = res.getString("access_token");
@@ -100,6 +114,8 @@ public class KeycloakService {
                 .field("grant_type", "refresh_token")
                 .field("refresh_token", refreshToken)
                 .asJson();
+
+        log.info("Account Service used the refresh token");
 
         JSONObject res = response.getBody().getObject();
         accessToken = res.getString("access_token");

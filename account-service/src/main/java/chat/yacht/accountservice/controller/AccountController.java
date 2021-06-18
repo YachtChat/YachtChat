@@ -2,9 +2,9 @@ package chat.yacht.accountservice.controller;
 
 import chat.yacht.accountservice.service.GcpService;
 import chat.yacht.accountservice.service.KeycloakService;
+import chat.yacht.accountservice.service.ProfileService;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
-import kong.unirest.json.JSONObject;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,9 +30,26 @@ public class AccountController extends SpringBootServletInitializer{
     @Autowired
     private KeycloakService keycloakService;
 
+    @Autowired
+    private ProfileService profileService;
+
     @GetMapping("/email")
     public ResponseEntity<String> getUserByEmail(@RequestParam String email) {
         HttpResponse<JsonNode> response = keycloakService.getUserByEmail(email);
+        return new ResponseEntity<>(response.getBody().toString(), HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<String> getUser(Principal principal){
+        String plainToken = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal()).getKeycloakSecurityContext().getTokenString();
+        AccessToken token = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal()).getKeycloakSecurityContext().getToken();
+        profileService.checkProfile(token, plainToken);
+
+        String userId = token.getSubject();
+        HttpResponse<JsonNode> response = keycloakService.getUserById(userId);
+        if (response.getStatus() == 404){
+            return new ResponseEntity<>("A User with id " + userId + " does not exist", HttpStatus.valueOf(404));
+        }
         return new ResponseEntity<>(response.getBody().toString(), HttpStatus.valueOf(response.getStatus()));
     }
 
@@ -69,12 +85,17 @@ public class AccountController extends SpringBootServletInitializer{
 //      TODO: resize image to smaller resolution
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         String uniqueID = UUID.randomUUID() + "." + extension;
-        String image_url = gcpService.uploadImageToBucket(uniqueID, file, extension);
+        String image_url;
+        try{
+            image_url = gcpService.uploadImageToBucket(uniqueID, file, extension);
+        } catch(RuntimeException e){
+            return new ResponseEntity<>("The image could not be uploaded to GCP Bucket", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         HttpResponse<JsonNode> response = keycloakService.updateUserImageById(image_url, token.getSubject());
         return new ResponseEntity<>("", HttpStatus.valueOf(response.getStatus()));
     }
 
-    @PutMapping("/")
+    @PutMapping("/update")
     public ResponseEntity<String> updateUser(@RequestBody String data, Principal principal){
         AccessToken token = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal()).getKeycloakSecurityContext().getToken();
         HttpResponse<JsonNode> ans = keycloakService.updateUserById(data, token.getSubject());
