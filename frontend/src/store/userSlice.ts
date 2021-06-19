@@ -150,6 +150,16 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
     // TODO Place call for API everytime after new user joint or after interval to filter user wich are not part of space anymore
 }
 
+export const handleLoginUser = (user: UserPayload): AppThunk => (dispatch, getState) => {
+    getHeaders(getState()).then(headers =>
+        axios.get("http://" + ACCOUNT_URL + "/account/", headers).then(response => {
+            const user = keycloakUserToUser(response.data, true)
+            console.log("ActiveUser", user)
+            dispatch(initUser(user))
+        })
+    )
+}
+
 // called when new user joins / including the activeUser in order to get user information for the user
 export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>

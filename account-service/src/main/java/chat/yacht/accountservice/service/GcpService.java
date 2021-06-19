@@ -4,6 +4,8 @@ import com.google.api.gax.paging.Page;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +29,7 @@ public class GcpService {
      * credentials are authorized to sign a URL. See the documentation for Storage.signUrl for more
      * details.
      */
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String PROJECT_NAME = System.getenv("GCP_PROJECT_NAME");
     private final String BUCKET_NAME = System.getenv("GCP_BUCKET_NAME");
@@ -38,8 +41,10 @@ public class GcpService {
                     BlobInfo.newBuilder(BUCKET_NAME, filename).setContentType("image/" + extension).build(), //get original file name
                     file.getBytes()// the file
             );
+            log.info("User uplodaded an image to the GCP Bucket");
             return blobInfo.getMediaLink();
         } catch (IOException e) {
+            log.error("Image could not be uploaed to GCP Bucket");
             throw new RuntimeException("A file could not be uploaded to GCP bucket");
         }
     }
