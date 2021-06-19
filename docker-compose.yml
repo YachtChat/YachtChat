@@ -79,7 +79,7 @@ services:
 #      - GOOGLE_APPLICATION_CREDENTIALS=tmp/keys/yacht-chat-9b0254d39af7.json
     volumes:
 #      - /Users/marc/Development/yacht-chat-9b0254d39af7.json:/tmp/keys/yacht-chat-9b0254d39af7.json
-      - /tmp/keys/yacht-chat-c542c660cc1b.json:/tmp/keys/yacht-chat-c542c660cc1b.json
+      - /tmp/keys/yacht-chat-4cfbecf324d7.json:/tmp/keys/yacht-chat-4cfbecf324d7.json
     networks:
       - application
 
