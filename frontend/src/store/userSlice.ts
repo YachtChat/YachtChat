@@ -152,7 +152,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
 
 export const handleLoginUser = (user: UserPayload): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
-        axios.get("http://" + ACCOUNT_URL + "/account/", headers).then(response => {
+        axios.get("https://" + ACCOUNT_URL + "/account/", headers).then(response => {
             const user = keycloakUserToUser(response.data, true)
             console.log("ActiveUser", user)
             dispatch(initUser(user))
