@@ -43,6 +43,7 @@ public class AccountController extends SpringBootServletInitializer{
     public ResponseEntity<String> getUser(Principal principal){
         String plainToken = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal()).getKeycloakSecurityContext().getTokenString();
         AccessToken token = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal()).getKeycloakSecurityContext().getToken();
+        logger.info("Initial User Information was fetched for user " + token.getSubject());
         profileService.checkProfile(token, plainToken);
 
         String userId = token.getSubject();
