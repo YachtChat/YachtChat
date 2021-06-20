@@ -9,6 +9,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path="/account", produces = "application/json")
 public class AccountController extends SpringBootServletInitializer{
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private GcpService gcpService;
 
@@ -43,7 +47,7 @@ public class AccountController extends SpringBootServletInitializer{
     public ResponseEntity<String> getUser(Principal principal){
         String plainToken = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal()).getKeycloakSecurityContext().getTokenString();
         AccessToken token = ((KeycloakPrincipal) ((KeycloakAuthenticationToken) principal).getPrincipal()).getKeycloakSecurityContext().getToken();
-        logger.info("Initial User Information was fetched for user " + token.getSubject());
+        log.info("Initial User Information was fetched for user " + token.getSubject());
         profileService.checkProfile(token, plainToken);
 
         String userId = token.getSubject();
