@@ -6,7 +6,7 @@ services:
       - /home/git_environment/NotZoom/keycloak/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
       - prometheus:/prometheus
     networks:
-      - application
+      - notzoom_application
 #       starts on 9090
 
   grafana:
@@ -17,7 +17,7 @@ services:
       - LETSENCRYPT_HOST=${GRAFANA_URL}
       - VIRTUAL_PORT=${GRAFANA_PORT}
     networks:
-      - application
+      - notzoom_application
 
 
 volumes:
