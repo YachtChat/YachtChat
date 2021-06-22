@@ -22,3 +22,7 @@ services:
 
 volumes:
   prometheus: { }
+
+networks:
+  application:
+    driver: bridge
