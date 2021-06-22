@@ -1,0 +1,24 @@
+version: "2"
+services:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - /home/git_environment/NotZoom/keycloak/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
+      - prometheus:/prometheus
+    networks:
+      - application
+#       starts on 9090
+
+  grafana:
+    image: grafana/grafana
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+      - VIRTUAL_HOST=${GRAFANA_PORT}
+      - LETSENCRYPT_HOST=${GRAFANA_URL}
+      - VIRTUAL_PORT=${GRAFANA_PORT}
+    networks:
+      - application
+
+
+volumes:
+  prometheus: { }
