@@ -105,6 +105,11 @@ label, .required {
   text-align: center;
   align-items: center;
   justify-content: center;
+
+  &.profilePic {
+    background-position: center center;
+    background-size: cover;
+  }
 }
 
 .headlineBox {
