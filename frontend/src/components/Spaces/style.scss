@@ -9,11 +9,6 @@
   text-align: left;
   overflow-y: auto;
 
-  .headlineBox .buttons .profilePic {
-    background-position: center center;
-    background-size: cover;
-  }
-
   .loadingAnimation {
     margin: auto auto;
     display: block;
@@ -52,7 +47,7 @@
     padding: 2rem 2rem;
   }
 
-  .spacesWrapper {
+  .itemWrapper {
     display: block;
     padding: 0 2rem;
 
@@ -71,11 +66,21 @@
       padding-right: 1rem;
     }
 
-    .space {
+    .item {
       position: relative;
       padding: 1.5rem 1rem;
       border-radius: $border_radius;
       margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+
+      .menuIcon {
+        margin-right: 10px;
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
 
       &:hover {
         background: $background_2_light;

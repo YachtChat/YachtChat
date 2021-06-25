@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {deleteSpace, requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
-import {IoAddOutline, IoChevronForwardOutline, IoPeople, IoTrashOutline} from "react-icons/all";
+import {IoAddOutline, IoChevronForwardOutline, IoEllipsisHorizontal, IoPeople, IoTrashOutline} from "react-icons/all";
 import {Link} from "react-router-dom";
 import {FaCog, FaPowerOff} from "react-icons/fa";
 import {logout} from "../../store/authSlice";
@@ -58,6 +58,7 @@ export class Spaces extends Component<Props, State> {
 
     handleContext(e: React.MouseEvent, space: Space) {
         e.preventDefault()
+        e.stopPropagation()
         this.setState({
             mouseX: e.clientX,
             mouseY: e.clientY,
@@ -88,7 +89,9 @@ export class Spaces extends Component<Props, State> {
                                             <MenuList autoFocusItem={open} id="menu-list-grow">
                                                 <Link to={keycloak.createAccountUrl()}>
                                                     <MenuItem className={"menuItem"}
-                                                              onClick={this.handleClose.bind(this)}><FaCog/> Account</MenuItem>
+                                                              onClick={this.handleClose.bind(this)}>
+                                                        <FaCog/> Account
+                                                    </MenuItem>
                                                 </Link>
                                                 <Link to={"/friends"}>
                                                     <MenuItem className={"menuItem"}
@@ -113,16 +116,20 @@ export class Spaces extends Component<Props, State> {
                             </span>
                     </Link>
                 </h2>
-                <div className={"spacesWrapper"}>
+                <div className={"itemWrapper"}>
                     {this.props.spaces.map((s, idx) => (
                         <Link to={`/spaces/${s.id}`}>
                             <div
                                 onContextMenu={e =>
                                     this.handleContext(e, s)
                                 }
-                                className={"space " + ((idx > 0) ? "separator" : "")}>
+                                className={"item " + ((idx > 0) ? "separator" : "")}>
                                 {s.name}
                                 <div className={"buttons"}>
+                                    <a onClick={e => this.handleContext(e, s)}
+                                       className={"menuIcon"}>
+                                        <IoEllipsisHorizontal/>
+                                    </a>
                                     <IoChevronForwardOutline/>
                                 </div>
                             </div>
@@ -131,6 +138,10 @@ export class Spaces extends Component<Props, State> {
                 </div>
                 <Menu
                     keepMounted
+                    onContextMenu={e => {
+                        e.preventDefault()
+                        this.handleClose()
+                    }}
                     open={!!this.state.space}
                     onClose={this.handleClose.bind(this)}
                     anchorReference="anchorPosition"

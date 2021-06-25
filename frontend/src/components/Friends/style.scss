@@ -8,17 +8,10 @@
   overflow: hidden;
   text-align: left;
 
-  .spacesWrapper {
+  .itemWrapper {
     display: block;
-    padding: 2rem;
+    padding: 0 2rem;
 
-    h2 {
-      position: relative;
-      font-size: 1.5rem;
-      line-height: 2rem;
-      padding: 0 0 0 1rem;
-      margin: 0;
-    }
 
     .buttons {
       position: absolute;
@@ -34,19 +27,35 @@
       padding-right: 1rem;
     }
 
-    .separator {
-      border-top: solid gray 1px;
-    }
-
-    .space {
+    .item {
       position: relative;
       padding: 1.5rem 1rem;
-      margin-bottom: 0.5rem;
       border-radius: $border_radius;
       margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+
+      .menuIcon {
+        margin-right: 10px;
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+
+      .online {
+        font-size: 0.5rem;
+        color: $accent_light;
+      }
 
       &:hover {
         background: $background_2_light;
+
+        @media (prefers-color-scheme: dark) {
+          & {
+            background: $background_2_dark;
+          }
+        }
       }
     }
   }

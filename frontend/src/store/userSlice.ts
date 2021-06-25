@@ -267,6 +267,11 @@ export const requestFriends = (): AppThunk => dispatch => {
     // request and commit friends here
 }
 
+export const promoteUser = (id: string): AppThunk => dispatch => {
+    // send request to backend to promote this user
+}
+
+export const isHost = (state: RootState) => false
 export const getUser = (state: RootState) => state.userState.activeUser;
 export const getUserID = (state: RootState) => state.userState.activeUser.id;
 export const getUserById = (state: RootState, id: string) => {
