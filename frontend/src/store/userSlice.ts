@@ -74,7 +74,7 @@ export const userSlice = createSlice({
                 const id = u.id
                 if (id === state.activeUser.id) {
                     state.activeUser = u
-                } else if (u.position) {
+                } else if (u.position || !u.online) {
                     spaceUsers[id] = u
                 }
             })
@@ -128,11 +128,10 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
     getHeaders(getState()).then(headers =>
         // load user ids from all users in space
         axios.get("https://" + SPACES_URL + "/api/v1/spaces/" + spaceId + "/allUsers/", headers).then((response) =>
-            response.data.forEach((u: { id: string }) =>
+            response.data.forEach((u: { id: string }) => {
                 userIDs.push(u.id)
-            )
+            })
         ).finally(() => {
-            console.log(userIDs)
             // axios load user info from all users in userids
             axios.post("https://" + ACCOUNT_URL + "/account/userslist/", userIDs, headers).then(response => {
                 // transform into users with util-function
@@ -141,6 +140,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
                     // set all users online and position of users in "users" (maybe also image)
                     return keycloakUserToUser(user, !!userPayload, userPayload?.position)
                 })
+                console.log(userObjects)
                 // finally call set users with user list
                 dispatch(setUsers(userObjects))
                 dispatch(userSetupReady())

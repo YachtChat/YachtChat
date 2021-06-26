@@ -1,8 +1,8 @@
 import React, {Component} from "react";
-import {User} from "../../store/models";
-import {RootState} from "../../store/store";
+import {User} from "../../../store/models";
+import {RootState} from "../../../store/store";
 import {connect} from "react-redux";
-import {submitRadius} from "../../store/userSlice";
+import {submitRadius} from "../../../store/userSlice";
 import './style.scss';
 import {Slider} from "@material-ui/core";
 
