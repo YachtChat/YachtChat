@@ -2,12 +2,9 @@
 
 .spaces {
   width: 50%;
-  height: 50%;
   min-width: 400px;
-  min-height: 600px;
   overflow: hidden;
   text-align: left;
-  overflow-y: auto;
 
   .loadingAnimation {
     margin: auto auto;
@@ -48,9 +45,12 @@
   }
 
   .itemWrapper {
-    display: block;
-    padding: 0 2rem;
-
+    min-width: 500px;
+    padding: 0.7rem 2rem;
+    overflow-y: auto;
+    height: 100px;
+    bottom: 0;
+    margin-bottom: 0;
 
     .buttons {
       position: absolute;

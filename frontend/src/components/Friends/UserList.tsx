@@ -34,7 +34,6 @@ class UserList extends Component<Props> {
                     <div className={"item " + ((idx > 0) ? "separator" : "")}>
                         <div className={"iconButton profilePic"}
                              style={{backgroundImage: `url(${u.profile_image})`}}/>
-                        />
                         {u.firstName} {u.lastName}
                         {u.online &&
                         <span className={"online"}>online</span>
