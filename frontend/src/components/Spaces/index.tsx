@@ -172,7 +172,11 @@ export class Spaces extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
-    spaces: state.space.spaces,
+    spaces: state.space.spaces.sort((a, b) => {
+        if(a.name < b.name) { return -1; }
+        if(a.name > b.name) { return 1; }
+        return 0;
+    }),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
