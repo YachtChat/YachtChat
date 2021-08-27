@@ -35,36 +35,41 @@ export class MembersComponent extends Component<Props, State> {
 
     render() {
         const style = {
-            display: (this.props.open) ? "block" : "none"
+            display: (this.props.open) ? "block" : "none",
         }
 
         return (
             <div>
-                <Dialog className={"messagePanel"}
-                        open={this.props.open}
+                <Dialog open={this.props.open}
                         onClose={this.props.onClose}
                         style={style}>
-                    <div className={"headlineBox"}>
-                        <div className={"buttons"}>
-                            <Tooltip title={"Get invitation link"} placement={"top"} arrow>
-                                <button onClick={e => {
-                                    e.preventDefault()
-                                    navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + this.state.token)
-                                    this.props.success("Invite link copied")
-                                    console.log(this.state)
-                                }} className={"iconButton"}>
-                                    <IoLink/>
-                                </button>
-                            </Tooltip>
+                    <div className={"panel"}>
 
-                            <button onClick={this.props.onClose} className={"iconButton"}>
-                                <IoCloseOutline/>
-                            </button>
+                        <div className={"headlineBox"}>
+                            <div className={"buttons"}>
+                                <Tooltip title={"Get invitation link"} placement={"top"} arrow>
+                                    <button onClick={e => {
+                                        e.preventDefault()
+                                        navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + this.state.token)
+                                        this.props.success("Invite link copied")
+                                        console.log(this.state)
+                                    }} className={"iconButton"}>
+                                        <IoLink/>
+                                    </button>
+                                </Tooltip>
+
+                                <button onClick={this.props.onClose} className={"iconButton"}>
+                                    <IoCloseOutline/>
+                                </button>
+                            </div>
+                            <h2>Space Members</h2>
+                            See everyone present in this space
                         </div>
-                        <h2>Space Members</h2>
-                        See everyone present in this space
+                        <div className={"panelContent"}>
+                            <h2>Space Members</h2>
+                            <UserList type={"users"} spaceID={this.props.spaceID}/>
+                        </div>
                     </div>
-                    <UserList type={"users"} spaceID={this.props.spaceID}/>
                 </Dialog>
             </div>
         );
