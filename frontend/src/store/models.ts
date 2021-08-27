@@ -39,6 +39,7 @@ export interface Space {
     name: string
     id: string
     public: boolean
+    hosts: string[]
 }
 
 export enum MediaType {
