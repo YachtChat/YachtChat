@@ -3,13 +3,16 @@ import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getCamera, getMicrophone, getSpeaker, getStream} from "../../store/rtcSlice";
-import {userProportion} from "../../store/userSlice";
+import {destroyMessage, userProportion} from "../../store/userSlice";
 import {Tooltip, Zoom} from "@material-ui/core";
 
-interface Props {
+interface OwnProps {
     user: User
     selected: boolean
     isActiveUser: boolean
+}
+
+interface OtherProps {
     playgroundOffset: PlaygroundOffset
     muted: boolean
     speaker: string
@@ -17,7 +20,10 @@ interface Props {
     microphone: string
     getStream: (id: string) => MediaStream | undefined
     mediaChangeOngoing: boolean
+    destroyMessage: () => void
 }
+
+type Props = OwnProps & OtherProps
 
 export class UserComponent extends Component<Props> {
 
@@ -114,7 +120,12 @@ export class UserComponent extends Component<Props> {
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
-                    <Tooltip data-id={"message"} TransitionComponent={Zoom} open={!!this.props.user.message} interactive
+                    <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message} interactive
+                             onClick={e => {
+                                 e.preventDefault()
+                                 e.stopPropagation()
+                                 this.props.destroyMessage()
+                             }}
                              title={
                                  (this.props.user.message) ?
                                      (this.props.user.message.toLocaleLowerCase().startsWith("http")) ?
@@ -150,4 +161,8 @@ const mapStateToProps = (state: RootState) => ({
     getStream: (id: string) => getStream(state, id),
 })
 
-export default connect(mapStateToProps)(UserComponent)
+const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
+    destroyMessage: () => dispatch(destroyMessage(ownProps.user.id))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserComponent)

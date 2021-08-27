@@ -78,9 +78,11 @@ export class Canvas extends Component<Props, State> {
 
     onMouseUp(e: React.MouseEvent) {
         // Click functionality
-        if (!this.state.dragStart ||
+        if ((!this.state.dragStart ||
             this.state.dragStart.x === e.clientX ||
-            this.state.dragStart.y === e.clientY) {
+            this.state.dragStart.y === e.clientY) &&
+            !(e.target as HTMLDivElement).classList.contains("MuiTooltip-tooltip")
+        ) {
             const scaling = this.props.offset.scale
             const x = e.currentTarget.getBoundingClientRect().x
             const y = e.currentTarget.getBoundingClientRect().y
@@ -125,11 +127,11 @@ export class Canvas extends Component<Props, State> {
                 x: (prev.x + (start.x - e.clientX) / scaling) - x,
                 y: (prev.y + (start.y - e.clientY) / scaling) - y
             })
-            this.props.move({
-                x: this.state.previousPosition!.x + (start.x - e.clientX) / scaling,
-                y: this.state.previousPosition!.y + (start.y - e.clientY) / scaling,
-                range: this.props.activeUser.position!.range
-            })
+            // this.props.move({
+            //     x: this.state.previousPosition!.x + (start.x - e.clientX) / scaling,
+            //     y: this.state.previousPosition!.y + (start.y - e.clientY) / scaling,
+            //     range: this.props.activeUser.position!.range
+            // })
         }
     }
 
@@ -137,7 +139,6 @@ export class Canvas extends Component<Props, State> {
     moveTouch(e: React.TouchEvent) {
         if (this.state.userDragActive) {
             const scaling = this.props.offset.scale
-            alert("moveTouch triggered")
             this.props.move({
                 x: e.touches[0].clientX / scaling,
                 y: e.touches[0].clientY / scaling,
@@ -213,7 +214,9 @@ export class Canvas extends Component<Props, State> {
                                           selected={false} user={user}/>
                 })}
                 <UserComponent user={this.props.activeUser}
-                               selected={this.state.mapDragActive || this.state.userDragActive}
+                               selected={
+                                   //this.state.mapDragActive ||
+                                   this.state.userDragActive}
                                isActiveUser={true}/>
             </div>
         )

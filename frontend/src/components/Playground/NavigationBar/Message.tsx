@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
 import {sendMessage} from "../../../store/webSocketSlice";
-import {IoCloseOutline} from "react-icons/all";
 
 interface Props {
     open: boolean
@@ -43,30 +42,33 @@ export class MessageComponent extends Component<Props, State> {
 
         return (
             <div>
-                <Dialog className={"messagePanel"}
-                        open={this.props.open}
+                <Dialog open={this.props.open}
                         onClose={this.handleClose.bind(this)}
                         style={style}>
-                    <div className={"headlineBox"}>
-                        <div className={"buttons"}>
-                            <button onClick={this.handleClose.bind(this)} className={"iconButton"}><IoCloseOutline/>
-                            </button>
+                    <div className={"panel"}>
+                        <div className={"headlineBox"}>
+                            <h2>Send message</h2>
+                            Send a message to everyone in your proximity
                         </div>
-                        <h2>Send message</h2>
-                        Send a message to everyone in your proximity
+                        <div className={"panelContent"}>
+                            <form onSubmit={e => {
+                                e.preventDefault()
+                                this.handleSubmit()
+                            }}
+                                  className={"message"}>
+                                <input autoFocus={this.props.open}
+                                       placeholder={"write message..."}
+                                       value={this.state.message}
+                                       onChange={({target: {value}}) => this.setState({message: value})}/>
+                                <button type={"submit"} className={"Button"}>
+                                    send
+                                </button>
+                                <button onClick={this.handleClose.bind(this)} className={"Button"}>
+                                    dismiss
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <form onSubmit={e => {
-                        e.preventDefault()
-                        this.handleSubmit()
-                    }}
-                          className={"message"}>
-                        <input autoFocus={this.props.open}
-                               value={this.state.message}
-                               onChange={({target: {value}}) => this.setState({message: value})}/>
-                        <button type={"submit"} className={"Button"}>
-                            send
-                        </button>
-                    </form>
                 </Dialog>
             </div>
         );

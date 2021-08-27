@@ -201,7 +201,7 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
         // Set message in order to display it
         dispatch(setMessage({message, id: fromId}))
         // After timeout message will be deleted
-        setTimeout(() => dispatch(destroyMessage(fromId)), 5000)
+        setTimeout(() => dispatch(destroyMessage(fromId)), 12000)
     }
 }
 
