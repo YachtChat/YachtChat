@@ -108,63 +108,65 @@ export class Spaces extends Component<Props, State> {
                     <h1>Hello, {this.props.activeUser.firstName}</h1>
                     <p>To join a space, select a space below, or create a new one.</p>
                 </div>
+                <div className={"spacesContent"}>
 
-                <h2>Spaces
-                    <Link to={"/create-space"}>
+                    <h2>Spaces
+                        <Link to={"/create-space"}>
                             <span className={"minimalButton"}>
                             <IoAddOutline/>
                             </span>
-                    </Link>
-                </h2>
-                <div className={"itemWrapper"}>
-                    {this.props.spaces.map((s, idx) => (
-                        <Link to={`/spaces/${s.id}`}>
-                            <div
-                                onContextMenu={e =>
-                                    this.handleContext(e, s)
-                                }
-                                className={"item " + ((idx > 0) ? "separator" : "")}>
-                                {s.name}
-                                <div className={"buttons"}>
-                                    <a onClick={e => this.handleContext(e, s)}
-                                       className={"menuIcon"}>
-                                        <IoEllipsisHorizontal/>
-                                    </a>
-                                    <IoChevronForwardOutline/>
-                                </div>
-                            </div>
                         </Link>
-                    ))}
-                </div>
-                <Menu
-                    keepMounted
-                    onContextMenu={e => {
-                        e.preventDefault()
-                        this.handleClose()
-                    }}
-                    open={!!this.state.space}
-                    onClose={this.handleClose.bind(this)}
-                    anchorReference="anchorPosition"
-                    anchorPosition={
-                        !!this.state.mouseY && !!this.state.mouseX
-                            ? {top: this.state.mouseY, left: this.state.mouseX}
-                            : undefined
-                    }
-                >
-                    {!!this.state.space && !this.state.space.public &&
-                    <MenuItem
-                        className={"menuItem"}
-                        onClick={() => {
+                    </h2>
+                    <div className={"itemWrapper"}>
+                        {this.props.spaces.map((s, idx) => (
+                            <Link to={`/spaces/${s.id}`}>
+                                <div
+                                    onContextMenu={e =>
+                                        this.handleContext(e, s)
+                                    }
+                                    className={"item " + ((idx > 0) ? "separator" : "")}>
+                                    {s.name}
+                                    <div className={"buttons"}>
+                                        <a onClick={e => this.handleContext(e, s)}
+                                           className={"menuIcon"}>
+                                            <IoEllipsisHorizontal/>
+                                        </a>
+                                        <IoChevronForwardOutline/>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                    <Menu
+                        keepMounted
+                        onContextMenu={e => {
+                            e.preventDefault()
                             this.handleClose()
-                            this.props.deleteSpace(this.state.space!.id)
-                        }}>
-                        <IoTrashOutline/> Delete
-                    </MenuItem>
-                    }
-                    <Link to={"/invite/" + this.state.space?.id}>
-                        <MenuItem onClick={this.handleClose.bind(this)}>Invite</MenuItem>
-                    </Link>
-                </Menu>
+                        }}
+                        open={!!this.state.space}
+                        onClose={this.handleClose.bind(this)}
+                        anchorReference="anchorPosition"
+                        anchorPosition={
+                            !!this.state.mouseY && !!this.state.mouseX
+                                ? {top: this.state.mouseY, left: this.state.mouseX}
+                                : undefined
+                        }
+                    >
+                        {!!this.state.space && !this.state.space.public &&
+                        <MenuItem
+                            className={"menuItem"}
+                            onClick={() => {
+                                this.handleClose()
+                                this.props.deleteSpace(this.state.space!.id)
+                            }}>
+                            <IoTrashOutline/> Delete
+                        </MenuItem>
+                        }
+                        <Link to={"/invite/" + this.state.space?.id}>
+                            <MenuItem onClick={this.handleClose.bind(this)}>Invite</MenuItem>
+                        </Link>
+                    </Menu>
+                </div>
             </Wrapper>
         )
     }
@@ -172,11 +174,7 @@ export class Spaces extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
-    spaces: state.space.spaces.sort((a, b) => {
-        if(a.name < b.name) { return -1; }
-        if(a.name > b.name) { return 1; }
-        return 0;
-    }),
+    spaces: state.space.spaces,
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

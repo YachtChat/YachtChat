@@ -41,6 +41,7 @@ export class CreateSpace extends Component<Props, State> {
                 </div>
                 <form className={"spacesWrapper"}>
                     <input value={this.state.spaceName}
+                           placeholder={"space name"}
                            onChange={({target: {value}}) => this.setState({spaceName: value})} type={"text"}/>
                     <button onClick={e => {
                         e.preventDefault()
