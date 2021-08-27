@@ -11,13 +11,11 @@ import {keycloakUserToUser} from "./utils";
 interface UserState {
     activeUser: User
     spaceUsers: { [key: string]: User },
-    friends: { [key: string]: User }
 }
 
 const initialState: UserState = {
     activeUser: {id: "-1", online: true},
     spaceUsers: {},
-    friends: {}
 };
 
 export const userProportion = 100
@@ -267,11 +265,6 @@ export const requestFriends = (): AppThunk => dispatch => {
     // request and commit friends here
 }
 
-export const promoteUser = (id: string): AppThunk => dispatch => {
-    // send request to backend to promote this user
-}
-
-export const isHost = (state: RootState) => false
 export const getUser = (state: RootState) => state.userState.activeUser;
 export const getUserID = (state: RootState) => state.userState.activeUser.id;
 export const getUserById = (state: RootState, id: string) => {
@@ -281,10 +274,19 @@ export const getUserById = (state: RootState, id: string) => {
 }
 export const getUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
     id => state.userState.spaceUsers[id]
-);
+).sort((a, b) => {
+    // Order by last name
+    const nameA = a.lastName + ", " + a.firstName
+    const nameB = b.lastName + ", " + b.firstName
+    if (nameA < nameB) {
+        return -1;
+    }
+    if (nameA > nameB) {
+        return 1;
+    }
+    return 0;
+});
 export const getOnlineUsers = (state: RootState) => getUsers(state).filter(u => u.online);
-export const getFriends = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
-    id => state.userState.friends[id]
-);
+export const getFriends = (state: RootState) => [];
 
 export default userSlice.reducer;

@@ -1,6 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {PlaygroundOffset} from "./models";
 import {AppThunk} from "./store";
+import {requestSpaces} from "./spaceSlice";
 
 interface SpaceState {
     offset: PlaygroundOffset
@@ -67,6 +68,7 @@ export const initPlayground = (): AppThunk => (dispatch, getState) => {
         prevHeight = window.innerHeight
         prevWidth = window.innerWidth
     })
+    dispatch(requestSpaces())
 }
 
 export const centerUser = (): AppThunk => (dispatch, getState) => {

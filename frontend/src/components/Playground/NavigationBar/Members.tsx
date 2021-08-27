@@ -3,8 +3,6 @@ import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
 import {IoCloseOutline, IoLink} from "react-icons/all";
 import UserList from "../../Friends/UserList";
-import {getUsers} from "../../../store/userSlice";
-import {User} from "../../../store/models";
 import {RootState} from "../../../store/store";
 import {FRONTEND_URL} from "../../../store/config";
 import {handleError, handleSuccess} from "../../../store/statusSlice";
@@ -15,7 +13,6 @@ interface Props {
     open: boolean
     onClose: () => void
     spaceID: string
-    users: User[]
     success: (s: string) => void
     error: (s: string) => void
     getToken: (sid: string) => Promise<string>
@@ -67,7 +64,7 @@ export class MembersComponent extends Component<Props, State> {
                         <h2>Space Members</h2>
                         See everyone present in this space
                     </div>
-                    <UserList type={"users"} users={this.props.users}/>
+                    <UserList type={"users"} spaceID={this.props.spaceID}/>
                 </Dialog>
             </div>
         );
@@ -75,7 +72,6 @@ export class MembersComponent extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    users: getUsers(state),
     getToken: (sid: string) => getInvitationToken(state, sid),
 })
 
