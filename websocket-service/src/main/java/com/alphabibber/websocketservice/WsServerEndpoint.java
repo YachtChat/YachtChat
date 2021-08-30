@@ -37,6 +37,8 @@ public class WsServerEndpoint {
     // https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html
     // https://www.baeldung.com/java-concurrent-map
     // Keep in mind the load factor and the concurrency level
+    // Concurrent Hashmap probably works good for a Space, it is unclear whether it works good for the roomMap that stores
+    // all Spaces.
     private static final Map<String, Map<String, User>> roomMap = new ConcurrentHashMap<>(8);
 
 
@@ -64,7 +66,7 @@ public class WsServerEndpoint {
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
         // Map of room with session.getId() as key and the User Object as value
         Map<String, User> room = roomMap.get(roomId);
-        User sender = null;
+        User sender;
         String type;
         try{
             type = jsonObject.get("type").getAsString();
@@ -137,10 +139,17 @@ public class WsServerEndpoint {
     }
 
     @OnClose
-    public void onClose(@PathParam("roomID") String roomId, Session session) throws IOException {
-        User sender = roomMap.get(roomId).get(session.getId());
-        leaveHandler.handleLeave(roomMap.get(roomId), sender);
-        log.info("User {} has left the room {}", sender.getId(), roomId);
+    public void onClose(@PathParam("roomID") String roomId, Session session) {
+        User sender = null;
+        try{
+            sender = roomMap.get(roomId).get(session.getId());
+        } catch (NullPointerException e){
+            log.error("Room {} does not exist but user closed connection on that room", roomId);
+        }
+        if (sender != null){
+            leaveHandler.handleLeave(roomMap.get(roomId), sender);
+            log.info("User {} has left the room {}", sender.getId(), roomId);
+        }
     }
 
     @OnError
@@ -149,13 +158,8 @@ public class WsServerEndpoint {
         if (cause != null){
             log.error("error-info -> cause: " + cause);
         }
-        if (roomMap.containsKey(roomId)){
-            Map<String, User> room = roomMap.get(roomId);
-            if (room.containsKey(session.getId())){
-                room.remove(session.getId());
-            }
-        }
         try{
+            // This should call the onClose method where the user is then removed from the room
             session.close();
         } catch (IOException ioException) {
             log.info("Error was handeled with cascading IOException");
