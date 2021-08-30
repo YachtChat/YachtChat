@@ -4,6 +4,7 @@ import com.alphabibber.websocketservice.encoder.*;
 import com.alphabibber.websocketservice.handler.*;
 import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
+import com.alphabibber.websocketservice.service.SpacesService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -31,6 +32,9 @@ public class WsServerEndpoint {
     private final LeaveHandler leaveHandler = new LeaveHandler();
     private final SignalHandler signalHandler = new SignalHandler();
     private final MediaHandler mediaHandler = new MediaHandler();
+    private final KickHandler kickHandler = new KickHandler();
+
+    private final SpacesService spacesService = new SpacesService();
 
 
     // Have a look at the ConcurrentHashMap here:
@@ -64,7 +68,9 @@ public class WsServerEndpoint {
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
         // Map of room with session.getId() as key and the User Object as value
         Map<String, User> room = roomMap.get(roomId);
-        User sender = null;
+        User sender;
+        String token;
+        String userId;
         String type;
         try{
             type = jsonObject.get("type").getAsString();
@@ -75,8 +81,8 @@ public class WsServerEndpoint {
 
         switch (type){
             case "login":
-                String token = jsonObject.get("token").getAsString();
-                String userId = jsonObject.get("id").getAsString();
+                token = jsonObject.get("token").getAsString();
+                userId = jsonObject.get("id").getAsString();
                 loginHandler.handleLogin(room, roomId, token, userId, session);
                 break;
             case "position":
@@ -131,6 +137,18 @@ public class WsServerEndpoint {
                 mediaHandler.handleMedia(roomMap.get(roomId), sender, media, event);
                 log.info("User {} changed his media type for {} to {}", sender.getId(), media, event);
                 return;
+            case "kick":
+                if (! room.containsKey(session.getId())){
+                    log.warn("User tried to kick another user while not being in a room");
+                    return;
+                }
+                sender = room.get(session.getId());
+                token = jsonObject.get("token").getAsString();
+                userId = jsonObject.get("user").getAsString();
+                kickHandler.handleKick(room, roomId, sender, token, userId);
+                log.info("User {} was kicked by {} out of Space {}", userId, sender.getId(), roomId);
+                break;
+
             default:
                 log.warn("The {} type is not defined", type);
         }

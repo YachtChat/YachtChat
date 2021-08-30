@@ -3,6 +3,7 @@ package com.alphabibber.websocketservice.handler;
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.model.answer.LoginAnswer;
 import com.alphabibber.websocketservice.model.answer.NewUserAnswer;
+import com.alphabibber.websocketservice.service.SpacesService;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class LoginHandler {
+    private final SpacesService spacesService = new SpacesService();
     private final String URL = System.getenv("SPACES_URL");
     private final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
@@ -26,28 +28,7 @@ public class LoginHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session) {
-
-        // Check if the user is allowed to enter the room
-        String requestUrl = "https://" + URL + "/api/v1/spaces/" + roomId + "/canUserJoin/";
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(requestUrl))
-                .header("authorization", "Bearer " + token)
-                .build();
-
-        HttpResponse<String> response;
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            log.error("Spaces server did not answer on {}", requestUrl);
-//          Todo Howto Error Handling discuss with Chris
-            log.error(String.valueOf(e.getStackTrace()));
-            return;
-        }
-        JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-        boolean isAllowed = jsonObject.get("valid").getAsBoolean();
-
-        if (!isAllowed) {
+        if (!spacesService.isUserAllowedToJoin(roomId, token)) {
             // if the user is not allowed to enter the room the websocket connection will be closed
             try {
                 LoginAnswer deniedAnswer = new LoginAnswer(false, new ArrayList<>(), userId);
@@ -88,7 +69,7 @@ public class LoginHandler {
         NewUserAnswer newUserAnswer = new NewUserAnswer(user.getId(), user.getPosition());
         ArrayList<User> users = new ArrayList<>(room.values());
         // this should only skip this iteration
-        users.stream().filter(target -> target.getId() != user.getId()).forEach(target -> {
+        users.stream().filter(target -> !target.getId().equals(user.getId())).forEach(target -> {
             synchronized (target) {
                 try {
                     target.getSession().getBasicRemote().sendObject(newUserAnswer);
