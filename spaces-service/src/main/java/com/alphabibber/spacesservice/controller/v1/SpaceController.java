@@ -101,6 +101,16 @@ public class SpaceController extends SpringBootServletInitializer {
         return map;
     }
 
+    @GetMapping(path = "/{spaceId}/isUserHost/")
+    public Map<String, Boolean> isUserHost(@PathVariable String spaceId){
+        var boolResponse = spaceService.isCurrentUserHost(spaceId);
+
+        HashMap<String, Boolean> map = new HashMap<>();
+        map.put("valid", boolResponse);
+
+        return map;
+    }
+
     @PutMapping(path = "/{spaceId}/promote")
     public SpaceHost promoteMemberToHost(@PathVariable String spaceId, @RequestParam String memberId) {
         var space = spaceService.getSpaceById(spaceId);
