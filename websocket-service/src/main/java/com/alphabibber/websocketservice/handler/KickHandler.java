@@ -1,10 +1,13 @@
 package com.alphabibber.websocketservice.handler;
 
 import com.alphabibber.websocketservice.model.User;
+import com.alphabibber.websocketservice.model.answer.KickAnswer;
 import com.alphabibber.websocketservice.service.SpacesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.websocket.EncodeException;
+import java.io.IOException;
 import java.util.Map;
 
 public class KickHandler {
@@ -28,6 +31,23 @@ public class KickHandler {
         if (!removed) return;
 
         User user = room.get(userId);
+
+        // tell the kicker that it was successful
+        KickAnswer answer = new KickAnswer(userId);
+        try{
+            sender.getSession().getBasicRemote().sendObject(answer);
+        }  catch (EncodeException | IOException e) {
+            log.error("Could not send kick answer to {}", sender.getId());
+            log.error(String.valueOf(e.getStackTrace()));
+        }
+        try{
+            user.getSession().getBasicRemote().sendObject(answer);
+        }  catch (EncodeException | IOException e) {
+            log.error("Could not send kick answer to {}", user.getId());
+            log.error(String.valueOf(e.getStackTrace()));
+        }
+
+        // tell the room that a user left
         leaveHandler.handleLeave(room, user);
     }
 }
