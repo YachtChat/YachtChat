@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,6 +27,24 @@ public class SpacesService {
     public boolean isUserHost(String roomId, String token){
         // Check if the user is host for the space
         return sendRequest(URL + roomId + "/isUserHost/", token);
+    }
+
+    public boolean removeUserFromSpace(String roomId, String token, String userId){
+        String requestUrl = URL + roomId + "/members/?memberId=" + userId;
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(requestUrl))
+                .header("authorization", "Bearer " + token)
+                .build();
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            log.error("Spaces server did not answer on {}", requestUrl);
+            log.error(String.valueOf(e.getStackTrace()));
+            return false;
+        }
+        return response.statusCode() == HttpStatus.OK.value();
     }
 
     private boolean sendRequest(String requestUrl, String token){

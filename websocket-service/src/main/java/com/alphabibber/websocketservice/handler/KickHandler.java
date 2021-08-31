@@ -15,11 +15,18 @@ public class KickHandler {
     public void handleKick(Map<String, User> room, String roomId, User sender, String token, String userId){
         if (!spacesService.isUserHost(roomId, token)){
             log.warn("User {} tried to kick another user for room {} but is no host for that room", sender.getId(), roomId);
+            return;
         }
         // check if the user which should be kicked is part of the space
         if (!room.containsKey(userId)){
             log.warn("User {} was tried to be kicked but is not part of the room {}", userId, roomId);
+            return;
         }
+        // User should be deleted from space, if he is deleted from the space he can join the space again by using an
+        // invite link
+        var removed = spacesService.removeUserFromSpace(roomId, token, userId);
+        if (!removed) return;
+
         User user = room.get(userId);
         leaveHandler.handleLeave(room, user);
     }
