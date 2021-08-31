@@ -311,13 +311,6 @@ public class SpaceService {
         var space = this.getSpaceById(spaceId);
         if (space.isPublic()) return false;
         var currentUser = userService.getContextUserIfExistsElseCreate();
-        boolean isHost = false;
-        for (SpaceHost spaceHost : space.getSpaceHosts()){
-            if(spaceHost.getHost().equals(currentUser)){
-                isHost = true;
-                break;
-            }
-        }
-        return isHost;
+        return !Collections.disjoint(space.getSpaceHosts(), currentUser.getHostSpaces());
     }
 }
