@@ -4,15 +4,15 @@ import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 
-public class SignalAnswer extends Answer{
+public class MessageAnswer extends Answer {
     @Getter @Setter
     private JsonObject content;
 
     @Getter @Setter
     private String senderId;
 
-    public SignalAnswer(JsonObject content, String senderId) {
-        super("signal");
+    public MessageAnswer(JsonObject content, String senderId) {
+        super("message");
         this.content = content;
         this.senderId = senderId;
     }
