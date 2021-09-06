@@ -9,11 +9,11 @@ public class SignalAnswer extends Answer{
     private JsonObject content;
 
     @Getter @Setter
-    private String senderId;
+    private String sender_id;
 
     public SignalAnswer(JsonObject content, String senderId) {
         super("signal");
         this.content = content;
-        this.senderId = senderId;
+        this.sender_id = senderId;
     }
 }
