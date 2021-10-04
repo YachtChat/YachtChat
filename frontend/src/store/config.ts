@@ -11,9 +11,15 @@ export const applicationName: string = "Yacht Chat"
 // `REACT_APP_SOCKET_URL=ws://localhost:6503` ... yarn run start
 
 export const rtcConfiguration = {
-    "iceServers": [{
-        "urls": [
-            "stun:stun.yacht.chat:3478"
+    "iceServers": [//{
+        //"urls": //[
+        {urls: "stun:stun.yacht.chat:3478"},
+        {
+            urls: "turn:stun.yacht.chat:3478",
+            credential: "password",
+            username: "guest"
+        }
+
             // "stun:iphone-stun.strato-iphone.de:3478",
             // "stun:numb.viagenie.ca:3478",
             // "stun:s1.taraba.net:3478",
@@ -280,6 +286,7 @@ export const rtcConfiguration = {
             // "stun:stun3.l.google.com:19302",
             // "stun:stun4.l.google.com:19302",
             // "stun:stunserver.org:3478"
-        ]
-    }]
+        //]
+    //}
+    ]
 }
