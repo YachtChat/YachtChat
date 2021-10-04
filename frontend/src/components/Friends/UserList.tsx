@@ -68,12 +68,12 @@ class UserList extends Component<Props> {
                     }
                     <div className={"buttons"}>
                         <Tooltip title="Remove yourself" arrow placement={"right"}>
-                            <a onClick={() => {
+                            <button onClick={() => {
                                 this.props.logout()
                                 this.props.removeSpace()
                             }} className={"menuIcon"}>
                                 <IoTrashOutline/>
-                            </a>
+                            </button>
                         </Tooltip>
                     </div>
                 </div>
@@ -93,20 +93,20 @@ class UserList extends Component<Props> {
                             <div>
                                 {!this.props.isHost(u.id) &&
                                 <Tooltip title="Promote user to Host" arrow placement={"right"}>
-                                    <a onClick={e => {
+                                    <button onClick={e => {
                                         this.props.makeHost(u.id)
                                     }} className={"menuIcon"}>
                                         <FaCrown/>
-                                    </a>
+                                    </button>
                                 </Tooltip>
                                 }
                                 {this.props.isHost(u.id) &&
                                 <Tooltip title="Unpromote user" arrow placement={"right"}>
-                                    <a onClick={e => {
+                                    <button onClick={e => {
                                         this.props.removeHost(u.id)
                                     }} className={"menuIcon"}>
                                         <IoHandRight/>
-                                    </a>
+                                    </button>
                                 </Tooltip>
                                 }
                             </div>

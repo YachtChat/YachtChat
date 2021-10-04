@@ -105,9 +105,15 @@
 
         .menuIcon {
           margin-right: 10px;
+          padding: 0;
+          border: none;
+          width: auto;
+          height: auto;
+          margin-bottom: auto;
 
           &:hover {
             opacity: 0.5;
+            background: transparent;
           }
         }
 

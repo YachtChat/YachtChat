@@ -127,10 +127,10 @@ export class Spaces extends Component<Props, State> {
                                     className={"item " + ((idx > 0) ? "separator" : "")}>
                                     {s.name}
                                     <div className={"buttons"}>
-                                        <a onClick={e => this.handleContext(e, s)}
-                                           className={"menuIcon"}>
+                                        <button onClick={e => this.handleContext(e, s)}
+                                                className={"menuIcon"}>
                                             <IoEllipsisHorizontal/>
-                                        </a>
+                                        </button>
                                         <IoChevronForwardOutline/>
                                     </div>
                                 </div>
