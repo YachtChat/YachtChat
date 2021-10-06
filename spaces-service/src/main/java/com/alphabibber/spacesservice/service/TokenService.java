@@ -47,7 +47,7 @@ public class TokenService {
         var user = userService.getContextUserIfExistsElseCreate();
 
         // Create token with claims inviteeId and spaceId, signing etc. and return
-        long jwtDurationInSeconds = (long) 60 * 60 * 24; // 1 DAY
+        long jwtDurationInSeconds = (long) 60 * 60 * 24 * 7 * 4; // 4 Weeks
         return Jwts.builder()
                 .claim("space", spaceId)
                 .setSubject(user.getId())
