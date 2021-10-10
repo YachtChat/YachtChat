@@ -106,7 +106,7 @@ export class Spaces extends Component<Props, State> {
                         </Popper>
                     </div>
                     <h1>Hello, {this.props.activeUser.firstName}</h1>
-                    <p>To join a space, select a space below, or create a new one.</p>
+                    <p>To join a space, select a space on the right, or create a new one.</p>
                 </div>
                 <div className={"spacesContent"}>
 
