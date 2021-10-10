@@ -3,6 +3,7 @@ import './style.scss';
 import {User} from "../../store/models";
 import {FaCrown, IoHandRight, IoTrashOutline} from "react-icons/all";
 import {Tooltip} from "@material-ui/core";
+import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {getUser, getUsers} from "../../store/userSlice";
@@ -16,6 +17,8 @@ import {
 } from "../../store/spaceSlice";
 import {handleError, handleSuccess} from "../../store/statusSlice";
 import {sendLogout} from "../../store/webSocketSlice";
+import Members, {MembersComponent} from "../Playground/NavigationBar/Members";
+import {NavigationBar} from "../Playground/NavigationBar/index";
 
 interface OwnProps {
     type: "users" | "friends"
@@ -66,16 +69,18 @@ class UserList extends Component<Props> {
                     {this.props.isHost(activeUser.id) &&
                     <span className={"tag"}>admin</span>
                     }
-                    <div className={"buttons"}>
-                        <Tooltip title="Remove yourself" arrow placement={"right"}>
-                            <button onClick={() => {
-                                this.props.logout()
-                                this.props.removeSpace()
-                            }} className={"menuIcon"}>
-                                <IoTrashOutline/>
-                            </button>
-                        </Tooltip>
-                    </div>
+                    <Link to={"/spaces/"}>
+                        <div className={"buttons"}>
+                            <Tooltip title="Remove yourself" arrow placement={"right"}>
+                                <a onClick={() => {
+                                    this.props.logout()
+                                    this.props.removeSpace()
+                                }} className={"menuIcon"}>
+                                    <IoTrashOutline/>
+                                </a>
+                            </Tooltip>
+                        </div>
+                    </Link>
                 </div>
                 {users.map((u, idx) => (
                     <div className={"item " + ((idx > 0) ? "separator" : "")}>
