@@ -16,6 +16,7 @@ interface Props {
     success: (s: string) => void
     error: (s: string) => void
     getToken: (sid: string) => Promise<string>
+    getSpaceName: (sid: string) => string
 }
 
 interface State {
@@ -62,7 +63,8 @@ export class MembersComponent extends Component<Props, State> {
                                     <IoCloseOutline/>
                                 </button>
                             </div>
-                            <h2>Space Members</h2>
+                            <h2> Space Name: {this.props.getSpaceName(this.props.spaceID)} </h2>
+                            {/*<h2>Space Members</h2>*/}
                             See everyone present in this space
                         </div>
                         <div className={"panelContent"}>
@@ -78,6 +80,7 @@ export class MembersComponent extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     getToken: (sid: string) => getInvitationToken(state, sid),
+    getSpaceName: (sid: string) => state.space.spaces.filter( (s) => s.id === sid).map( space => space.name).toString(),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
