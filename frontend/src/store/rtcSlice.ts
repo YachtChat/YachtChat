@@ -184,6 +184,10 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
 }
 
 export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
+
+    if (getState().rtc.muted)
+        return
+
     rtpSender[id].forEach(rtp => {
         console.log("Trying to enable audio to ", id)
         if (rtp.track && rtp.track.kind === 'audio') {
