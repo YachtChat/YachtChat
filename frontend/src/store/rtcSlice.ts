@@ -84,6 +84,9 @@ export const rtcSlice = createSlice({
         },
         setUserMedia: (state, action: PayloadAction<boolean>) => {
             state.userMedia = action.payload
+        },
+        turnOnVideo: (state ) => {
+            state.video = true
         }
     },
 });
@@ -96,7 +99,8 @@ export const {
     setMicrophone,
     setSpeaker,
     setMediaChangeOngoing,
-    setUserMedia
+    setUserMedia,
+    turnOnVideo
 } = rtcSlice.actions;
 
 export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatch) => {
@@ -164,11 +168,13 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
 
     const state = getState()
     const userID = getUserID(state)
+    //state.rtc.video = false
 
     if (!getStream(state, userID)) {
         dispatch(send({'type': 'media', 'id': userID, 'media': 'image', 'event': false}))
         return
     }
+
 
     getStream(state, userID)!.getVideoTracks()[0].enabled = state.rtc.video
 
@@ -377,7 +383,7 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
     rtcConnections = {}
     rtpSender = {}
 
-    dispatch(handleLeave())
+    dispatch(turnOnVideo())
     dispatch(forgetUsers())
     dispatch(resetPlayground())
 }
