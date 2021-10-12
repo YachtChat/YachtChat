@@ -178,6 +178,23 @@ label, .required {
     background: #0a0a0a;
   }
 }
+.contentWrapper .backgroundRange {
+  display: block;
+  position: absolute;
+  width: 200vw;
+  height: 200vw;
+  background: white;
+  margin-right: 0;
+  right: 0;
+  border-radius: 50%;
+  transform: translate(50%, -40vh);
+}
+
+@media (prefers-color-scheme: dark) {
+  .contentWrapper .backgroundRange {
+    background: black;
+  }
+}
 .contentWrapper .backgroundBall {
   display: block;
   position: absolute;
