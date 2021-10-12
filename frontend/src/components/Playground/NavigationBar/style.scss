@@ -231,6 +231,13 @@
     box-sizing: border-box;
     max-height: 50vh;
 
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $button_font_dark;
+        background: $foreground_dark;
+      }
+    }
+
     h2 {
       padding: 2rem 0 0 2rem;
       margin: 0;
