@@ -18,8 +18,10 @@ export class Index extends Component<Props> {
     render() {
         return (
             <div>
-                <Dialog className={"settingsPanel"} open={this.props.open} onClose={this.props.onClose}
-                        aria-labelledby="form-dialog-title">
+                <Dialog className={"settingsPanel"}
+                        open={this.props.open}
+                        onClose={this.props.onClose}
+                        aria-labelledby="form-dialog-title" >
                     <DialogTitle id="form-dialog-title">Settings</DialogTitle>
                     <div className={"settings"}>
                         <MediaSettings/>

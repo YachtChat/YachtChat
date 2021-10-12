@@ -198,8 +198,10 @@ export class NavigationBar extends Component<Props, State> {
                                                           onClose={() => this.handleClose("messages")}/>
                                     </div>
                                 </li>
-                                <li className="menu-item" onClick={e => this.handleOpen(e, "settings")}>
-                                    <div className="inner-item">
+                                <li className="menu-item" >
+                                    <div
+                                        onClick={e => this.handleOpen(e, "settings")}
+                                        className="inner-item">
                                         <span className="icon-wrapper">
                                             <span className="icon">
                                                 <FaCog/>
@@ -207,11 +209,11 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                         <span className="item-content">
                                             Settings
-                                            <div>
-                                                <Settings open={this.state.open["settings"]}
-                                                          onClose={() => this.handleClose("settings")}/>
-                                            </div>
                                         </span>
+                                    </div>
+                                    <div>
+                                        <Settings open={this.state.open["settings"]}
+                                                  onClose={() => this.handleClose("settings")}/>
                                     </div>
                                 </li>
                                 <Link to={"/spaces/"}>
