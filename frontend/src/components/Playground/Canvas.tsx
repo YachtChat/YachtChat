@@ -102,7 +102,7 @@ export class Canvas extends Component<Props, State> {
 
     // function that sets the state of dragActive on false
     // if the mouse left the playground or is not holded anymore
-    dragEnd(e: React.MouseEvent) {
+    dragEnd(e: React.MouseEvent | React.TouchEvent) {
         this.setState({
             userDragActive: false,
             mapDragActive: false,
@@ -114,9 +114,24 @@ export class Canvas extends Component<Props, State> {
 
     // function that moves the active user if the mouse
     moveMouse(e: React.MouseEvent) {
-        const scaling = this.props.offset.scale
         const x = e.currentTarget.getBoundingClientRect().x
         const y = e.currentTarget.getBoundingClientRect().y
+        const clientX = e.clientX
+        const clientY = e.clientY
+        this.move(x, y, clientX, clientY)
+    }
+
+    // function that moves the active user if user touches
+    moveTouch(e: React.TouchEvent) {
+        const x = e.currentTarget.getBoundingClientRect().x
+        const y = e.currentTarget.getBoundingClientRect().y
+        const clientX = e.touches[0].clientX
+        const clientY = e.touches[0].clientY
+        this.move(x, y, clientX, clientY)
+    }
+
+    move(x: number, y: number, clientX: number, clientY: number) {
+        const scaling = this.props.offset.scale
         if (this.state.userDragActive) {
             this.props.move({
                 x: e.clientX / scaling + this.props.offset.x - this.state.userOffset!.x,
@@ -129,8 +144,8 @@ export class Canvas extends Component<Props, State> {
             const start = this.state.dragStart!
             this.props.movePlayground({
                 ...this.props.offset,
-                x: (prev.x + (start.x - e.clientX) / scaling) - x - this.state.userOffset!.x,
-                y: (prev.y + (start.y - e.clientY) / scaling) - y - this.state.userOffset!.y
+                x: (prev.x + (start.x - clientX) / scaling) - x,
+                y: (prev.y + (start.y - clientY) / scaling) - y
             })
             // this.props.move({
             //     x: this.state.previousPosition!.x + (start.x - e.clientX) / scaling,
@@ -140,38 +155,14 @@ export class Canvas extends Component<Props, State> {
         }
     }
 
-    // function that moves the active user if the mouse
-    moveTouch(e: React.TouchEvent) {
-        if (this.state.userDragActive) {
-            const scaling = this.props.offset.scale
-            this.props.move({
-                x: e.touches[0].clientX / scaling,
-                y: e.touches[0].clientY / scaling,
-                range: this.props.activeUser.position!.range
-            })
-        }
-    }
-
-    // function handleZoomIn increases the sizeMultiplier
-    handleZoomIn() {
-        //this.props.changeSizeMultiplier(this.props.offset.scale + 0.1)
-        this.props.handleZoom(0.05)
-    }
-
-    // function handleZoomOut decreases the sizeMultiplier
-    handleZoomOut() {
-        //this.props.changeSizeMultiplier(this.props.offset.scale - 0.1)
-        this.props.handleZoom(-0.05)
-    }
-
     // calls handleZoomOut if user scrolls down/ handleZoomIn if user scrolls up
-    onWheel(event: any) {
+    onWheel(event: React.WheelEvent) {
         if (event.deltaY < 0 || event.deltaX < 0) {
-            this.handleZoomOut()
+            this.props.handleZoom(event.deltaY / 1000)
         }
 
         if (event.deltaY > 0 || event.deltaX > 0) {
-            this.handleZoomIn()
+            this.props.handleZoom(event.deltaY / 1000)
         }
     }
 
@@ -198,7 +189,7 @@ export class Canvas extends Component<Props, State> {
                  onMouseUp={this.onMouseUp.bind(this)}
                  onWheel={this.onWheel.bind(this)}
                  onTouchMove={this.moveTouch.bind(this)}
-                //onTouchEnd={this.dragEnd.bind(this)}
+                 onTouchEnd={this.dragEnd.bind(this)}
                  onKeyDown={this.handleKeyStream.bind(this)}
                  onMouseDown={this.dragStart.bind(this)}
                  onTouchStart={this.dragStart.bind(this)}
