@@ -73,6 +73,18 @@ services:
     networks:
       - application
 
+  stun-server:
+    image: instrumentisto/coturn
+    restart: always
+    volumes:
+      - ./turnserver.conf:/etc/turnserver.conf
+    environment:
+      - VIRTUAL_HOST=${STUN_URL}
+      - LETSENCRYPT_HOST=${STUN_URL}
+      - VIRTUAL_PORT=${STUN_PORT}
+    networks:
+      - application
+
 volumes:
   certs: { }
   vhost: { }
