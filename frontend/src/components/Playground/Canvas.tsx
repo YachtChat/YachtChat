@@ -129,8 +129,8 @@ export class Canvas extends Component<Props, State> {
             const start = this.state.dragStart!
             this.props.movePlayground({
                 ...this.props.offset,
-                x: (prev.x + (start.x - e.clientX) / scaling) - x - this.state.userOffset!.x,
-                y: (prev.y + (start.y - e.clientY) / scaling) - y - this.state.userOffset!.y
+                x: (prev.x + (start.x - e.clientX) / scaling) - x,
+                y: (prev.y + (start.y - e.clientY) / scaling) - y
             })
             // this.props.move({
             //     x: this.state.previousPosition!.x + (start.x - e.clientX) / scaling,
