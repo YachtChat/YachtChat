@@ -26,7 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @ServerEndpoint(value = "/room/{roomID}", encoders = { LoginAnswerEncoder.class, NewUserAnswerEncoder.class,
-        PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class, MediaAnswerEncoder.class})
+        PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class, MediaAnswerEncoder.class,
+        MessageEncoder.class})
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     Gson gson = new GsonBuilder().create();
@@ -95,6 +96,7 @@ public class WsServerEndpoint {
 
             JsonObject content;
             String targetId;
+            String userMessage;
             switch (type){
                 case "position":
                     JsonObject positionStr = jsonObject.get("position").getAsJsonObject();
@@ -105,12 +107,12 @@ public class WsServerEndpoint {
                     content = jsonObject.getAsJsonObject("content");
                     targetId = jsonObject.get("target_id").getAsString();
                     signalHandler.handleSignal(roomMap.get(roomId), roomId, sender, content, targetId);
-                    log.info("User {} send message to user {} in room {}", sender.getId(), targetId, roomId);
+                    log.info("User {} signaled to user {} in room {}", sender.getId(), targetId, roomId);
                     break;
                 case "message":
-                    content = jsonObject.getAsJsonObject("content");
+                    userMessage = jsonObject.get("content").getAsString();
                     targetId = jsonObject.get("target_id").getAsString();
-                    messageHandler.handleMessage(roomMap.get(roomId), roomId, sender, content, targetId);
+                    messageHandler.handleMessage(roomMap.get(roomId), roomId, sender, userMessage, targetId);
                     log.info("User {} send message to user {} in room {}", sender.getId(), targetId, roomId);
                     break;
                 case "leave":

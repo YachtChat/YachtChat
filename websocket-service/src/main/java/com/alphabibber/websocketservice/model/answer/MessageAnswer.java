@@ -6,14 +6,14 @@ import lombok.Setter;
 
 public class MessageAnswer extends Answer {
     @Getter @Setter
-    private JsonObject content;
+    private String content;
 
     @Getter @Setter
-    private String senderId;
+    private String sender_id;
 
-    public MessageAnswer(JsonObject content, String senderId) {
+    public MessageAnswer(String content, String sender_id) {
         super("message");
         this.content = content;
-        this.senderId = senderId;
+        this.sender_id = sender_id;
     }
 }
