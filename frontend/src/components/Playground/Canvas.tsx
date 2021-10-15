@@ -134,8 +134,8 @@ export class Canvas extends Component<Props, State> {
         const scaling = this.props.offset.scale
         if (this.state.userDragActive) {
             this.props.move({
-                x: e.clientX / scaling + this.props.offset.x - this.state.userOffset!.x,
-                y: e.clientY / scaling + this.props.offset.y - this.state.userOffset!.y,
+                x: clientX / scaling + this.props.offset.x - this.state.userOffset!.x,
+                y: clientY / scaling + this.props.offset.y - this.state.userOffset!.y,
                 range: this.props.activeUser.position!.range
             })
         }
