@@ -7,12 +7,11 @@ import {FaBars, FaCog, FaMicrophone, FaMicrophoneSlash, FaSignOutAlt, FaVideo, F
 import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../../store/webSocketSlice";
-import {displayVideo, mute} from "../../../store/rtcSlice";
+import {displayVideo, mute, shareScreen} from "../../../store/rtcSlice";
 import Settings from "../../Settings";
 import {centerUser} from "../../../store/playgroundSlice";
-import {IoChatbubble, IoPeople} from "react-icons/all";
+import {IoChatbubble, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
 import MessageComponent from "./Message";
-import {Link} from "react-router-dom";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
 import MembersComponent from "./Members";
@@ -25,9 +24,11 @@ interface Props {
     logout: () => void
     toggleAudio: () => void
     toggleVideo: () => void
+    toggleScreen: () => void
     center: () => void
     video: boolean
     muted: boolean
+    screen: boolean
 }
 
 interface State {
@@ -109,7 +110,7 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                     </span>
                                         <span className="item-content">
-                                        Dashboard
+                                        Menu
                                     </span>
                                     </div>
                                 </li>
@@ -134,6 +135,18 @@ export class NavigationBar extends Component<Props, State> {
                                     </span>
                                         <span className="item-content">
                                         Microphone
+                                    </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item" onClick={this.props.toggleScreen}>
+                                    <div className="inner-item">
+                                    <span className="icon-wrapper">
+                                        <span className="icon">
+                                            {(this.props.screen) ? <IoTv/> : <IoTvOutline/>}
+                                        </span>
+                                    </span>
+                                        <span className="item-content">
+                                            {(this.props.screen) ? "Stop Sharing" : "Share Screen"}
                                     </span>
                                     </div>
                                 </li>
@@ -215,20 +228,18 @@ export class NavigationBar extends Component<Props, State> {
                                                   onClose={() => this.handleClose("settings")}/>
                                     </div>
                                 </li>
-                                <Link to={"/spaces/"}>
-                                    <li className="menu-item" onClick={this.props.logout}>
-                                        <div className="inner-item">
-                                            <span className="icon-wrapper">
-                                                <span className="icon">
-                                                    <FaSignOutAlt/>
-                                                </span>
+                                <li className="menu-item" onClick={this.props.logout}>
+                                    <div className="inner-item">
+                                        <span className="icon-wrapper">
+                                            <span className="icon">
+                                                <FaSignOutAlt/>
                                             </span>
-                                            <span className="item-content">
-                                                Log Out
-                                            </span>
-                                        </div>
-                                    </li>
-                                </Link>
+                                        </span>
+                                        <span className="item-content">
+                                            Log Out
+                                        </span>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -243,15 +254,17 @@ const mapStateToProps = (state: RootState) => ({
     spaces: state.space.spaces,
     activeUser: state.userState.activeUser,
     video: state.rtc.video,
-    muted: state.rtc.muted
+    muted: state.rtc.muted,
+    screen: state.rtc.screen
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     success: (s: string) => dispatch(handleSuccess(s)),
     toggleAudio: () => dispatch(mute()),
     toggleVideo: () => dispatch(displayVideo()),
+    toggleScreen: () => dispatch(shareScreen()),
     logout: () => dispatch(sendLogout()),
-    center: () => dispatch(centerUser())
+    center: () => dispatch(centerUser()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavigationBar)

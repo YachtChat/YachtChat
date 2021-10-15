@@ -82,11 +82,16 @@ export const joinSpace = (token: string): AppThunk => (dispatch, getState) => {
             dispatch(push("/spaces/" + response.data.id))
         }).catch(e => {
             dispatch(handleError("Space could not be joined"))
-            dispatch(push("/spaces"))
+            dispatch(returnHome())
             console.log(e.trace)
         })
     )
 }
+
+export const returnHome = (): AppThunk => (dispatch) => {
+    dispatch(push("/"))
+}
+
 
 export const deleteSpace = (id: string): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>

@@ -65,7 +65,7 @@ public class WsServerEndpoint {
         log.info("User joined the room {}", roomId);
     }
 
-    @OnMessage
+    @OnMessage(maxMessageSize = -1L)
     public void openMessage(@PathParam("roomID") String roomId, Session session, String message)  {
         // get data which the user send
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();

@@ -13,6 +13,7 @@ import {
     setUserOffline
 } from "./userSlice";
 import {resetPlayground} from "./playgroundSlice";
+import {returnHome} from "./spaceSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./models";
 
@@ -27,6 +28,7 @@ interface RTCState {
         speaker?: string,
         microphone?: string
     }
+    screen: boolean
     mediaChangeOngoing: boolean
     userMedia: boolean
 }
@@ -34,6 +36,7 @@ interface RTCState {
 const initialState: RTCState = {
     muted: false,
     video: true,
+    screen: false,
     cameras: [],
     microphones: [],
     speakers: [],
@@ -43,8 +46,9 @@ const initialState: RTCState = {
 };
 
 let rtcConnections: { [key: string]: RTCPeerConnection } = {};
-let rtpSender: { [key: string]: RTCRtpSender[] } = {};
+let rtpSender: { [key: string]: { [key: string]: RTCRtpSender } } = {};
 let localStream: MediaStream | undefined = undefined
+let screenStream: MediaStream | undefined = undefined
 let streams: { [key: string]: MediaStream } = {};
 let mediaDevices: { [key: string]: MediaDeviceInfo } = {};
 
@@ -68,6 +72,9 @@ export const rtcSlice = createSlice({
         toggleVideo: (state) => {
             state.video = !state.video
         },
+        toggleScreen: (state) => {
+            state.screen = !state.screen
+        },
         setMediaChangeOngoing: (state, action: PayloadAction<boolean>) => {
             state.mediaChangeOngoing = action.payload
         },
@@ -87,7 +94,10 @@ export const rtcSlice = createSlice({
         },
         turnOnVideo: (state ) => {
             state.video = true
-        }
+        },
+        setScreen: (state, action: PayloadAction<boolean>) => {
+            state.screen = action.payload
+        },
     },
 });
 
@@ -95,12 +105,14 @@ export const {
     initAllMediaDevices,
     toggleVideo,
     toggleMute,
+    toggleScreen,
     setCamera,
     setMicrophone,
     setSpeaker,
     setMediaChangeOngoing,
     setUserMedia,
-    turnOnVideo
+    turnOnVideo,
+    setScreen
 } = rtcSlice.actions;
 
 export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatch) => {
@@ -155,7 +167,8 @@ export const mute = (): AppThunk => (dispatch, getState) => {
 
     getStream(getState(), getUserID(getState()))!.getAudioTracks()[0].enabled = !getState().rtc.muted
     getOnlineUsers(getState()).forEach(u => {
-        rtpSender[u.id].forEach(rtp => {
+        Object.keys(rtpSender[u.id]).forEach(k => {
+            const rtp = rtpSender[u.id][k]
             if (rtp.track && rtp.track.kind === 'audio') {
                 rtp.track.enabled = (!getState().rtc.muted && !!u.inProximity)
             }
@@ -181,7 +194,8 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
     dispatch(send({'type': 'media', 'media': 'image', 'event': state.rtc.video}))
     dispatch(setMedia({id: userID, type: MediaType.VIDEO, state: state.rtc.video}))
     getOnlineUsers(state).forEach(u => {
-        rtpSender[u.id].forEach(rtp => {
+        Object.keys(rtpSender[u.id]).forEach(k => {
+            const rtp = rtpSender[u.id][k]
             if (rtp.track && rtp.track.kind === 'video') {
                 rtp.track.enabled = state.rtc.video
             }
@@ -189,30 +203,68 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
     })
 }
 
-export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
+export const shareScreen = (): AppThunk => (dispatch, getState) => {
+    dispatch(setMediaChangeOngoing(true))
+    const state = getState()
+    const userID = getUserID(state)
+    const users = getOnlineUsers(state)
 
+    // If not enabled yet try to enable the screen sharing
+    if (!state.rtc.screen) {
+        navigator.mediaDevices.getDisplayMedia().then((stream) => {
+            dispatch(toggleScreen())
+            // make sure that the stream is ended when the user f.e. closes the window
+            stream!.getTracks().forEach(t => t.onended = () => {
+                dispatch(unshareScreen())
+            })
+
+            screenStream = stream
+
+            // iterate over all user and replace my video stream with the stream of my screen.
+            users.forEach(u => {
+                if (u.id === userID) return
+                rtpSender[u.id]["video"].replaceTrack(stream!.getTracks()[0]);
+            })
+            dispatch(setMediaChangeOngoing(false))
+        }).catch((e) => {
+            dispatch(handleError("Unable to share the screen", e))
+        })
+    } else {
+        dispatch(unshareScreen())
+    }
+}
+
+export const unshareScreen = (): AppThunk => (dispatch, getState) => {
+    // share the normal video again with each user
+    dispatch(handleInputChange())
+
+    // end all streams
+    screenStream?.getTracks().forEach(t => t.stop())
+    screenStream = undefined
+
+    dispatch(setScreen(false))
+}
+
+export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
     if (getState().rtc.muted)
         return
-
-    rtpSender[id].forEach(rtp => {
-        console.log("Trying to enable audio to ", id)
-        if (rtp.track && rtp.track.kind === 'audio') {
-            console.log("Enabled audio")
-            rtp.track.enabled = true
-        }
-        //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
-    })
+    const rtp = rtpSender[id]["audio"]
+    //console.log("Trying to enable audio to ", id)
+    if (rtp.track && rtp.track.kind === 'audio') {
+        //console.log("Enabled audio")
+        rtp.track.enabled = true
+    }
+    //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }
 
 export const unsendAudio = (id: string): AppThunk => (dispatch, getState) => {
-    rtpSender[id].forEach(rtp => {
-        console.log("Trying not to enable audio to ", id)
-        if (rtp.track && rtp.track.kind === 'audio') {
-            console.log("Disabled audio")
-            rtp.track.enabled = false
-        }
-        //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
-    })
+    const rtp = rtpSender[id]["audio"]
+    console.log("Trying not to enable audio to ", id)
+    if (rtp.track && rtp.track.kind === 'audio') {
+        console.log("Disabled audio")
+        rtp.track.enabled = false
+    }
+    //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
 }
 
 export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, getState) => {
@@ -278,20 +330,20 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                                         description: rtcConnections[userId].localDescription,
                                     }
                                 }));
-                            }).catch(handleError);
+                            }).catch(e => dispatch(handleError(e.toString())));
                         });
                     };
 
                 }
-                rtpSender[userId] = []
+                rtpSender[userId] = {}
 
                 if (!getStream(getState(), localClient)) {
                     dispatch(handleError("Could not access media."))
                     return
                 }
                 // todo maybe do not send the stream until the connection is established
-                getStream(getState(), localClient)!.getTracks().forEach((track, idx) => {
-                    rtpSender[userId][idx] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
+                getStream(getState(), localClient)!.getTracks().forEach(track => {
+                    rtpSender[userId][track.kind] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
             }
         });
@@ -358,7 +410,7 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
 }
 
 export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => {
-    rtpSender[id].forEach(r => r.track?.stop())
+    Object.keys(rtpSender[id]).forEach(k => rtpSender[id][k].track?.stop())
     delete rtpSender[id]
     rtcConnections[id].close()
     delete rtcConnections[id]
@@ -367,6 +419,10 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
 
 export const destroySession = (): AppThunk => (dispatch, getState) => {
     localStream?.getTracks().forEach(t => t.stop())
+
+    screenStream?.getTracks().forEach(t => t.stop())
+    dispatch(setScreen(false))
+
     Object.keys(streams).forEach(k => {
         getStream(getState(), k)!.getTracks().forEach(t => {
             t.enabled = false
@@ -377,7 +433,7 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
 
     getOnlineUsers(getState()).forEach(u => {
         rtcConnections[u.id].close()
-        rtpSender[u.id].forEach(t => t.track?.stop())
+        Object.keys(rtpSender[u.id]).forEach(k => rtpSender[u.id][k].track?.stop())
     })
     streams = {}
     rtcConnections = {}
@@ -386,6 +442,8 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
     dispatch(turnOnVideo())
     dispatch(forgetUsers())
     dispatch(resetPlayground())
+
+    dispatch(returnHome())
 }
 
 export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {
@@ -409,7 +467,8 @@ export const handleInputChange = (): AppThunk => (dispatch, getState) => {
         dispatch(setMediaChangeOngoing(false))
         getStream(getState(), localClient)!.getTracks().forEach(s => {
             getOnlineUsers(getState()).forEach(u => {
-                rtpSender[u.id].forEach(rs => {
+                Object.keys(rtpSender[u.id]).forEach(k => {
+                    const rs = rtpSender[u.id][k]
                     if (rs.track && rs.track.kind === s.kind)
                         rs.replaceTrack(s.clone())
                 })
@@ -470,5 +529,13 @@ export const getStream = (state: RootState, id: string) => {
     if (state.userState.activeUser.id === id)
         return localStream
 }
+
+export const getScreenStream = (state: RootState, id: string) => {
+    //if (screenStream[id])
+    //    return screenStream[id]
+    if (state.userState.activeUser.id === id)
+        return screenStream
+}
+
 export const getMediaDevices = () => mediaDevices
 export default rtcSlice.reducer;
