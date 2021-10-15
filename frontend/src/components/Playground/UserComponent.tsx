@@ -113,7 +113,7 @@ export class UserComponent extends Component<Props> {
             opacity: userOpacity,
             transform: userScale,
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
-            backgroundImage: (!this.props.camera || !this.videoObject.current?.srcObject) ? `url(${user.profile_image})` : "none",
+            backgroundImage: `url(${user.profile_image})`
         }
 
         const userNameStyle = {
