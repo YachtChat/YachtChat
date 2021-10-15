@@ -112,8 +112,11 @@ export class Canvas extends Component<Props, State> {
     }
 
     onMouseUp(e: React.MouseEvent) {
+         if (this.state.focusUser !== undefined){
+
+         }
         // Click functionality
-        if ((!this.state.dragStart ||
+        else if ((!this.state.dragStart ||
             this.state.dragStart.x === e.clientX ||
             this.state.dragStart.y === e.clientY) &&
             !(e.target as HTMLDivElement).classList.contains("MuiTooltip-tooltip")
