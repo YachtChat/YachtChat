@@ -307,4 +307,10 @@ public class SpaceService {
         return space.getAllUsers().contains(currentUser);
     }
 
+    public Boolean isCurrentUserHost(String spaceId){
+        var space = this.getSpaceById(spaceId);
+        if (space.isPublic()) return false;
+        var currentUser = userService.getContextUserIfExistsElseCreate();
+        return !Collections.disjoint(space.getSpaceHosts(), currentUser.getHostSpaces());
+    }
 }

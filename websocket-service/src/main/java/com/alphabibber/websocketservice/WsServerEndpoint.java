@@ -5,6 +5,7 @@ import com.alphabibber.websocketservice.handler.*;
 import com.alphabibber.websocketservice.handler.MessageHandler;
 import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
+import com.alphabibber.websocketservice.service.SpacesService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -37,6 +38,10 @@ public class WsServerEndpoint {
     private final SignalHandler signalHandler = new SignalHandler();
     private final MediaHandler mediaHandler = new MediaHandler();
     private final MessageHandler messageHandler = new MessageHandler();
+    private final KickHandler kickHandler = new KickHandler();
+
+    private final SpacesService spacesService = new SpacesService();
+
 
     // Have a look at the ConcurrentHashMap here:
     // https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html
@@ -124,6 +129,17 @@ public class WsServerEndpoint {
                     Boolean event = jsonObject.get("event").getAsBoolean();
                     mediaHandler.handleMedia(roomMap.get(roomId), sender, media, event);
                     log.info("User {} changed his media type for {} to {}", sender.getId(), media, event);
+                    break;
+                case "kick":
+                    if (! room.containsKey(session.getId())){
+                        log.warn("User tried to kick another user while not being in a room");
+                        return;
+                    }
+                    sender = room.get(session.getId());
+                    token = jsonObject.get("token").getAsString();
+                    userId = jsonObject.get("user").getAsString();
+                    kickHandler.handleKick(room, roomId, sender, token, userId);
+                    log.info("User {} was kicked by {} out of Space {}", userId, sender.getId(), roomId);
                     break;
                 default:
                     log.warn("The {} type is not defined", type);
