@@ -198,10 +198,9 @@ export class NavigationBar extends Component<Props, State> {
                                                           onClose={() => this.handleClose("messages")}/>
                                     </div>
                                 </li>
-                                <li className="menu-item" >
-                                    <div
-                                        onClick={e => this.handleOpen(e, "settings")}
-                                        className="inner-item">
+                                <li className="menu-item">
+                                    <div className="inner-item"
+                                         onClick={e => this.handleOpen(e, "settings")}>
                                         <span className="icon-wrapper">
                                             <span className="icon">
                                                 <FaCog/>

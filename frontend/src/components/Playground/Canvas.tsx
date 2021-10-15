@@ -29,6 +29,7 @@ interface State {
     previousOffset?: { x: number, y: number }
     previousPosition?: { x: number, y: number }
     dragStart?: { x: number, y: number }
+    userOffset?: {x: number, y: number}
 }
 
 export class Canvas extends Component<Props, State> {
@@ -58,11 +59,15 @@ export class Canvas extends Component<Props, State> {
             x = (event as React.TouchEvent).touches[0].clientX
             y = (event as React.TouchEvent).touches[0].clientY
         }
+        let userOffsetx, userOffsety;
+        userOffsetx = x / this.props.offset.scale + this.props.offset.x - this.props.activeUser.position!.x
+        userOffsety = y / this.props.offset.scale + this.props.offset.y - this.props.activeUser.position!.y
 
         if (activeUser)
             this.setState({
                 userDragActive: true,
-                dragStart: {x, y}
+                dragStart: {x, y},
+                userOffset: {x: userOffsetx, y: userOffsety}
             })
         else if (canvas)
             this.setState({
@@ -129,8 +134,8 @@ export class Canvas extends Component<Props, State> {
         const scaling = this.props.offset.scale
         if (this.state.userDragActive) {
             this.props.move({
-                x: clientX / scaling - x + this.props.offset.x,
-                y: clientY / scaling - y + this.props.offset.y,
+                x: clientX / scaling + this.props.offset.x - this.state.userOffset!.x,
+                y: clientY / scaling + this.props.offset.y - this.state.userOffset!.y,
                 range: this.props.activeUser.position!.range
             })
         }
