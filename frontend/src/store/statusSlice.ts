@@ -34,8 +34,8 @@ export const {
     resetSuccess
 } = statusSlice.actions;
 
-export const handleError = (error: string): AppThunk => (dispatch, getState) => {
-    console.error(error)
+export const handleError = (error: string, e?: any): AppThunk => (dispatch, getState) => {
+    console.error(error, e)
     dispatch(setError(error))
     setTimeout(() => dispatch(resetError()), 2000)
 }

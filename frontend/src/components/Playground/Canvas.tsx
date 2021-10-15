@@ -8,6 +8,7 @@ import {displayVideo, mute} from "../../store/rtcSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground} from "../../store/playgroundSlice";
+import FocusUser from "./focusUser";
 
 interface Props {
     activeUser: User
@@ -30,6 +31,7 @@ interface State {
     previousPosition?: { x: number, y: number }
     dragStart?: { x: number, y: number }
     userOffset?: {x: number, y: number}
+    focusUser?: string
 }
 
 export class Canvas extends Component<Props, State> {
@@ -42,12 +44,40 @@ export class Canvas extends Component<Props, State> {
         }
     }
 
+    focus(userID: string) {
+        if (!this.state.focusUser) {
+            this.setState({
+                focusUser: userID
+            })
+        }
+    }
+
+    handleClose(component: string) {
+        if (this.state.focusUser) {
+            this.setState({
+                focusUser: undefined
+            })
+        }
+    }
+
     // function that sets the state of dragActive on true
     // if the mouse is clicked on the active user
     dragStart(event: React.MouseEvent | React.TouchEvent) {
         event.stopPropagation()
         const activeUser = ((event.target as HTMLVideoElement).dataset.id === "activeUser")
         const message = ((event.target as HTMLDivElement).dataset.id === "message")
+
+        const clickedUserId = ((event.target as HTMLVideoElement).dataset.id)
+        this.props.spaceUsers.map(user => {
+            if (user.id === clickedUserId){
+            //    TODO: Change size of video
+                //alert("test")
+                this.focus(user.id)
+            //    <FocusUser open={this.state.open["focus"]} onClose={() => this.handleClose("focus")}/>
+                return
+            }
+        })
+
         const canvas = !(activeUser || message)
 
         let x, y;
@@ -214,6 +244,7 @@ export class Canvas extends Component<Props, State> {
                                    //this.state.mapDragActive ||
                                    this.state.userDragActive}
                                isActiveUser={true}/>
+                <FocusUser userID={this.state.focusUser} onClose={() => this.handleClose("focusUser")}/>
             </div>
         )
     }
