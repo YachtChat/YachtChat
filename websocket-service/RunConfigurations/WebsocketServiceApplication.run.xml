@@ -15,7 +15,7 @@
     <option name="ALTERNATIVE_JRE_PATH" />
     <option name="SHORTEN_COMMAND_LINE" value="NONE" />
     <envs>
-      <env name="SPACES_URL" value="spaces.alphabibber.com" />
+      <env name="SPACES_URL" value="spaces.yacht.chat" />
       <env name="VIRTUAL_PORT" value="8085" />
     </envs>
     <method v="2">
