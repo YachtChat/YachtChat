@@ -1,8 +1,8 @@
 package com.alphabibber.websocketservice;
 
 import com.alphabibber.websocketservice.encoder.*;
-import com.alphabibber.websocketservice.handler.*;
 import com.alphabibber.websocketservice.handler.MessageHandler;
+import com.alphabibber.websocketservice.handler.*;
 import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.service.SpacesService;
@@ -19,9 +19,6 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -85,8 +82,8 @@ public class WsServerEndpoint {
         String type = jsonObject.get("type").getAsString();
 
         // if the user is not yet part of the room the type has to be 'login'
-        if (! room.containsKey(session.getId())){
-            if (! type.equals("login")){
+        if (!room.containsKey(session.getId())) {
+            if (!type.equals("login")) {
                 throw new IllegalArgumentException("If the user is not yet logged in the type should be login");
             }
             String token = jsonObject.get("token").getAsString();
@@ -95,14 +92,16 @@ public class WsServerEndpoint {
         }
 
         // if the user is already logged in the space, it can be various type
-        else{
+        else {
             // get the sender as a User object
             User sender = room.get(session.getId());
+            String token;
+            String userId;
 
             JsonObject content;
             String targetId;
             String userMessage;
-            switch (type){
+            switch (type) {
                 case "position":
                     JsonObject positionStr = jsonObject.get("position").getAsJsonObject();
                     Position position = gson.fromJson(positionStr, Position.class);
@@ -137,7 +136,7 @@ public class WsServerEndpoint {
                     }
                     sender = room.get(session.getId());
                     token = jsonObject.get("token").getAsString();
-                    userId = jsonObject.get("user").getAsString();
+                    userId = jsonObject.get("user_id").getAsString();
                     kickHandler.handleKick(room, roomId, sender, token, userId);
                     log.info("User {} was kicked by {} out of Space {}", userId, sender.getId(), roomId);
                     break;
