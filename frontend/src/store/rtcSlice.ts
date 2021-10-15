@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {connectToServer, handleLeave, send} from "./webSocketSlice";
+import {connectToServer, send} from "./webSocketSlice";
 import {rtcConfiguration} from "./config";
 import {
     forgetUsers,
@@ -13,7 +13,7 @@ import {
     setUserOffline
 } from "./userSlice";
 import {resetPlayground} from "./playgroundSlice";
-import {returnHome} from "./spaceSlice";
+import {requestSpaces, returnHome} from "./spaceSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./models";
 
@@ -442,6 +442,7 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
     dispatch(turnOnVideo())
     dispatch(forgetUsers())
     dispatch(resetPlayground())
+    dispatch(requestSpaces())
 
     dispatch(returnHome())
 }

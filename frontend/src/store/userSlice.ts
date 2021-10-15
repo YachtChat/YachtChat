@@ -1,9 +1,9 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, User, UserCoordinates, UserPayload} from "./models";
-import {sendPosition, userSetupReady} from "./webSocketSlice";
+import {send, sendPosition, userSetupReady} from "./webSocketSlice";
 import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
-import {getHeaders} from "./authSlice";
+import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
 import {ACCOUNT_URL, SPACES_URL} from "./config";
 import {keycloakUserToUser} from "./utils";
@@ -192,6 +192,12 @@ export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispa
         // Execute proximity check
         dispatch(handlePositionUpdate({id: user.id, position: coordinates}))
     }
+}
+
+export const kickUser = (id: string): AppThunk => (dispatch, getState) => {
+    getToken(getState()).then(token => {
+        dispatch(send({type: "kick", token, user_id: id}))
+    })
 }
 
 // When a user sends a message

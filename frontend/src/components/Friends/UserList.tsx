@@ -6,7 +6,7 @@ import {Tooltip} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
-import {getUser, getUsers} from "../../store/userSlice";
+import {getUser, getUsers, kickUser} from "../../store/userSlice";
 import {
     deleteSpace,
     downgradeUser,
@@ -17,8 +17,6 @@ import {
 } from "../../store/spaceSlice";
 import {handleError, handleSuccess} from "../../store/statusSlice";
 import {sendLogout} from "../../store/webSocketSlice";
-import Members, {MembersComponent} from "../Playground/NavigationBar/Members";
-import {NavigationBar} from "../Playground/NavigationBar/index";
 
 interface OwnProps {
     type: "users" | "friends"
@@ -36,6 +34,7 @@ interface MoreProps {
     removeHost: (uid: string) => void
     logout: () => void
     removeSpace: () => void
+    kick: (uid: string) => void
 }
 
 type Props = MoreProps & OwnProps
@@ -48,15 +47,15 @@ class UserList extends Component<Props> {
 
     render() {
         const users = this.props.users
-        if (users.length === 0) {
-            return (
-                <div className={"itemWrapper"}>
-                    <div className={"item"}>
-                        {this.props.emptyLabel ? this.props.emptyLabel : "Currently no users here."}
-                    </div>
-                </div>
-            )
-        }
+        // if (users.length === 0) {
+        //     return (
+        //         <div className={"itemWrapper"}>
+        //             <div className={"item"}>
+        //                 {this.props.emptyLabel ? this.props.emptyLabel : "Currently no users here."}
+        //             </div>
+        //         </div>
+        //     )
+        // }
 
         const activeUser = this.props.activeUser
         return (
@@ -71,14 +70,16 @@ class UserList extends Component<Props> {
                     }
                     <Link to={"/spaces/"}>
                         <div className={"buttons"}>
-                            <Tooltip title="Remove yourself" arrow placement={"right"}>
-                                <a onClick={() => {
-                                    this.props.logout()
-                                    this.props.removeSpace()
-                                }} className={"menuIcon"}>
-                                    <IoTrashOutline/>
-                                </a>
-                            </Tooltip>
+                            <div>
+                                <Tooltip title="Remove yourself" arrow placement={"right"}>
+                                    <button onClick={() => {
+                                        this.props.logout()
+                                        this.props.removeSpace()
+                                    }} className={"menuIcon"}>
+                                        <IoTrashOutline/>
+                                    </button>
+                                </Tooltip>
+                            </div>
                         </div>
                     </Link>
                 </div>
@@ -114,6 +115,13 @@ class UserList extends Component<Props> {
                                     </button>
                                 </Tooltip>
                                 }
+                                <Tooltip title="Remove User from Space" arrow placement={"right"}>
+                                    <button onClick={e => {
+                                        this.props.kick(u.id)
+                                    }} className={"menuIcon"}>
+                                        <IoTrashOutline/>
+                                    </button>
+                                </Tooltip>
                             </div>
                             }
                         </div>
@@ -138,7 +146,8 @@ const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     error: (s: string) => dispatch(handleError(s)),
     getHosts: () => dispatch(requestHosts(ownProps.spaceID)),
     makeHost: (uid: string) => dispatch(promoteUser(uid, ownProps.spaceID)),
-    removeHost: (uid: string) => dispatch(downgradeUser(uid, ownProps.spaceID))
+    removeHost: (uid: string) => dispatch(downgradeUser(uid, ownProps.spaceID)),
+    kick: (uid: string) => dispatch(kickUser(uid))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserList)

@@ -4,12 +4,14 @@ import {UserCoordinates, UserPayload} from "./models";
 import {
     getOnlineUsers,
     getUser,
+    getUserById,
     getUserID,
     gotRemoteStream,
     handleMessage,
     handlePositionUpdate,
     handleSpaceUser,
     handleSpaceUsers,
+    removeUser,
     setMedia
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
@@ -108,8 +110,18 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                     dispatch(setMedia({id: data.id, type: data.medium, state: data.event}));
                 break;
             case "message":
-                if(!loggedIn) break;
+                if (!loggedIn) break;
                 dispatch(handleMessage(data.content, data.sender_id))
+                break;
+            case "kick":
+                if (!loggedIn) break;
+                if (getState().userState.activeUser.id === data.id)
+                    dispatch(destroySession())
+                else {
+                    const user = getUserById(getState(), data.id)
+                    dispatch(handleSuccess(`Successfully kicked ${user.firstName} ${user.lastName}`))
+                    dispatch(removeUser(data.id))
+                }
                 break;
             case "signal":
                 if (!loggedIn)
