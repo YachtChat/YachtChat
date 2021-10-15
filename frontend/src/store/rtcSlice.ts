@@ -410,8 +410,8 @@ export const handleInputChange = (): AppThunk => (dispatch, getState) => {
         getStream(getState(), localClient)!.getTracks().forEach(s => {
             getOnlineUsers(getState()).forEach(u => {
                 rtpSender[u.id].forEach(rs => {
-                    if (rs.track && rs.track.kind === s.kind)
-                        rs.replaceTrack(s.clone())
+                    // if (rs.track && rs.track.kind === s.kind)
+                    //     rs.replaceTrack(s.clone())
                 })
             })
         })
