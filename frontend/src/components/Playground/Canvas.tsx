@@ -69,9 +69,6 @@ export class Canvas extends Component<Props, State> {
             // Drag
             this.dragStart(event)
         } else if (event.touches.length === 2) {
-
-            window.alert("Hello")
-
             // Pinch to zoom
             this.setState({
                 pinchStart: {
@@ -130,14 +127,13 @@ export class Canvas extends Component<Props, State> {
     }
 
     onMouseUp(e: React.MouseEvent) {
-        if (this.state.focusUser !== undefined) {
-
-        }
-        // Click functionality
-        else if ((!this.state.dragStart ||
-            this.state.dragStart.x === e.clientX ||
-            this.state.dragStart.y === e.clientY) &&
-            !(e.target as HTMLDivElement).classList.contains("MuiTooltip-tooltip")
+        // if the user is currently in the focus user mode this.state.focusUser will not be undefined and therefore we
+        // don't want to move
+        if (((!this.state.dragStart ||
+                    this.state.dragStart.x === e.clientX ||
+                    this.state.dragStart.y === e.clientY) &&
+                !(e.target as HTMLDivElement).classList.contains("MuiTooltip-tooltip"))
+            && (this.state.focusUser === undefined)
         ) {
             // Open full screen of user if clicked on user
             const clickedUserId = ((e.target as HTMLVideoElement).dataset.id)
