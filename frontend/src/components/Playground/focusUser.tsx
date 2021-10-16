@@ -91,6 +91,8 @@ export class FocusUser extends Component<Props, State> {
                 <Dialog open={!!this.props.userID}
                         onClick={e => e.stopPropagation()}
                         onClose={this.handleClose.bind(this)}
+                        fullWidth={true}
+                        maxWidth={"xl"}
                         style={style}>
                     <div className={"panel"}
                          onClick={e => e.stopPropagation()}>
