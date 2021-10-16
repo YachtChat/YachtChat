@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {connectToServer, handleLeave, send} from "./webSocketSlice";
+import {connectToServer, send} from "./webSocketSlice";
 import {rtcConfiguration} from "./config";
 import {
     forgetUsers,
