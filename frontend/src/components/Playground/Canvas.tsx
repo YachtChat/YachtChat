@@ -69,9 +69,6 @@ export class Canvas extends Component<Props, State> {
             // Drag
             this.dragStart(event)
         } else if (event.touches.length === 2) {
-
-            window.alert("Hello")
-
             // Pinch to zoom
             this.setState({
                 pinchStart: {
@@ -130,36 +127,36 @@ export class Canvas extends Component<Props, State> {
     }
 
     onMouseUp(e: React.MouseEvent) {
-        if (this.state.focusUser !== undefined) {
-
-        }
-        // Click functionality
-        else if ((!this.state.dragStart ||
-            this.state.dragStart.x === e.clientX ||
-            this.state.dragStart.y === e.clientY) &&
-            !(e.target as HTMLDivElement).classList.contains("MuiTooltip-tooltip")
-        ) {
-            // Open full screen of user if clicked on user
-            const clickedUserId = ((e.target as HTMLVideoElement).dataset.id)
-            let focused = false
-            this.props.spaceUsers.forEach(user => {
-                if (user.id === clickedUserId) {
-                    this.focus(user.id)
-                    //    <FocusUser open={this.state.open["focus"]} onClose={() => this.handleClose("focus")}/>
-                    focused = true
-                }
-            })
-
-            // If not opened fullscreen jump to that spot
-            if (!focused) {
-                const scaling = this.props.offset.scale
-                const x = e.currentTarget.getBoundingClientRect().x
-                const y = e.currentTarget.getBoundingClientRect().y
-                this.props.move({
-                    x: e.clientX / scaling - x + this.props.offset.x,
-                    y: e.clientY / scaling - y + this.props.offset.y,
-                    range: this.props.activeUser.position!.range
+        // if the user is currently in the focus user mode this.state.focusUser will not be undefined and therefore we
+        // don't want to move
+        if (this.state.focusUser === undefined){
+            if ((!this.state.dragStart ||
+                    this.state.dragStart.x === e.clientX ||
+                    this.state.dragStart.y === e.clientY) &&
+                !(e.target as HTMLDivElement).classList.contains("MuiTooltip-tooltip")
+            ) {
+                // Open full screen of user if clicked on user
+                const clickedUserId = ((e.target as HTMLVideoElement).dataset.id)
+                let focused = false
+                this.props.spaceUsers.forEach(user => {
+                    if (user.id === clickedUserId) {
+                        this.focus(user.id)
+                        //    <FocusUser open={this.state.open["focus"]} onClose={() => this.handleClose("focus")}/>
+                        focused = true
+                    }
                 })
+
+                // If not opened fullscreen jump to that spot
+                if (!focused) {
+                    const scaling = this.props.offset.scale
+                    const x = e.currentTarget.getBoundingClientRect().x
+                    const y = e.currentTarget.getBoundingClientRect().y
+                    this.props.move({
+                        x: e.clientX / scaling - x + this.props.offset.x,
+                        y: e.clientY / scaling - y + this.props.offset.y,
+                        range: this.props.activeUser.position!.range
+                    })
+                }
             }
         }
         this.dragEnd(e)
