@@ -32,6 +32,7 @@ interface State {
     dragStart?: { x: number, y: number }
     userOffset?: {x: number, y: number}
     focusUser?: string
+    possibleFocusUser?: string
 }
 
 export class Canvas extends Component<Props, State> {
@@ -68,15 +69,6 @@ export class Canvas extends Component<Props, State> {
         const message = ((event.target as HTMLDivElement).dataset.id === "message")
 
         const clickedUserId = ((event.target as HTMLVideoElement).dataset.id)
-        this.props.spaceUsers.map(user => {
-            if (user.id === clickedUserId){
-            //    TODO: Change size of video
-                //alert("test")
-                this.focus(user.id)
-            //    <FocusUser open={this.state.open["focus"]} onClose={() => this.handleClose("focus")}/>
-                return
-            }
-        })
 
         const canvas = !(activeUser || message)
 
@@ -95,12 +87,14 @@ export class Canvas extends Component<Props, State> {
 
         if (activeUser)
             this.setState({
+                possibleFocusUser: clickedUserId,
                 userDragActive: true,
                 dragStart: {x, y},
                 userOffset: {x: userOffsetx, y: userOffsety}
             })
         else if (canvas)
             this.setState({
+                possibleFocusUser: clickedUserId,
                 mapDragActive: true,
                 previousOffset: this.props.offset,
                 previousPosition: {
@@ -121,14 +115,28 @@ export class Canvas extends Component<Props, State> {
             this.state.dragStart.y === e.clientY) &&
             !(e.target as HTMLDivElement).classList.contains("MuiTooltip-tooltip")
         ) {
-            const scaling = this.props.offset.scale
-            const x = e.currentTarget.getBoundingClientRect().x
-            const y = e.currentTarget.getBoundingClientRect().y
-            this.props.move({
-                x: e.clientX / scaling - x + this.props.offset.x,
-                y: e.clientY / scaling - y + this.props.offset.y,
-                range: this.props.activeUser.position!.range
+            // Open full screen of user if clicked on user
+            const clickedUserId = ((e.target as HTMLVideoElement).dataset.id)
+            let focused = false
+            this.props.spaceUsers.forEach(user => {
+                if (user.id === clickedUserId) {
+                    this.focus(user.id)
+                    //    <FocusUser open={this.state.open["focus"]} onClose={() => this.handleClose("focus")}/>
+                    focused = true
+                }
             })
+
+            // If not opened fullscreen jump to that spot
+            if (!focused) {
+                const scaling = this.props.offset.scale
+                const x = e.currentTarget.getBoundingClientRect().x
+                const y = e.currentTarget.getBoundingClientRect().y
+                this.props.move({
+                    x: e.clientX / scaling - x + this.props.offset.x,
+                    y: e.clientY / scaling - y + this.props.offset.y,
+                    range: this.props.activeUser.position!.range
+                })
+            }
         }
         this.dragEnd(e)
     }
