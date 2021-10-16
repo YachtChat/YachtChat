@@ -8,7 +8,6 @@ import {FaChevronLeft} from "react-icons/all";
 import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
 import {getFriends, requestFriends} from "../../store/userSlice";
-import UserList from "./UserList";
 
 interface Props {
     activeUser: User
@@ -35,7 +34,7 @@ export class Friends extends Component<Props> {
                     <p>Here you can see all your friends.</p>
                 </div>
 
-                <UserList users={this.props.friends} type={"friends"}/>
+                {/*<UserList users={this.props.friends} type={"friends"}/>*/}
             </Wrapper>
         )
     }

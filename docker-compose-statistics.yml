@@ -3,7 +3,7 @@ services:
   prometheus:
     image: prom/prometheus
     volumes:
-      - /home/git_environment/NotZoom/keycloak/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
+      - /home/git_environment/NotZoom/keycloak/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus:/prometheus
     networks:
       - application

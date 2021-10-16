@@ -3,6 +3,7 @@ export const SPACES_URL: string | undefined = process.env.REACT_APP_SPACES_URL;
 export const ACCOUNT_URL: string | undefined = process.env.REACT_APP_ACCOUNT_URL
 export const FRONTEND_URL: string | undefined = process.env.REACT_APP_FRONTEND_URL
 export const SOCKET_PORT: string | undefined = process.env.REACT_APP_SIGNAL_PORT;
+export const SPACES_PORT: string | undefined = process.env.REACT_APP_SPACES_PORT;
 export const AUTH_SERVICE: string | undefined = process.env.REACT_APP_AUTH_URL
 export const REALM: string | undefined = process.env.REACT_APP_REALM
 export const CLIENT_ID: string | undefined = process.env.REACT_APP_KEYCLOAK_CLIENT
@@ -11,9 +12,15 @@ export const applicationName: string = "Yacht Chat"
 // `REACT_APP_SOCKET_URL=ws://localhost:6503` ... yarn run start
 
 export const rtcConfiguration = {
-    "iceServers": [{
-        "urls": [
-            "stun:stun.yacht.chat:3478"
+    "iceServers": [//{
+        //"urls": //[
+        {urls: "stun:stun.yacht.chat:3478"},
+        {
+            urls: "turn:stun.yacht.chat:3478",
+            credential: "password",
+            username: "guest"
+        }
+
             // "stun:iphone-stun.strato-iphone.de:3478",
             // "stun:numb.viagenie.ca:3478",
             // "stun:s1.taraba.net:3478",
@@ -280,6 +287,7 @@ export const rtcConfiguration = {
             // "stun:stun3.l.google.com:19302",
             // "stun:stun4.l.google.com:19302",
             // "stun:stunserver.org:3478"
-        ]
-    }]
+        //]
+    //}
+    ]
 }

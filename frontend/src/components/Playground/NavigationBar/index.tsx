@@ -1,30 +1,20 @@
 import React, {Component} from "react";
 import './style.scss';
-import {User} from "../../store/models";
-import {RootState} from "../../store/store";
+import {User} from "../../../store/models";
+import {RootState} from "../../../store/store";
 import {connect} from "react-redux";
-import {
-    FaBars,
-    FaCog,
-    FaMicrophone,
-    FaMicrophoneSlash,
-    FaPlusCircle,
-    FaSignOutAlt,
-    FaVideo,
-    FaVideoSlash
-} from 'react-icons/fa';
+import {FaBars, FaCog, FaMicrophone, FaMicrophoneSlash, FaSignOutAlt, FaVideo, FaVideoSlash} from 'react-icons/fa';
 import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
-import {sendLogout} from "../../store/webSocketSlice";
-import {displayVideo, mute} from "../../store/rtcSlice";
-import Settings from "../Settings";
-import {centerUser} from "../../store/playgroundSlice";
-import {IoChatbubble} from "react-icons/all";
+import {sendLogout} from "../../../store/webSocketSlice";
+import {displayVideo, mute, shareScreen} from "../../../store/rtcSlice";
+import Settings from "../../Settings";
+import {centerUser} from "../../../store/playgroundSlice";
+import {IoChatbubble, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
 import MessageComponent from "./Message";
-import {Link} from "react-router-dom";
-import {FRONTEND_URL} from "../../store/config";
-import {getInvitationToken} from "../../store/spaceSlice";
-import {handleSuccess} from "../../store/statusSlice";
+import {getInvitationToken} from "../../../store/spaceSlice";
+import {handleSuccess} from "../../../store/statusSlice";
+import MembersComponent from "./Members";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -34,18 +24,16 @@ interface Props {
     logout: () => void
     toggleAudio: () => void
     toggleVideo: () => void
+    toggleScreen: () => void
     center: () => void
     video: boolean
     muted: boolean
+    screen: boolean
 }
 
 interface State {
-    token?: string
-    value: string
     collapsed: boolean
-    className: string
-    messagesOpen: boolean
-    settingsOpen: boolean
+    open: { [component: string]: boolean }
 }
 
 export class NavigationBar extends Component<Props, State> {
@@ -60,26 +48,9 @@ export class NavigationBar extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            value: "",
             collapsed: true,
-            className: "navbar collapsed",
-            settingsOpen: false,
-            messagesOpen: false
+            open: {}
         }
-    }
-
-    componentDidMount() {
-        this.props.getToken(this.props.spaceID).then(token => {
-            console.log(token)
-            this.setState({
-                token: token
-            })
-        }).catch(() => console.log("NOPE"))
-    }
-
-    // function that changes the state of value, used in the username input
-    handleChange(event: any) {
-        this.setState({value: event.target.value});
     }
 
     // function that switches the state of the navigationbar bar (collapsed/not collapsed)
@@ -87,12 +58,10 @@ export class NavigationBar extends Component<Props, State> {
         if (this.state.collapsed) {
             this.setState({
                 collapsed: false,
-                className: "navbar"
             })
         } else if (!this.state.collapsed) {
             this.setState({
                 collapsed: true,
-                className: "navbar collapsed"
             })
         }
     }
@@ -102,35 +71,24 @@ export class NavigationBar extends Component<Props, State> {
         if (!this.state.collapsed) {
             this.setState({
                 collapsed: true,
-                className: "navbar collapsed"
             })
         }
     }
 
-    handleSettingsOpen(event: any) {
-        if (!this.state.settingsOpen) {
+    handleOpen(event: any, component: string) {
+        if (!this.state.open[component]) {
             this.setState({
-                settingsOpen: true,
+                open: {[component]: true},
             })
         }
     }
 
-    handleMessagesOpen(event: any) {
-        if (!this.state.messagesOpen) {
+    handleClose(component: string) {
+        if (this.state.open[component]) {
             this.setState({
-                messagesOpen: true,
+                open: {}
             })
         }
-    }
-
-    handleClose() {
-        if (this.state.messagesOpen || this.state.settingsOpen) {
-            this.setState({
-                settingsOpen: false,
-                messagesOpen: false
-            })
-        }
-        console.log(this.state)
     }
 
 
@@ -138,7 +96,8 @@ export class NavigationBar extends Component<Props, State> {
         const micIcon = (this.props.muted) ? this.icons.micOffIcon : this.icons.micOnIcon
         const videoIcon = (this.props.video) ? this.icons.videoOnIcon : this.icons.videoOffIcon
         return (
-            <div id="sidebar" className={this.state.className} onMouseLeave={this.handleHoverCollapse.bind(this)}>
+            <div id="sidebar" className={"navbar " + ((this.state.collapsed) ? "collapsed" : "")}
+                 onMouseLeave={this.handleHoverCollapse.bind(this)}>
                 <div className="navbar-inner">
                     <div className="navbar-layout">
                         <div className="menu">
@@ -151,7 +110,7 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                     </span>
                                         <span className="item-content">
-                                        Dashboard
+                                        Menu
                                     </span>
                                     </div>
                                 </li>
@@ -179,21 +138,35 @@ export class NavigationBar extends Component<Props, State> {
                                     </span>
                                     </div>
                                 </li>
-                                <li className="menu-item"
-                                    onClick={e => {
-                                        e.preventDefault()
-                                        navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + this.state.token)
-                                        this.props.success("Invite link copied")
-                                        console.log(this.state)}}>
+                                <li className="menu-item" onClick={this.props.toggleScreen}>
                                     <div className="inner-item">
                                     <span className="icon-wrapper">
                                         <span className="icon">
-                                            <FaPlusCircle/>
+                                            {(this.props.screen) ? <IoTv/> : <IoTvOutline/>}
                                         </span>
                                     </span>
                                         <span className="item-content">
-                                        Add User
+                                            {(this.props.screen) ? "Stop Sharing" : "Share Screen"}
                                     </span>
+                                    </div>
+                                </li>
+                                <li className="menu-item">
+                                    <div
+                                        onClick={e => this.handleOpen(e, "users")}
+                                        className="inner-item">
+                                        <span className="icon-wrapper">
+                                            <span className="icon">
+                                                <IoPeople/>
+                                            </span>
+                                        </span>
+                                        <span className="item-content">
+                                            Users
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <MembersComponent open={this.state.open["users"]}
+                                                          spaceID={this.props.spaceID}
+                                                          onClose={() => this.handleClose("users")}/>
                                     </div>
                                 </li>
                                 <li className="menu-item" onClick={this.props.center}>
@@ -222,7 +195,7 @@ export class NavigationBar extends Component<Props, State> {
                             <ul>
                                 <li className="menu-item">
                                     <div
-                                        onClick={() => this.setState(this.handleMessagesOpen.bind(this))}
+                                        onClick={e => this.handleOpen(e, "messages")}
                                         className="inner-item">
                                         <span className="icon-wrapper">
                                             <span className="icon">
@@ -234,12 +207,13 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                     </div>
                                     <div>
-                                        <MessageComponent open={this.state.messagesOpen}
-                                                          onClose={this.handleClose.bind(this)}/>
+                                        <MessageComponent open={this.state.open["messages"]}
+                                                          onClose={() => this.handleClose("messages")}/>
                                     </div>
                                 </li>
-                                <li className="menu-item" onClick={this.handleSettingsOpen.bind(this)}>
-                                    <div className="inner-item">
+                                <li className="menu-item">
+                                    <div className="inner-item"
+                                         onClick={e => this.handleOpen(e, "settings")}>
                                         <span className="icon-wrapper">
                                             <span className="icon">
                                                 <FaCog/>
@@ -247,27 +221,25 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                         <span className="item-content">
                                             Settings
-                                            <div>
-                                                <Settings open={this.state.settingsOpen}
-                                                          onClose={this.handleClose.bind(this)}/>
-                                            </div>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <Settings open={this.state.open["settings"]}
+                                                  onClose={() => this.handleClose("settings")}/>
+                                    </div>
+                                </li>
+                                <li className="menu-item" onClick={this.props.logout}>
+                                    <div className="inner-item">
+                                        <span className="icon-wrapper">
+                                            <span className="icon">
+                                                <FaSignOutAlt/>
+                                            </span>
+                                        </span>
+                                        <span className="item-content">
+                                            Log Out
                                         </span>
                                     </div>
                                 </li>
-                                <Link to={"/spaces/"}>
-                                    <li className="menu-item" onClick={this.props.logout}>
-                                        <div className="inner-item">
-                                            <span className="icon-wrapper">
-                                                <span className="icon">
-                                                    <FaSignOutAlt/>
-                                                </span>
-                                            </span>
-                                            <span className="item-content">
-                                                Log Out
-                                            </span>
-                                        </div>
-                                    </li>
-                                </Link>
                             </ul>
                         </div>
                     </div>
@@ -282,15 +254,17 @@ const mapStateToProps = (state: RootState) => ({
     spaces: state.space.spaces,
     activeUser: state.userState.activeUser,
     video: state.rtc.video,
-    muted: state.rtc.muted
+    muted: state.rtc.muted,
+    screen: state.rtc.screen
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     success: (s: string) => dispatch(handleSuccess(s)),
     toggleAudio: () => dispatch(mute()),
     toggleVideo: () => dispatch(displayVideo()),
+    toggleScreen: () => dispatch(shareScreen()),
     logout: () => dispatch(sendLogout()),
-    center: () => dispatch(centerUser())
+    center: () => dispatch(centerUser()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavigationBar)

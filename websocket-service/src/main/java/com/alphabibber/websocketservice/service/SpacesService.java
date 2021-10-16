@@ -13,7 +13,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class SpacesService {
-    private final String URL = "https://" + System.getenv("SPACES_URL") + "/api/v1/spaces/";
+    private static final String PORT = System.getenv("SPACES_PORT");
+    private static String URL = System.getenv("SPACES_URL");
+    String url = (PORT != null) ? "http://" + URL + ":" + PORT + "/api/v1/spaces/" :
+            "https://" + URL + "/api/v1/spaces/";
+
     private final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .build();
@@ -21,16 +25,16 @@ public class SpacesService {
 
     public boolean isUserAllowedToJoin(String roomId, String token){
         // Check if the user is allowed to enter the space
-        return sendRequest(URL + roomId + "/canUserJoin/", token);
+        return sendRequest(url + roomId + "/canUserJoin/", token);
     }
 
     public boolean isUserHost(String roomId, String token){
         // Check if the user is host for the space
-        return sendRequest(URL + roomId + "/isUserHost/", token);
+        return sendRequest(url + roomId + "/isUserHost/", token);
     }
 
     public boolean removeUserFromSpace(String roomId, String token, String userId){
-        String requestUrl = URL + roomId + "/members/?memberId=" + userId;
+        String requestUrl = url + roomId + "/members/?memberId=" + userId;
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(requestUrl))

@@ -48,7 +48,7 @@ export class MediaSettings extends Component<Props> {
     render() {
         const mediaDevices = getMediaDevices()
 
-        if (this.props.speakers.length === 0 || this.props.microphones.length === 0 || this.props.cameras.length === 0) {
+        if (this.props.speakers.length === 0 && this.props.microphones.length === 0 && this.props.cameras.length === 0) {
             return (<div className={"no-media"}>
                 <div>
                     No media devices found. <br/>Request media again?
@@ -68,6 +68,7 @@ export class MediaSettings extends Component<Props> {
                     }}/>
                 </div>
                 <VolumeIndicator/>
+                {this.props.cameras.length !== 0 &&
                 <div className={"settings-item"}>
                     <label>
                         Change Video Input
@@ -84,6 +85,8 @@ export class MediaSettings extends Component<Props> {
                         </select>
                     </div>
                 </div>
+                }
+                {this.props.microphones.length !== 0 &&
                 <div className={"settings-item"}>
                     <label>
                         Change Audio Input
@@ -101,6 +104,8 @@ export class MediaSettings extends Component<Props> {
                         </select>
                     </div>
                 </div>
+                }
+                {this.props.speakers.length !== 0 &&
                 <div className={"settings-item"}>
                     <label>
                         Change Audio Output
@@ -118,6 +123,7 @@ export class MediaSettings extends Component<Props> {
                         </select>
                     </div>
                 </div>
+                }
             </div>
         );
     }

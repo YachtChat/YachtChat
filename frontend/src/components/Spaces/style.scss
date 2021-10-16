@@ -1,17 +1,33 @@
 @import "src/variables.module";
 
 .spaces {
-  width: 50%;
-  height: 50%;
   min-width: 400px;
-  min-height: 600px;
-  overflow: hidden;
+  max-width: 100%;
   text-align: left;
-  overflow-y: auto;
+  height: 50%;
+  min-height: 500px;
+  display: flex;
+  flex-direction: row;
 
-  .headlineBox .buttons .profilePic {
-    background-position: center center;
-    background-size: cover;
+  .headlineBox {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0;
+    justify-content: center;
+
+    .buttons {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: inherit;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      width: 10rem;
+      border-bottom: 5px solid $headline_light;
+    }
   }
 
   .loadingAnimation {
@@ -52,37 +68,63 @@
     padding: 2rem 2rem;
   }
 
-  .spacesWrapper {
-    display: block;
-    padding: 0 2rem;
+  .spacesContent {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    height: 100%;
 
+    .itemWrapper {
+      min-width: 300px;
+      padding: 0.7rem 2rem;
+      overflow-y: auto;
+      bottom: 0;
+      margin-bottom: 0;
+      box-sizing: content-box;
 
-    .buttons {
-      position: absolute;
-      top: 0;
-      right: 0;
-      height: 100%;
-      align-items: center;
-      justify-content: center;
-      justify-items: center;
-      width: auto;
-      display: flex;
-      flex-direction: row;
-      padding-right: 1rem;
-    }
+      .buttons {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        justify-items: center;
+        width: auto;
+        display: flex;
+        flex-direction: row;
+        padding-right: 1rem;
+      }
 
-    .space {
-      position: relative;
-      padding: 1.5rem 1rem;
-      border-radius: $border_radius;
-      margin-top: 0.5rem;
+      .item {
+        position: relative;
+        padding: 1.5rem 1rem;
+        border-radius: $border_radius;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
 
-      &:hover {
-        background: $background_2_light;
+        .menuIcon {
+          margin: auto;
+          margin-right: 10px;
+          padding: 0;
+          border: none;
+          width: auto;
+          height: auto;
 
-        @media (prefers-color-scheme: dark) {
-          & {
-            background: $background_2_dark;
+          &:hover {
+            opacity: 0.5;
+            background: transparent;
+          }
+        }
+
+        &:hover {
+          background: $background_2_light;
+
+          @media (prefers-color-scheme: dark) {
+            & {
+              background: $background_2_dark;
+            }
           }
         }
       }

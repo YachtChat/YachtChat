@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {handleLoginUser, handleSpaceUser} from './userSlice';
+import {handleLoginUser} from './userSlice';
 import keycloak from "./keycloak";
 import {AxiosRequestConfig} from "axios";
 
@@ -49,22 +49,22 @@ export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) =
         onLoad: 'login-required',
     }).then((auth) => {
         if (auth) {
-            keycloak.updateToken(30).then(() =>
+            keycloak.updateToken(30).then(() => {
                 dispatch(setToken(keycloak.token!)) // TODO: to be set to keycloak.token
-            ).catch(() => keycloak.login())
-        }
 
-        const existingToken = getState().auth.token
-        if (existingToken && existingToken !== "") {
-            dispatch(setLogin(auth)) // TODO: to be set to keycloak.authenticated
+                const existingToken = getState().auth.token
+                if (existingToken && existingToken !== "") {
+                    dispatch(setLogin(auth)) // TODO: to be set to keycloak.authenticated
 
-            // @ts-ignore
-            const tokenParsed: string = keycloak.tokenParsed!.sub
+                    // @ts-ignore
+                    const tokenParsed: string = keycloak.tokenParsed!.sub
 
-            dispatch(handleLoginUser({id: tokenParsed}))
-        } else {
-            dispatch(authFlowReady())
-            keycloak.login()
+                    dispatch(handleLoginUser({id: tokenParsed}))
+                } else {
+                    dispatch(authFlowReady())
+                    keycloak.login()
+                }
+            }).catch(() => keycloak.login())
         }
     })
         .then(() => dispatch(authFlowReady()))

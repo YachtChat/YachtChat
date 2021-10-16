@@ -17,6 +17,6 @@ scrape_configs:
 
       static_configs:
           # Change this to a env Variable
-          - targets: ['Keycloak:8080']
+          - targets: ['notzoom_keycloak_1:8080']
 
       metrics_path: /auth/realms/master/metrics

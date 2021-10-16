@@ -12,10 +12,11 @@
       </ENTRIES>
     </extension>
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.alphabibber.websocketservice.WebsocketServiceApplication" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/websocket-service"/>
     <option name="ALTERNATIVE_JRE_PATH" />
     <option name="SHORTEN_COMMAND_LINE" value="NONE" />
     <envs>
-      <env name="SPACES_URL" value="spaces.alphabibber.com" />
+      <env name="SPACES_URL" value="spaces.yacht.chat" />
       <env name="VIRTUAL_PORT" value="8085" />
     </envs>
     <method v="2">

@@ -1,6 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {PlaygroundOffset} from "./models";
 import {AppThunk} from "./store";
+import {requestSpaces} from "./spaceSlice";
 
 interface SpaceState {
     offset: PlaygroundOffset
@@ -67,6 +68,7 @@ export const initPlayground = (): AppThunk => (dispatch, getState) => {
         prevHeight = window.innerHeight
         prevWidth = window.innerWidth
     })
+    dispatch(requestSpaces())
 }
 
 export const centerUser = (): AppThunk => (dispatch, getState) => {
@@ -82,13 +84,13 @@ export const centerUser = (): AppThunk => (dispatch, getState) => {
 export const handleZoom = (z: number): AppThunk => (dispatch, getState) => {
     const state = getState()
     const scale = state.playground.offset.scale
+    const scaledZoom = state.playground.offset.scale + (z / 1080 * ((window.innerWidth > window.innerHeight) ? window.innerWidth : window.innerHeight))
     const userPos = state.userState.activeUser.position!
     const offX = state.playground.offset.x
     const offY = state.playground.offset.y
-    const x = offX + ((userPos.x - offX) * (scale + z) - (userPos.x - offX) * scale) / (scale + z)
-    const y = offY + ((userPos.y - offY) * (scale + z) - (userPos.y - offY) * scale) / (scale + z)
+    const x = offX + ((userPos.x - offX) * (scaledZoom) - (userPos.x - offX) * scale) / (scaledZoom)
+    const y = offY + ((userPos.y - offY) * (scaledZoom) - (userPos.y - offY) * scale) / (scaledZoom)
 
-    const scaledZoom = state.playground.offset.scale + (z / 1080 * ((window.innerWidth > window.innerHeight) ? window.innerWidth : window.innerHeight))
 
     dispatch(movePlayground({
         x,

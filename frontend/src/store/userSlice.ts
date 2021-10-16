@@ -1,9 +1,9 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, User, UserCoordinates, UserPayload} from "./models";
-import {sendPosition, userSetupReady} from "./webSocketSlice";
+import {send, sendPosition, userSetupReady} from "./webSocketSlice";
 import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
-import {getHeaders} from "./authSlice";
+import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
 import {ACCOUNT_URL, SPACES_URL} from "./config";
 import {keycloakUserToUser} from "./utils";
@@ -11,13 +11,11 @@ import {keycloakUserToUser} from "./utils";
 interface UserState {
     activeUser: User
     spaceUsers: { [key: string]: User },
-    friends: { [key: string]: User }
 }
 
 const initialState: UserState = {
     activeUser: {id: "-1", online: true},
     spaceUsers: {},
-    friends: {}
 };
 
 export const userProportion = 100
@@ -74,7 +72,7 @@ export const userSlice = createSlice({
                 const id = u.id
                 if (id === state.activeUser.id) {
                     state.activeUser = u
-                } else if (u.position) {
+                } else if (u.position || !u.online) {
                     spaceUsers[id] = u
                 }
             })
@@ -128,11 +126,10 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
     getHeaders(getState()).then(headers =>
         // load user ids from all users in space
         axios.get("https://" + SPACES_URL + "/api/v1/spaces/" + spaceId + "/allUsers/", headers).then((response) =>
-            response.data.forEach((u: { id: string }) =>
+            response.data.forEach((u: { id: string }) => {
                 userIDs.push(u.id)
-            )
+            })
         ).finally(() => {
-            console.log(userIDs)
             // axios load user info from all users in userids
             axios.post("https://" + ACCOUNT_URL + "/account/userslist/", userIDs, headers).then(response => {
                 // transform into users with util-function
@@ -141,6 +138,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
                     // set all users online and position of users in "users" (maybe also image)
                     return keycloakUserToUser(user, !!userPayload, userPayload?.position)
                 })
+                console.log(userObjects)
                 // finally call set users with user list
                 dispatch(setUsers(userObjects))
                 dispatch(userSetupReady())
@@ -196,6 +194,12 @@ export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispa
     }
 }
 
+export const kickUser = (id: string): AppThunk => (dispatch, getState) => {
+    getToken(getState()).then(token => {
+        dispatch(send({type: "kick", token, user_id: id}))
+    })
+}
+
 // When a user sends a message
 export const handleMessage = (message: string, fromId: string): AppThunk => (dispatch, getState) => {
     const user = getUserById(getState(), fromId)
@@ -203,7 +207,7 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
         // Set message in order to display it
         dispatch(setMessage({message, id: fromId}))
         // After timeout message will be deleted
-        setTimeout(() => dispatch(destroyMessage(fromId)), 5000)
+        setTimeout(() => dispatch(destroyMessage(fromId)), 12000)
     }
 }
 
@@ -276,10 +280,19 @@ export const getUserById = (state: RootState, id: string) => {
 }
 export const getUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
     id => state.userState.spaceUsers[id]
-);
+).sort((a, b) => {
+    // Order by last name
+    const nameA = a.lastName + ", " + a.firstName
+    const nameB = b.lastName + ", " + b.firstName
+    if (nameA < nameB) {
+        return -1;
+    }
+    if (nameA > nameB) {
+        return 1;
+    }
+    return 0;
+});
 export const getOnlineUsers = (state: RootState) => getUsers(state).filter(u => u.online);
-export const getFriends = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
-    id => state.userState.friends[id]
-);
+export const getFriends = (state: RootState) => [];
 
 export default userSlice.reducer;

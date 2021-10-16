@@ -26,6 +26,7 @@ public class LoginHandler {
             .version(HttpClient.Version.HTTP_2)
             .build();
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final LeaveHandler leaveHandler = new LeaveHandler();
 
     public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session) {
         if (!spacesService.isUserAllowedToJoin(roomId, token)) {
@@ -46,8 +47,9 @@ public class LoginHandler {
         // check if a user with the given userId is already part of this room
         for (User user:room.values()){
             if (user.getId().equals(userId)){
-                log.error("A user with id: {} is already part of room {}", userId, roomId);
-                return;
+                // kick this user that was already in the space
+                log.error("A user with id: {} is already part of room {} and will be kicked", userId, roomId);
+                leaveHandler.handleLeave(room, user);
             }
         }
 

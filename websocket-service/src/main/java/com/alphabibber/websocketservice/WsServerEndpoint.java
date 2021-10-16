@@ -1,6 +1,7 @@
 package com.alphabibber.websocketservice;
 
 import com.alphabibber.websocketservice.encoder.*;
+import com.alphabibber.websocketservice.handler.MessageHandler;
 import com.alphabibber.websocketservice.handler.*;
 import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
@@ -9,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.junit.platform.commons.util.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -17,13 +19,13 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @ServerEndpoint(value = "/room/{roomID}", encoders = { LoginAnswerEncoder.class, NewUserAnswerEncoder.class,
-        PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class, MediaAnswerEncoder.class})
+        PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class, MediaAnswerEncoder.class,
+        MessageEncoder.class})
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     Gson gson = new GsonBuilder().create();
@@ -32,6 +34,7 @@ public class WsServerEndpoint {
     private final LeaveHandler leaveHandler = new LeaveHandler();
     private final SignalHandler signalHandler = new SignalHandler();
     private final MediaHandler mediaHandler = new MediaHandler();
+    private final MessageHandler messageHandler = new MessageHandler();
     private final KickHandler kickHandler = new KickHandler();
 
     private final SpacesService spacesService = new SpacesService();
@@ -41,6 +44,8 @@ public class WsServerEndpoint {
     // https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html
     // https://www.baeldung.com/java-concurrent-map
     // Keep in mind the load factor and the concurrency level
+    // Concurrent Hashmap probably works good for a Space, it is unclear whether it works good for the roomMap that stores
+    // all Spaces.
     private static final Map<String, Map<String, User>> roomMap = new ConcurrentHashMap<>(8);
 
 
@@ -62,118 +67,104 @@ public class WsServerEndpoint {
         log.info("User joined the room {}", roomId);
     }
 
-    @OnMessage
+    @OnMessage(maxMessageSize = -1L)
     public void openMessage(@PathParam("roomID") String roomId, Session session, String message)  {
-        // TODO should we here catch the exception that are possibly thrown
+        // get data which the user send
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
-        // Map of room with session.getId() as key and the User Object as value
+
+        // Get room that was created when the user entered the space
         Map<String, User> room = roomMap.get(roomId);
-        User sender;
-        String token;
-        String userId;
-        String type;
-        try{
-            type = jsonObject.get("type").getAsString();
-        } catch (NullPointerException e){
-            log.error("This json does not contain a field type");
-            return;
+
+        // check if the user send a type (it probably does not make sense to check this here. Just let it fail.
+        if (jsonObject.get("type") == null){
+            throw new IllegalArgumentException("Field 'type' should be provided");
+        }
+        String type = jsonObject.get("type").getAsString();
+
+        // if the user is not yet part of the room the type has to be 'login'
+        if (!room.containsKey(session.getId())) {
+            if (!type.equals("login")) {
+                throw new IllegalArgumentException("If the user is not yet logged in the type should be login");
+            }
+            String token = jsonObject.get("token").getAsString();
+            String userId = jsonObject.get("id").getAsString();
+            loginHandler.handleLogin(room, roomId, token, userId, session);
         }
 
-        switch (type){
-            case "login":
-                token = jsonObject.get("token").getAsString();
-                userId = jsonObject.get("id").getAsString();
-                loginHandler.handleLogin(room, roomId, token, userId, session);
-                break;
-            case "position":
-                if (! room.containsKey(session.getId())){
-                    log.warn("User tried to update his Position while not being logged in");
-                    return;
-                }
-                JsonObject positionStr = jsonObject.get("position").getAsJsonObject();
-                Position position = gson.fromJson(positionStr, Position.class);
-                positionChangeHandler.handlePositinChange(roomMap.get(roomId), roomId, session, position);
-                break;
-            case "signal":
-                if (! room.containsKey(session.getId())){
-                    log.warn("User tried to signal while not being logged in");
-                    return;
-                }
-                sender = room.get(session.getId());
-                JsonObject content = jsonObject.getAsJsonObject("content");
-                String target_id = jsonObject.get("target_id").getAsString();
-                // check if the tagertUder.getSession().getId() field is in the room
-                User targetUser = null;
-                for (User user:room.values()){
-                    if (user.getId().equals(target_id)){
-                        targetUser = user;
-                        break;
-                    }
-                }
-                if (targetUser == null){
-                    log.warn("User {} tried to signal to target {} but target does not exist", sender.getId(), target_id);
-                    return;
-                }
-                signalHandler.handleSignal(roomMap.get(roomId), roomId, sender, content, targetUser);
-                log.info("User {} send message to user {} in room {}", sender.getId(), target_id, roomId);
-                break;
-            case "leave":
-                if (! room.containsKey(session.getId())){
-                    log.warn("User tried to leave while not being logged in");
-                    return;
-                }
-                sender = room.get(session.getId());
-                leaveHandler.handleLeave(roomMap.get(roomId), sender);
-                log.info("User {} has left the room {}", sender.getId(), roomId);
-                break;
-            case "media":
-                if (! room.containsKey(session.getId())){
-                    log.warn("User tried to leave while not being logged in");
-                    return;
-                }
-                sender = room.get(session.getId());
-                String media = jsonObject.get("media").getAsString();
-                Boolean event = jsonObject.get("event").getAsBoolean();
-                mediaHandler.handleMedia(roomMap.get(roomId), sender, media, event);
-                log.info("User {} changed his media type for {} to {}", sender.getId(), media, event);
-                return;
-            case "kick":
-                if (! room.containsKey(session.getId())){
-                    log.warn("User tried to kick another user while not being in a room");
-                    return;
-                }
-                sender = room.get(session.getId());
-                token = jsonObject.get("token").getAsString();
-                userId = jsonObject.get("user").getAsString();
-                kickHandler.handleKick(room, roomId, sender, token, userId);
-                log.info("User {} was kicked by {} out of Space {}", userId, sender.getId(), roomId);
-                break;
+        // if the user is already logged in the space, it can be various type
+        else {
+            // get the sender as a User object
+            User sender = room.get(session.getId());
+            String token;
+            String userId;
 
-            default:
-                log.warn("The {} type is not defined", type);
+            JsonObject content;
+            String targetId;
+            String userMessage;
+            switch (type) {
+                case "position":
+                    JsonObject positionStr = jsonObject.get("position").getAsJsonObject();
+                    Position position = gson.fromJson(positionStr, Position.class);
+                    positionChangeHandler.handlePositinChange(roomMap.get(roomId), roomId, session, position);
+                    break;
+                case "signal":
+                    content = jsonObject.getAsJsonObject("content");
+                    targetId = jsonObject.get("target_id").getAsString();
+                    signalHandler.handleSignal(roomMap.get(roomId), roomId, sender, content, targetId);
+                    log.info("User {} signaled to user {} in room {}", sender.getId(), targetId, roomId);
+                    break;
+                case "message":
+                    userMessage = jsonObject.get("content").getAsString();
+                    targetId = jsonObject.get("target_id").getAsString();
+                    messageHandler.handleMessage(roomMap.get(roomId), roomId, sender, userMessage, targetId);
+                    log.info("User {} send message to user {} in room {}", sender.getId(), targetId, roomId);
+                    break;
+                case "leave":
+                    leaveHandler.handleLeave(roomMap.get(roomId), sender);
+                    log.info("User {} has left the room {}", sender.getId(), roomId);
+                    break;
+                case "media":
+                    String media = jsonObject.get("media").getAsString();
+                    Boolean event = jsonObject.get("event").getAsBoolean();
+                    mediaHandler.handleMedia(roomMap.get(roomId), sender, media, event);
+                    log.info("User {} changed his media type for {} to {}", sender.getId(), media, event);
+                    break;
+                case "kick":
+                    if (! room.containsKey(session.getId())){
+                        log.warn("User tried to kick another user while not being in a room");
+                        return;
+                    }
+                    sender = room.get(session.getId());
+                    token = jsonObject.get("token").getAsString();
+                    userId = jsonObject.get("user_id").getAsString();
+                    kickHandler.handleKick(room, roomId, sender, token, userId);
+                    log.info("User {} was kicked by {} out of Space {}", userId, sender.getId(), roomId);
+                    break;
+                default:
+                    log.warn("The {} type is not defined", type);
+            }
         }
     }
 
     @OnClose
-    public void onClose(@PathParam("roomID") String roomId, Session session) throws IOException {
-        User sender = roomMap.get(roomId).get(session.getId());
-        leaveHandler.handleLeave(roomMap.get(roomId), sender);
-        log.info("User {} has left the room {}", sender.getId(), roomId);
+    public void onClose(@PathParam("roomID") String roomId, Session session) {
+        User sender = null;
+        try{
+            sender = roomMap.get(roomId).get(session.getId());
+        } catch (NullPointerException e){
+            log.error("Room {} does not exist but user closed connection on that room", roomId);
+        }
+        if (sender != null){
+            leaveHandler.handleLeave(roomMap.get(roomId), sender);
+            log.info("User {} has left the room {}", sender.getId(), roomId);
+        }
     }
 
     @OnError
-    public void onError(@PathParam("roomID") String roomId, Session session, Throwable e){
-        Throwable cause = e.getCause();
-        if (cause != null){
-            log.error("error-info -> cause: " + cause);
-        }
-        if (roomMap.containsKey(roomId)){
-            Map<String, User> room = roomMap.get(roomId);
-            if (room.containsKey(session.getId())){
-                room.remove(session.getId());
-            }
-        }
+    public void onError(@PathParam("roomID") String roomId, Session session, Throwable t){
+        log.error(ExceptionUtils.readStackTrace(t));
         try{
+            // This should call the onClose method where the user is then removed from the room
             session.close();
         } catch (IOException ioException) {
             log.info("Error was handeled with cascading IOException");

@@ -1,6 +1,6 @@
 /*$sidebar-bg-color: red;*/
 
-@import '~react-pro-sidebar/dist/scss/styles.scss';
+@import 'node_modules/react-pro-sidebar/dist/scss/styles';
 @import "src/variables.module";
 
 .slider-parent {
@@ -191,7 +191,7 @@
           }
 
           .spacer-50 {
-            height: 50px;
+            height: 0px;
           }
         }
       }
@@ -204,14 +204,51 @@
   }
 }
 
-.messagePanel {
+.panel {
+  height: 50%;
+  display: flex;
+  flex-direction: row;
 
+  .headlineBox {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0;
+    justify-content: center;
 
-  .message {
-    padding: 2rem;
+    .buttons {
+      width: 10rem;
+    }
+  }
 
-    button {
-      margin-top: 1rem;
+  .panelContent {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    max-height: 50vh;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $button_font_dark;
+        background: $foreground_dark;
+      }
+    }
+
+    h2 {
+      padding: 2rem 0 0 2rem;
+      margin: 0;
+    }
+
+    .message {
+      padding: 2rem;
+
+      button {
+        margin-top: 1rem;
+      }
     }
 
   }

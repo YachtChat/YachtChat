@@ -2,22 +2,30 @@ import React, {Component} from "react";
 import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
-import {getCamera, getMicrophone, getSpeaker, getStream} from "../../store/rtcSlice";
-import {userProportion} from "../../store/userSlice";
+import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";
+import {destroyMessage, userProportion} from "../../store/userSlice";
 import {Tooltip, Zoom} from "@material-ui/core";
 
-interface Props {
+interface OwnProps {
     user: User
     selected: boolean
     isActiveUser: boolean
+}
+
+interface OtherProps {
     playgroundOffset: PlaygroundOffset
     muted: boolean
+    screen: boolean
     speaker: string
     camera: string
     microphone: string
     getStream: (id: string) => MediaStream | undefined
+    getScreenStream: (id: string) => MediaStream | undefined
     mediaChangeOngoing: boolean
+    destroyMessage: () => void
 }
+
+type Props = OwnProps & OtherProps
 
 export class UserComponent extends Component<Props> {
 
@@ -36,8 +44,12 @@ export class UserComponent extends Component<Props> {
 
             if (!this.videoObject.current.srcObject ||
                 this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing) {
-                this.videoObject.current.srcObject = this.props.getStream(this.props.user.id)!
-                console.log(this.props.getStream(this.props.user.id)!)
+                if (this.props.screen && this.props.isActiveUser) {
+                    this.videoObject.current.srcObject = this.props.getScreenStream(this.props.user.id)!
+                } else {
+                    this.videoObject.current.srcObject = this.props.getStream(this.props.user.id)!
+                }
+                //console.log(this.props.getStream(this.props.user.id)!)
             }
 
             //@ts-ignore
@@ -101,7 +113,7 @@ export class UserComponent extends Component<Props> {
             opacity: userOpacity,
             transform: userScale,
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
-            backgroundImage: `url(${user.profile_image})`,
+            backgroundImage: (!this.props.camera || !this.videoObject.current?.srcObject) ? `url(${user.profile_image})` : "none",
         }
 
         const userNameStyle = {
@@ -113,8 +125,13 @@ export class UserComponent extends Component<Props> {
 
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
-                <div data-id={(this.props.isActiveUser) ? "activeUser" : ""} className="User" style={userStyle}>
-                    <Tooltip data-id={"message"} TransitionComponent={Zoom} open={!!this.props.user.message} interactive
+                <div data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id} className="User" style={userStyle}>
+                    <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message} interactive
+                             onClick={e => {
+                                 e.preventDefault()
+                                 e.stopPropagation()
+                                 this.props.destroyMessage()
+                             }}
                              title={
                                  (this.props.user.message) ?
                                      (this.props.user.message.toLocaleLowerCase().startsWith("http")) ?
@@ -125,7 +142,7 @@ export class UserComponent extends Component<Props> {
                                      : ""} placement="top" arrow>
                         <div>
                             {!!this.props.user.userStream &&
-                            <video data-id={(this.props.isActiveUser) ? "activeUser" : ""} key={this.props.camera}
+                            <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id} key={this.props.camera}
                                    autoPlay muted={this.props.isActiveUser}
                                    ref={this.videoObject}
                                    className={(!user.image) ? "profile-picture" : ""}/>
@@ -143,11 +160,17 @@ export class UserComponent extends Component<Props> {
 const mapStateToProps = (state: RootState) => ({
     playgroundOffset: state.playground.offset,
     muted: state.rtc.muted,
+    screen: state.rtc.screen,
     speaker: getSpeaker(state),
     camera: getCamera(state),
     microphone: getMicrophone(state),
     mediaChangeOngoing: state.rtc.mediaChangeOngoing,
     getStream: (id: string) => getStream(state, id),
+    getScreenStream: (id: string) => getScreenStream(state, id),
 })
 
-export default connect(mapStateToProps)(UserComponent)
+const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
+    destroyMessage: () => dispatch(destroyMessage(ownProps.user.id))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserComponent)

@@ -1,52 +1,67 @@
 @import "src/variables.module";
 
-.spaces {
-  width: 50%;
-  height: 50%;
-  min-width: 400px;
-  min-height: 600px;
-  overflow: hidden;
-  text-align: left;
+.itemWrapper {
+  display: block;
+  padding: 0.7rem 1rem;
+  overflow-y: auto;
 
-  .spacesWrapper {
-    display: block;
-    padding: 2rem;
+  .buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    padding-right: 1rem;
+  }
 
-    h2 {
-      position: relative;
-      font-size: 1.5rem;
-      line-height: 2rem;
-      padding: 0 0 0 1rem;
-      margin: 0;
+  .item {
+    position: relative;
+    padding: 1rem 1rem;
+    border-radius: $border_radius;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+
+    .iconButton.profilePic {
+      margin-left: 0;
+      margin-right: 10px;
     }
 
-    .buttons {
-      position: absolute;
-      top: 0;
-      right: 0;
-      height: 100%;
-      align-items: center;
-      justify-content: center;
-      justify-items: center;
+    .menuIcon {
+      margin-right: 10px;
+      padding: 0;
+      border: none;
       width: auto;
-      display: flex;
-      flex-direction: row;
-      padding-right: 1rem;
-    }
-
-    .separator {
-      border-top: solid gray 1px;
-    }
-
-    .space {
-      position: relative;
-      padding: 1.5rem 1rem;
-      margin-bottom: 0.5rem;
-      border-radius: $border_radius;
-      margin-top: 0.5rem;
+      height: auto;
+      margin-bottom: auto;
 
       &:hover {
-        background: $background_2_light;
+        opacity: 0.5;
+        background: transparent;
+      }
+    }
+
+    .tag {
+      margin-left: 10px;
+      font-size: 0.6rem;
+      color: $accent_light;
+      padding: 0.2rem 0.6rem;
+      background: $background_2_light;
+      border-radius: $border_radius;
+    }
+
+    &:hover {
+      background: $background_2_light;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          background: $background_2_dark;
+        }
       }
     }
   }

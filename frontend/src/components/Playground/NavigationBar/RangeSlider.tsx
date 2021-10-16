@@ -1,8 +1,8 @@
 import React, {Component} from "react";
-import {User} from "../../store/models";
-import {RootState} from "../../store/store";
+import {User} from "../../../store/models";
+import {RootState} from "../../../store/store";
 import {connect} from "react-redux";
-import {submitRadius} from "../../store/userSlice";
+import {submitRadius} from "../../../store/userSlice";
 import './style.scss';
 import {Slider} from "@material-ui/core";
 
@@ -25,7 +25,7 @@ export class RangeSlider extends Component<Props> {
                     className={"slider"}
                     orientation="vertical"
                     color={"primary"}
-                    value={this.props.activeUser.position?.range}
+                    value={(this.props.activeUser.position) ? this.props.activeUser.position.range : 30}
                     max={100}
                     min={10}
                     step={5}
