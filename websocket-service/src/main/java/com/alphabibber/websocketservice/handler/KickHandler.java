@@ -21,16 +21,19 @@ public class KickHandler {
             return;
         }
         // check if the user which should be kicked is part of the space
-        if (!room.containsKey(userId)){
+        User user = null;
+        for (User u: room.values()){
+            if (u.getId().equals(userId)) user = u;
+        }
+        if (user == null){
             log.warn("User {} was tried to be kicked but is not part of the room {}", userId, roomId);
             return;
         }
+
         // User should be deleted from space, if he is deleted from the space he can join the space again by using an
         // invite link
         var removed = spacesService.removeUserFromSpace(roomId, token, userId);
         if (!removed) return;
-
-        User user = room.get(userId);
 
         // tell the kicker that it was successful
         KickAnswer answer = new KickAnswer(userId);

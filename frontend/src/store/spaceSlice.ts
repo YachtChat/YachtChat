@@ -123,7 +123,7 @@ export const getInvitationToken = (state: RootState, spaceID: string): Promise<s
 export const requestHosts = (spaceID: string): AppThunk => (dispatch, getState) => {
     // send request to backend to promote this user
     getHeaders(getState()).then(headers => {
-            axios.get("https://" + SPACES_URL + "/api/v1/spaces/" + spaceID + "/hosts/", headers).then(response => {
+            axios.get(spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/", headers).then(response => {
                 dispatch(setHosts({
                     spaceID,
                     hosts: response.data.map((d: { id: string }) => d.id)
@@ -138,7 +138,7 @@ export const requestHosts = (spaceID: string): AppThunk => (dispatch, getState) 
 export const promoteUser = (id: string, spaceID: string): AppThunk => (dispatch, getState) => {
     // send request to backend to promote this user
     getHeaders(getState()).then(headers => {
-            axios.post("https://" + SPACES_URL + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, {}, headers).then(response => {
+            axios.post(spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, {}, headers).then(response => {
                 dispatch(requestHosts(spaceID))
             }).catch((e) => {
                 console.log(e.trace)
@@ -150,7 +150,7 @@ export const promoteUser = (id: string, spaceID: string): AppThunk => (dispatch,
 export const downgradeUser = (id: string, spaceID: string): AppThunk => (dispatch, getState) => {
     // send request to backend to promote this user
     getHeaders(getState()).then(headers => {
-            axios.delete("https://" + SPACES_URL + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, headers).then(response => {
+            axios.delete(spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, headers).then(response => {
                 dispatch(requestHosts(spaceID))
             }).catch((e) => {
                 console.log(e.trace)

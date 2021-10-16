@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @ServerEndpoint(value = "/room/{roomID}", encoders = { LoginAnswerEncoder.class, NewUserAnswerEncoder.class,
         PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class, MediaAnswerEncoder.class,
-        MessageEncoder.class})
+        MessageEncoder.class, KickAnswerEncoder.class})
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     Gson gson = new GsonBuilder().create();
