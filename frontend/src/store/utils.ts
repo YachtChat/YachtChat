@@ -29,12 +29,12 @@ export function resetCookie(cname: string) {
     document.cookie = cname + "=;" + expires + ";path=/";
 }
 
-export function keycloakUserToUser(data: any, online: boolean, position?: UserCoordinates): User {
+export function keycloakUserToUser(data: any, online: boolean, position?: UserCoordinates, video?: boolean): User {
     const image = data.attributes?.profile_image
     return {
         id: data["id"],
         online: online,
-        image: online,
+        video: (online) ? !!video : false, // bug change to actual state
 
         firstName: data.firstName,
         lastName: data.lastName,

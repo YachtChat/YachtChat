@@ -95,11 +95,11 @@ export const userSlice = createSlice({
         },
         setMedia: (state, action: PayloadAction<{ id: string, type: MediaType, state: boolean }>) => {
             if (action.payload.id === state.activeUser.id) {
-                state.activeUser.image = action.payload.state
+                state.activeUser.video = action.payload.state
                 return
             }
             if (state.spaceUsers[action.payload.id])
-                state.spaceUsers[action.payload.id].image = action.payload.state
+                state.spaceUsers[action.payload.id].video = action.payload.state
         }
     },
 });
@@ -136,7 +136,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
                 const userObjects = response.data.map((user: any) => {
                     const userPayload = users.find(u => u.id === user.id)
                     // set all users online and position of users in "users" (maybe also image)
-                    return keycloakUserToUser(user, !!userPayload, userPayload?.position)
+                    return keycloakUserToUser(user, !!userPayload, userPayload?.position, userPayload?.video)
                 })
                 console.log(userObjects)
                 // finally call set users with user list
@@ -166,11 +166,11 @@ export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppT
             // transform into user with util-function
             // finally set user
             if (isActiveUser) {
-                const user = keycloakUserToUser(response.data, true)
-                console.log("ActiveUser", user)
-                dispatch(initUser(user))
+                const activeUser = keycloakUserToUser(response.data, true, user?.position, true)
+                //console.log("ActiveUser", user)
+                dispatch(initUser(activeUser))
             } else {
-                dispatch(setUser(keycloakUserToUser(response.data, true, user?.position)))
+                dispatch(setUser(keycloakUserToUser(response.data, true, user?.position, true)))
                 // If the user is not the active user, init RTC Events
                 if (getUser(getState()).id !== user.id) {
                     // TODO here the new_user case is treated exactly the same as the login case, however , there should

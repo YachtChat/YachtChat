@@ -4,18 +4,13 @@ import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.model.answer.LoginAnswer;
 import com.alphabibber.websocketservice.model.answer.NewUserAnswer;
 import com.alphabibber.websocketservice.service.SpacesService;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.websocket.EncodeException;
 import javax.websocket.Session;
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -67,7 +62,7 @@ public class LoginHandler {
         }
         log.info("User {} is now part of room {}", userId, roomId);
 
-        // tell all other users that a new User joied
+        // tell all other users that a new User joined
         NewUserAnswer newUserAnswer = new NewUserAnswer(user.getId(), user.getPosition());
         ArrayList<User> users = new ArrayList<>(room.values());
         // this should only skip this iteration

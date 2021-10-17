@@ -6,9 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.websocket.EncodeException;
-import javax.websocket.Session;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -17,8 +15,8 @@ public class MediaHandler {
     public void handleMedia(Map<String, User> room, User sender, String media, Boolean event) {
         MediaAnswer answer;
         switch (media){
-            case "image":
-                sender.setImage(event);
+            case "video":
+                sender.setVideo(event);
                 answer = new MediaAnswer(sender.getId(), media, event);
                 break;
             default:
