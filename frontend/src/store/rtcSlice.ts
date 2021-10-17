@@ -183,7 +183,7 @@ export const mute = (): AppThunk => (dispatch, getState) => {
         //dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
     } else {
         // If disabled, stop all audio tracks
-        getStream(state, getUserID(state))!.getAudioTracks()[0].stop()
+        getStream(state, getUserID(state))?.getAudioTracks()[0].stop()
         //dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
 
         getOnlineUsers(state).forEach(u => {
@@ -220,7 +220,7 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
         dispatch(send({'type': 'media', 'media': 'video', 'event': state.rtc.video}))
     } else {
         // disable streams if video disabled
-        getStream(state, userID)!.getVideoTracks()[0].stop()
+        getStream(state, userID)?.getVideoTracks()[0].stop()
 
         // Inform other users about media event
         dispatch(send({'type': 'media', 'media': 'video', 'event': state.rtc.video}))
@@ -230,7 +230,7 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
             Object.keys(rtpSender[u.id]).forEach(k => {
                 const rtp = rtpSender[u.id][k]
                 if (rtp.track && rtp.track.kind === 'video') {
-                    rtp.track.enabled = state.rtc.video
+                    rtp.track.stop()
                 }
             })
         })
@@ -458,6 +458,7 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
 
     Object.keys(streams).forEach(k => {
         getStream(getState(), k)!.getTracks().forEach(t => {
+            t.stop()
             t.enabled = false
             getStream(getState(), k)!.removeTrack(t)
         })
@@ -465,8 +466,8 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
 
 
     getOnlineUsers(getState()).forEach(u => {
-        rtcConnections[u.id].close()
         Object.keys(rtpSender[u.id]).forEach(k => rtpSender[u.id][k].track?.stop())
+        rtcConnections[u.id].close()
     })
     streams = {}
     rtcConnections = {}
@@ -497,7 +498,7 @@ export const changeAudioInput = (microphone: string): AppThunk => (dispatch, get
 export const handleInputChange = (type?: string): AppThunk => (dispatch, getState) => {
     const localClient = getUserID(getState())
     const oldStream = getStream(getState(), localClient)
-    navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(getState(), type)).then((e) => {
         localStream = e
         dispatch(setMediaChangeOngoing(false))
         getStream(getState(), localClient)!.getTracks().forEach(s => {
@@ -531,18 +532,18 @@ export const changeAudioOutput = (speaker: string): AppThunk => (dispatch, getSt
 }
 
 export const getRtcConnection = (state: RootState, id: number) => rtcConnections[id];
-export const getMediaConstrains = (state: RootState) => {
+export const getMediaConstrains = (state: RootState, type?: string) => {
     return {
-        video: {
+        video: (type !== 'audio') ? {
             width: 320,
             height: 320,
             facingMode: "user",
             deviceId: getCamera(state)
-        },
-        audio: {
+        } : undefined,
+        audio: (type !== 'video') ? {
             deviceId: getMicrophone(state),
             echoCancellation: true
-        }
+        } : undefined
     }
 }
 export const getMicrophone = (state: RootState): string => {
