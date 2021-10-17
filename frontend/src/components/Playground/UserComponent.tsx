@@ -87,22 +87,22 @@ export class UserComponent extends Component<Props> {
         let userNamePosX = x - nameWidth / 2 - offsetX
         let userNamePosY = y + userSize / 2 - offsetY + 15
 
-        if (userNamePosX < 0) {
-            userNamePosX = 15 + nameWidth
-            nameOpacity = 0
+        if (userNamePosX < 15) {
+            userNamePosX = 15
+            nameOpacity = 0.45
         }
-        if (userNamePosX > window.innerWidth) {
-            userNamePosX = window.innerWidth - (15 - nameWidth)
-            nameOpacity = 0
+        if (userNamePosX > window.innerWidth - (15 + nameWidth)) {
+            userNamePosX = window.innerWidth - (15 + nameWidth)
+            nameOpacity = 0.45
         }
 
-        if (userNamePosY < 0) {
-            userNamePosY = 15 + nameWidth
-            nameOpacity = 0
+        if (userNamePosY < 15) {
+            userNamePosY = 15
+            nameOpacity = 0.45
         }
-        if (userNamePosY > window.innerHeight) {
-            userNamePosY = window.innerHeight - (15 - nameHeight)
-            nameOpacity = 0
+        if (userNamePosY > window.innerHeight - (15 + nameHeight)) {
+            userNamePosY = window.innerHeight - (15 + nameHeight)
+            nameOpacity = 0.45
         }
 
         const userStyle = {
