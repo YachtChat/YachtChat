@@ -147,14 +147,6 @@
     }
 
     .User {
-      background-color: transparent;
-
-      @media (prefers-color-scheme: dark) {
-        & {
-          background-color: $focus_dark;
-        }
-      }
-
       video {
         position: absolute;
         transform: rotateY(180deg);
