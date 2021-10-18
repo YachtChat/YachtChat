@@ -63,9 +63,9 @@ export class MembersComponent extends Component<Props, State> {
                                     <IoCloseOutline/>
                                 </button>
                             </div>
-                            <h2> Space Name: {this.props.getSpaceName(this.props.spaceID)} </h2>
+                            <h2> Members of <i>{this.props.getSpaceName(this.props.spaceID)}</i></h2>
                             {/*<h2>Space Members</h2>*/}
-                            See everyone present in this space
+                            See every member of this space - present or not
                         </div>
                         <div className={"panelContent"}>
                             <h2>Space Members</h2>
@@ -80,7 +80,7 @@ export class MembersComponent extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     getToken: (sid: string) => getInvitationToken(state, sid),
-    getSpaceName: (sid: string) => state.space.spaces.filter( (s) => s.id === sid).map( space => space.name).toString(),
+    getSpaceName: (sid: string) => state.space.spaces.filter((s) => s.id === sid).map(space => space.name).toString().trim(),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
