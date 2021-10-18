@@ -147,7 +147,7 @@ const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     getHosts: () => dispatch(requestHosts(ownProps.spaceID)),
     makeHost: (uid: string) => dispatch(promoteUser(uid, ownProps.spaceID)),
     removeHost: (uid: string) => dispatch(downgradeUser(uid, ownProps.spaceID)),
-    kick: (uid: string) => dispatch(kickUser(uid))
+    kick: (uid: string) => dispatch(kickUser(uid, ownProps.spaceID))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserList)

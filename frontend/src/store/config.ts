@@ -11,6 +11,8 @@ export const applicationName: string = "Yacht Chat"
 // start it like
 // `REACT_APP_SOCKET_URL=ws://localhost:6503` ... yarn run start
 
+export const complete_spaces_url: String = !SPACES_PORT ? "https://" + SPACES_URL : "http://" + SPACES_URL + ":" + SPACES_PORT
+
 export const rtcConfiguration = {
     "iceServers": [//{
         //"urls": //[

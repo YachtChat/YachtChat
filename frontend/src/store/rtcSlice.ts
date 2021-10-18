@@ -443,6 +443,9 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
 }
 
 export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => {
+    if (!(id in getState().userState.spaceUsers)) {
+        return
+    }
     Object.keys(rtpSender[id]).forEach(k => rtpSender[id][k].track?.stop())
     delete rtpSender[id]
     rtcConnections[id].close()

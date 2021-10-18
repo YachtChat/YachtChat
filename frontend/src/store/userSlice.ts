@@ -5,8 +5,9 @@ import {send, sendPosition, userSetupReady} from "./webSocketSlice";
 import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
 import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
-import {ACCOUNT_URL, SPACES_URL} from "./config";
+import {ACCOUNT_URL, complete_spaces_url} from "./config";
 import {keycloakUserToUser} from "./utils";
+import {handleError, handleSuccess} from "./statusSlice";
 
 interface UserState {
     activeUser: User
@@ -125,7 +126,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
     const userIDs: string[] = users.map(u => u.id)
     getHeaders(getState()).then(headers =>
         // load user ids from all users in space
-        axios.get("https://" + SPACES_URL + "/api/v1/spaces/" + spaceId + "/allUsers/", headers).then((response) =>
+        axios.get(complete_spaces_url + "/api/v1/spaces/" + spaceId + "/allUsers/", headers).then((response) =>
             response.data.forEach((u: { id: string }) => {
                 userIDs.push(u.id)
             })
@@ -194,9 +195,21 @@ export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispa
     }
 }
 
-export const kickUser = (id: string): AppThunk => (dispatch, getState) => {
-    getToken(getState()).then(token => {
-        dispatch(send({type: "kick", token, user_id: id}))
+export const kickUser = (id: string, spaceID: string): AppThunk => (dispatch, getState) => {
+    const state = getState()
+    getHeaders(state).then(headers => {
+        axios.delete(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/members/?memberId=" + id, headers).then(() => {
+            if (getUserById(state, id).online)
+                getToken(state).then(token => {
+                    dispatch(send({type: "kick", token, user_id: id}))
+                })
+            else {
+                dispatch(removeUser(id))
+                dispatch(handleSuccess("User was successfully removed"))
+            }
+        }).catch(() =>
+            dispatch(handleError("Not able to remove user"))
+        )
     })
 }
 

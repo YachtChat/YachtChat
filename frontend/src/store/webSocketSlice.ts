@@ -18,6 +18,7 @@ import {handleError, handleSuccess} from "./statusSlice";
 import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./config";
 import {getToken} from "./authSlice";
+import {requestSpaces} from "./spaceSlice";
 
 interface WebSocketState {
     connected: boolean
@@ -115,11 +116,13 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 break;
             case "kick":
                 if (!loggedIn) break;
-                if (getState().userState.activeUser.id === data.id)
+                if (getState().userState.activeUser.id === data.id) {
                     dispatch(destroySession())
-                else {
+                    dispatch(requestSpaces())
+                } else {
                     const user = getUserById(getState(), data.id)
                     dispatch(handleSuccess(`Successfully kicked ${user.firstName} ${user.lastName}`))
+                    dispatch(disconnectUser(data.id))
                     dispatch(removeUser(data.id))
                 }
                 break;
