@@ -92,7 +92,6 @@ export class FocusUser extends Component<Props, State> {
                         onClick={e => e.stopPropagation()}
                         onClose={this.handleClose.bind(this)}
                         fullWidth={true}
-                        maxWidth={"xl"}
                         style={style}>
                     <div className={"panel"}
                          onClick={e => e.stopPropagation()}>
@@ -108,6 +107,9 @@ export class FocusUser extends Component<Props, State> {
                                        }}
                                        ref={this.videoObject}/>
                             </Tooltip>
+                            <div>
+                                Click for fullscreen
+                            </div>
 
                         </div>
                     </div>

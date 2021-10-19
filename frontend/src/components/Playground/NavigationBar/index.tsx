@@ -15,6 +15,7 @@ import MessageComponent from "./Message";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
 import MembersComponent from "./Members";
+import {Tooltip, Zoom} from "@material-ui/core";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -104,61 +105,76 @@ export class NavigationBar extends Component<Props, State> {
                             <ul>
                                 <li className="menu-item" onClick={this.handleCollapse.bind(this)}>
                                     <div className="inner-item">
-                                    <span className="icon-wrapper">
-                                        <span className="icon">
-                                            <FaBars/>
-                                        </span>
-                                    </span>
+                                        <Tooltip  disableFocusListener
+                                                  title={"Menu"} placement="top" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <FaBars/>
+                                                </span>
+                                            </span>
+                                        </Tooltip>
                                         <span className="item-content">
-                                        Menu
-                                    </span>
+                                            Menu
+                                        </span>
                                     </div>
                                 </li>
                                 <li className="menu-item" onClick={this.props.toggleVideo}>
                                     <div className="inner-item">
-                                    <span className="icon-wrapper">
-                                        <span className="icon">
-                                            {videoIcon}
+                                        <span className="icon-wrapper">
+                                            <Tooltip  disableFocusListener
+                                                      title={"Video"} placement="top" arrow>
+                                                <span className="icon">
+                                                    {videoIcon}
+                                                </span>
+                                            </Tooltip>
                                         </span>
-                                    </span>
                                         <span className="item-content">
-                                        Video
-                                    </span>
+                                            Video
+                                        </span>
                                     </div>
                                 </li>
                                 <li className="menu-item" onClick={this.props.toggleAudio}>
                                     <div className="inner-item">
-                                    <span className="icon-wrapper">
-                                        <span className="icon">
-                                            {micIcon}
-                                        </span>
-                                    </span>
+                                        <Tooltip  disableFocusListener
+                                                  title={"Microphone"} placement="top" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    {micIcon}
+                                                </span>
+                                            </span>
+                                        </Tooltip>
                                         <span className="item-content">
-                                        Microphone
-                                    </span>
+                                            Microphone
+                                        </span>
                                     </div>
                                 </li>
                                 <li className="menu-item" onClick={this.props.toggleScreen}>
                                     <div className="inner-item">
-                                    <span className="icon-wrapper">
-                                        <span className="icon">
-                                            {(this.props.screen) ? <IoTv/> : <IoTvOutline/>}
-                                        </span>
-                                    </span>
+                                        <Tooltip  disableFocusListener
+                                                  title={(this.props.screen) ? "Stop Sharing" : "Share Screen"} placement="top" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    {(this.props.screen) ? <IoTv/> : <IoTvOutline/>}
+                                                </span>
+                                            </span>
+                                        </Tooltip>
                                         <span className="item-content">
                                             {(this.props.screen) ? "Stop Sharing" : "Share Screen"}
-                                    </span>
+                                        </span>
                                     </div>
                                 </li>
                                 <li className="menu-item">
                                     <div
                                         onClick={e => this.handleOpen(e, "users")}
                                         className="inner-item">
-                                        <span className="icon-wrapper">
-                                            <span className="icon">
-                                                <IoPeople/>
+                                        <Tooltip  disableFocusListener
+                                                  title={"Users"} placement="top" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <IoPeople/>
+                                                </span>
                                             </span>
-                                        </span>
+                                        </Tooltip>
                                         <span className="item-content">
                                             Users
                                         </span>
@@ -171,14 +187,17 @@ export class NavigationBar extends Component<Props, State> {
                                 </li>
                                 <li className="menu-item" onClick={this.props.center}>
                                     <div className="inner-item">
-                                    <span className="icon-wrapper">
-                                        <span className="icon">
-                                            <MdFilterCenterFocus/>
-                                        </span>
-                                    </span>
+                                        <Tooltip  disableFocusListener
+                                                  title={"Center user"} placement="top" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <MdFilterCenterFocus/>
+                                                </span>
+                                            </span>
+                                        </Tooltip>
                                         <span className="item-content">
-                                        Center user
-                                    </span>
+                                            Center user
+                                        </span>
                                     </div>
                                 </li>
                                 <li className="menu-item spacer-50">
@@ -197,11 +216,14 @@ export class NavigationBar extends Component<Props, State> {
                                     <div
                                         onClick={e => this.handleOpen(e, "messages")}
                                         className="inner-item">
-                                        <span className="icon-wrapper">
-                                            <span className="icon">
-                                                <IoChatbubble/>
+                                        <Tooltip  disableFocusListener
+                                                  title={"Message"} placement="top" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <IoChatbubble/>
+                                                </span>
                                             </span>
-                                        </span>
+                                        </Tooltip>
                                         <span className="item-content">
                                             Message
                                         </span>
@@ -214,11 +236,14 @@ export class NavigationBar extends Component<Props, State> {
                                 <li className="menu-item">
                                     <div className="inner-item"
                                          onClick={e => this.handleOpen(e, "settings")}>
-                                        <span className="icon-wrapper">
-                                            <span className="icon">
-                                                <FaCog/>
+                                        <Tooltip  disableFocusListener
+                                                  title={"Settings"} placement="top" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <FaCog/>
+                                                </span>
                                             </span>
-                                        </span>
+                                        </Tooltip>
                                         <span className="item-content">
                                             Settings
                                         </span>
@@ -230,11 +255,14 @@ export class NavigationBar extends Component<Props, State> {
                                 </li>
                                 <li className="menu-item" onClick={this.props.logout}>
                                     <div className="inner-item">
-                                        <span className="icon-wrapper">
-                                            <span className="icon">
-                                                <FaSignOutAlt/>
+                                        <Tooltip  disableFocusListener
+                                                  title={"Log Out"} placement="top" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <FaSignOutAlt/>
+                                                </span>
                                             </span>
-                                        </span>
+                                        </Tooltip>
                                         <span className="item-content">
                                             Log Out
                                         </span>
