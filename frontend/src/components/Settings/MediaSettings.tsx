@@ -7,10 +7,10 @@ import {
     changeAudioOutput,
     changeVideoInput,
     getCamera,
+    getFreshCameraStream,
     getMediaDevices,
     getMicrophone,
     getSpeaker,
-    getStream,
     handleInputChange,
     loadAllMediaDevices
 } from "../../store/rtcSlice";
@@ -31,18 +31,38 @@ interface Props {
     changeAudioOutput: (speaker: string) => void
     changeAudioInput: (microphone: string) => void
     requestUserMedia: () => void
-    getStream: (id: string) => MediaStream | undefined
+    getStream: () => Promise<MediaStream>
 }
 
 export class MediaSettings extends Component<Props> {
 
+    stream?: MediaStream
+
     componentDidMount() {
         this.props.loadMedia()
+        this.props.getStream().then(stream => {
+            this.stream = stream
+            this.forceUpdate()
+        })
     }
 
     retryUserMedia() {
         this.props.requestUserMedia()
         this.props.loadMedia()
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
+        if (this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing && prevProps.camera !== this.props.camera) {
+            this.props.getStream().then(stream => {
+                this.stream = stream
+                this.forceUpdate()
+            })
+        }
+    }
+
+    componentWillUnmount() {
+        this.stream?.getTracks().forEach(t => t.stop())
+        this.stream = undefined
     }
 
     render() {
@@ -63,8 +83,8 @@ export class MediaSettings extends Component<Props> {
             <div className={"mediaSettings"}>
                 <div className={"videoPreview"}>
                     <video key={this.props.camera} autoPlay muted ref={ref => {
-                        if (ref && !this.props.mediaChangeOngoing && this.props.getStream(this.props.user.id))
-                            ref.srcObject = this.props.getStream(this.props.user.id)!
+                        if (ref && !this.props.mediaChangeOngoing && this.stream)
+                            ref.srcObject = this.stream
                     }}/>
                 </div>
                 <VolumeIndicator/>
@@ -138,7 +158,7 @@ const mapStateToProps = (state: RootState) => ({
     microphone: getMicrophone(state),
     camera: getCamera(state),
     speaker: getSpeaker(state),
-    getStream: (id: string) => getStream(state, id),
+    getStream: () => getFreshCameraStream(state),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

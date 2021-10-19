@@ -40,9 +40,13 @@ const initialState: RTCState = {
     cameras: [],
     microphones: [],
     speakers: [],
-    selected: {},
     mediaChangeOngoing: false,
-    userMedia: false
+    userMedia: false,
+    selected: {
+        camera: (!!localStorage.getItem("camera")) ? localStorage.getItem("camera")! : undefined,
+        microphone: (!!localStorage.getItem("microphone")) ? localStorage.getItem("microphone")! : undefined,
+        speaker: (!!localStorage.getItem("speaker")) ? localStorage.getItem("speaker")! : undefined,
+    }
 };
 
 let rtcConnections: { [key: string]: RTCPeerConnection } = {}; // the connection to handle the connection to the other peer
@@ -80,13 +84,16 @@ export const rtcSlice = createSlice({
         },
         setCamera: (state, action: PayloadAction<string>) => {
             state.selected.camera = action.payload
+            localStorage.setItem("camera", action.payload)
         },
         setMicrophone: (state, action: PayloadAction<string>) => {
             state.selected.microphone = action.payload
+            localStorage.setItem("microphone", action.payload)
 
         },
         setSpeaker: (state, action: PayloadAction<string>) => {
             state.selected.speaker = action.payload
+            localStorage.setItem("speaker", action.payload)
 
         },
         setUserMedia: (state, action: PayloadAction<boolean>) => {
@@ -584,5 +591,7 @@ export const getScreenStream = (state: RootState, id: string) => {
         return screenStream
 }
 
+export const getFreshCameraStream = (state: RootState): Promise<MediaStream> =>
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(state, "video"))
 export const getMediaDevices = () => mediaDevices
 export default rtcSlice.reducer;

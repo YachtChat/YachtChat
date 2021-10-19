@@ -15,7 +15,7 @@ import MessageComponent from "./Message";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
 import MembersComponent from "./Members";
-import {Tooltip, Zoom} from "@material-ui/core";
+import {Tooltip} from "@material-ui/core";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>

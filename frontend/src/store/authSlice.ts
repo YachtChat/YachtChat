@@ -78,7 +78,7 @@ export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) =
 
 export const logout = (): AppThunk => (dispatch, getState) => {
     dispatch(setToken(""))
-    localStorage.removeItem("token")
+    localStorage.clear()
     dispatch(setLogin(false))
     keycloak.logout()
 }
