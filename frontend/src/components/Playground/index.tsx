@@ -52,13 +52,13 @@ export class Playground extends Component<Props> {
     // function handleZoomIn increases the sizeMultiplier
     handleZoomIn() {
         //this.props.changeSizeMultiplier(this.props.offset.scale + 0.1)
-        this.props.handleZoom(0.05)
+        this.props.handleZoom(0.1)
     }
 
     // function handleZoomOut decreases the sizeMultiplier
     handleZoomOut() {
         //this.props.changeSizeMultiplier(this.props.offset.scale - 0.1)
-        this.props.handleZoom(-0.05)
+        this.props.handleZoom(-0.1)
     }
 
     render() {

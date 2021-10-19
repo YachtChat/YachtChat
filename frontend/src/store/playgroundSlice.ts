@@ -81,15 +81,20 @@ export const centerUser = (): AppThunk => (dispatch, getState) => {
     }))
 }
 
-export const handleZoom = (z: number): AppThunk => (dispatch, getState) => {
+export const handleZoom = (z: number, cx?: number, cy?: number): AppThunk => (dispatch, getState) => {
     const state = getState()
     const scale = state.playground.offset.scale
     const scaledZoom = state.playground.offset.scale + (z / 1080 * ((window.innerWidth > window.innerHeight) ? window.innerWidth : window.innerHeight))
     const userPos = state.userState.activeUser.position!
     const offX = state.playground.offset.x
     const offY = state.playground.offset.y
-    const x = offX + ((userPos.x - offX) * (scaledZoom) - (userPos.x - offX) * scale) / (scaledZoom)
-    const y = offY + ((userPos.y - offY) * (scaledZoom) - (userPos.y - offY) * scale) / (scaledZoom)
+
+    // center of zoom
+    const centerX = cx ? cx / getState().playground.offset.scale : (userPos.x - offX)
+    const centerY = cy ? cy / getState().playground.offset.scale : (userPos.y - offY)
+
+    const x = offX + ((centerX) * (scaledZoom) - (centerX) * scale) / (scaledZoom)
+    const y = offY + ((centerY) * (scaledZoom) - (centerY) * scale) / (scaledZoom)
 
 
     dispatch(movePlayground({
@@ -97,6 +102,30 @@ export const handleZoom = (z: number): AppThunk => (dispatch, getState) => {
         y,
         scale: scaledZoom,
         trueScale: state.playground.offset.trueScale + z
+    }))
+}
+
+export const setScale = (z: number, cx?: number, cy?: number): AppThunk => (dispatch, getState) => {
+    const state = getState()
+    const scale = state.playground.offset.scale
+    const scaledZoom = (z / 1080 * ((window.innerWidth > window.innerHeight) ? window.innerWidth : window.innerHeight))
+    const userPos = state.userState.activeUser.position!
+    const offX = state.playground.offset.x
+    const offY = state.playground.offset.y
+
+    // center of zoom
+    const centerX = cx ? cx : (userPos.x - offX)
+    const centerY = cy ? cy : (userPos.y - offY)
+
+    const x = offX + ((centerX) * (scaledZoom) - (centerX) * scale) / (scaledZoom)
+    const y = offY + ((centerY) * (scaledZoom) - (centerY) * scale) / (scaledZoom)
+
+
+    dispatch(movePlayground({
+        x,
+        y,
+        scale: scaledZoom,
+        trueScale: z
     }))
 }
 

@@ -145,6 +145,7 @@ export class UserComponent extends Component<Props> {
                             <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                                    key={this.props.camera}
                                    autoPlay muted={this.props.isActiveUser}
+                                   playsInline
                                    ref={this.videoObject}
                                    className={(!user.video) ? "profile-picture" : ""}/>
                             }
