@@ -3,9 +3,11 @@ import {Space} from "./models";
 import {AppThunk, RootState} from "./store";
 import axios from "axios";
 import {handleError, handleSuccess} from "./statusSlice";
-import {SPACES_URL} from "./config";
+import {complete_spaces_url, SPACES_URL} from "./config";
 import {getHeaders} from "./authSlice";
 import {push} from "connected-react-router";
+
+// either the spaces server is run locally or on the server
 
 interface SpaceState {
     spaces: Space[]
@@ -53,7 +55,7 @@ export const requestSpaces = (): AppThunk => (dispatch, getState) => {
         return;
     }
     getHeaders(getState()).then(header =>
-        axios.get("https://" + SPACES_URL + "/api/v1/spaces/", header).then(response => {
+        axios.get(complete_spaces_url + "/api/v1/spaces/", header).then(response => {
             dispatch(setSpaces(response.data))
         }).catch(e => console.log(e.trace))
     )
@@ -61,12 +63,12 @@ export const requestSpaces = (): AppThunk => (dispatch, getState) => {
 
 export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
-        axios.post("https://" + SPACES_URL + "/api/v1/spaces/", {name}, header).then(response => {
+        axios.post(complete_spaces_url + "/api/v1/spaces/", {name}, header).then(response => {
             dispatch(handleSuccess("Space successfully created"))
             dispatch(addSpace(response.data))
             dispatch(push("/invite/" + response.data.id))
         }).catch(e => {
-            console.log("https://" + SPACES_URL + "/api/v1/spaces/?name=" + name)
+            console.log(complete_spaces_url + "/api/v1/spaces/?name=" + name)
             dispatch(handleError("Space could not be created"))
             dispatch(push("/create-space"))
             console.log(e.trace)
@@ -76,14 +78,13 @@ export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
 
 export const joinSpace = (token: string): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
-        axios.post("https://" + SPACES_URL + "/api/v1/spaces/invitation", {token}, header).then(response => {
+        axios.post(complete_spaces_url + "/api/v1/spaces/invitation", {token}, header).then(response => {
             dispatch(addSpace(response.data))
             dispatch(handleSuccess("Space successfully joined"))
             dispatch(push("/spaces/" + response.data.id))
         }).catch(e => {
-            dispatch(handleError("Space could not be joined"))
+            dispatch(handleError("Space could not be joined", e))
             dispatch(returnHome())
-            console.log(e.trace)
         })
     )
 }
@@ -92,15 +93,13 @@ export const returnHome = (): AppThunk => (dispatch) => {
     dispatch(push("/"))
 }
 
-
 export const deleteSpace = (id: string): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
-        axios.delete("https://" + SPACES_URL + "/api/v1/spaces/" + id + "/", header).then(response => {
+        axios.delete(complete_spaces_url + "/api/v1/spaces/" + id + "/", header).then(response => {
             dispatch(handleSuccess("Space successfully deleted"))
             dispatch(requestSpaces())
         }).catch(e => {
-            dispatch(handleError("Space could not be deleted"))
-            console.log(e.trace)
+            dispatch(handleError("Space could not be deleted", e))
         })
     )
 }
@@ -108,9 +107,10 @@ export const deleteSpace = (id: string): AppThunk => (dispatch, getState) => {
 export const getInvitationToken = (state: RootState, spaceID: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
         getHeaders(state).then(headers => {
-                axios.get("https://" + SPACES_URL + "/api/v1/spaces/invitation?spaceId=" + spaceID, headers).then(response => {
-                    resolve(response.data)
-                }).catch((e) => {
+                console.log(headers)
+            axios.get(complete_spaces_url + "/api/v1/spaces/invitation?spaceId=" + spaceID, headers).then(response => {
+                resolve(response.data)
+            }).catch((e) => {
                     console.log(e.trace)
                     reject()
                 })
@@ -122,12 +122,12 @@ export const getInvitationToken = (state: RootState, spaceID: string): Promise<s
 export const requestHosts = (spaceID: string): AppThunk => (dispatch, getState) => {
     // send request to backend to promote this user
     getHeaders(getState()).then(headers => {
-            axios.get("https://" + SPACES_URL + "/api/v1/spaces/" + spaceID + "/hosts/", headers).then(response => {
-                dispatch(setHosts({
-                    spaceID,
-                    hosts: response.data.map((d: { id: string }) => d.id)
-                }))
-            }).catch((e) => {
+        axios.get(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/", headers).then(response => {
+            dispatch(setHosts({
+                spaceID,
+                hosts: response.data.map((d: { id: string }) => d.id)
+            }))
+        }).catch((e) => {
                 console.log(e.trace)
             })
         }
@@ -137,9 +137,9 @@ export const requestHosts = (spaceID: string): AppThunk => (dispatch, getState) 
 export const promoteUser = (id: string, spaceID: string): AppThunk => (dispatch, getState) => {
     // send request to backend to promote this user
     getHeaders(getState()).then(headers => {
-            axios.post("https://" + SPACES_URL + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, {}, headers).then(response => {
-                dispatch(requestHosts(spaceID))
-            }).catch((e) => {
+        axios.post(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, {}, headers).then(response => {
+            dispatch(requestHosts(spaceID))
+        }).catch((e) => {
                 console.log(e.trace)
             })
         }
@@ -149,9 +149,9 @@ export const promoteUser = (id: string, spaceID: string): AppThunk => (dispatch,
 export const downgradeUser = (id: string, spaceID: string): AppThunk => (dispatch, getState) => {
     // send request to backend to promote this user
     getHeaders(getState()).then(headers => {
-            axios.delete("https://" + SPACES_URL + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, headers).then(response => {
-                dispatch(requestHosts(spaceID))
-            }).catch((e) => {
+        axios.delete(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, headers).then(response => {
+            dispatch(requestHosts(spaceID))
+        }).catch((e) => {
                 console.log(e.trace)
             })
         }

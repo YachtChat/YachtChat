@@ -1,12 +1,13 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, User, UserCoordinates, UserPayload} from "./models";
-import {sendPosition, userSetupReady} from "./webSocketSlice";
+import {send, sendPosition, userSetupReady} from "./webSocketSlice";
 import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
-import {getHeaders} from "./authSlice";
+import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
-import {ACCOUNT_URL, SPACES_URL} from "./config";
+import {ACCOUNT_URL, complete_spaces_url} from "./config";
 import {keycloakUserToUser} from "./utils";
+import {handleError, handleSuccess} from "./statusSlice";
 
 interface UserState {
     activeUser: User
@@ -95,11 +96,11 @@ export const userSlice = createSlice({
         },
         setMedia: (state, action: PayloadAction<{ id: string, type: MediaType, state: boolean }>) => {
             if (action.payload.id === state.activeUser.id) {
-                state.activeUser.image = action.payload.state
+                state.activeUser.video = action.payload.state
                 return
             }
             if (state.spaceUsers[action.payload.id])
-                state.spaceUsers[action.payload.id].image = action.payload.state
+                state.spaceUsers[action.payload.id].video = action.payload.state
         }
     },
 });
@@ -125,7 +126,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
     const userIDs: string[] = users.map(u => u.id)
     getHeaders(getState()).then(headers =>
         // load user ids from all users in space
-        axios.get("https://" + SPACES_URL + "/api/v1/spaces/" + spaceId + "/allUsers/", headers).then((response) =>
+        axios.get(complete_spaces_url + "/api/v1/spaces/" + spaceId + "/allUsers/", headers).then((response) =>
             response.data.forEach((u: { id: string }) => {
                 userIDs.push(u.id)
             })
@@ -136,7 +137,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
                 const userObjects = response.data.map((user: any) => {
                     const userPayload = users.find(u => u.id === user.id)
                     // set all users online and position of users in "users" (maybe also image)
-                    return keycloakUserToUser(user, !!userPayload, userPayload?.position)
+                    return keycloakUserToUser(user, !!userPayload, userPayload?.position, userPayload?.video)
                 })
                 console.log(userObjects)
                 // finally call set users with user list
@@ -166,11 +167,11 @@ export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppT
             // transform into user with util-function
             // finally set user
             if (isActiveUser) {
-                const user = keycloakUserToUser(response.data, true)
-                console.log("ActiveUser", user)
-                dispatch(initUser(user))
+                const activeUser = keycloakUserToUser(response.data, true, user?.position, true)
+                //console.log("ActiveUser", user)
+                dispatch(initUser(activeUser))
             } else {
-                dispatch(setUser(keycloakUserToUser(response.data, true, user?.position)))
+                dispatch(setUser(keycloakUserToUser(response.data, true, user?.position, true)))
                 // If the user is not the active user, init RTC Events
                 if (getUser(getState()).id !== user.id) {
                     // TODO here the new_user case is treated exactly the same as the login case, however , there should
@@ -192,6 +193,24 @@ export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispa
         // Execute proximity check
         dispatch(handlePositionUpdate({id: user.id, position: coordinates}))
     }
+}
+
+export const kickUser = (id: string, spaceID: string): AppThunk => (dispatch, getState) => {
+    const state = getState()
+    getHeaders(state).then(headers => {
+        axios.delete(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/members/?memberId=" + id, headers).then(() => {
+            if (getUserById(state, id).online)
+                getToken(state).then(token => {
+                    dispatch(send({type: "kick", token, user_id: id}))
+                })
+            else {
+                dispatch(removeUser(id))
+                dispatch(handleSuccess("User was successfully removed"))
+            }
+        }).catch(() =>
+            dispatch(handleError("Not able to remove user"))
+        )
+    })
 }
 
 // When a user sends a message

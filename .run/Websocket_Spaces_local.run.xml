@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Websocket_Spaces_local" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="websocket-service" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.alphabibber.websocketservice.WebsocketServiceApplication" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+    <envs>
+      <env name="SPACES_URL" value="localhost" />
+      <env name="VIRTUAL_PORT" value="8085" />
+      <env name="SPACES_PORT" value="8081" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

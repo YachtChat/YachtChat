@@ -8,7 +8,7 @@ export interface User {
     email?: string
     profile_image?: string // The actual URL to the image if available
 
-    image?: boolean // if a user sends video or not
+    video?: boolean // if a user sends video or not
     message?: string
     inProximity?: boolean
     userStream?: boolean
@@ -19,6 +19,7 @@ export interface User {
 export interface UserPayload {
     id: string
     position?: UserCoordinates
+    video?: boolean
 }
 
 

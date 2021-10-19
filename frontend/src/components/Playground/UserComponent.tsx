@@ -87,22 +87,22 @@ export class UserComponent extends Component<Props> {
         let userNamePosX = x - nameWidth / 2 - offsetX
         let userNamePosY = y + userSize / 2 - offsetY + 15
 
-        if (userNamePosX < 0) {
-            userNamePosX = 15 + nameWidth
-            nameOpacity = 0
+        if (userNamePosX < 15) {
+            userNamePosX = 15
+            nameOpacity = 0.45
         }
-        if (userNamePosX > window.innerWidth) {
-            userNamePosX = window.innerWidth - (15 - nameWidth)
-            nameOpacity = 0
+        if (userNamePosX > window.innerWidth - (15 + nameWidth)) {
+            userNamePosX = window.innerWidth - (15 + nameWidth)
+            nameOpacity = 0.45
         }
 
-        if (userNamePosY < 0) {
-            userNamePosY = 15 + nameWidth
-            nameOpacity = 0
+        if (userNamePosY < 15) {
+            userNamePosY = 15
+            nameOpacity = 0.45
         }
-        if (userNamePosY > window.innerHeight) {
-            userNamePosY = window.innerHeight - (15 - nameHeight)
-            nameOpacity = 0
+        if (userNamePosY > window.innerHeight - (15 + nameHeight)) {
+            userNamePosY = window.innerHeight - (15 + nameHeight)
+            nameOpacity = 0.45
         }
 
         const userStyle = {
@@ -113,7 +113,7 @@ export class UserComponent extends Component<Props> {
             opacity: userOpacity,
             transform: userScale,
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
-            backgroundImage: `url(${user.profile_image})`
+            backgroundImage: (!user.video || !this.videoObject.current?.srcObject) ? `url(${user.profile_image})` : "none",
         }
 
         const userNameStyle = {
@@ -142,11 +142,12 @@ export class UserComponent extends Component<Props> {
                                      : ""} placement="top" arrow>
                         <div>
                             {!!this.props.user.userStream &&
-                            <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id} key={this.props.camera}
+                            <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
+                                   key={this.props.camera}
                                    autoPlay muted={this.props.isActiveUser}
                                    playsInline
                                    ref={this.videoObject}
-                                   className={(!user.image) ? "profile-picture" : ""}/>
+                                   className={(!user.video) ? "profile-picture" : ""}/>
                             }
                         </div>
                     </Tooltip>

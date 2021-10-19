@@ -3,12 +3,15 @@ export const SPACES_URL: string | undefined = process.env.REACT_APP_SPACES_URL;
 export const ACCOUNT_URL: string | undefined = process.env.REACT_APP_ACCOUNT_URL
 export const FRONTEND_URL: string | undefined = process.env.REACT_APP_FRONTEND_URL
 export const SOCKET_PORT: string | undefined = process.env.REACT_APP_SIGNAL_PORT;
+export const SPACES_PORT: string | undefined = process.env.REACT_APP_SPACES_PORT;
 export const AUTH_SERVICE: string | undefined = process.env.REACT_APP_AUTH_URL
 export const REALM: string | undefined = process.env.REACT_APP_REALM
 export const CLIENT_ID: string | undefined = process.env.REACT_APP_KEYCLOAK_CLIENT
 export const applicationName: string = "Yacht Chat"
 // start it like
 // `REACT_APP_SOCKET_URL=ws://localhost:6503` ... yarn run start
+
+export const complete_spaces_url: String = !SPACES_PORT ? "https://" + SPACES_URL : "http://" + SPACES_URL + ":" + SPACES_PORT
 
 export const rtcConfiguration = {
     "iceServers": [//{
