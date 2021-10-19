@@ -107,6 +107,9 @@ export class FocusUser extends Component<Props, State> {
                                        }}
                                        ref={this.videoObject}/>
                             </Tooltip>
+                            <div>
+                                Click for fullscreen
+                            </div>
 
                         </div>
                     </div>
