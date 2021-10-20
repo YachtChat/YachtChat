@@ -4,7 +4,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import './style.scss';
 import {getUsers, submitMovement} from "../../store/userSlice";
-import {displayVideo, mute} from "../../store/rtcSlice";
+import {displayVideo, handleRTCEvents, mute} from "../../store/rtcSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
@@ -270,6 +270,14 @@ export class Canvas extends Component<Props, State> {
         window.addEventListener("gestureend", (e: any) => e.preventDefault())
 
 
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
+        this.props.spaceUsers.forEach(u => {
+            if(!u.userStream){
+                handleRTCEvents(this.props.activeUser.id)
+            }
+        })
     }
 
     render() {
