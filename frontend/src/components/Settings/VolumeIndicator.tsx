@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import "./style.scss";
-import {getStream,} from "../../store/rtcSlice";
 
 interface Props {
     audio?: MediaStream
@@ -91,7 +90,6 @@ export class MediaSettings extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    audio: getStream(state, state.userState.activeUser.id),
     mediaChangeOngoing: state.rtc.mediaChangeOngoing,
 })
 

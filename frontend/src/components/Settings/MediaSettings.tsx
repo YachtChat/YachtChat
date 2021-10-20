@@ -7,7 +7,7 @@ import {
     changeAudioOutput,
     changeVideoInput,
     getCamera,
-    getFreshCameraStream,
+    getFreshMediaStream,
     getMediaDevices,
     getMicrophone,
     getSpeaker,
@@ -54,6 +54,8 @@ export class MediaSettings extends Component<Props> {
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
         if (this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing && prevProps.camera !== this.props.camera) {
             this.props.getStream().then(stream => {
+                if (this.stream)
+                    this.stream.getTracks().forEach(t => t.stop())
                 this.stream = stream
                 this.forceUpdate()
             })
@@ -87,7 +89,7 @@ export class MediaSettings extends Component<Props> {
                             ref.srcObject = this.stream
                     }}/>
                 </div>
-                <VolumeIndicator/>
+                <VolumeIndicator audio={this.stream}/>
                 {this.props.cameras.length !== 0 &&
                 <div className={"settings-item"}>
                     <label>
@@ -158,7 +160,7 @@ const mapStateToProps = (state: RootState) => ({
     microphone: getMicrophone(state),
     camera: getCamera(state),
     speaker: getSpeaker(state),
-    getStream: () => getFreshCameraStream(state),
+    getStream: () => getFreshMediaStream(state),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

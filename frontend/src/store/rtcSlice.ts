@@ -495,27 +495,33 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
 export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {
     dispatch(setMediaChangeOngoing(true))
     dispatch(setCamera(camera))
-    dispatch(handleInputChange())
+    dispatch(handleInputChange("video"))
 }
 
 export const changeAudioInput = (microphone: string): AppThunk => (dispatch, getState) => {
     dispatch(setMediaChangeOngoing(true))
     dispatch(setMicrophone(microphone))
-    dispatch(handleInputChange())
+    dispatch(handleInputChange("audio"))
 
 }
 
 export const handleInputChange = (type?: string): AppThunk => (dispatch, getState) => {
-    const localClient = getUserID(getState())
-    const oldStream = getStream(getState(), localClient)
-    navigator.mediaDevices.getUserMedia(getMediaConstrains(getState(), type)).then((e) => {
+    const state = getState()
+    const localClient = getUserID(state)
+    const oldStream = getStream(state, localClient)
+
+    // If true all tracks have to be replaced otherwise just of type
+    const replaceAllTracks = state.rtc.video && !state.rtc.muted
+
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(state, (replaceAllTracks) ? undefined : type)).then((e) => {
+        // If type is not set or no localStream available reset the whole stream object
         localStream = e
         dispatch(setMediaChangeOngoing(false))
-        getStream(getState(), localClient)!.getTracks().forEach(s => {
+        getStream(state, localClient)!.getTracks().forEach(s => {
             // replace only stream of type and only if the video/audio aint muted
             if ((!type || type === s.kind) &&
-                ((s.kind === 'audio' && !getState().rtc.muted) || (s.kind === 'video' && getState().rtc.video))) {
-                getOnlineUsers(getState()).forEach(u => {
+                ((s.kind === 'audio' && !state.rtc.muted) || (s.kind === 'video' && state.rtc.video))) {
+                getOnlineUsers(state).forEach(u => {
                     Object.keys(rtpSender[u.id]).forEach(k => {
                         const rs = rtpSender[u.id][k]
                         if (rs.track && rs.track.kind === s.kind) {
@@ -591,7 +597,7 @@ export const getScreenStream = (state: RootState, id: string) => {
         return screenStream
 }
 
-export const getFreshCameraStream = (state: RootState): Promise<MediaStream> =>
-    navigator.mediaDevices.getUserMedia(getMediaConstrains(state, "video"))
+export const getFreshMediaStream = (state: RootState): Promise<MediaStream> =>
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(state))
 export const getMediaDevices = () => mediaDevices
 export default rtcSlice.reducer;
