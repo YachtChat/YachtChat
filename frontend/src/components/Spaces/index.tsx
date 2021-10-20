@@ -75,15 +75,20 @@ export class Spaces extends Component<Props, State> {
                         <button
                             className={"iconButton profilePic"}
                             ref={this.anchorRef}
-                            onClick={() => this.setState({profileOpen: true})}
+                            onMouseOver={() => this.setState({profileOpen: true})}
+                            onMouseLeave={() => this.setState({profileOpen: false})}
                             style={{backgroundImage: `url(${this.props.activeUser.profile_image})`}}
                         />
-                        <Popper open={open} anchorEl={this.anchorRef.current} role={undefined} placement={"bottom-end"}
+                        <Popper open={open}
+                                anchorEl={this.anchorRef.current}
+                                role={undefined} placement={"bottom"}
+                                onMouseOver={() => this.setState({profileOpen: true})}
+                                onMouseLeave={() => this.setState({profileOpen: false})}
                                 transition disablePortal>
                             {({TransitionProps, placement}) => (
                                 <Grow
                                     {...TransitionProps}
-                                    style={{transformOrigin: placement === 'bottom' ? 'right top' : 'right top'}}
+                                    style={{transformOrigin: placement === 'bottom' ? 'top' : 'top'}}
                                 >
                                     <Paper>
                                         <ClickAwayListener onClickAway={this.handleClose.bind(this)}>

@@ -29,13 +29,12 @@
       border-bottom: 5px solid $headline_light;
     }
   }
+
   .iconButton.profilePic {
-    width: 40%;
-    padding-top: 40%;
+    width: 4rem;
+    height: 4rem;
+    padding-top: 2rem;
     margin: auto;
-  }
-  .iconButton.profilePic:hover{
-    opacity: 30%;
   }
 
   .loadingAnimation {
