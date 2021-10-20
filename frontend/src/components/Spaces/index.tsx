@@ -24,7 +24,6 @@ interface Props {
 
 interface State {
     profileOpen: boolean
-    hover: boolean
     mouseX?: number
     mouseY?: number
     space?: Space
@@ -41,7 +40,6 @@ export class Spaces extends Component<Props, State> {
 
         this.state = {
             profileOpen: false,
-            hover: false
         }
     }
 
@@ -68,12 +66,6 @@ export class Spaces extends Component<Props, State> {
         })
     }
 
-    toggleHover(){
-        this.setState((state, _) => ({
-            hover: !state.hover
-        }));
-    }
-
     render() {
         const open = this.state.profileOpen
         return (
@@ -84,12 +76,7 @@ export class Spaces extends Component<Props, State> {
                             className={"iconButton profilePic"}
                             ref={this.anchorRef}
                             onClick={() => this.setState({profileOpen: true})}
-                            onMouseOver={this.toggleHover.bind(this)}
-                            onMouseLeave={this.toggleHover.bind(this)}
-                            style={
-                                {backgroundImage: `url(${this.props.activeUser.profile_image})`,
-                                    opacity: this.state.hover ? 0.3 : 1, width: "50%", paddingTop: "50%", margin: "auto"
-                            }}
+                            style={{backgroundImage: `url(${this.props.activeUser.profile_image})`}}
                         />
                         <Popper open={open} anchorEl={this.anchorRef.current} role={undefined} placement={"bottom-end"}
                                 transition disablePortal>
