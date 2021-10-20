@@ -120,7 +120,7 @@ export class Spaces extends Component<Props, State> {
                     </h2>
                     <div className={"itemWrapper"}>
                         {this.props.spaces.map((s, idx) => (
-                            <Link to={`/spaces/${s.id}`}>
+                            <Link to={`/spaces/${s.id}`} key={idx}>
                                 <div
                                     onContextMenu={e =>
                                         this.handleContext(e, s)
