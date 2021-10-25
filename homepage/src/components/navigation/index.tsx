@@ -31,8 +31,10 @@ export const Navigation = (props: Props) => {
                         </div>
                     ) : (
                         <div className={"buttons"}>
-                            <div className={"button"}>Login</div>
-                            <div className={"button solid"}>Sign Up</div>
+                            <a className={"button"}
+                               onClick={() => keycloak.login({redirectUri: 'https://' + FRONTEND_URL})}>Login</a>
+                            <a className={"button solid"}
+                               onClick={() => keycloak.register({redirectUri: 'https://' + FRONTEND_URL})}>Sign Up</a>
                         </div>
                     )}
                 </div>
