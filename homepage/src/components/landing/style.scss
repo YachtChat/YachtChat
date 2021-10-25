@@ -1,0 +1,77 @@
+@import "../frontend/src/variables.module";
+
+#landing {
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  position: relative;
+
+  #video {
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  #intro {
+    position: relative;
+    height: 100vh;
+
+    .background {
+      width: 75vh;
+      height: 75vh;
+      border-radius: 50vh;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(1rem);
+      transform: translate(-30%, 60%);
+      bottom: 0;
+    }
+
+    .content {
+      width: 40vh;
+      display: block;
+      position: absolute;
+      bottom: 0;
+      box-sizing: border-box;
+      padding: 2rem;
+
+      .headings {
+        margin: 3vh 0;
+
+        h2 {
+          padding: 0;
+          margin: 0;
+          font-size: 3vh;
+
+          &.subheading {
+            font-weight: normal;
+          }
+        }
+      }
+
+      .button {
+        font-size: 1.5vh;
+        transition: transform 0.2s, opacity 0.2s;
+
+        &:hover {
+          transform: translateX(5px);
+          opacity: 0.5;
+        }
+      }
+
+      .links {
+        font-size: 1.5vh;
+
+        a {
+          margin-right: 0.5rem;
+        }
+      }
+
+      img {
+        max-width: 40vh;
+      }
+    }
+  }
+}
