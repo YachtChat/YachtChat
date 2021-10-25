@@ -4,6 +4,7 @@ import Navigation from "./components/navigation";
 import {ReactKeycloakProvider} from '@react-keycloak/web'
 import {auth} from "./util/keycloak";
 import {Landing} from "./components/landing";
+import {About} from "./components/about";
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
             <div className="App">
                 <Navigation/>
                 <Landing/>
+                <About/>
             </div>
         </ReactKeycloakProvider>
     );

@@ -1,0 +1,82 @@
+@import "../frontend/src/variables.module";
+
+#about {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  float: right;
+  overflow: hidden;
+
+  .backgroundBall {
+    display: block;
+    position: absolute;
+    width: 200vw;
+    height: 200vw;
+    background: $background_2_light;
+    margin-right: 0;
+    right: 0;
+    border-radius: 50%;
+    transform: translate(50%, -40vh);
+    //@media (prefers-color-scheme: dark) {
+    //  & {
+    //    background: $background_2_dark;
+    //  }
+    //}
+  }
+
+  .divider {
+    position: absolute;
+    width: 50%;
+    right: 0;
+  }
+
+  .content {
+    z-index: 11;
+    position: absolute;
+    right: 0;
+    background: black;
+    padding: 15vh;
+    border-radius: 30vh;
+    width: 30vh;
+    height: 30vh;
+    color: white;
+    transform: translateX(5vh);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 5vh;
+
+    h2, p {
+      margin-top: 0;
+    }
+
+    p {
+      align-self: flex-end;
+      flex-grow: 0.5;
+    }
+
+    h2 {
+      flex-grow: 2;
+      align-self: flex-start;
+      text-align: right;
+      margin-right: 1vh;
+      font-size: 3vh;
+    }
+  }
+
+  .youtube {
+    position: absolute;
+    bottom: 5vh;
+    z-index: 10;
+    left: 20%;
+    height: 40vh;
+    width: 60vh;
+    box-shadow: 0 0 5rem rgba(0, 0, 0, .5);
+
+    iframe {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+}
