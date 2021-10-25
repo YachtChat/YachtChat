@@ -268,6 +268,9 @@ export class Canvas extends Component<Props, State> {
         document.onwheel = (e) => e.preventDefault()
         document.getElementById("Playground")?.addEventListener("wheel", (e) => e.preventDefault())
         window.addEventListener("gestureend", (e: any) => e.preventDefault())
+        window.addEventListener("touchstart", (e: any) => e.preventDefault())
+        window.addEventListener("touchmove", (e: any) => e.preventDefault())
+        window.addEventListener("touchend", (e: any) => e.preventDefault())
 
 
     }
