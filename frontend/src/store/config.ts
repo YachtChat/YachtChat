@@ -13,15 +13,48 @@ export const applicationName: string = "Yacht Chat"
 
 export const complete_spaces_url: String = !SPACES_PORT ? "https://" + SPACES_URL : "http://" + SPACES_URL + ":" + SPACES_PORT
 
-export const rtcConfiguration = {
-    "iceServers": [//{
-        //"urls": //[
-        {urls: "stun:stun.yacht.chat:3478"},
-        {
-            urls: "turn:stun.yacht.chat:3478",
-            credential: "password",
-            username: "guest"
-        }
+export const rtcConfiguration = <RTCConfiguration>{
+    iceTransportPolicy: "all",// set to "relay" to force TURN.
+    // "turnServer": {
+    //     "uri": "turn:turn.yacht.chat:3478",//"turn:turn.yacht.chat:3478",
+    //     "username": "guest",
+    //     "password": "password"
+    // },
+    // "stunServer": {
+    //     "uri": "stun.yacht.chat:3478"//"stun.yacht.chat:3478"
+    // },
+    // "server": "signal.yacht.chat",
+    // "port": 6503,
+    // "heartbeat": 5000
+    iceServers: [{
+        urls: [ "stun:stun.yacht.chat" ]
+    }, {
+        username: "guest",
+        credential: "password",
+        urls: [
+            "turn:turn.yacht.chat:80?transport=udp",
+            "turn:turn.yacht.chat:3478?transport=udp",
+            "turn:turn.yacht.chat:80?transport=tcp",
+            "turn:turn.yacht.chat:3478?transport=tcp",
+            "turns:turn.yacht.chat:443?transport=tcp",
+            "turns:turn.yacht.chat:5349?transport=tcp"
+        ]
+    }]
+
+    // iceServers: [{
+    //     urls: [ "stun:eu-turn8.xirsys.com" ]
+    // }, {
+    //     username: "FlnVrxz76s4fVHZUaxGrSjU2uiJhxToooZofpWNhnTEHhmW6OIZke0LTUcYqAxRoAAAAAGF2qaR5YWNodA==",
+    //     credential: "0ff57c90-3593-11ec-b11b-0242ac140004",
+    //     urls: [
+    //         "turn:eu-turn8.xirsys.com:80?transport=udp",
+    //         "turn:eu-turn8.xirsys.com:3478?transport=udp",
+    //         "turn:eu-turn8.xirsys.com:80?transport=tcp",
+    //         "turn:eu-turn8.xirsys.com:3478?transport=tcp",
+    //         "turns:eu-turn8.xirsys.com:443?transport=tcp",
+    //         "turns:eu-turn8.xirsys.com:5349?transport=tcp"
+    //     ]
+    // }]
 
             // "stun:iphone-stun.strato-iphone.de:3478",
             // "stun:numb.viagenie.ca:3478",
@@ -291,5 +324,5 @@ export const rtcConfiguration = {
             // "stun:stunserver.org:3478"
         //]
     //}
-    ]
+    // ]
 }
