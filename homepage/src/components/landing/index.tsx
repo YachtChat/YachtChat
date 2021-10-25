@@ -14,7 +14,7 @@ export function Landing() {
             </video>
 
             <div id={"intro"}>
-                <div className={"background"}></div>
+                <div className={"background"}/>
                 <div className={"content"}>
 
                     <img alt={"yacht.chat"} src={Yacht}/>
