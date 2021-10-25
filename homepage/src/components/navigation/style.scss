@@ -1,0 +1,75 @@
+@import "../frontend/src/variables.module";
+
+#navigation {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.8);
+  filter: blur(1.5rem);
+  top: 0;
+  width: 100%;
+  left: 0;
+  right: 0;
+  display: block;
+
+  #nav-content {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: stretch;
+    justify-content: stretch;
+    left: 0;
+    right: 0;
+    margin: 0;
+  }
+
+  #logo {
+    flex-grow: 0;
+    padding: 1rem 2rem;
+    width: 3rem;
+    height: 3rem;
+    filter: drop-shadow(0 0 0.5rem rgba(0, 0, 0, .7));
+
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.15);
+    }
+  }
+
+  #nav-items {
+    flex-grow: 0;
+    padding: 0;
+    height: auto;
+
+    a {
+      margin: 0 1rem;
+      padding: 0;
+      font-size: 0.9rem;
+      list-style: none;
+      color: $accent_light;
+      font-weight: bold;
+      border-radius: $border_radius;
+
+      transition: opacity 0.3s;
+
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+  }
+
+  #authentification {
+    justify-self: right;
+    float: right;
+
+    padding-right: 2rem;
+    flex-grow: 3;
+
+    .buttons {
+      right: 0;
+      margin-right: 0;
+      float: right;
+    }
+  }
+}

@@ -1,0 +1,40 @@
+@import "../frontend/src/variables.module";
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+
+    .button, .button:link, .button:visited {
+        border-radius: $border-radius;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        color: $button_font_light;
+        border: 2px solid $accent_light;
+        text-decoration: none;
+        margin-left: 0.5rem;
+
+        transition: opacity 0.5s;
+
+        &:hover {
+            opacity: 0.5;
+        }
+
+        &.solid {
+            background: $accent_light;
+        }
+    }
+}
