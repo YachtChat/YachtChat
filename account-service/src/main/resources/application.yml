@@ -15,4 +15,3 @@ keycloak:
   credentials.secret: ${KEYCLOAK_CLIENT_SECRET}
   use-resource-role-mappings: true
   bearer-only: true
-  
