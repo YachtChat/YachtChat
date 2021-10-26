@@ -5,6 +5,7 @@ import {ReactKeycloakProvider} from '@react-keycloak/web'
 import {auth} from "./util/keycloak";
 import {Landing} from "./components/landing";
 import {About} from "./components/about";
+import {Scenarios} from "./components/scenarios";
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
                 <Navigation/>
                 <Landing/>
                 <About/>
+                <Scenarios/>
             </div>
         </ReactKeycloakProvider>
     );

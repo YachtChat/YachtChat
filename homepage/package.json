@@ -11,11 +11,13 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "classnames": "^2.3.1",
     "keycloak-js": "^15.0.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-scripts": "4.0.3",
+    "react-swipeable": "^6.2.0",
     "sass": "^1.43.3",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"

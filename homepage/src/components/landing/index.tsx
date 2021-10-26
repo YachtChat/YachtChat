@@ -14,25 +14,28 @@ export function Landing() {
             </video>
 
             <div id={"intro"}>
-                <div className={"background"}/>
-                <div className={"content"}>
+                <div className={"contentWrapper"}>
+                    <div className={"background"}/>
 
-                    <img alt={"yacht.chat"} src={Yacht}/>
-                    <div className={"headings"}>
-                        <h2>Bring your team home.</h2>
-                        <h2 className={"subheading"}>With the future of communication.</h2>
-                    </div>
+                    <div className={"content"}>
 
-                    <div className={"button"}
-                         onClick={() => keycloak.login({redirectUri: "https://" + FRONTEND_URL})}>Join a new way of
-                        working <IoArrowForward/></div>
+                        <img alt={"yacht.chat"} src={Yacht}/>
+                        <div className={"headings"}>
+                            <h2>Bring your team home.</h2>
+                            <h2 className={"subheading"}>With the future of communication.</h2>
+                        </div>
 
-                    <br/>
+                        <div className={"button"}
+                             onClick={() => keycloak.login({redirectUri: "https://" + FRONTEND_URL})}>Join a new way of
+                            working <IoArrowForward/></div>
 
-                    <div className={"links"}>
-                        <a href={INSTA}><IoLogoInstagram/></a>
-                        <a href={LINKEDIN}><IoLogoLinkedin/></a>
-                        <a href={TIKTOK}><IoLogoTiktok/></a>
+                        <br/>
+
+                        <div className={"links"}>
+                            <a href={INSTA}><IoLogoInstagram/></a>
+                            <a href={LINKEDIN}><IoLogoLinkedin/></a>
+                            <a href={TIKTOK}><IoLogoTiktok/></a>
+                        </div>
                     </div>
                 </div>
             </div>

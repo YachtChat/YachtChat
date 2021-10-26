@@ -24,6 +24,12 @@ code {
     monospace;
 }
 
+.contentWrapper {
+    max-width: 100vh;
+    margin: auto;
+    bottom: 0;
+}
+
 .buttons {
     display: flex;
     flex-direction: row;
