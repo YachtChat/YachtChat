@@ -6,6 +6,8 @@ import {auth} from "./util/keycloak";
 import {Landing} from "./components/landing";
 import {About} from "./components/about";
 import {Scenarios} from "./components/scenarios";
+import {Tutorial} from "./components/tutorial";
+import {Usp} from "./components/usp";
 
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
                 <Landing/>
                 <About/>
                 <Scenarios/>
+                <Usp/>
+                <Tutorial/>
             </div>
         </ReactKeycloakProvider>
     );
