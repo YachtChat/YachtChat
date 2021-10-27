@@ -2,6 +2,10 @@ version: "2"
 services:
   prometheus:
     image: prom/prometheus
+    environment:
+      - VIRTUAL_HOST=${PROMETHEUS_URL}
+      - LETSENCRYPT_HOST=${PROMETHEUS_URL}
+      - VIRTUAL_PORT=${PROMETHEUS_PORT}
     volumes:
       - /home/git_environment/NotZoom/keycloak/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus:/prometheus
