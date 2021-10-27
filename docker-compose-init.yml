@@ -7,11 +7,11 @@ services:
       - "443:443"
     volumes:
       - certs:/etc/nginx/certs:ro
-      - vhost:/etc/nginx/vhost.d
+#      - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /etc/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /home/git_environment/NotZoom/keycloak/Prometheus/vhost.d:vhost
+      - /home/git_environment/NotZoom/keycloak/Prometheus/vhost.d:/etc/nginx/vhost.d
       - /etc/.htpasswd:/etc/.htpasswd
     networks:
       - application
