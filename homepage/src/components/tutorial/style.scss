@@ -2,23 +2,51 @@
 
 #tutorial {
   position: relative;
-  height: 100vh;
-  padding: 2rem;
+  overflow: hidden;
+
+  background: $background_2_light;
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: $background_2_dark;
+    }
+  }
+
+  .contentWrapper {
+    padding: 2rem;
+  }
 
   .backgroundBall {
-    z-index: -1;
+    z-index: 0;
     display: block;
     position: absolute;
     width: 200vw;
     height: 200vw;
-    background: $background_2_light;
     left: 0;
     top: 0;
     border-radius: 50%;
-    transform: translate(-50%, -40vh);
+    transform: translate(-50%, 0);
+
+    background: $background_light;
     @media (prefers-color-scheme: dark) {
       & {
-        background: $background_2_dark;
+        background: $background_dark;
+      }
+    }
+  }
+
+  .separator {
+    z-index: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    fill: $background_2_light;
+
+    width: 100%;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        fill: $background_2_dark;
       }
     }
   }
@@ -43,13 +71,15 @@
     margin: auto;
     max-width: 700px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-content: stretch;
     align-items: stretch;
     flex: 1;
     padding-bottom: 5rem;
 
     .listItem {
+      z-index: 1;
       display: flex;
       flex-direction: row;
       align-content: center;
@@ -67,10 +97,11 @@
       box-shadow: 0 0 3rem rgba(0, 0, 0, 0.3);
 
       &:hover {
-        transform: scale(1.1);
+        transform: scale(1.01);
       }
 
       .itemIcon {
+        color: $accent_light;
         text-align: center;
         flex-shrink: 0;
         flex-grow: 0;

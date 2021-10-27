@@ -1,19 +1,26 @@
 import {BiMouse, IoVolumeHigh} from "react-icons/all";
 import React from "react";
 import "./style.scss"
+import {applicationName} from "../../util/config";
 
 export function Tutorial() {
     return (
         <div id={"tutorial"}>
-            {/*<div className={"backgroundBall"}/>*/}
+            <div className={"backgroundBall"}/>
+            <svg className={"separator"} width="100%" height="100%" viewBox="0 0 1181 178" version="1.1"
+                 style={{fillRule: "evenodd", clipRule: "evenodd", strokeLinejoin: "round", strokeMiterlimit: 2}}>
+                <g transform="matrix(0.268213,0,0,0.268213,546.275,557.46)">
+                    <circle cx="168" cy="2233" r="4256"/>
+                </g>
+            </svg>
             <div className={"contentWrapper"}>
                 <h1>How to</h1>
-                <h2 className={"subtitle"}>How does Yacht.Chat work?</h2>
+                <h2 className={"subtitle"}>How does {applicationName} work?</h2>
                 <div className={"list"}>
 
                     <div className={"listItem"}>
                         <div className={"itemIcon code"}>
-                            N<span className={"animateicon"} id={"cursoricon"}>_</span>
+                            {">"}<span className={"animateicon"} id={"cursoricon"}>_</span>
                         </div>
                         <div className={"itemText"}>
                             After logging in, create a space.
