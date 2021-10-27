@@ -15,7 +15,7 @@ import MessageComponent from "./Message";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
 import MembersComponent from "./Members";
-import {Tooltip} from "@material-ui/core";
+import {ClickAwayListener, Grow, Paper, Popper, Tooltip} from "@material-ui/core";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -33,11 +33,14 @@ interface Props {
 }
 
 interface State {
+    confirmlogout: boolean
     collapsed: boolean
     open: { [component: string]: boolean }
 }
 
 export class NavigationBar extends Component<Props, State> {
+
+    anchorRef: React.RefObject<HTMLSpanElement>
 
     icons = {
         videoOnIcon: <FaVideo/>,
@@ -48,7 +51,11 @@ export class NavigationBar extends Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
+
+        this.anchorRef = React.createRef()
+
         this.state = {
+            confirmlogout: false,
             collapsed: true,
             open: {}
         }
@@ -106,7 +113,7 @@ export class NavigationBar extends Component<Props, State> {
                                 <li className="menu-item" onClick={this.handleCollapse.bind(this)}>
                                     <div className="inner-item">
                                         <Tooltip  disableFocusListener
-                                                  title={"Menu"} placement="top" arrow>
+                                                  title={"Menu"} placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     <FaBars/>
@@ -122,7 +129,7 @@ export class NavigationBar extends Component<Props, State> {
                                     <div className="inner-item">
                                         <span className="icon-wrapper">
                                             <Tooltip  disableFocusListener
-                                                      title={"Video"} placement="top" arrow>
+                                                      title={"Video"} placement="right" arrow>
                                                 <span className="icon">
                                                     {videoIcon}
                                                 </span>
@@ -136,7 +143,7 @@ export class NavigationBar extends Component<Props, State> {
                                 <li className="menu-item" onClick={this.props.toggleAudio}>
                                     <div className="inner-item">
                                         <Tooltip  disableFocusListener
-                                                  title={"Microphone"} placement="top" arrow>
+                                                  title={"Microphone"} placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     {micIcon}
@@ -151,7 +158,7 @@ export class NavigationBar extends Component<Props, State> {
                                 <li className="menu-item" onClick={this.props.toggleScreen}>
                                     <div className="inner-item">
                                         <Tooltip  disableFocusListener
-                                                  title={(this.props.screen) ? "Stop Sharing" : "Share Screen"} placement="top" arrow>
+                                                  title={(this.props.screen) ? "Stop Sharing" : "Share Screen"} placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     {(this.props.screen) ? <IoTv/> : <IoTvOutline/>}
@@ -168,7 +175,7 @@ export class NavigationBar extends Component<Props, State> {
                                         onClick={e => this.handleOpen(e, "users")}
                                         className="inner-item">
                                         <Tooltip  disableFocusListener
-                                                  title={"Users"} placement="top" arrow>
+                                                  title={"Users"} placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     <IoPeople/>
@@ -188,7 +195,7 @@ export class NavigationBar extends Component<Props, State> {
                                 <li className="menu-item" onClick={this.props.center}>
                                     <div className="inner-item">
                                         <Tooltip  disableFocusListener
-                                                  title={"Center user"} placement="top" arrow>
+                                                  title={"Center user"} placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     <MdFilterCenterFocus/>
@@ -217,7 +224,7 @@ export class NavigationBar extends Component<Props, State> {
                                         onClick={e => this.handleOpen(e, "messages")}
                                         className="inner-item">
                                         <Tooltip  disableFocusListener
-                                                  title={"Message"} placement="top" arrow>
+                                                  title={"Message"} placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     <IoChatbubble/>
@@ -237,7 +244,7 @@ export class NavigationBar extends Component<Props, State> {
                                     <div className="inner-item"
                                          onClick={e => this.handleOpen(e, "settings")}>
                                         <Tooltip  disableFocusListener
-                                                  title={"Settings"} placement="top" arrow>
+                                                  title={"Settings"} placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     <FaCog/>
@@ -253,14 +260,36 @@ export class NavigationBar extends Component<Props, State> {
                                                   onClose={() => this.handleClose("settings")}/>
                                     </div>
                                 </li>
-                                <li className="menu-item" onClick={this.props.logout}>
+                                <li className="menu-item" >
                                     <div className="inner-item">
                                         <Tooltip  disableFocusListener
-                                                  title={"Log Out"} placement="top" arrow>
-                                            <span className="icon-wrapper">
-                                                <span className="icon">
+                                                  title={"Log Out"} placement="right" arrow>
+                                            <span className="icon-wrapper" >
+                                                <span onClick={() => this.setState({confirmlogout: true})} className="icon" ref={this.anchorRef}>
                                                     <FaSignOutAlt/>
                                                 </span>
+                                                <Popper open={this.state.confirmlogout}
+                                                        anchorEl={this.anchorRef.current}
+                                                        role={undefined} placement={"right"}
+                                                        transition disablePortal
+
+                                                        >
+                                                    {({TransitionProps, placement}) => (
+                                                        <Grow
+
+                                                            {...TransitionProps}
+                                                            style={{transformOrigin: placement === 'bottom' ? 'top' : 'top'}}
+                                                        >
+                                                            <Paper className={"logoutbutton"} onClick={this.props.logout}>
+                                                                <ClickAwayListener onClickAway={() => this.setState({confirmlogout: false})}>
+
+                                                                    <span onClick={this.props.logout}><FaSignOutAlt/> Logout </span>
+
+                                                                </ClickAwayListener>
+                                                            </Paper>
+                                                        </Grow>
+                                                    )}
+                                                </Popper>
                                             </span>
                                         </Tooltip>
                                         <span className="item-content">
