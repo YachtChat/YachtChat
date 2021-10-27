@@ -31,7 +31,7 @@ jobs:
         with:
           command: |
             cd /home/git_environment/NotZoom/
-            sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose -f docker-compose-init.yml up -d
+            sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose -f docker-compose-init.yml -f docker-compose-statistics.yml up -d
             sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
             sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
             sudo mvn clean -f ./account-service/pom.xml package -DskipTests
