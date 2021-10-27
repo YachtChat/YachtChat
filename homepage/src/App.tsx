@@ -8,6 +8,7 @@ import {About} from "./components/about";
 import {Scenarios} from "./components/scenarios";
 import {Tutorial} from "./components/tutorial";
 import {Usp} from "./components/usp";
+import {Contact} from "./components/contact";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
                 <Scenarios/>
                 <Usp/>
                 <Tutorial/>
+                <Contact/>
             </div>
         </ReactKeycloakProvider>
     );

@@ -3,6 +3,7 @@
 #tutorial {
   position: relative;
   overflow: hidden;
+  padding-top: 5rem;
 
   background: $background_2_light;
   @media (prefers-color-scheme: dark) {
