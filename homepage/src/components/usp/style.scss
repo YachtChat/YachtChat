@@ -2,8 +2,11 @@
 
 #usp {
   position: relative;
-  height: 100vh;
-  padding: 2rem;
+  width: 100%;
+
+  .contentWrapper {
+    padding: 2rem;
+  }
 
   .backgroundBall {
     z-index: -1;
@@ -19,6 +22,23 @@
     @media (prefers-color-scheme: dark) {
       & {
         background: $background_2_dark;
+      }
+    }
+  }
+
+  .separator {
+    z-index: -1;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    fill: $background_2_light;
+
+    width: 100%;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        fill: $background_2_dark;
       }
     }
   }
@@ -39,98 +59,46 @@
     margin: 0 0 2rem;
   }
 
-  .list {
-    margin: auto;
-    max-width: 700px;
+  .aboutCards {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    align-content: stretch;
-    align-items: stretch;
-    flex: 1;
-    padding-bottom: 5rem;
+    flex-direction: row;
+    flex-wrap: wrap;
 
-    .listItem {
-      display: flex;
-      flex-direction: row;
-      align-content: center;
-      align-items: center;
-      justify-content: center;
-      justify-items: center;
-      margin-bottom: 1.5rem;
+    .card {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      color: $accent_light;
+      flex-shrink: 1;
       flex-grow: 1;
-      background: $background_light;
+      width: 300px;
+      background: white;
+      margin: 20px;
+      padding: 2rem;
+      text-align: center;
       border-radius: $border_radius;
-      padding: 4rem 3rem;
-      overflow: hidden;
-      transition: transform 0.2s;
+      transition: transform 0.2s, opacity 0.2s;
 
-      box-shadow: 0 0 3rem rgba(0, 0, 0, 0.3);
+      svg {
+        display: block;
+        margin: 1rem auto 2rem;
+        font-size: 3rem;
+      }
 
       &:hover {
-        transform: scale(1.1);
+        opacity: 1;
+        transform: translateY(-5px) scale(1.01);
       }
 
-      .itemIcon {
-        text-align: center;
-        flex-shrink: 0;
-        flex-grow: 0;
-        padding-right: 2rem;
-        width: 4rem;
-        font-size: 2rem;
-        box-sizing: border-box;
-
-
+      label {
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        font-weight: bolder;
+        color: $headline_2_light;
       }
 
-      .animateicon {
-        animation-duration: 1s;
-        animation-iteration-count: infinite;
-        animation-direction: alternate;
-
-        &#cursoricon {
-          animation-name: cursor_blink;
-        }
-
-        &#mouseicon {
-          animation-name: mouse_move;
-        }
-
-        &#volumeicon {
-          animation-name: volume_fade;
-        }
+      p {
+        color: black;
       }
-    }
-  }
-
-  @keyframes mouse_move {
-    from {
-      transform: translateX(-5%) rotate(-5deg);
-    }
-
-    to {
-      transform: translateX(5%) rotate(5deg);
-    }
-  }
-
-  @keyframes volume_fade {
-    from {
-      transform: translateX(-3%);
-    }
-
-    to {
-      transform: translateX(3%);
-    }
-  }
-
-  @keyframes cursor_blink {
-    from {
-      opacity: 1;
-    }
-    70% {
-      opacity: 0.9;
-    }
-    to {
-      opacity: 0.1;
     }
   }
 
