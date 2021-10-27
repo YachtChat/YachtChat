@@ -11,8 +11,8 @@ services:
       - html:/usr/share/nginx/html
       - /etc/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-#      - /home/git_environment/NotZoom/keycloak/Prometheus/prometheus.txt:etc/nginx/vhost.d/${PROMETHEUS_URL}
-#      - /etc/.htpasswd:/etc/.htpasswd
+      - /home/git_environment/NotZoom/keycloak/Prometheus/prometheus.txt:/etc/nginx/vhost.d/${PROMETHEUS_URL}
+      - /etc/.htpasswd:/etc/.htpasswd
     networks:
       - application
 
