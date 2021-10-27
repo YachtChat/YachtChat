@@ -34,6 +34,10 @@ code {
     div, h1, h2, h3, a, p {
         z-index: 3;
     }
+
+    h1, h2, h3, a, p {
+        position: relative;
+    }
 }
 
 .buttons {
