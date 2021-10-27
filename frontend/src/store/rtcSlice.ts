@@ -397,6 +397,23 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
 
 export const handleCandidate = (candidate: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
     rtcConnections[fromId].addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e.stack));
+    let connection_type = new RTCIceCandidate(candidate)
+    if (connection_type.type !== null) {
+        switch (connection_type.type) {
+            case "relay":
+                //console.log(connection_type.address + " uses TURN")
+                break
+
+            case "srflx":
+                //console.log(connection_type.address + " uses STUN")
+                break
+
+            default:
+                console.log("NO TURN SERVER USED by: " + connection_type.address + " as " + connection_type.type)
+                break
+
+        }
+    }
 }
 
 export const handleSdp = (description: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
