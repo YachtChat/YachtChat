@@ -15,29 +15,15 @@ export const complete_spaces_url: String = !SPACES_PORT ? "https://" + SPACES_UR
 
 export const rtcConfiguration = <RTCConfiguration>{
     iceTransportPolicy: "all",// set to "relay" to force TURN.
-    // "turnServer": {
-    //     "uri": "turn:turn.yacht.chat:3478",//"turn:turn.yacht.chat:3478",
-    //     "username": "guest",
-    //     "password": "password"
-    // },
-    // "stunServer": {
-    //     "uri": "stun.yacht.chat:3478"//"stun.yacht.chat:3478"
-    // },
-    // "server": "signal.yacht.chat",
-    // "port": 6503,
-    // "heartbeat": 5000
     iceServers: [{
         urls: [ "stun:stun.yacht.chat" ]
     }, {
         username: "guest",
         credential: "password",
         urls: [
-            "turn:turn.yacht.chat:80?transport=udp",
-            "turn:turn.yacht.chat:3478?transport=udp",
-            "turn:turn.yacht.chat:80?transport=tcp",
-            "turn:turn.yacht.chat:3478?transport=tcp",
-            "turns:turn.yacht.chat:443?transport=tcp",
-            "turns:turn.yacht.chat:5349?transport=tcp"
+            "turn:stun.yacht.chat:3478?transport=udp",
+            "turn:stun.yacht.chat:3478?transport=tcp",
+            "turns:stun.yacht.chat:5349?transport=tcp"
         ]
     }]
 
