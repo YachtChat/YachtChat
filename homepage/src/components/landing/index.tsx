@@ -1,6 +1,7 @@
 import "./style.scss"
 import Film from "../../rsc/Film.m4v"
 import Yacht from "../../rsc/yacht_font.png"
+import Yacht_Dark from "../../rsc/yacht_font_white.png"
 import {IoArrowForward, IoLogoInstagram, IoLogoLinkedin, IoLogoTiktok} from "react-icons/all";
 import {useKeycloak} from "@react-keycloak/web";
 import {FRONTEND_URL, INSTA, LINKEDIN, TIKTOK} from "../../util/config";
@@ -22,7 +23,8 @@ export function Landing() {
 
                     <div className={"content"}>
 
-                        <img alt={"yacht.chat"} src={Yacht}/>
+                        <img className={"light"} alt={"yacht.chat"} src={Yacht}/>
+                        <img className={"dark"} alt={"yacht.chat"} src={Yacht_Dark}/>
                         <div className={"headings"}>
                             <h2>Bring your team home.</h2>
                             <h2 className={"subheading"}>With the future of communication.</h2>
