@@ -87,7 +87,7 @@
       align-items: center;
       justify-content: center;
       justify-items: center;
-      margin-bottom: 1.5rem;
+      margin: 0.75rem;
       flex-grow: 1;
       background: $background_light;
       border-radius: $border_radius;
@@ -95,7 +95,7 @@
       overflow: hidden;
       transition: transform 0.2s;
 
-      box-shadow: 0 0 3rem rgba(0, 0, 0, 0.3);
+      box-shadow: $shadow;
 
       &:hover {
         transform: scale(1.01);

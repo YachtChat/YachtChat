@@ -58,13 +58,13 @@
     flex-wrap: wrap;
 
     .card {
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      box-shadow: $shadow;
       color: $accent_light;
       flex-shrink: 1;
       flex-grow: 1;
       width: 300px;
       background: white;
-      margin: 20px;
+      margin: 0.75rem;
       padding: 2rem;
       text-align: center;
       border-radius: $border_radius;
