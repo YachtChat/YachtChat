@@ -9,9 +9,12 @@ export function Landing() {
     const {keycloak} = useKeycloak()
     return (
         <div id={"landing"}>
-            <video autoPlay playsInline muted loop id="video">
-                <source src={Film} type="video/mp4"/>
-            </video>
+            <div className={"video-wrapper"}>
+
+                <video autoPlay playsInline muted loop id="video">
+                    <source src={Film} type="video/mp4"/>
+                </video>
+            </div>
 
             <div id={"intro"}>
                 <div className={"contentWrapper"}>
