@@ -89,6 +89,7 @@ services:
 
 networks:
   application:
+    external: true
     driver: bridge
 
 volumes:
