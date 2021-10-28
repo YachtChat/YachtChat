@@ -159,6 +159,9 @@
                   align-items: center;
                   justify-content: center;
                 }
+                .logoutbutton {
+                  background-color: $logout_button_color;
+                }
               }
 
               .item-content {
