@@ -2,6 +2,7 @@ version: "2"
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
+    container_name: nginx-proxy
     ports:
       - "80:80"
       - "443:443"
@@ -12,12 +13,13 @@ services:
       - /etc/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
 #      - /home/git_environment/NotZoom/keycloak/Prometheus/vhost.d/${PROMETHEUS_URL}:/etc/nginx/vhost.d/${PROMETHEUS_URL}
-      - /etc/.htpasswd:/etc/.htpasswd
+#      - /etc/.htpasswd:/etc/.htpasswd
     networks:
       - application
 
   letsencrypt-nginx-proxy-companion:
     image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt-nginx-proxy-companion
     volumes_from:
       - nginx-proxy
     environment:
@@ -31,6 +33,7 @@ services:
       - application
 
   keycloak-postgres:
+    container_name: keycloak-postgres
     image: postgres
     volumes:
       - keycloak_postgres_data:/var/lib/postgresql/data
@@ -42,6 +45,7 @@ services:
       - application
 
   keycloak:
+    container_name: keycloak
     image: jboss/keycloak
 #    image: wizzn/keycloak:12
     environment:
@@ -64,6 +68,7 @@ services:
       - keycloak-postgres
 
   spaces-postgres:
+    container_name: spaces-postgres
     image: postgres
     restart: always
     environment:
@@ -76,16 +81,18 @@ services:
       - application
 
 volumes:
-  certs: { }
+  certs:
+    external: true
   vhost:
-    driver_opts:
-      type: none
-      device: /home/git_environment/NotZoom/keycloak/Prometheus/vhost.d
-      o: bind
-  html: { }
-  keycloak_postgres_data: { }
-  spaces_postgres_data: { }
+    external: true
+  html:
+    external: true
+  keycloak_postgres_data:
+    external: true
+  spaces_postgres_data:
+    external: true
 
 networks:
   application:
     driver: bridge
+    external: true

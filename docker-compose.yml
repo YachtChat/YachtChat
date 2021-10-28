@@ -1,6 +1,7 @@
 version: "2"
 services:
   frontend:
+    container_name: frontend
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
@@ -20,6 +21,7 @@ services:
       - application
 
   websocket-service:
+    container_name: websocket-service
     build:
       context: ./websocket-service
       dockerfile: ./Dockerfile
@@ -34,6 +36,7 @@ services:
       - application
 
   spaces-service:
+    container_name: spaces-service
     build:
       context: ./spaces-service
       dockerfile: ./Dockerfile
@@ -58,6 +61,7 @@ services:
       - application
 
   account-service:
+    container_name: account-service
     build:
       context: ./account-service
       dockerfile: ./Dockerfile
@@ -88,8 +92,12 @@ networks:
     driver: bridge
 
 volumes:
-  certs: { }
-  vhost: { }
-  html: { }
-  keycloak_postgres_data: { }
+  certs:
+    external: true
+  vhost:
+    external: true
+  html:
+    external: true
+  keycloak_postgres_data:
+    external: true
   
