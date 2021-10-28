@@ -5,16 +5,20 @@ interface Props {
 }
 
 export function NavButtons(props: Props) {
+
+    const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({behavior: 'smooth'})
+
     return (
         <nav className={"nav-items"}>
             {!!props.closeButton &&
             <a className={"close-button"}><IoClose/></a>
             }
-            <a>Home</a>
-            <a>About</a>
-            <a>How To</a>
-            <a>Szenarios</a>
-            <a>Contact</a>
+            <a onClick={() => scrollTo("landing")}>Home</a>
+            <a onClick={() => scrollTo("about")}>About</a>
+            <a onClick={() => scrollTo("scenarios")}>Use cases</a>
+            <a onClick={() => scrollTo("usp")}>Why Yacht</a>
+            <a onClick={() => scrollTo("tutorial")}>How To</a>
+            <a onClick={() => scrollTo("contact")}>Contact</a>
         </nav>
     )
 }
