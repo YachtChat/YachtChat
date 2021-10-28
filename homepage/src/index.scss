@@ -55,12 +55,25 @@ code {
 
         transition: opacity 0.5s;
 
+        @media (prefers-color-scheme: dark) {
+            & {
+                border: 2px solid $accent_dark;
+                color: $button_font_dark;
+            }
+        }
+
         &:hover {
             opacity: 0.5;
         }
 
         &.solid {
             background: $accent_light;
+
+            @media (prefers-color-scheme: dark) {
+                & {
+                    background: $accent_dark;
+                }
+            }
         }
     }
 }

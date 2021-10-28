@@ -35,6 +35,12 @@
       transform: translate(-30%, 60%);
       bottom: 0;
       margin-left: 0;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          background: rgba(0, 0, 0, 0.5);
+        }
+      }
     }
 
     .content {
@@ -44,6 +50,13 @@
       bottom: 0;
       box-sizing: border-box;
       padding: 2rem;
+      color: black;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          color: white;
+        }
+      }
 
       .headings {
         margin: 3vh 0;

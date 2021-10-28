@@ -3,19 +3,15 @@ import React from "react";
 import "./style.scss"
 import {applicationName} from "../../util/config";
 import classNames from "classnames";
-import {Card} from "./card";
+import {Card} from "../card";
 import {IoMdHeart} from "react-icons/io";
+import {Separator} from "../separator";
 
 export function Usp() {
     return (
         <div id={"usp"}>
             {/*<div className={"backgroundBall"}/>*/}
-            <svg className={"separator"} width="100%" height="100%" viewBox="0 0 1181 178" version="1.1"
-                 style={{fillRule: "evenodd", clipRule: "evenodd", strokeLinejoin: "round", strokeMiterlimit: 2}}>
-                <g transform="matrix(0.268213,0,0,0.268213,546.275,557.46)">
-                    <circle cx="168" cy="2233" r="4256"/>
-                </g>
-            </svg>
+            <Separator/>
             <div className={"contentWrapper"}>
                 <h1>Why {applicationName}?</h1>
                 <h2 className={"subtitle"}>What makes {applicationName} so special?</h2>

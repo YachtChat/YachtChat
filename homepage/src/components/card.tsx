@@ -1,5 +1,5 @@
 import React from "react";
-import "../tutorial/style.scss"
+import "./tutorial/style.scss"
 import Fade from "react-reveal/Fade";
 
 export class Card extends React.Component {

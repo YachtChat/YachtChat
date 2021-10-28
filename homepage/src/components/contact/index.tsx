@@ -2,7 +2,7 @@ import {IoLogoInstagram, IoLogoLinkedin, IoMail} from "react-icons/all";
 import React from "react";
 import "./style.scss"
 import classNames from "classnames";
-import {Card} from "../usp/card";
+import {Card} from "../card";
 import {INSTA, LINKEDIN} from "../../util/config";
 
 export function Contact() {
