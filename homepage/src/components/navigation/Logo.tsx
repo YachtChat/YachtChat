@@ -1,6 +1,6 @@
 export function Logo() {
     return (
-        <svg id={"logo"} width="100%" height="100%" viewBox="0 0 2796 2796" style={{
+        <svg className={"logo"} width="100%" height="100%" viewBox="0 0 2796 2796" style={{
             fillRule: "evenodd",
             clipRule: "evenodd",
             strokeLinecap: "round",

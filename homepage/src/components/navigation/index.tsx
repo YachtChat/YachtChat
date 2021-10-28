@@ -1,8 +1,9 @@
 import './style.scss'
-import {useKeycloak} from "@react-keycloak/web";
 import {Logo} from "./Logo";
-import {FRONTEND_URL} from "../../util/config";
-import {IoArrowForward} from "react-icons/all";
+import {IoMenu} from "react-icons/all";
+import {useState} from "react";
+import {AuthButtons} from "./AuthButtons";
+import {NavButtons} from "./NavButtons";
 
 interface Props {
 
@@ -11,36 +12,26 @@ interface Props {
 
 export const Navigation = (props: Props) => {
 
-    const {keycloak} = useKeycloak()
+    const [open, setOpen] = useState(false)
 
     return (
         <header id={"navigation"}>
             <div className={"contentWrapper"}>
 
-                <div id={"nav-content"}>
+                <div id={"nav-content-desktop"}>
                     <Logo/>
-                    <nav id={"nav-items"}>
-                        <a>Home</a>
-                        <a>About</a>
-                        <a>How To</a>
-                        <a>Szenarios</a>
-                        <a>Contact</a>
-                    </nav>
-                    <div id={"authentification"}>
-                        {keycloak.authenticated ? (
-                            <div className={"buttons"}>
-                                <a className={"button"} href={"https://" + FRONTEND_URL}>Go to Spaces <IoArrowForward/></a>
-                            </div>
-                        ) : (
-                            <div className={"buttons"}>
-                                <a className={"button"}
-                                   onClick={() => keycloak.login({redirectUri: 'https://' + FRONTEND_URL})}>Login</a>
-                                <a className={"button solid"}
-                                   onClick={() => keycloak.register({redirectUri: 'https://' + FRONTEND_URL})}>Sign
-                                    Up</a>
-                            </div>
-                        )}
-                    </div>
+                    <NavButtons/>
+                    <AuthButtons/>
+                </div>
+            </div>
+            <div id={"nav-content-mobile"}>
+                <Logo/>
+                <div className={"menu-button " + ((open) ? "closed" : "")} onClick={() => setOpen(!open)}>
+                    <IoMenu/>
+                </div>
+                <div onClick={() => setOpen(false)} className={"nav-menu " + ((open) ? "open" : "closed")}>
+                    <NavButtons closeButton/>
+                    <AuthButtons/>
                 </div>
             </div>
         </header>
