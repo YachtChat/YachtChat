@@ -63,22 +63,42 @@
       flex-shrink: 1;
       flex-grow: 1;
       width: 300px;
-      background: white;
       margin: 0.75rem;
       padding: 2rem;
       text-align: center;
       border-radius: $border_radius;
-      transition: transform 0.2s, opacity 0.2s;
+      transition: transform 0.2s, opacity 0.2s, color 0.2s;
+      background: $background_light;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          color: $accent_dark;
+          background: $background_dark;
+        }
+      }
 
       svg {
         display: block;
         margin: 1rem auto 2rem;
         font-size: 3rem;
+        transition: transform 0.2s, opacity 0.2s, color 0.3s;
       }
 
       &:hover {
         opacity: 1;
         transform: translateY(-5px) scale(1.01);
+
+        .insta {
+          color: red;
+        }
+
+        .linkedin {
+          color: #417efc;
+        }
+
+        .mail {
+          color: $accent-light;
+        }
       }
 
       label {
