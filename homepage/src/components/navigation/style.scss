@@ -11,7 +11,22 @@
   right: 0;
   display: block;
 
-  #nav-content {
+  .logo {
+    flex-grow: 0;
+    padding: 1rem 2rem;
+    width: 3rem;
+    height: 3rem;
+    filter: drop-shadow(0 0 0.5rem rgba(0, 0, 0, .7));
+    float: left;
+
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.15);
+    }
+  }
+
+  #nav-content-desktop {
     position: relative;
     width: 100%;
     display: flex;
@@ -22,56 +37,168 @@
     left: 0;
     right: 0;
     margin: 0;
-  }
 
-  #logo {
-    flex-grow: 0;
-    padding: 1rem 2rem;
-    width: 3rem;
-    height: 3rem;
-    filter: drop-shadow(0 0 0.5rem rgba(0, 0, 0, .7));
-
-    transition: transform 0.3s;
-
-    &:hover {
-      transform: scale(1.15);
-    }
-  }
-
-  #nav-items {
-    flex-grow: 0;
-    padding: 0;
-    height: auto;
-
-    a {
-      margin: 0 1rem;
+    .nav-items {
+      flex-grow: 0;
       padding: 0;
-      font-size: 0.9rem;
-      list-style: none;
-      color: $headline_2_light;
-      text-transform: uppercase;
+      height: auto;
 
-      font-weight: bold;
+      a {
+        margin: 0 1rem;
+        padding: 0;
+        font-size: 0.9rem;
+        list-style: none;
+        color: $headline_2_light;
+        text-transform: uppercase;
 
-      transition: opacity 0.3s;
+        font-weight: bold;
 
-      &:hover {
-        opacity: 0.5;
+        transition: opacity 0.3s;
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+    }
+
+    .authentification {
+      justify-self: right;
+      float: right;
+
+      padding-right: 2rem;
+      flex-grow: 3;
+
+      .buttons {
+        right: 0;
+        margin-right: 0;
+        float: right;
       }
     }
   }
 
-  #authentification {
-    justify-self: right;
-    float: right;
+  #nav-content-mobile {
+    position: relative;
+    width: 100%;
 
-    padding-right: 2rem;
-    flex-grow: 3;
-
-    .buttons {
+    .menu-button {
+      position: absolute;
       right: 0;
-      margin-right: 0;
+      top: 50%;
+      transform: translateY(50%);
+
+      padding: 0 2rem;
+      font-size: 2rem;
       float: right;
+
+      transition: transform 0.3s;
+
+      color: $headline_2_light;
+
+      &:hover {
+        transform: translateY(50%) scale(1.1);
+      }
+
+      &.closed {
+        transform: translateY(50%) translateX(200%);
+      }
+    }
+
+    .nav-menu {
+
+      position: absolute;
+      top: 0;
+
+      width: 100%;
+
+      .nav-items {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        a {
+          position: relative;
+          width: 100%;
+          padding: 2rem;
+          font-size: 5vh;
+          font-weight: bold;
+          transition: opacity 0.5s, transform 0.5s;
+          text-align: center;
+
+          color: $headline_light;
+          text-decoration: underline $accent-light;
+          text-decoration-width: 5px;
+
+          &:hover {
+            transform: translateX(10px);
+          }
+
+          &:active {
+            transform: translateX(50%);
+            opacity: 0.1;
+          }
+
+          &.close-button {
+            text-align: right;
+          }
+        }
+      }
+
+      &.closed {
+        height: 100vh;
+        transform: translateY(-100%);
+        transition: transform 1s 0.3s, background 1s 0.3s;
+
+        .nav-items {
+          a {
+            transform: translate(-30%);
+            opacity: 0;
+          }
+        }
+
+      }
+    }
+
+    .open {
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      transition: transform 1s, background 1s;
+
+    }
+
+    .authentification {
+      position: relative;
+      margin: 0 auto;
+      padding: 2rem;
+      overflow-y: auto;
+
+      .buttons {
+        margin: auto;
+        display: flex;
+        flex-direction: row;
+        justify-items: center;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+
+        .button {
+          padding: 1rem 2rem;
+          font-size: 3vh;
+          color: $headline_light;
+        }
+      }
+    }
+
+  }
+
+  @media only screen and (max-width: 1000px) {
+    #nav-content-desktop {
+      display: none;
+    }
+  }
+
+  @media only screen and (min-width: 1000px) {
+    #nav-content-mobile {
+      display: none;
     }
   }
 }
