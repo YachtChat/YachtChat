@@ -40,6 +40,19 @@ code {
     }
 }
 
+.dark {
+    display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .dark {
+        display: unset;
+    }
+    .light {
+        display: none;
+    }
+}
+
 .buttons {
     display: flex;
     flex-direction: row;
