@@ -3,6 +3,7 @@ import React from "react";
 import "./style.scss"
 import classNames from "classnames";
 import {Card} from "../usp/card";
+import {INSTA, LINKEDIN} from "../../util/config";
 
 export function Contact() {
     return (
@@ -20,16 +21,22 @@ export function Contact() {
 
                 <div className={classNames({"aboutCards": true})}>
                     <Card>
-                        <IoLogoLinkedin/>
-                        <label>Linkedin</label>
+                        <a href={LINKEDIN}>
+                            <IoLogoLinkedin className={"linkedin"}/>
+                            <label>Linkedin</label>
+                        </a>
                     </Card>
                     <Card>
-                        <IoMail/>
-                        <label>Mail</label>
+                        <a href={"mail://contact@yacht.chat"}>
+                            <IoMail className={"mail"}/>
+                            <label>Mail</label>
+                        </a>
                     </Card>
                     <Card>
-                        <IoLogoInstagram/>
-                        <label>Instagram</label>
+                        <a href={INSTA}>
+                            <IoLogoInstagram className={"insta"}/>
+                            <label>Instagram</label>
+                        </a>
                     </Card>
                 </div>
 
