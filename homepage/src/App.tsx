@@ -9,21 +9,24 @@ import {Scenarios} from "./components/scenarios";
 import {Tutorial} from "./components/tutorial";
 import {Usp} from "./components/usp";
 import {Contact} from "./components/contact";
+import {ParallaxProvider} from "react-scroll-parallax";
 
 
 function App() {
     return (
         <ReactKeycloakProvider authClient={auth} initOptions={{onLoad: "check-sso"}}>
+            <ParallaxProvider>
 
-            <div className="App">
-                <Navigation/>
-                <Landing/>
-                <About/>
-                <Scenarios/>
-                <Usp/>
-                <Tutorial/>
-                <Contact/>
-            </div>
+                <div className="App">
+                    <Navigation/>
+                    <Landing/>
+                    <About/>
+                    <Scenarios/>
+                    <Usp/>
+                    <Tutorial/>
+                    <Contact/>
+                </div>
+            </ParallaxProvider>
         </ReactKeycloakProvider>
     );
 }
