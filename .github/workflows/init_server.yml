@@ -35,8 +35,8 @@ jobs:
             sudo docker volume create vhost
             sudo docker volume create html
             sudo docker volume create keycloak_postgres_data
-            sudo doccker volume create spaces_postgres_data
-            sudo doccker volume create prometheus
+            sudo docker volume create spaces_postgres_data
+            sudo docker volume create prometheus
 
             cd /home/git_environment/NotZoom/
             sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose -f docker-compose-init.yml -f docker-compose-statistics.yml up -d
