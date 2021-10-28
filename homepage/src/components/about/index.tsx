@@ -13,9 +13,8 @@ export function About() {
                 </g>
             </svg>
             <div className={"contentWrapper"}>
-                <Parallax y={[-20, 20]}>
+                <Parallax className={"parallax"} y={[-20, 20]}>
                     <div className={"divider"}>
-
                         <div className={"content"}>
                             <h2>But what is Yacht?
                             </h2>

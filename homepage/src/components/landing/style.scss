@@ -24,7 +24,7 @@
   #intro {
     position: relative;
     height: 100vh;
-    z-index: 5;
+    z-index: 1;
 
     .background {
       width: 75vh;
@@ -35,7 +35,7 @@
       transform: translate(-30%, 30%);
       bottom: 0;
       margin-left: 0;
-      z-index: 5;
+      z-index: 1;
       position: relative;
 
       @media (prefers-color-scheme: dark) {
@@ -53,7 +53,7 @@
       box-sizing: border-box;
       padding: 2rem;
       color: black;
-      z-index: 9;
+      z-index: 3;
 
       @media (prefers-color-scheme: dark) {
         & {

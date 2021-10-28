@@ -35,22 +35,28 @@ code {
         z-index: 3;
     }
 
-    h1, h2, h3, a, p {
-        position: relative;
-    }
+  h1, h2, h3, a, p {
+    position: relative;
+  }
 }
 
 .dark {
-    display: none;
+  display: none;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 @media (prefers-color-scheme: dark) {
-    .dark {
-        display: unset;
-    }
-    .light {
-        display: none;
-    }
+  .dark {
+    display: unset;
+  }
+  .light {
+    display: none;
+  }
 }
 
 .buttons {

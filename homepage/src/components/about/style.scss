@@ -46,6 +46,10 @@
     }
   }
 
+  .parallax {
+    position: relative;
+  }
+
   .divider {
     position: relative;
     z-index: 100;
@@ -123,9 +127,38 @@
       @media only screen and (max-width: 770px) {
         h2, p {
           max-width: unset;
+          min-width: unset;
         }
       }
     }
+
+    @media only screen and (max-width: 770px) {
+      & {
+        border-radius: $border_radius;
+        box-sizing: border-box;
+        width: unset;
+        margin: 4rem 2rem;
+        height: auto;
+        max-height: unset;
+        display: block;
+        overflow: hidden;
+        min-width: unset;
+
+        .content {
+          position: relative;
+          transform: none;
+          margin: 0;
+          left: 0;
+          top: 0;
+          max-height: unset;
+          width: 100%;
+          padding: 2rem;
+          min-width: unset;
+          box-sizing: border-box;
+        }
+      }
+    }
+
   }
 
   .youtubeWrapper {

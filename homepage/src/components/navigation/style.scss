@@ -49,7 +49,7 @@
       padding: 0;
       height: auto;
 
-      a {
+      button {
         margin: 0 1rem;
         padding: 0;
         font-size: 0.9rem;
@@ -120,6 +120,9 @@
 
       position: absolute;
       top: 0;
+      height: 100vh;
+      overflow-y: hidden;
+      overflow-x: scroll;
 
       width: 100%;
 
@@ -128,7 +131,7 @@
         flex-direction: row;
         flex-wrap: wrap;
 
-        a {
+        button {
           position: relative;
           width: 100%;
           padding: 2rem;

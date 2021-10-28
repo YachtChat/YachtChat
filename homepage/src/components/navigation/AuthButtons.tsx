@@ -15,11 +15,13 @@ export function AuthButtons() {
                 </div>
             ) : (
                 <div className={"buttons"}>
-                    <a className={"button"}
-                       onClick={() => keycloak.login({redirectUri: 'https://' + FRONTEND_URL})}>Login</a>
-                    <a className={"button solid"}
-                       onClick={() => keycloak.register({redirectUri: 'https://' + FRONTEND_URL})}>Sign
-                        Up</a>
+                    <button className={"button"}
+                            onClick={() => keycloak.login({redirectUri: 'https://' + FRONTEND_URL})}>Login
+                    </button>
+                    <button className={"button solid"}
+                            onClick={() => keycloak.register({redirectUri: 'https://' + FRONTEND_URL})}>Sign
+                        Up
+                    </button>
                 </div>
             )}
         </div>
