@@ -1,4 +1,4 @@
-FROM node:alpine as build-deps
+FROM node:lts as build-deps
 #ARG REACT_APP_SIGNAL_PORT
 ARG REACT_APP_SIGNAL_URL
 ARG REACT_APP_SPACES_URL
