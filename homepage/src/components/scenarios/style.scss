@@ -169,20 +169,21 @@
             border-radius: 300px;
 
             color: black;
-            background: $accent_light_alpha_0-5;
+            background: rgba(255, 255, 255, 0.5);
+
+
+            p {
+              color: $button_font_light;
+              padding: 0 100px;
+              text-align: center;
+              transition: opacity 0.5s;
+            }
 
             @media (prefers-color-scheme: dark) {
               & {
                 color: white;
-                background: $accent_dark_alpha_0-5;
+                background: rgba(0, 0, 0, 0.5);
               }
-            }
-
-            p {
-              color: white;
-              padding: 0 100px;
-              text-align: center;
-              transition: opacity 0.5s;
             }
           }
 
