@@ -11,14 +11,14 @@ export function NavButtons(props: Props) {
     return (
         <nav className={"nav-items"}>
             {!!props.closeButton &&
-            <a className={"close-button"}><IoClose/></a>
+            <button className={"close-button"}><IoClose/></button>
             }
-            <a onClick={() => scrollTo("landing")}>Home</a>
-            <a onClick={() => scrollTo("about")}>About</a>
-            <a onClick={() => scrollTo("scenarios")}>Use cases</a>
-            <a onClick={() => scrollTo("usp")}>Why Yacht</a>
-            <a onClick={() => scrollTo("tutorial")}>How To</a>
-            <a onClick={() => scrollTo("contact")}>Contact</a>
+            <button onClick={() => scrollTo("landing")}>Home</button>
+            <button onClick={() => scrollTo("about")}>About</button>
+            <button onClick={() => scrollTo("scenarios")}>Use cases</button>
+            <button onClick={() => scrollTo("usp")}>Why Yacht</button>
+            <button onClick={() => scrollTo("tutorial")}>How To</button>
+            <button onClick={() => scrollTo("contact")}>Contact</button>
         </nav>
     )
 }

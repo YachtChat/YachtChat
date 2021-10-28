@@ -40,7 +40,8 @@ export function Contact() {
                     </Card>
                 </div>
 
-                <a>Legal</a>
+                <label>copyright 2021 by yacht.chat</label>
+                <button>Legal</button>
 
             </div>
         </div>

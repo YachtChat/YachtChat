@@ -171,7 +171,6 @@
             color: black;
             background: rgba(255, 255, 255, 0.5);
 
-
             p {
               color: $button_font_light;
               padding: 0 100px;
@@ -179,10 +178,35 @@
               transition: opacity 0.5s;
             }
 
+            @media only screen and (max-width: 600px) {
+              & {
+                width: 100%;
+                height: 100%;
+                transform: translateY(-50%) translateX(0);
+                padding: 2rem;
+                box-sizing: border-box;
+                position: absolute;
+                top: 50%;
+                margin-top: auto;
+                backdrop-filter: blur(4px);
+                margin-bottom: 0;
+                transition: opacity 0.7s ease-out;
+                border-radius: $border_radius;
+
+                p {
+                  padding: 0;
+                }
+              }
+            }
+
             @media (prefers-color-scheme: dark) {
               & {
                 color: white;
                 background: rgba(0, 0, 0, 0.5);
+
+                p {
+                  color: $button_font_dark;
+                }
               }
             }
           }
