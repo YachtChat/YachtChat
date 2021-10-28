@@ -19,7 +19,7 @@ export function Landing() {
             </div>
 
             <div id={"intro"}>
-                <Parallax className="custom-class" y={[-30, 30]} tagOuter="landing">
+                <Parallax className="custom-class" y={[-10, 10]} tagOuter="landing">
                     <div className={"contentWrapper"}>
                         <div className={"background"}/>
 

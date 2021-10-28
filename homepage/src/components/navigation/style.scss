@@ -119,11 +119,14 @@
     .nav-menu {
 
       position: absolute;
-      top: 0;
-      height: 100vh;
-      overflow-y: hidden;
-      overflow-x: scroll;
+      overflow-x: hidden;
+      overflow-y: auto;
+      display: block;
 
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
       width: 100%;
 
       .nav-items {

@@ -26,10 +26,16 @@ export const Navigation = (props: Props) => {
             </div>
             <div id={"nav-content-mobile"}>
                 <Logo/>
-                <div className={"menu-button " + ((open) ? "closed" : "")} onClick={() => setOpen(!open)}>
+                <div className={"menu-button " + ((open) ? "closed" : "")} onClick={() => {
+                    document.body.style.overflow = "hidden"
+                    setOpen(!open)
+                }}>
                     <IoMenu/>
                 </div>
-                <div onClick={() => setOpen(false)} className={"nav-menu " + ((open) ? "open" : "closed")}>
+                <div onClick={() => {
+                    setOpen(false)
+                    document.body.style.overflow = "unset"
+                }} className={"nav-menu " + ((open) ? "open" : "closed")}>
                     <NavButtons closeButton/>
                     <AuthButtons/>
                 </div>
