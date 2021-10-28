@@ -12,7 +12,7 @@ export interface ScenarioData {
 
 export const getSzenarios = (): ScenarioData[] => {
     return [{
-        name: "Collaboration",
+        name: "Virtual HQ",
         image: collaboration,
         text: [
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis metus vulputate enim pretium bibendum. Nulla erat neque, aliquet et turpis ac, placerat gravida nulla. Aliquam tempus, nisl vitae sollicitudin finibus, leo mi tincidunt leo, in pharetra leo ex sed tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi imperdiet diam id felis auctor ornare. Vivamus metus augue, blandit in maximus vitae, rhoncus id magna. Aliquam id tempus ipsum. Ut sollicitudin nulla nec eros vehicula, sed tempus enim venenatis."
@@ -20,7 +20,7 @@ export const getSzenarios = (): ScenarioData[] => {
         icon: <IoPeopleOutline/>
     },
         {
-            name: "Collaboration",
+            name: "Collaborative Sessions",
             image: collaboration,
             text: [
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis metus vulputate enim pretium bibendum. Nulla erat neque, aliquet et turpis ac, placerat gravida nulla. Aliquam tempus, nisl vitae sollicitudin finibus, leo mi tincidunt leo, in pharetra leo ex sed tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi imperdiet diam id felis auctor ornare. Vivamus metus augue, blandit in maximus vitae, rhoncus id magna. Aliquam id tempus ipsum. Ut sollicitudin nulla nec eros vehicula, sed tempus enim venenatis."
@@ -28,7 +28,7 @@ export const getSzenarios = (): ScenarioData[] => {
             icon: <IoPeopleOutline/>
         },
         {
-            name: "Collaboration",
+            name: "New employee",
             image: collaboration,
             text: [
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis metus vulputate enim pretium bibendum. Nulla erat neque, aliquet et turpis ac, placerat gravida nulla. Aliquam tempus, nisl vitae sollicitudin finibus, leo mi tincidunt leo, in pharetra leo ex sed tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi imperdiet diam id felis auctor ornare. Vivamus metus augue, blandit in maximus vitae, rhoncus id magna. Aliquam id tempus ipsum. Ut sollicitudin nulla nec eros vehicula, sed tempus enim venenatis."

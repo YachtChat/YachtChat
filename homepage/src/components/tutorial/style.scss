@@ -58,6 +58,12 @@
     padding: 1rem 0 0;
     text-align: center;
     margin: 0;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $accent_dark;
+      }
+    }
   }
 
   h2.subtitle {
@@ -66,6 +72,13 @@
     font-weight: normal;
     padding: 0;
     margin: 0 0 2rem;
+    color: black;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: white;
+      }
+    }
   }
 
   .list {
@@ -96,9 +109,18 @@
       transition: transform 0.2s;
 
       box-shadow: $shadow;
+      color: $button_font_dark;
 
       &:hover {
         transform: scale(1.01);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          box-shadow: $shadow_dark;
+          color: $button_font_dark;
+          background: $background_2_dark;
+        }
       }
 
       .itemIcon {
@@ -111,6 +133,11 @@
         font-size: 2rem;
         box-sizing: border-box;
 
+        @media (prefers-color-scheme: dark) {
+          & {
+            color: $accent_dark;
+          }
+        }
 
       }
 

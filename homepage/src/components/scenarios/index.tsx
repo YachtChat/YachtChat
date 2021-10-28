@@ -4,6 +4,8 @@ import {getSzenarios} from "../../util/szenarios";
 import {ScenarioNavigation} from "./scenarioNavigation";
 import {useSwipeable} from "react-swipeable";
 import {Scenario} from "./scenario";
+import {Separator} from "../separator";
+import {applicationName} from "../../util/config";
 
 interface Props {
 }
@@ -66,15 +68,12 @@ export function Scenarios(props: Props) {
     return (
         <div className="scenarios" id="scenarios">
             <div className={"backgroundBall"}/>
-            <svg className={"separator"} width="100%" height="100%" viewBox="0 0 1181 178" version="1.1"
-                 style={{fillRule: "evenodd", clipRule: "evenodd", strokeLinejoin: "round", strokeMiterlimit: 2}}>
-                <g transform="matrix(0.268213,0,0,0.268213,546.275,557.46)">
-                    <circle cx="168" cy="2233" r="4256" style={{fill: "white"}}/>
-                </g>
-            </svg>
+            <Separator/>
             <div {...handlers} className="contentWrapper">
-                <h1>Scenarios</h1>
-                <h2 className={"subtitle"}>See some examples where<br/>Yacht.Chat provides <i>most</i> value.</h2>
+                <h1>Use cases</h1>
+                <h2 className={"subtitle"}>
+                    See some examples where
+                    <br/>{applicationName} provides great value.</h2>
                 <div className="scenarioWindow">
                     <div className="scenarioWrapper" style={wrapperTransform}>
                         {scenarios.map((project, i) => (
