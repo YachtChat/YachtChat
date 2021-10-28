@@ -12,7 +12,7 @@ services:
       - /etc/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
 #      - /home/git_environment/NotZoom/keycloak/Prometheus/vhost.d/${PROMETHEUS_URL}:/etc/nginx/vhost.d/${PROMETHEUS_URL}
-#      - /etc/.htpasswd:/etc/.htpasswd
+      - /etc/.htpasswd:/etc/.htpasswd
     networks:
       - application
 
@@ -77,7 +77,11 @@ services:
 
 volumes:
   certs: { }
-  vhost: { }
+  vhost:
+    driver_opts:
+      type: none
+      device: /home/git_environment/NotZoom/keycloak/Prometheus/vhost.d
+      o: bind
   html: { }
   keycloak_postgres_data: { }
   spaces_postgres_data: { }
