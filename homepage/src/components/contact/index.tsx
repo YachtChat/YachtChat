@@ -4,7 +4,7 @@ import "./style.scss"
 import classNames from "classnames";
 import {Card} from "../card";
 import {EMAIL, INSTA, LINKEDIN} from "../../util/config";
-import Imprint from "../imprint";
+import {Imprint} from "../imprint";
 
 export function Contact() {
 
