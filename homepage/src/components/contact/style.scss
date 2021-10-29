@@ -110,7 +110,13 @@
         }
 
         .mail {
-          color: $accent-light;
+          color: $accent_dark;
+
+          @media (prefers-color-scheme: dark) {
+            & {
+              color: $accent_light;
+            }
+          }
         }
       }
 
@@ -127,4 +133,22 @@
     }
   }
 
+}
+
+#legal {
+  position: relative;
+  text-align: center;
+
+  label, button {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: $accent_light;
+    display: block;
+    margin: auto;
+  }
+
+  button:hover {
+    opacity: 0.5;
+  }
 }

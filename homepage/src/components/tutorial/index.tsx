@@ -25,7 +25,7 @@ export function Tutorial() {
                         <div className={"itemText"}>
                             After logging in, create a space.
                             You will instantly receive an invitation link to let others join.
-                            After joining you are a member and since you are now a member you can always return.
+                            After joining you are a member and can always return.
                             A space can be associated with an office or room. <i>Your</i> very own.
                         </div>
                     </div>
@@ -35,9 +35,9 @@ export function Tutorial() {
                             <div className={"animateicon"} id={"mouseicon"}><BiMouse/></div>
                         </div>
                         <div className={"itemText"}>
-                            After joining you will see the space in all its glory with all the active members.
+                            After joining you will see the space in all its glory with the active members.
                             Click or drag yourself somewhere you want to go.
-                            Easily mute yourself, get an overview over all members or share the screen with the control
+                            Easily mute yourself, get an overview over all members or share your screen with the control
                             bar on the left.
                         </div>
                     </div>
@@ -47,7 +47,7 @@ export function Tutorial() {
                             <div className={"animateicon"} id={"volumeicon"}><IoVolumeHigh/></div>
                         </div>
                         <div className={"itemText"}>
-                            Other members can only hear you when they are in your range - the blue halo around you.
+                            Other members can only hear you when they are in your range - the blue area around you.
                             You can quickly change the size of your range on the control bar.
                         </div>
                     </div>
