@@ -20,7 +20,9 @@ services:
       - LETSENCRYPT_HOST=${FRONTEND_URL}
     networks:
       - application
+
   homepage:
+    container_name: homepage
     build:
       context: ./homepage
       dockerfile: ./Dockerfile
