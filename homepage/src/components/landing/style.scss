@@ -26,6 +26,12 @@
     height: 100vh;
     z-index: 1;
 
+    .landing-parallax {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+
     .background {
       width: 75vh;
       height: 75vh;
@@ -36,7 +42,7 @@
       bottom: 0;
       margin-left: 0;
       z-index: 1;
-      position: relative;
+      position: absolute;
 
       @media (prefers-color-scheme: dark) {
         & {
@@ -94,7 +100,7 @@
       }
 
       img {
-        max-width: 40vh;
+        max-width: 35vh;
       }
     }
   }

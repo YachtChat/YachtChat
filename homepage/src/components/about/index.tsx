@@ -1,6 +1,7 @@
 import "./style.scss"
 import {Parallax} from "react-scroll-parallax";
 import Fade from "react-reveal/Fade";
+import {applicationName} from "../../util/config";
 
 export function About() {
     return (
@@ -13,13 +14,22 @@ export function About() {
                 </g>
             </svg>
             <div className={"contentWrapper"}>
-                <Parallax className={"parallax"} y={[-20, 20]}>
+                <Parallax className={"parallax"} y={[-10, 10]}>
                     <div className={"divider"}>
                         <div className={"content"}>
                             <h2>But what is Yacht?
                             </h2>
                             <p>
-                                {"Yacht.chat is a digital communication platform that enables real-time #collaboration for #remoteworking teams. Unlike existing communication solutions, Yacht allows each team member to move around freely in a virtual space and adjust their speaking radius. Conversations can thus easily emerge and adapt to team dynamics - comparable to working in an office. Yacht combines the collaborative working methods of an #office with the advantages of #remotework."}
+                                We present {applicationName} to you.{" "}
+                                {applicationName} is a digital communication platform that enables real-time
+                                collaboration for remotely working teams.{" "}
+                                Unlike existing communication solutions, {applicationName} allows each team member to
+                                move around freely in a virtual space and adjust their speaking radius.{" "}
+                                Conversations can emerge spontaneously and adapt to team dynamics.{" "}
+                                {applicationName} helps increase information exchange and lets team members feel like an
+                                team again.{" "}
+                                {applicationName} combines the collaborative working methods of an office with the
+                                advantages of remote work.{" "}
                             </p>
                         </div>
                     </div>

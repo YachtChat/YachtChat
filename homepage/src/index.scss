@@ -26,14 +26,14 @@ code {
 }
 
 .contentWrapper {
-    max-width: 100vh;
-    margin: auto;
-    bottom: 0;
-    z-index: 5;
+  max-width: 950px;
+  margin: auto;
+  bottom: 0;
+  z-index: 5;
 
-    div, h1, h2, h3, a, p {
-        z-index: 3;
-    }
+  div, h1, h2, h3, a, p {
+    z-index: 3;
+  }
 
   h1, h2, h3, a, p {
     position: relative;

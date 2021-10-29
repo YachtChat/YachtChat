@@ -3,7 +3,7 @@ import React from "react";
 import "./style.scss"
 import classNames from "classnames";
 import {Card} from "../card";
-import {INSTA, LINKEDIN} from "../../util/config";
+import {EMAIL, INSTA, LINKEDIN} from "../../util/config";
 
 export function Contact() {
     return (
@@ -27,7 +27,7 @@ export function Contact() {
                         </a>
                     </Card>
                     <Card>
-                        <a href={"mail://contact@yacht.chat"}>
+                        <a href={EMAIL}>
                             <IoMail className={"mail"}/>
                             <label>Mail</label>
                         </a>
