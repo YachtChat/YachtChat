@@ -56,6 +56,21 @@ jobs:
           key: ${{ secrets.KEY}}
         env:
           TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
+          
+      - name: build homepage when changed
+        if: contains(env.TEST_STATEMENT, 'homepage/')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo docker-compose build homepage
+            sudo docker-compose down homepage
+            sudo docker-compose up --no-deps -d homepage
+          host: ${{ secrets.HOST}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
       - name: build spaces-service when changed
         if: contains(env.TEST_STATEMENT, 'spaces-service/')
