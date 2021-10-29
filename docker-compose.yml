@@ -6,7 +6,7 @@ services:
       context: ./frontend
       dockerfile: ./Dockerfile
       args:
-        - REACT_APP_HOMEPAGE_URL=${WEBSOCKET_URL}
+        - REACT_APP_HOMEPAGE_URL=${HOMEPAGE_URL}
         - REACT_APP_SIGNAL_URL=${WEBSOCKET_URL}
         - REACT_APP_SIGNAL_PORT=${WEBSOCKET_PORT}
         - REACT_APP_SPACES_URL=${SPACES_URL}
