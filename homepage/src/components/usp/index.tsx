@@ -39,8 +39,7 @@ export function Usp() {
                         <IoBrush/>
                         <label>Easy to use and understand</label>
                         <p>
-                            Don't spend time why you do not hear your coworkers and talk to them as you walk to them
-                            with an beautiful and easy UI.
+                            At {applicationName}, everything revolves around our customers. In order to provide you with the best possible experience, we rely on a minimalistic yet highly appealing design. This makes {applicationName} intuitive for everyone to use.
                         </p>
                     </Card>
                     <Card>
