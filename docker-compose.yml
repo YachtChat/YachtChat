@@ -24,8 +24,8 @@ services:
   homepage:
     container_name: homepage
     build:
-      context: ./homepage
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./homepage/Dockerfile
       args:
         - REACT_APP_HOMEPAGE_URL=${HOMEPAGE_URL}
         - REACT_APP_AUTH_URL=${KEYCLOAK_URL}
