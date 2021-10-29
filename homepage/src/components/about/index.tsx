@@ -26,7 +26,7 @@ export function About() {
                                 Unlike existing communication solutions, {applicationName} allows each team member to
                                 move around freely in a virtual space and adjust their speaking radius.{" "}
                                 Conversations can emerge spontaneously and adapt to team dynamics.{" "}
-                                {applicationName} helps increase information exchange and lets team members feel like an
+                                {applicationName} helps increase information exchange and lets team members feel like a
                                 team again.{" "}
                                 {applicationName} combines the collaborative working methods of an office with the
                                 advantages of remote work.{" "}

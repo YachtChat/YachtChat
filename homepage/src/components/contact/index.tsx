@@ -1,11 +1,15 @@
 import {IoLogoInstagram, IoLogoLinkedin, IoMail} from "react-icons/all";
-import React from "react";
+import React, {useState} from "react";
 import "./style.scss"
 import classNames from "classnames";
 import {Card} from "../card";
 import {EMAIL, INSTA, LINKEDIN} from "../../util/config";
+import Imprint from "../imprint";
 
 export function Contact() {
+
+    const [legal, setLegal] = useState(false)
+
     return (
         <div id={"contact"}>
             <div className={"backgroundBall"}/>
@@ -27,22 +31,23 @@ export function Contact() {
                         </a>
                     </Card>
                     <Card>
-                        <a href={EMAIL}>
-                            <IoMail className={"mail"}/>
-                            <label>Mail</label>
-                        </a>
-                    </Card>
-                    <Card>
                         <a href={INSTA}>
                             <IoLogoInstagram className={"insta"}/>
                             <label>Instagram</label>
                         </a>
                     </Card>
+                    <Card>
+                        <a href={EMAIL}>
+                            <IoMail className={"mail"}/>
+                            <label>Mail</label>
+                        </a>
+                    </Card>
                 </div>
-
+            </div>
+            <div id={"legal"}>
                 <label>copyright 2021 by yacht.chat</label>
-                <button>Legal</button>
-
+                <button onClick={() => setLegal(true)}>Legal</button>
+                <Imprint visible={legal} onClick={() => setLegal(false)}/>
             </div>
         </div>
     )

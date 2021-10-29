@@ -21,8 +21,8 @@ export const getSzenarios = (): ScenarioData[] => {
             name: "Coffee break sessions",
             image: coffee,
             text: [
-                "Sometimes when working remote some of the more informal exchanges gets lost. " +
-                "Meetings get often more official and scheduled." +
+                "When working remotely some of the more informal exchanges get lost. " +
+                "Meetings are often more official and scheduled. " +
                 "Additionally, when using traditional video conferencing tools only one person at a time can talk. " +
                 applicationName + " promotes dynamic exchange - spontaneously bump into anyone in a space and talk to them. " +
                 "Just like in a hallway or coffee kitchen."
@@ -33,10 +33,8 @@ export const getSzenarios = (): ScenarioData[] => {
             name: "Virtual HQ",
             image: virtualhq,
             text: [
-                "The whole team at home. " +
-                applicationName + " creates an office atmosphere and accompanies you and your team during the working day. " +
-                "The whole team at home. " +
-                "Yacht creates an office atmosphere and accompanies you and your team during the working day. " +
+                "Bring the whole team home. " +
+                applicationName + " creates an office atmosphere and accompanies you and your team during your day. " +
                 "Enter " + applicationName + " at the beginning of your working day, have spontaneous conversations, approach each other and finally collaborate like in the office again."
             ],
             icon: <IoLaptopOutline/>
@@ -45,7 +43,7 @@ export const getSzenarios = (): ScenarioData[] => {
             name: "Collaborative Sessions",
             image: collaboration,
             text: [
-                "No matter if work on a project together or just a specific task that needs consultation – " + applicationName + " will provide you with the necessary tools to shape a productive and creative working environment. " +
+                "No matter if you work on a project together or just a specific task that needs consultation – " + applicationName + " will provide you with the necessary tools to shape a productive and creative working environment. " +
                 "Speak to each other when you need to work on something simultaneously or split up into subgroups when you need to focus on a task by yourself and find back as soon as you need to."
             ],
             icon: <IoPeopleOutline/>
@@ -68,7 +66,7 @@ export const getSzenarios = (): ScenarioData[] => {
             text: [
                 "Due to the unique capabilty of dynamically adapting your speaking range, different members can model their role in a space. " +
                 "When a person presents something the speaking range can be maximized to reach a big number of people, " +
-                "and minimized on the other hand when having a private question or discussion about the presentation content. " +
+                "and minimized when having a private question or discussion about the presentation content. " +
                 "Workgroups can be formed in productivity phases and easily merge back together when presenting something."
             ],
             icon: <IoEaselOutline/>
