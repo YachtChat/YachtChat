@@ -216,12 +216,17 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             transform: scale(0.95) translateY(5%);
             user-select: none;
-            transition: width 0.2s, height 0.2s;
+            transition: transform 0.2s, opacity 0.2s;
 
             @media (prefers-color-scheme: dark) {
               & {
                 box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
               }
+            }
+
+            &:hover {
+              opacity: 0.5;
+              transform: scale(0.97) translateY(5%);
             }
 
             .titleSheet .buttons {

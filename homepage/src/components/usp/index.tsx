@@ -28,7 +28,7 @@ export function Usp() {
                     </Card>
                     <Card>
                         <IoMdClock/>
-                        <label>Save time</label>
+                        <label>Saves time</label>
                         <p>
                             With {applicationName} you can simply talk to anybody in a room.
                             Don't waste time making appointments and writing messages with your teammates and just talk
@@ -47,8 +47,9 @@ export function Usp() {
                         <label>Privacy at its core</label>
                         <p>
                             {applicationName} is a solution build in germany with privacy in mind from the beginning.
-                            Every media connection is based on the peer-to-peer principle, we store as little as
-                            possible data on our servers.
+                            Every media connection is encrypted and based on the peer-to-peer principle and we store as
+                            little data as
+                            possible on our servers.
                         </p>
                     </Card>
                 </div>

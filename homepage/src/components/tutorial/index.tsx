@@ -35,7 +35,7 @@ export function Tutorial() {
                             <div className={"animateicon"} id={"mouseicon"}><BiMouse/></div>
                         </div>
                         <div className={"itemText"}>
-                            After joining you will see the space in all its glory with all the active members..
+                            After joining you will see the space in all its glory with all the active members.
                             Click or drag yourself somewhere you want to go.
                             Easily mute yourself, get an overview over all members or share the screen with the control
                             bar on the left.

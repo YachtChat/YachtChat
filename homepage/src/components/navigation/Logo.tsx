@@ -1,12 +1,16 @@
 export function Logo() {
+
+    const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({behavior: 'smooth'})
+
     return (
-        <svg className={"logo"} width="100%" height="100%" viewBox="0 0 2796 2796" style={{
-            fillRule: "evenodd",
-            clipRule: "evenodd",
-            strokeLinecap: "round",
-            strokeLinejoin: "round",
-            //strokeMiterlimit: "1.5"
-        }}>
+        <svg onClick={() => scrollTo("landing")} className={"logo"} width="100%" height="100%" viewBox="0 0 2796 2796"
+             style={{
+                 fillRule: "evenodd",
+                 clipRule: "evenodd",
+                 strokeLinecap: "round",
+                 strokeLinejoin: "round",
+                 //strokeMiterlimit: "1.5"
+             }}>
 
             <g transform="matrix(1,0,0,1,-355,-196)">
                 <g id="V6_light" transform="matrix(1,0,0,1,513.78,0)">

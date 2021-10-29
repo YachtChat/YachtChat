@@ -5,7 +5,6 @@ import Yacht_Dark from "../../rsc/yacht_font_white.png"
 import {IoArrowForward, IoLogoInstagram, IoLogoLinkedin, IoLogoTiktok} from "react-icons/all";
 import {useKeycloak} from "@react-keycloak/web";
 import {FRONTEND_URL, INSTA, LINKEDIN, TIKTOK} from "../../util/config";
-import {Parallax} from "react-scroll-parallax";
 
 export function Landing() {
     const {keycloak} = useKeycloak()
@@ -19,34 +18,32 @@ export function Landing() {
             </div>
 
             <div id={"intro"}>
-                <Parallax className="custom-class" y={[-10, 10]} tagOuter="landing">
-                    <div className={"contentWrapper"}>
-                        <div className={"background"}/>
+                <div className={"contentWrapper"}>
+                    <div className={"background"}/>
 
-                        <div className={"content"}>
+                    <div className={"content"}>
 
-                            <img className={"light"} alt={"yacht.chat"} src={Yacht}/>
-                            <img className={"dark"} alt={"yacht.chat"} src={Yacht_Dark}/>
-                            <div className={"headings"}>
-                                <h2>Bring your team home.</h2>
-                                <h2 className={"subheading"}>With the future of communication.</h2>
-                            </div>
+                        <img className={"light"} alt={"yacht.chat"} src={Yacht}/>
+                        <img className={"dark"} alt={"yacht.chat"} src={Yacht_Dark}/>
+                        <div className={"headings"}>
+                            <h2>Bring your team home.</h2>
+                            <h2 className={"subheading"}>With the future of communication.</h2>
+                        </div>
 
-                            <div className={"button"}
-                                 onClick={() => keycloak.login({redirectUri: "https://" + FRONTEND_URL})}>Join a new way
-                                of
-                                working <IoArrowForward/></div>
+                        <div className={"button"}
+                             onClick={() => keycloak.login({redirectUri: "https://" + FRONTEND_URL})}>Join a new way
+                            of
+                            working <IoArrowForward/></div>
 
-                            <br/>
+                        <br/>
 
-                            <div className={"links"}>
-                                <a href={INSTA}><IoLogoInstagram/></a>
-                                <a href={LINKEDIN}><IoLogoLinkedin/></a>
-                                <a href={TIKTOK}><IoLogoTiktok/></a>
-                            </div>
+                        <div className={"links"}>
+                            <a href={INSTA}><IoLogoInstagram/></a>
+                            <a href={LINKEDIN}><IoLogoLinkedin/></a>
+                            <a href={TIKTOK}><IoLogoTiktok/></a>
                         </div>
                     </div>
-                </Parallax>
+                </div>
             </div>
         </div>
     )
