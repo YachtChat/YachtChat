@@ -1,4 +1,6 @@
 export function Privacy() {
+
+    // https://www.gdprprivacypolicy.net/download.php?lang=en&token=aFbUYorWEjNBJ5G93JdxLFXvZl6B2ssC#
     return (
         <div id={"privacy"}>
             <h1>Privacy Policy for Yacht.Chat</h1>
