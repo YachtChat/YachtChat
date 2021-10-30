@@ -14,7 +14,10 @@ import {ParallaxProvider} from "react-scroll-parallax";
 
 function App() {
     return (
-        <ReactKeycloakProvider authClient={auth} initOptions={{onLoad: "check-sso"}}>
+        <ReactKeycloakProvider authClient={auth} initOptions={{
+            onLoad: "check-sso",
+            silentCheckSsoRedirectUri: window.location.origin
+        }}>
             <ParallaxProvider>
 
                 <div className="App">

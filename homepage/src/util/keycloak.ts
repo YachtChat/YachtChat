@@ -11,6 +11,6 @@ export const auth = Keycloak(
 
 export const login = () => {
     auth.login({
-        redirectUri: FRONTEND_URL
+        redirectUri: "https://" + FRONTEND_URL
     })
 }
