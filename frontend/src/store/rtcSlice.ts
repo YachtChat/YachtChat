@@ -345,11 +345,8 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                 };
 
                 rtcConnections[userId].ontrack = (event: RTCTrackEvent) => {
-                    //console.log(`On track event handler of ${localClient} triggered with streams:`);
-                    //console.dir(event.streams);
                     streams[userId] = event.streams[0]
                     dispatch(gotRemoteStream(userId));
-                    //console.log("I HAVE A TRACK");
                 }
 
                 rtcConnections[userId].onicegatheringstatechange = (event) => {
@@ -385,7 +382,7 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                     dispatch(handleError("Could not access media."))
                     return
                 }
-                // todo maybe do not send the stream until the connection is established
+
                 getStream(getState(), localClient)!.getTracks().forEach(track => {
                     rtpSender[userId][track.kind] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
@@ -395,7 +392,15 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
     }
 }
 
+function waitForRtcConnectionElement(id: string){
+    if(typeof rtcConnections[id] !== "undefined")return;
+    else {
+        setTimeout(waitForRtcConnectionElement, 250);
+    }
+}
+
 export const handleCandidate = (candidate: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
+    waitForRtcConnectionElement(fromId)
     rtcConnections[fromId].addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e.stack));
     let connection_type = new RTCIceCandidate(candidate)
     if (connection_type.type !== null) {
@@ -420,6 +425,7 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
     //console.log("Start handleSdp with description:");
     //console.dir(description);
     if (!!description) {
+        waitForRtcConnectionElement(fromId);
         const clientId: string = getUserID(getState());
 
         //console.log(clientId, ' Receive sdp from ', fromId);
@@ -430,6 +436,7 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
         // here we get the description from the caller and set them to our remoteDescription
         // maybe here not create the RTCSesseionDescription with the whole description but just with description.sdp
         // TODO: Should we not already set out track to the connection here
+        // it happens sometimes that rtcConnections[fromId] does not already exist here
         rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))
             .then(() => {
                  // TODO why description type offer here?
