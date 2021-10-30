@@ -1,4 +1,4 @@
-FROM node:alpine as build-deps
+FROM node:lts-alpine as build-deps
 #ARG REACT_APP_SIGNAL_PORT
 ARG REACT_APP_AUTH_URL
 ARG REACT_APP_FRONTEND_URL
@@ -18,4 +18,4 @@ FROM nginx:alpine
 
 WORKDIR /src
 COPY ./homepage/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build-deps /src/build /usr/share/nginx/html
+COPY --from=build-deps /homepage/build /usr/share/nginx/html
