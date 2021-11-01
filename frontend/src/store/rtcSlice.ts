@@ -16,7 +16,7 @@ import {resetPlayground} from "./playgroundSlice";
 import {requestSpaces, returnHome} from "./spaceSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./models";
-import {applyVirtualBackground} from "./utils";
+import {applyVirtualBackground, stopAllVideoEffects} from "./utils";
 
 interface RTCState {
     muted: boolean
@@ -27,7 +27,8 @@ interface RTCState {
     selected: {
         camera?: string,
         speaker?: string,
-        microphone?: string
+        microphone?: string,
+        virtualBackground?: string
     }
     screen: boolean
     mediaChangeOngoing: boolean
@@ -47,6 +48,7 @@ const initialState: RTCState = {
         camera: (!!localStorage.getItem("camera")) ? localStorage.getItem("camera")! : undefined,
         microphone: (!!localStorage.getItem("microphone")) ? localStorage.getItem("microphone")! : undefined,
         speaker: (!!localStorage.getItem("speaker")) ? localStorage.getItem("speaker")! : undefined,
+        virtualBackground: (!!localStorage.getItem("virtualBackground")) ? localStorage.getItem("virtualBackground")! : "blur",
     }
 };
 
@@ -97,6 +99,14 @@ export const rtcSlice = createSlice({
             localStorage.setItem("speaker", action.payload)
 
         },
+        setVirtualBackground: (state, action: PayloadAction<string | undefined>) => {
+            state.selected.virtualBackground = action.payload
+
+            if (!!action.payload)
+                localStorage.setItem("virtualBackground", action.payload)
+            else
+                localStorage.removeItem("virtualBackground")
+        },
         setUserMedia: (state, action: PayloadAction<boolean>) => {
             state.userMedia = action.payload
         },
@@ -120,6 +130,7 @@ export const {
     setCamera,
     setMicrophone,
     setSpeaker,
+    setVirtualBackground,
     setMediaChangeOngoing,
     setUserMedia,
     turnOnVideo,
@@ -158,7 +169,7 @@ export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatc
 export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch, getState) => {
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
-        localStream = e
+        localStream = applyVirtualBackground(e, getState().rtc.selected.virtualBackground)
 
         dispatch(gotRemoteStream(localClient))
         dispatch(loadAllMediaDevices())
@@ -223,6 +234,8 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
         // replace streams
         dispatch(setMediaChangeOngoing(true))
         dispatch(handleInputChange('video'))
+
+        stopAllVideoEffects()
 
         // Inform others about media event
         dispatch(send({'type': 'media', 'media': 'video', 'event': state.rtc.video}))
@@ -501,6 +514,8 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
     rtcConnections = {}
     rtpSender = {}
 
+    stopAllVideoEffects()
+
     dispatch(turnOnVideo())
     dispatch(turnOnAudio())
     dispatch(forgetUsers())
@@ -523,6 +538,12 @@ export const changeAudioInput = (microphone: string): AppThunk => (dispatch, get
 
 }
 
+export const changeVirtualBackground = (background: string): AppThunk => (dispatch, getState) => {
+    dispatch(setMediaChangeOngoing(true))
+    dispatch(setVirtualBackground(background))
+    dispatch(handleInputChange("video"))
+}
+
 export const handleInputChange = (type?: string): AppThunk => (dispatch, getState) => {
     const state = getState()
     const localClient = getUserID(state)
@@ -533,7 +554,7 @@ export const handleInputChange = (type?: string): AppThunk => (dispatch, getStat
 
     navigator.mediaDevices.getUserMedia(getMediaConstrains(state, (replaceAllTracks) ? undefined : type)).then((e) => {
         // If type is not set or no localStream available reset the whole stream object
-        localStream = applyVirtualBackground(true, e)
+        localStream = applyVirtualBackground(e, state.rtc.selected.virtualBackground)
         dispatch(setMediaChangeOngoing(false))
         getStream(state, localClient)!.getTracks().forEach(s => {
             // replace only stream of type and only if the video/audio aint muted

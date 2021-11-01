@@ -6,6 +6,7 @@ import {
     changeAudioInput,
     changeAudioOutput,
     changeVideoInput,
+    changeVirtualBackground,
     getCamera,
     getFreshMediaStream,
     getMediaDevices,
@@ -27,11 +28,12 @@ interface Props {
     microphone: string
     camera: string
     speaker: string
-    virtualBackground: boolean
+    virtualBackground: string | undefined
     mediaChangeOngoing: boolean
     changeVideoInput: (camera: string) => void
     changeAudioOutput: (speaker: string) => void
     changeAudioInput: (microphone: string) => void
+    changeVirtualBackground: (background: string) => void
     requestUserMedia: () => void
     getStream: () => Promise<MediaStream>
 }
@@ -43,7 +45,7 @@ export class MediaSettings extends Component<Props> {
     componentDidMount() {
         this.props.loadMedia()
         this.props.getStream().then(stream => {
-            this.stream = stream
+            this.stream = applyVirtualBackground(stream, this.props.virtualBackground)
             this.forceUpdate()
         })
     }
@@ -54,11 +56,12 @@ export class MediaSettings extends Component<Props> {
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        if (this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing && prevProps.camera !== this.props.camera) {
+        if (this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing &&
+            (prevProps.camera !== this.props.camera || prevProps.virtualBackground !== this.props.virtualBackground)) {
             this.props.getStream().then(stream => {
                 if (this.stream)
                     this.stream.getTracks().forEach(t => t.stop())
-                this.stream = applyVirtualBackground(this.props.virtualBackground, stream)
+                this.stream = applyVirtualBackground(stream, this.props.virtualBackground)
                 this.forceUpdate()
             })
         }
@@ -83,6 +86,8 @@ export class MediaSettings extends Component<Props> {
             </div>)
         }
 
+        const virtualBackgrounds = ["blur", "none"]
+
         return (
             <div className={"mediaSettings"}>
                 <div className={"videoPreview"}>
@@ -104,6 +109,25 @@ export class MediaSettings extends Component<Props> {
                             {this.props.cameras.map(c => (
                                 <option key={c} value={c}>
                                     {mediaDevices[c].label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                }
+                {this.props.cameras.length !== 0 &&
+                <div className={"settings-item"}>
+                    <label>
+                        Virtual Background
+                    </label>
+                    <div className="dropdown">
+                        {/*<label htmlFor="spaces">Choose a Space:</label>*/}
+                        <select value={this.props.virtualBackground}
+                                onChange={({target: {value}}) => this.props.changeVirtualBackground(value)}
+                                className="audiodevices" name="audiodevices">
+                            {virtualBackgrounds.map(c => (
+                                <option key={c} value={c}>
+                                    {c[0].toUpperCase() + c.slice(1)}
                                 </option>
                             ))}
                         </select>
@@ -162,7 +186,7 @@ const mapStateToProps = (state: RootState) => ({
     microphone: getMicrophone(state),
     camera: getCamera(state),
     speaker: getSpeaker(state),
-    virtualBackground: true,
+    virtualBackground: state.rtc.selected.virtualBackground,
     getStream: () => getFreshMediaStream(state),
 })
 
@@ -171,6 +195,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     changeVideoInput: (camera: string) => dispatch(changeVideoInput(camera)),
     changeAudioOutput: (speaker: string) => dispatch(changeAudioOutput(speaker)),
     changeAudioInput: (microphone: string) => dispatch(changeAudioInput(microphone)),
+    changeVirtualBackground: (background: string) => dispatch(changeVirtualBackground(background)),
     requestUserMedia: () => dispatch(handleInputChange()),
 })
 
