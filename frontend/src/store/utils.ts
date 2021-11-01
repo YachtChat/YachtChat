@@ -9,6 +9,9 @@ import {
     VirtualBackgroundRenderer
 } from '@camera-processor/virtual-background';
 
+let camera_processor: CameraProcessor | undefined = undefined
+
+
 export function getCookie(cname: string) {
     const name = cname + "=";
     const decodedCookie = decodeURIComponent(document.cookie);
@@ -54,14 +57,16 @@ export function keycloakUserToUser(data: any, online: boolean, position?: UserCo
     }
 }
 
-export function applyVirtualBackground(enabled: boolean, stream: MediaStream) {
-    if (!enabled)
+export function applyVirtualBackground(stream: MediaStream, kind?: string, data?: any) {
+    window.alert(kind)
+    if (!kind || kind === "none" || stream.getVideoTracks().length === 0) {
+        stopAllVideoEffects()
         return stream
+    }
 
-    const camera_processor = new CameraProcessor(); // Instantiate framework object
-    camera_processor.setCameraStream(stream); // Set the camera stream from somewhere
+    camera_processor = new CameraProcessor(); // Instantiate framework object
+    camera_processor.setCameraStream(new MediaStream([stream.getVideoTracks()[0].clone()])); // Set the camera stream from somewhere
     camera_processor.start(); // Start the camera processor
-    camera_processor.freeCameraStream(true)
 
     // Add the segmentation analyzer
     const segmentation_analyzer = camera_processor.addAnalyzer(
@@ -76,10 +81,21 @@ export function applyVirtualBackground(enabled: boolean, stream: MediaStream) {
     const hostURL = process.env.PUBLIC_URL
     //const hostURL = "http://localhost"
 
-    // Set the virtual background settings
-    const image = new Image();
-    image.src = default_image; // Stream will freeze if this image is CORS protected
-    background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, image);
+    if (kind === "blur") {
+        // Set the virtual background settings
+        background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Filter, 'blur(10px)');
+        background_renderer.setRenderSettings({contourFilter: 'blur(4px)'});
+    } else if (kind === "color") {
+        background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Color, data);
+    } else if (kind === "image") {
+        const image = new Image()
+        image.src = URL.createObjectURL(data)
+        background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, image);
+    } else if (kind === "yacht") {
+        const image = new Image()
+        image.src = hostURL + "/rsc/background.jpg"
+        background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, image);
+    }
 
     // Load the model
     // modelPath is the path where you hosted the model's .tflite file
@@ -89,6 +105,22 @@ export function applyVirtualBackground(enabled: boolean, stream: MediaStream) {
         modulePath: hostURL + '/tflite/'
     });
 
-    return camera_processor.getOutputStream(); // Get the output stream and use it
+    const cam = camera_processor.getOutputStream()
 
+    const audioTracks = (stream.getAudioTracks().length === 0) ? [] : [stream.getAudioTracks()[0].clone()]
+
+    stream.getTracks().forEach(t => {
+        stream.removeTrack(t)
+        t.stop()
+    })
+
+    return new MediaStream([
+        ...audioTracks,
+        ...cam.getVideoTracks(),
+    ]); // Get the output stream and use it
+}
+
+export function stopAllVideoEffects() {
+    camera_processor?.freeCameraStream(true)
+    camera_processor?.stop()
 }

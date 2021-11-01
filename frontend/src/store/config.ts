@@ -13,10 +13,10 @@ export const applicationName: string = "Yacht Chat"
 
 export const complete_spaces_url: String = !SPACES_PORT ? "https://" + SPACES_URL : "http://" + SPACES_URL + ":" + SPACES_PORT
 
-export const rtcConfiguration = <RTCConfiguration>{
+export const rtcConfiguration = {
     iceTransportPolicy: "all",// set to "relay" to force TURN.
     iceServers: [{
-        urls: [ "stun:stun.yacht.chat" ]
+        urls: ["stun:stun.yacht.chat"]
     }, {
         username: "guest",
         credential: "password",
@@ -301,14 +301,14 @@ export const rtcConfiguration = <RTCConfiguration>{
             // "stun:stun.zadarma.com:3478",
             // "stun:stun.zadv.com:3478",
             // "stun:stun.zoiper.com:3478",
-            // "stun:stun1.faktortel.com.au:3478",
-            // "stun:stun1.l.google.com:19302",
-            // "stun:stun1.voiceeclipse.net:3478",
-            // "stun:stun2.l.google.com:19302",
-            // "stun:stun3.l.google.com:19302",
-            // "stun:stun4.l.google.com:19302",
-            // "stun:stunserver.org:3478"
-        //]
+    // "stun:stun1.faktortel.com.au:3478",
+    // "stun:stun1.l.google.com:19302",
+    // "stun:stun1.voiceeclipse.net:3478",
+    // "stun:stun2.l.google.com:19302",
+    // "stun:stun3.l.google.com:19302",
+    // "stun:stun4.l.google.com:19302",
+    // "stun:stunserver.org:3478"
+    //]
     //}
     // ]
-}
+} as RTCConfiguration
