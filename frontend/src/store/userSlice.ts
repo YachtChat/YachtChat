@@ -6,7 +6,7 @@ import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
 import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
 import {ACCOUNT_URL, complete_spaces_url} from "./config";
-import {keycloakUserToUser} from "./utils";
+import {keycloakUserToUser, playNotificationSound} from "./utils";
 import {handleError, handleSuccess} from "./statusSlice";
 
 interface UserState {
@@ -215,8 +215,12 @@ export const kickUser = (id: string, spaceID: string): AppThunk => (dispatch, ge
 
 // When a user sends a message
 export const handleMessage = (message: string, fromId: string): AppThunk => (dispatch, getState) => {
-    const user = getUserById(getState(), fromId)
+    const state = getState()
+    const isActiveUser = (getUserID(state) === fromId)
+    const user = getUserById(state, fromId)
     if (user) {
+        if (isActiveUser)
+            playNotificationSound()
         // Set message in order to display it
         dispatch(setMessage({message, id: fromId}))
         // After timeout message will be deleted

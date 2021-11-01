@@ -125,3 +125,7 @@ export function stopAllVideoEffects() {
     camera_processor?.freeCameraStream(true)
     camera_processor?.stop()
 }
+
+export function playNotificationSound() {
+    new Audio(process.env.PUBLIC_URL + "/rsc/notification.wav").play()
+}

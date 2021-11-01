@@ -48,7 +48,7 @@ const initialState: RTCState = {
         camera: (!!localStorage.getItem("camera")) ? localStorage.getItem("camera")! : undefined,
         microphone: (!!localStorage.getItem("microphone")) ? localStorage.getItem("microphone")! : undefined,
         speaker: (!!localStorage.getItem("speaker")) ? localStorage.getItem("speaker")! : undefined,
-        virtualBackground: (!!localStorage.getItem("virtualBackground")) ? localStorage.getItem("virtualBackground")! : "blur",
+        virtualBackground: (!!localStorage.getItem("virtualBackground")) ? localStorage.getItem("virtualBackground")! : "none",
     }
 };
 
