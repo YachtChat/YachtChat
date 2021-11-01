@@ -61,6 +61,7 @@ export function applyVirtualBackground(enabled: boolean, stream: MediaStream) {
     const camera_processor = new CameraProcessor(); // Instantiate framework object
     camera_processor.setCameraStream(stream); // Set the camera stream from somewhere
     camera_processor.start(); // Start the camera processor
+    camera_processor.freeCameraStream(true)
 
     // Add the segmentation analyzer
     const segmentation_analyzer = camera_processor.addAnalyzer(
@@ -71,17 +72,21 @@ export function applyVirtualBackground(enabled: boolean, stream: MediaStream) {
     // Add the virtual background renderer
     const background_renderer = camera_processor.addRenderer(new VirtualBackgroundRenderer(RENDER_PIPELINE._2D));
 
+
+    const hostURL = process.env.PUBLIC_URL
+    //const hostURL = "http://localhost"
+
     // Set the virtual background settings
     const image = new Image();
-    image.src = './yacht512.png'; // Stream will freeze if this image is CORS protected
+    image.src = default_image; // Stream will freeze if this image is CORS protected
     background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, image);
 
     // Load the model
     // modelPath is the path where you hosted the model's .tflite file
     // modulePath is the path where you hosted tflite-helper's module files
     segmentation_analyzer.loadModel({
-        modelPath: './tflite/models/selfie_segmentation.tflite',
-        modulePath: './tflite/'
+        modelPath: hostURL + '/tflite/models/selfie_segmentation.tflite',
+        modulePath: hostURL + '/tflite/'
     });
 
     return camera_processor.getOutputStream(); // Get the output stream and use it
