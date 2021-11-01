@@ -16,6 +16,7 @@ import {
 } from "../../store/rtcSlice";
 import {User} from "../../store/models";
 import VolumeIndicator from "./VolumeIndicator";
+import {applyVirtualBackground} from "../../store/utils";
 
 interface Props {
     user: User
@@ -26,6 +27,7 @@ interface Props {
     microphone: string
     camera: string
     speaker: string
+    virtualBackground: boolean
     mediaChangeOngoing: boolean
     changeVideoInput: (camera: string) => void
     changeAudioOutput: (speaker: string) => void
@@ -56,7 +58,7 @@ export class MediaSettings extends Component<Props> {
             this.props.getStream().then(stream => {
                 if (this.stream)
                     this.stream.getTracks().forEach(t => t.stop())
-                this.stream = stream
+                this.stream = applyVirtualBackground(this.props.virtualBackground, stream)
                 this.forceUpdate()
             })
         }
@@ -160,6 +162,7 @@ const mapStateToProps = (state: RootState) => ({
     microphone: getMicrophone(state),
     camera: getCamera(state),
     speaker: getSpeaker(state),
+    virtualBackground: true,
     getStream: () => getFreshMediaStream(state),
 })
 
