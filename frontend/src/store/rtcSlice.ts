@@ -16,6 +16,7 @@ import {resetPlayground} from "./playgroundSlice";
 import {requestSpaces, returnHome} from "./spaceSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./models";
+import {applyVirtualBackground} from "./utils";
 
 interface RTCState {
     muted: boolean
@@ -532,7 +533,7 @@ export const handleInputChange = (type?: string): AppThunk => (dispatch, getStat
 
     navigator.mediaDevices.getUserMedia(getMediaConstrains(state, (replaceAllTracks) ? undefined : type)).then((e) => {
         // If type is not set or no localStream available reset the whole stream object
-        localStream = e
+        localStream = applyVirtualBackground(true, e)
         dispatch(setMediaChangeOngoing(false))
         getStream(state, localClient)!.getTracks().forEach(s => {
             // replace only stream of type and only if the video/audio aint muted
