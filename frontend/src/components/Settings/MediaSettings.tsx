@@ -86,7 +86,7 @@ export class MediaSettings extends Component<Props> {
             </div>)
         }
 
-        const virtualBackgrounds = ["blur", "none"]
+        const virtualBackgrounds = ["blur", "yacht", "transparent", "none"]
 
         return (
             <div className={"mediaSettings"}>

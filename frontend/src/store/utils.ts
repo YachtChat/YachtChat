@@ -86,6 +86,8 @@ export function applyVirtualBackground(stream: MediaStream, kind?: string, data?
         background_renderer.setRenderSettings({contourFilter: 'blur(4px)'});
     } else if (kind === "color") {
         background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Color, data);
+    } else if (kind === "transparent") {
+        background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Transparent, data);
     } else if (kind === "image") {
         const image = new Image()
         image.src = URL.createObjectURL(data)
@@ -93,7 +95,7 @@ export function applyVirtualBackground(stream: MediaStream, kind?: string, data?
     } else if (kind === "yacht") {
         const image = new Image()
         image.src = hostURL + "/rsc/background.jpg"
-        background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, image);
+        background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Transparent, image);
     }
 
     // Load the model

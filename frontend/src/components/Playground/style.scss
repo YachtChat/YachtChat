@@ -162,7 +162,7 @@
         border-radius: 100%;
         overflow: hidden;
         background-size: cover;
-        background: gray;
+        // background: gray;
 
         &:active {
           cursor: grabbing;
@@ -184,11 +184,11 @@
     overflow: hidden;
     transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s;
 
-    background-color: $foreground_light;
+    //background-color: $foreground_light;
 
     @media (prefers-color-scheme: dark) {
       & {
-        background-color: $foreground_dark;
+        //background-color: $foreground_dark;
       }
     }
 
