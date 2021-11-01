@@ -58,7 +58,6 @@ export function keycloakUserToUser(data: any, online: boolean, position?: UserCo
 }
 
 export function applyVirtualBackground(stream: MediaStream, kind?: string, data?: any) {
-    window.alert(kind)
     if (!kind || kind === "none" || stream.getVideoTracks().length === 0) {
         stopAllVideoEffects()
         return stream

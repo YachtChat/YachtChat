@@ -217,6 +217,12 @@ export const mute = (): AppThunk => (dispatch, getState) => {
 }
 
 export const displayVideo = (): AppThunk => (dispatch, getState) => {
+    // If currently sharing screen --> interrupt
+    // Video and screen not at the same time
+    if (!getState().rtc.video && getState().rtc.screen) {
+        dispatch(shareScreen())
+    }
+
     dispatch(toggleVideo())
 
     const state = getState()
@@ -235,27 +241,33 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
         dispatch(setMediaChangeOngoing(true))
         dispatch(handleInputChange('video'))
 
-        stopAllVideoEffects()
-
-        // Inform others about media event
-        dispatch(send({'type': 'media', 'media': 'video', 'event': state.rtc.video}))
+        dispatch(updateRemoteVideoStatus())
     } else {
-        // disable streams if video disabled
-        getStream(state, userID)?.getVideoTracks()[0].stop()
+        dispatch(updateRemoteVideoStatus())
 
-        // Inform other users about media event
-        dispatch(send({'type': 'media', 'media': 'video', 'event': state.rtc.video}))
-
-        // Disable streams for every one
-        getOnlineUsers(state).forEach(u => {
-            Object.keys(rtpSender[u.id]).forEach(k => {
-                const rtp = rtpSender[u.id][k]
-                if (rtp.track && rtp.track.kind === 'video') {
-                    rtp.track.stop()
-                }
-            })
-        })
+        dispatch(stopVideo())
     }
+}
+
+export const stopVideo = (): AppThunk => (dispatch, getState) => {
+    const state = getState()
+    const userID = getUserID(state)
+
+    // Stop all video effects (otherwise camera will remain active)
+    stopAllVideoEffects()
+
+    // disable streams if video disabled
+    getStream(state, userID)?.getVideoTracks()[0].stop()
+
+    // Disable streams for every one
+    getOnlineUsers(state).forEach(u => {
+        Object.keys(rtpSender[u.id]).forEach(k => {
+            const rtp = rtpSender[u.id][k]
+            if (rtp.track && rtp.track.kind === 'video') {
+                rtp.track.stop()
+            }
+        })
+    })
 }
 
 export const shareScreen = (): AppThunk => (dispatch, getState) => {
@@ -275,6 +287,11 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 
             screenStream = stream
 
+            // If screen stream ends stop screen sharing
+            stream.getTracks().forEach(t => t.onended = () => {
+                dispatch(unshareScreen())
+            })
+
             // iterate over all user and replace my video stream with the stream of my screen.
             users.forEach(u => {
                 if (u.id === userID) return
@@ -284,6 +301,13 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
         }).catch((e) => {
             dispatch(handleError("Unable to share the screen", e))
         })
+
+        // If currently sharing video --> interrupt
+        // Video and screen not at the same time
+        if (state.rtc.video) {
+            dispatch(stopVideo())
+        }
+        dispatch(updateRemoteVideoStatus())
     } else {
         dispatch(unshareScreen())
     }
@@ -291,14 +315,31 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 
 // This will switch back to normal video and deinitialize the screen
 export const unshareScreen = (): AppThunk => (dispatch, getState) => {
-    // share the normal video again with each user
-    dispatch(handleInputChange('video'))
+    const state = getState()
 
     // end all streams
     screenStream?.getTracks().forEach(t => t.stop())
     screenStream = undefined
 
     dispatch(setScreen(false))
+
+    if (state.rtc.video) {
+        // share the normal video again with each user
+        dispatch(handleInputChange("video"))
+    }
+    dispatch(updateRemoteVideoStatus())
+}
+
+export const updateRemoteVideoStatus = (): AppThunk => (dispatch, getState) => {
+    const state = getState()
+    const video = state.rtc.video
+    const screen = state.rtc.screen
+
+    dispatch(send({
+        'type': 'media',
+        'media': 'video',
+        'event': (video || screen) && !!getStream(state, getUserID(state))
+    }))
 }
 
 // Function that will enable spatial audio to a given user
