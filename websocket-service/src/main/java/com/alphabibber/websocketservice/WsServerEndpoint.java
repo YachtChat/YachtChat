@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @ServerEndpoint(value = "/room/{roomID}", encoders = { LoginAnswerEncoder.class, NewUserAnswerEncoder.class,
         PositionAnswerEncoder.class, LeaveAnswerEncoder.class, SignalAnswerEncoder.class, MediaAnswerEncoder.class,
-        MessageEncoder.class, KickAnswerEncoder.class})
+        MessageEncoder.class, KickAnswerEncoder.class, ReconnectionEncoder.class})
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     Gson gson = new GsonBuilder().create();
@@ -36,6 +36,7 @@ public class WsServerEndpoint {
     private final MediaHandler mediaHandler = new MediaHandler();
     private final MessageHandler messageHandler = new MessageHandler();
     private final KickHandler kickHandler = new KickHandler();
+    private final ReconnectionHandler reconnectionHandler = new ReconnectionHandler();
 
     private final SpacesService spacesService = new SpacesService();
 
@@ -139,6 +140,16 @@ public class WsServerEndpoint {
                     userId = jsonObject.get("user_id").getAsString();
                     kickHandler.handleKick(room, roomId, sender, token, userId);
                     log.info("User {} was kicked by {} out of Space {}", userId, sender.getId(), roomId);
+                    break;
+                case "reconnect":
+                    if (! room.containsKey(session.getId())){
+                        log.warn("User tried to reconnect to another user while not being in a room");
+                        return;
+                    }
+                    sender = room.get(session.getId());
+                    userId = jsonObject.get("user_id").getAsString();
+                    reconnectionHandler.handleReconnection(roomMap.get(roomId), sender, room.get(userId));
+
                     break;
                 default:
                     log.warn("The {} type is not defined", type);
