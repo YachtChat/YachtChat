@@ -211,7 +211,7 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
     const isActiveUser = (getUserID(state) === fromId)
     const user = getUserById(state, fromId)
     if (user) {
-        if (isActiveUser)
+        if (!isActiveUser)
             playNotificationSound()
         // Set message in order to display it
         dispatch(setMessage({message, id: fromId}))
