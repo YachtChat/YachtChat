@@ -1,11 +1,11 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {connectToServer, send} from "./webSocketSlice";
+import {connectToServer, send, triggerReconnection} from "./webSocketSlice";
 import {rtcConfiguration} from "./config";
 import {
     forgetUsers,
     getOnlineUsers,
-    getUser,
+    getUser, getUserById,
     getUserID,
     gotRemoteStream,
     handlePositionUpdate,
@@ -311,7 +311,7 @@ export const unsendAudio = (id: string): AppThunk => (dispatch, getState) => {
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
 }
 
-export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, getState) => {
+export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppThunk => (dispatch, getState) => {
     // get client ids
     const clients = getOnlineUsers(getState()).map(k => k.id)
     const localClient: string = getUserID(getState())
@@ -359,7 +359,9 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                 // this event should get triggered after the tracks are added to the local stream and the client
                 // is ready to start sending the sdp offer
                 // on negotionneeded should only be part of the caller??
-                if (localClient === joinedUserId) {
+
+                // is Caller is false when undefined -> Should work
+                if (localClient === joinedUserId || isCaller) {
                     rtcConnections[userId].onnegotiationneeded = (event) => {
                         console.log(userId)
                         rtcConnections[userId].createOffer(offerOptions).then((description) => {
@@ -389,6 +391,14 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                 getStream(getState(), localClient)!.getTracks().forEach(track => {
                     rtpSender[userId][track.kind] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
+
+                // Reconnection functionality
+                if (localClient === joinedUserId || isCaller){
+                    setTimeout(() => {
+                        dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
+                        dispatch(triggerReconnection(getUserById(getState(), userId)));
+                    }, 5000);    
+                }
             }
         });
         dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position!}))

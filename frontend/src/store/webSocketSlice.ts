@@ -1,6 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
-import {UserCoordinates, UserPayload} from "./models";
+import {User, UserCoordinates, UserPayload} from "./models";
 import {
     getOnlineUsers,
     getUser,
@@ -96,6 +96,11 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
             case "new_user":
                 if (loggedIn) {
                     dispatch(handleSpaceUser(data));
+                }
+                break;
+            case "reconnection":
+                if (loggedIn){
+                    dispatch(handleSpaceUser(data))
                 }
                 break;
             case "leave":
@@ -222,5 +227,12 @@ export const handleLeave = (): AppThunk => (dispatch, getState) => {
     dispatch(disconnect())
     dispatch(leftRoom())
 }
+
+export const triggerReconnection = (target: User): AppThunk => (dispatch => {
+    dispatch(send({
+        type: "reconnection",
+        user_id: target.id
+    }))
+})
 
 export default webSocketSlice.reducer;

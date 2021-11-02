@@ -160,7 +160,7 @@ export const handleLoginUser = (user: UserPayload): AppThunk => (dispatch, getSt
 }
 
 // called when new user joins / including the activeUser in order to get user information for the user
-export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppThunk => (dispatch, getState) => {
+export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean, isCaller?: boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         // axios load user info
         axios.get("https://" + ACCOUNT_URL + "/account/" + user.id + "/", headers).then(response => {
@@ -176,7 +176,11 @@ export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean): AppT
                 if (getUser(getState()).id !== user.id) {
                     // TODO here the new_user case is treated exactly the same as the login case, however , there should
                     // be a callee and a caller.
-                    dispatch(handleRTCEvents(user.id));
+                    if (isCaller === undefined){
+                        dispatch(handleRTCEvents(user.id));
+                    } else {
+                        dispatch(handleRTCEvents(user.id, isCaller));
+                    }
                     dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
                 }
             }
