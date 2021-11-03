@@ -48,7 +48,7 @@ public class ReconnectionHandler {
         }
         try{
 //            waiting here might not be necessary
-            Thread.sleep(2000);
+            Thread.sleep(250);
         }catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
