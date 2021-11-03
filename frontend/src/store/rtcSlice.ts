@@ -397,8 +397,12 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                     setTimeout(() => {
                         //TODO later we need this if statement for testing reasons I excluded it here
                         // if(!getUserById(getState(), userId).userStream){
-                        dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
-                        dispatch(triggerReconnection(getUserById(getState(), userId)));
+
+                        // Check if user is still in the space
+                        if(getState().userState.spaceUsers[userId].online){
+                            dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
+                            dispatch(triggerReconnection(getUserById(getState(), userId)));
+                        }
                         // }
                     }, 5000);
                 }
