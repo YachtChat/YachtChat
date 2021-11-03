@@ -18,11 +18,17 @@ public class ReconnectionHandler {
      * then Handler tells sender that the target joined and tells the target that the sender joined
      * @param room
      * @param sender: the previous caller
-     * @param target: the previous callee
+     * @param userId: id of the previous callee
      */
-    public void handleReconnection(Map<String, User> room, User sender, User target){
-        LeaveAnswer answerToSender = new LeaveAnswer(target.getSession().getId());
-        LeaveAnswer answerToTarget = new LeaveAnswer(sender.getSession().getId());
+    public void handleReconnection(Map<String, User> room, User sender, String userId){
+
+        User target = null;
+        for (User u: room.values()){
+            if (u.getId().equals(userId)) target = u;
+        }
+
+        LeaveAnswer answerToSender = new LeaveAnswer(target.getId());
+        LeaveAnswer answerToTarget = new LeaveAnswer(sender.getId());
         synchronized (sender){
             try{
                 sender.getSession().getBasicRemote().sendObject(answerToSender);
@@ -42,13 +48,13 @@ public class ReconnectionHandler {
         }
         try{
 //            waiting here might not be necessary
-            Thread.sleep(500);
+            Thread.sleep(2000);
         }catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
 
-        ReconnectionAnswer reconnectionAnswerToSender = new ReconnectionAnswer(target.getSession().getId(), target.getPosition(), true);
-        ReconnectionAnswer reconnectionAnswerToTarget = new ReconnectionAnswer(sender.getSession().getId(), sender.getPosition(), false);
+        ReconnectionAnswer reconnectionAnswerToSender = new ReconnectionAnswer(target.getId(), target.getPosition(), true);
+        ReconnectionAnswer reconnectionAnswerToTarget = new ReconnectionAnswer(sender.getId(), sender.getPosition(), false);
 
         synchronized (sender){
             try{

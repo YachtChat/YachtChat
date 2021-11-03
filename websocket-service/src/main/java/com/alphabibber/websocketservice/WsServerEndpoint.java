@@ -141,15 +141,15 @@ public class WsServerEndpoint {
                     kickHandler.handleKick(room, roomId, sender, token, userId);
                     log.info("User {} was kicked by {} out of Space {}", userId, sender.getId(), roomId);
                     break;
-                case "reconnect":
+                case "reconnection":
                     if (! room.containsKey(session.getId())){
                         log.warn("User tried to reconnect to another user while not being in a room");
                         return;
                     }
                     sender = room.get(session.getId());
                     userId = jsonObject.get("user_id").getAsString();
-                    reconnectionHandler.handleReconnection(roomMap.get(roomId), sender, room.get(userId));
-
+                    reconnectionHandler.handleReconnection(roomMap.get(roomId), sender, userId);
+                    log.info("Reconnection between {} and {} was handled", sender.getId(), userId);
                     break;
                 default:
                     log.warn("The {} type is not defined", type);

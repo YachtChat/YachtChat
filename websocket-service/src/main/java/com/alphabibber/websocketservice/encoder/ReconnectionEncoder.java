@@ -11,7 +11,7 @@ import javax.websocket.EndpointConfig;
 
 public class ReconnectionEncoder implements Encoder.Text<ReconnectionAnswer> {
     // tell gson to just use field for serialization that are annotated
-    Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    Gson gson = new GsonBuilder().create();
 
     @Override
     public String encode(ReconnectionAnswer reconnectionAnswer) throws EncodeException {
