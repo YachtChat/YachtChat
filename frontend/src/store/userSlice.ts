@@ -160,16 +160,17 @@ export const handleLoginUser = (user: UserPayload): AppThunk => (dispatch, getSt
 }
 
 // called when new user joins / including the activeUser in order to get user information for the user
-export const handleSpaceUser = (user: UserPayload, isCaller?: boolean): AppThunk => (dispatch, getState) => {
+export const handleSpaceUser = (userId : string, position : UserCoordinates, isCaller? : boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         // axios load user info
-        axios.get("https://" + ACCOUNT_URL + "/account/" + user.id + "/", headers).then(response => {
-            dispatch(setUser(keycloakUserToUser(response.data, true, user?.position, true)))
+        axios.get("https://" + ACCOUNT_URL + "/account/" + userId + "/", headers).then(response => {
+            dispatch(setUser(keycloakUserToUser(response.data, true, position, true)))
             // if the user.id is ourselves skip the next steps
-            if (getUser(getState()).id !== user.id) {
+            if (getUser(getState()).id !== userId) {
                 // isCaller is true if this is a reconncetion and the local user was the previous caller
-                dispatch(handleRTCEvents(user.id, !!isCaller))
-                dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
+                // if isCaller is undefined it can be treated as false
+                dispatch(handleRTCEvents(userId, !!isCaller))
+                dispatch(handlePositionUpdate({id: userId, position: position}))
             }
         })
     )
