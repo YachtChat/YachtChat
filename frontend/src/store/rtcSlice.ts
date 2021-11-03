@@ -452,8 +452,19 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                     dispatch(handleError("Could not access media."))
                     return
                 }
+
+                let mediaStream = getStream(getState(), localClient)!
+
+                // if screen is beeing shared
+                if (getState().rtc.screen && screenStream) {
+                    mediaStream = new MediaStream([
+                        localStream!.getAudioTracks()[0],
+                        screenStream!.getVideoTracks()[0]
+                    ])
+                }
+
                 // todo maybe do not send the stream until the connection is established
-                getStream(getState(), localClient)!.getTracks().forEach(track => {
+                mediaStream.getTracks().forEach(track => {
                     rtpSender[userId][track.kind] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
 
