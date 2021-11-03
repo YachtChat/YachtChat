@@ -357,11 +357,10 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                     //console.log(event)
                 }
 
-                // this event should get triggered after the tracks are added to the local stream and the client
-                // is ready to start sending the sdp offer
-                // on negotionneeded should only be part of the caller??
-
-                // is Caller is false when undefined -> Should work
+                // onnegotiationneeded is called when a track is added to the RTPConncetion.
+                // Only the caller needs this eventlistener to send the offer
+                // the caller is either the user who recently joined the space or if this is a reconnection try, the user
+                // that was the previous caller.
                 if (localClient === joinedUserId || isCaller) {
                     rtcConnections[userId].onnegotiationneeded = (event) => {
                         console.log(userId)
@@ -373,7 +372,6 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                                     target_id: userId,
                                     content: {
                                         signal_type: 'sdp',
-                                        // TODO shouldn't this here be the localClient
                                         description: rtcConnections[userId].localDescription,
                                     }
                                 }));
