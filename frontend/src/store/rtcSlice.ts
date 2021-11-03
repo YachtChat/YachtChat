@@ -399,20 +399,16 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                         //TODO later we need this if statement for testing reasons I excluded it here
                         // if(!getUserById(getState(), userId).userStream){
 
-                        // Check if a spaceUser with that id still exist
+                        // This if statement only yields true if the peer is still in the space and I am still in the Space.
+                        // if this is true we want to try a reconnection.
                         if(getUserById(getState(), userId) !== undefined){
-                            // trigger reconnection when the user is still online and I am still online
-                            // the if statement below might not be necessary
-                            if(getUserById(getState(), userId).online && getUser(getState()).online){
-                                dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
-                                dispatch(triggerReconnection(getUserById(getState(), userId)));
-                            }
+                            dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
+                            dispatch(triggerReconnection(getUserById(getState(), userId)));
                         }
                         // delete the old timer
-                        delete connectionTimer[userId]
+                        delete connectionTimer[userId];
                     }, 3000);
                     connectionTimer[userId] = timer;
-
                 }
             }
         });
