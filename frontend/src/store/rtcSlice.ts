@@ -55,6 +55,7 @@ let localStream: MediaStream | undefined = undefined // local video and audio
 let screenStream: MediaStream | undefined = undefined // stream of the display video when shared
 let streams: { [key: string]: MediaStream } = {}; // incoming streams of the other users
 let mediaDevices: { [key: string]: MediaDeviceInfo } = {}; // media devices
+let connectionTimer: {[key: string]: number} = {}; // Connection retry timer
 
 const offerOptions = {
     offerToReceiveVideo: true,
@@ -394,17 +395,24 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
 
                 // Reconnection functionality
                 if (localClient === joinedUserId || isCaller){
-                    setTimeout(() => {
+                    var timer = setTimeout(() => {
                         //TODO later we need this if statement for testing reasons I excluded it here
                         // if(!getUserById(getState(), userId).userStream){
 
-                        // Check if user is still in the space
-                        if(getState().userState.spaceUsers[userId].online){
-                            dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
-                            dispatch(triggerReconnection(getUserById(getState(), userId)));
+                        // Check if a spaceUser with that id still exist
+                        if(getUserById(getState(), userId) !== undefined){
+                            // trigger reconnection when the user is still online and I am still online
+                            // the if statement below might not be necessary
+                            if(getUserById(getState(), userId).online && getUser(getState()).online){
+                                dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
+                                dispatch(triggerReconnection(getUserById(getState(), userId)));
+                            }
                         }
-                        // }
-                    }, 5000);
+                        // delete the old timer
+                        delete connectionTimer[userId]
+                    }, 3000);
+                    connectionTimer[userId] = timer;
+
                 }
             }
         });
@@ -475,6 +483,11 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
     rtcConnections[id].close()
     delete rtcConnections[id]
     dispatch(setUserOffline(id))
+    // clear potential timer which was set up for the user that just left
+    if (connectionTimer[id]){
+        clearTimeout(connectionTimer[id]);
+        delete connectionTimer[id];
+    }
 }
 
 export const destroySession = (): AppThunk => (dispatch, getState) => {
@@ -482,6 +495,13 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
 
     screenStream?.getTracks().forEach(t => t.stop())
     dispatch(setScreen(false))
+    // dispatch(setUser({...getUser(getState()), online: false}))
+
+    // clear all timer when we are leaving the space
+    Object.keys(connectionTimer).forEach(userId => {
+        clearTimeout(connectionTimer[userId]);
+    });
+    connectionTimer = {};
 
     Object.keys(streams).forEach(k => {
         getStream(getState(), k)!.getTracks().forEach(t => {
