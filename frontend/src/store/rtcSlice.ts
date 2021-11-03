@@ -17,6 +17,7 @@ import {requestSpaces, returnHome} from "./spaceSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./models";
 import {applyVirtualBackground, stopAllVideoEffects} from "./utils";
+import CameraProcessor from "camera-processor";
 
 interface RTCState {
     muted: boolean
@@ -55,6 +56,7 @@ const initialState: RTCState = {
 let rtcConnections: { [key: string]: RTCPeerConnection } = {}; // the connection to handle the connection to the other peer
 let rtpSender: { [key: string]: { [key: string]: RTCRtpSender } } = {}; // rtc object that handles stream transmission
 let localStream: MediaStream | undefined = undefined // local video and audio
+let camera_processor: CameraProcessor | undefined = undefined // if virtual background is applied
 let screenStream: MediaStream | undefined = undefined // stream of the display video when shared
 let streams: { [key: string]: MediaStream } = {}; // incoming streams of the other users
 let mediaDevices: { [key: string]: MediaDeviceInfo } = {}; // media devices
@@ -170,7 +172,9 @@ export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatc
 export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch, getState) => {
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
-        localStream = applyVirtualBackground(e, getState().rtc.selected.virtualBackground)
+        const [ls, cp] = applyVirtualBackground(e, getState().rtc.selected.virtualBackground, camera_processor)
+        localStream = ls
+        camera_processor = cp
 
         dispatch(gotRemoteStream(localClient))
         dispatch(loadAllMediaDevices())
@@ -339,7 +343,7 @@ export const updateRemoteVideoStatus = (): AppThunk => (dispatch, getState) => {
     dispatch(send({
         'type': 'media',
         'media': 'video',
-        'event': (video || screen) && !!getStream(state, getUserID(state))
+        'event': ((video || screen) && !!getStream(state, getUserID(state)))
     }))
 }
 
@@ -625,7 +629,10 @@ export const handleInputChange = (type?: string): AppThunk => (dispatch, getStat
 
     navigator.mediaDevices.getUserMedia(getMediaConstrains(state, (replaceAllTracks) ? undefined : type)).then((e) => {
         // If type is not set or no localStream available reset the whole stream object
-        localStream = applyVirtualBackground(e, state.rtc.selected.virtualBackground)
+        const [ls, cp] = applyVirtualBackground(e, getState().rtc.selected.virtualBackground, camera_processor)
+        localStream = ls
+        camera_processor = cp
+
         dispatch(setMediaChangeOngoing(false))
         getStream(state, localClient)!.getTracks().forEach(s => {
             // replace only stream of type and only if the video/audio aint muted

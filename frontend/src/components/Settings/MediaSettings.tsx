@@ -17,7 +17,8 @@ import {
 } from "../../store/rtcSlice";
 import {User} from "../../store/models";
 import VolumeIndicator from "./VolumeIndicator";
-import {applyVirtualBackground} from "../../store/utils";
+import {applyVirtualBackground, stopAllVideoEffects} from "../../store/utils";
+import CameraProcessor from "camera-processor";
 
 interface Props {
     user: User
@@ -41,11 +42,14 @@ interface Props {
 export class MediaSettings extends Component<Props> {
 
     stream?: MediaStream
+    cam?: CameraProcessor
 
     componentDidMount() {
         this.props.loadMedia()
         this.props.getStream().then(stream => {
-            this.stream = applyVirtualBackground(stream, this.props.virtualBackground)
+            const [str, cam] = applyVirtualBackground(stream, this.props.virtualBackground)
+            this.stream = str
+            this.cam = cam
             this.forceUpdate()
         })
     }
@@ -61,7 +65,9 @@ export class MediaSettings extends Component<Props> {
             this.props.getStream().then(stream => {
                 if (this.stream)
                     this.stream.getTracks().forEach(t => t.stop())
-                this.stream = applyVirtualBackground(stream, this.props.virtualBackground)
+                const [str, cam] = applyVirtualBackground(stream, this.props.virtualBackground, this.cam)
+                this.stream = str
+                this.cam = cam
                 this.forceUpdate()
             })
         }
@@ -69,6 +75,8 @@ export class MediaSettings extends Component<Props> {
 
     componentWillUnmount() {
         this.stream?.getTracks().forEach(t => t.stop())
+        stopAllVideoEffects(this.cam)
+        this.cam = undefined
         this.stream = undefined
     }
 
