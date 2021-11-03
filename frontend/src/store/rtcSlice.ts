@@ -395,9 +395,12 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                 // Reconnection functionality
                 if (localClient === joinedUserId || isCaller){
                     setTimeout(() => {
+                        //TODO later we need this if statement for testing reasons I excluded it here
+                        // if(!getUserById(getState(), userId).userStream){
                         dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
                         dispatch(triggerReconnection(getUserById(getState(), userId)));
-                    }, 5000);    
+                        // }
+                    }, 5000);
                 }
             }
         });
