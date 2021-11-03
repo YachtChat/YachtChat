@@ -160,29 +160,16 @@ export const handleLoginUser = (user: UserPayload): AppThunk => (dispatch, getSt
 }
 
 // called when new user joins / including the activeUser in order to get user information for the user
-export const handleSpaceUser = (user: UserPayload, isActiveUser?: boolean, isCaller?: boolean): AppThunk => (dispatch, getState) => {
+export const handleSpaceUser = (user: UserPayload, isCaller?: boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         // axios load user info
         axios.get("https://" + ACCOUNT_URL + "/account/" + user.id + "/", headers).then(response => {
-            // transform into user with util-function
-            // finally set user
-            if (isActiveUser) {
-                const activeUser = keycloakUserToUser(response.data, true, user?.position, true)
-                //console.log("ActiveUser", user)
-                dispatch(initUser(activeUser))
-            } else {
-                dispatch(setUser(keycloakUserToUser(response.data, true, user?.position, true)))
-                // If the user is not the active user, init RTC Events
-                if (getUser(getState()).id !== user.id) {
-                    // TODO here the new_user case is treated exactly the same as the login case, however , there should
-                    // be a callee and a caller.
-                    if (isCaller === undefined){
-                        dispatch(handleRTCEvents(user.id));
-                    } else {
-                        dispatch(handleRTCEvents(user.id, isCaller));
-                    }
-                    dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
-                }
+            dispatch(setUser(keycloakUserToUser(response.data, true, user?.position, true)))
+            // if the user.id is ourselves skip the next steps
+            if (getUser(getState()).id !== user.id) {
+                // isCaller is true if this is a reconncetion and the local user was the previous caller
+                dispatch(handleRTCEvents(user.id, !!isCaller))
+                dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
             }
         })
     )
