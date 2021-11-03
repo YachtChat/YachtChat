@@ -114,7 +114,7 @@ export class UserComponent extends Component<Props> {
             transform: userScale,
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
             // If no screen is beeing shared or video is shown or no stream is available show profile pic
-            backgroundImage: (((this.props.isActiveUser && !this.props.screen) && !user.video) || !this.videoObject.current?.srcObject) ? `url(${user.profile_image})` : "none",
+            backgroundImage: ((!(this.props.isActiveUser && this.props.screen) && !user.video) || !this.videoObject.current?.srcObject) ? `url(${user.profile_image})` : "none",
         }
 
         const userNameStyle = {
@@ -142,13 +142,13 @@ export class UserComponent extends Component<Props> {
                                          this.props.user.message
                                      : ""} placement="top" arrow>
                         <div>
-                            {(!!this.props.user.userStream || (this.props.isActiveUser && this.props.screen)) &&
+                            {(!!this.props.user.userStream && ((this.props.isActiveUser && this.props.screen) || user.video)) &&
                             <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                                    key={this.props.camera}
                                    autoPlay muted={this.props.isActiveUser}
                                    playsInline
                                    ref={this.videoObject}
-                                   className={((this.props.isActiveUser && !this.props.screen) && !user.video) ? "profile-picture" : ""}/>
+                                   className={((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : ""}/>
                             }
                         </div>
                     </Tooltip>
