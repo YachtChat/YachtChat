@@ -208,7 +208,8 @@ export const mute = (): AppThunk => (dispatch, getState) => {
         //dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
     } else {
         // If disabled, stop all audio tracks
-        getStream(state, getUserID(state))?.getAudioTracks()[0].stop()
+        if (getStream(state, getUserID(state))?.getAudioTracks()[0])
+            getStream(state, getUserID(state))?.getAudioTracks()[0].stop()
         //dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
 
         getOnlineUsers(state).forEach(u => {
