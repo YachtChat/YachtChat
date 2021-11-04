@@ -139,7 +139,7 @@ export class Canvas extends Component<Props, State> {
             const clickedUserId = ((e.target as HTMLVideoElement).dataset.id)
             let focused = false
             this.props.spaceUsers.forEach(user => {
-                if (user.id === clickedUserId) {
+                if (user.id === clickedUserId && user.inProximity) {
                     this.focus(user.id)
                     //    <FocusUser open={this.state.open["focus"]} onClose={() => this.handleClose("focus")}/>
                     focused = true

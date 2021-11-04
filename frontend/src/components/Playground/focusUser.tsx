@@ -4,9 +4,12 @@ import {connect} from "react-redux";
 import {getStream} from "../../store/rtcSlice";
 import {RootState} from "../../store/store";
 import {Tooltip, Zoom} from "@material-ui/core";
+import {User} from "../../store/models";
+import {getUserById} from "../../store/userSlice";
 
 interface StateProps {
     getStream: (uid: string) => MediaStream | undefined
+    user?: User
 }
 
 interface OwnProps {
@@ -85,6 +88,8 @@ export class FocusUser extends Component<Props, State> {
             display: (!!this.props.userID) ? "block" : "none"
         }
 
+        if (!!this.props.user && !this.props.user.inProximity)
+            this.handleClose()
 
         return (
             <div onClick={e => e.stopPropagation()}>
@@ -119,6 +124,7 @@ export class FocusUser extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     getStream: (uid: string) => getStream(state, uid),
+    user: (!!ownProps.userID) ? getUserById(state, ownProps.userID) : undefined
     //stream: (ownProps.userID) ? getStream(state, ownProps.userID) : undefined,
 })
 
