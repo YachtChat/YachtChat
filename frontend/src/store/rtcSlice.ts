@@ -254,25 +254,29 @@ export const displayVideo = (): AppThunk => (dispatch, getState) => {
     }
 }
 
+// stop but do not set state
 export const stopVideo = (): AppThunk => (dispatch, getState) => {
     const state = getState()
     const userID = getUserID(state)
 
     // Stop all video effects (otherwise camera will remain active)
-    stopAllVideoEffects()
+    stopAllVideoEffects(camera_processor)
 
     // disable streams if video disabled
     getStream(state, userID)?.getVideoTracks()[0].stop()
 
-    // Disable streams for every one
-    getOnlineUsers(state).forEach(u => {
-        Object.keys(rtpSender[u.id]).forEach(k => {
-            const rtp = rtpSender[u.id][k]
-            if (rtp.track && rtp.track.kind === 'video') {
-                rtp.track.stop()
-            }
+    // only kill remote streams if no screen is beeing shared
+    if (!state.rtc.screen) {
+        // Disable streams for every one (if nothing is shared)
+        getOnlineUsers(state).forEach(u => {
+            Object.keys(rtpSender[u.id]).forEach(k => {
+                const rtp = rtpSender[u.id][k]
+                if (rtp.track && rtp.track.kind === 'video') {
+                    rtp.track.stop()
+                }
+            })
         })
-    })
+    }
 }
 
 export const shareScreen = (): AppThunk => (dispatch, getState) => {
@@ -284,11 +288,14 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
     // If not enabled yet try to enable the screen sharing
     if (!state.rtc.screen) {
         navigator.mediaDevices.getDisplayMedia(getScreenSharingConstraints()).then((stream) => {
-            dispatch(toggleScreen())
-            // make sure that the stream is ended when the user f.e. closes the window
-            stream!.getTracks().forEach(t => t.onended = () => {
-                dispatch(unshareScreen())
-            })
+
+            // If currently sharing video --> interrupt
+            // Video and screen not at the same time
+            if (state.rtc.video) {
+                dispatch(stopVideo())
+            }
+
+            dispatch(setScreen(true))
 
             screenStream = stream
 
@@ -300,19 +307,14 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
             // iterate over all user and replace my video stream with the stream of my screen.
             users.forEach(u => {
                 if (u.id === userID) return
-                rtpSender[u.id]["video"].replaceTrack(stream!.getTracks()[0]);
+                rtpSender[u.id]["video"].replaceTrack(stream!.getVideoTracks()[0].clone());
             })
-            dispatch(setMediaChangeOngoing(false))
         }).catch((e) => {
             dispatch(handleError("Unable to share the screen", e))
+        }).finally(() => {
+            dispatch(setMediaChangeOngoing(false))
+            dispatch(updateRemoteVideoStatus())
         })
-
-        // If currently sharing video --> interrupt
-        // Video and screen not at the same time
-        if (state.rtc.video) {
-            dispatch(stopVideo())
-        }
-        dispatch(updateRemoteVideoStatus())
     } else {
         dispatch(unshareScreen())
     }
@@ -572,8 +574,13 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
 
 export const destroySession = (): AppThunk => (dispatch, getState) => {
     localStream?.getTracks().forEach(t => t.stop())
-
+    stopAllVideoEffects(camera_processor)
     screenStream?.getTracks().forEach(t => t.stop())
+
+    localStream = undefined
+    camera_processor = undefined
+    screenStream = undefined
+
     dispatch(setScreen(false))
     // dispatch(setUser({...getUser(getState()), online: false}))
 
@@ -599,8 +606,6 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
     streams = {}
     rtcConnections = {}
     rtpSender = {}
-
-    stopAllVideoEffects()
 
     dispatch(turnOnVideo())
     dispatch(turnOnAudio())
@@ -656,6 +661,7 @@ export const handleInputChange = (type?: string): AppThunk => (dispatch, getStat
                             const clone = s.clone()
                             if (clone.kind === 'audio')
                                 clone.enabled = !!u.inProximity
+                            rs.track.stop()
                             rs.replaceTrack(clone)
                         }
                     })
