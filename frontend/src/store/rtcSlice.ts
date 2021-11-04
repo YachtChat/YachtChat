@@ -312,6 +312,15 @@ export const unsendAudio = (id: string): AppThunk => (dispatch, getState) => {
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
 }
 
+// User is still in space when his rtcConnection element exist and if he is still online
+// this function should be called before every rtcConnection eventlistener to make sure we don't trigger connection when
+// the user is not longer in the space
+function isUserInSpace(state: RootState, id: string){
+    const user = getUserById(state, id)
+    if (!user) return false
+    return !!rtcConnections[id] && user.online
+}
+
 export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppThunk => (dispatch, getState) => {
     // get client ids
     const clients = getOnlineUsers(getState()).map(k => k.id)
@@ -332,6 +341,7 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                 // onnegotiationneeded
 
                 rtcConnections[userId].onicecandidate = (event) => {
+                    if (!isUserInSpace(getState(), userId)) return
                     if (event.candidate) {
                         console.log(localClient, 'send candidate to ', userId);
                         dispatch(send({
@@ -346,15 +356,12 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                 };
 
                 rtcConnections[userId].ontrack = (event: RTCTrackEvent) => {
-                    //console.log(`On track event handler of ${localClient} triggered with streams:`);
-                    //console.dir(event.streams);
+                    if (!isUserInSpace(getState(), userId)) return
                     streams[userId] = event.streams[0]
                     dispatch(gotRemoteStream(userId));
-                    //console.log("I HAVE A TRACK");
                 }
 
                 rtcConnections[userId].onicegatheringstatechange = (event) => {
-                    //console.log(event)
                 }
 
                 // onnegotiationneeded is called when a track is added to the RTPConncetion.
@@ -363,7 +370,7 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                 // that was the previous caller.
                 if (localClient === joinedUserId || isCaller) {
                     rtcConnections[userId].onnegotiationneeded = (event) => {
-                        console.log(userId)
+                        if (!isUserInSpace(getState(), userId)) return
                         rtcConnections[userId].createOffer(offerOptions).then((description) => {
                             rtcConnections[userId].setLocalDescription(description).then(() => {
                                 console.log(localClient, ' Send offer to ', userId);
@@ -416,12 +423,12 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
 }
 
 export const handleCandidate = (candidate: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
+    if(!isUserInSpace(getState(), fromId)) return
     rtcConnections[fromId].addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e.stack));
 }
 
 export const handleSdp = (description: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
-    //console.log("Start handleSdp with description:");
-    //console.dir(description);
+    if(!isUserInSpace(getState(), fromId)) return
     if (!!description) {
         const clientId: string = getUserID(getState());
 
@@ -470,11 +477,7 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
 }
 
 export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => {
-    if (!(id in getState().userState.spaceUsers)) {
-        return
-    }
-    Object.keys(rtpSender[id]).forEach(k => rtpSender[id][k].track?.stop())
-    delete rtpSender[id]
+    if (!isUserInSpace(getState(), id)) return
     rtcConnections[id].close()
     delete rtcConnections[id]
     dispatch(setUserOffline(id))
@@ -483,6 +486,9 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
         clearTimeout(connectionTimer[id]);
         delete connectionTimer[id];
     }
+    if (!rtpSender[id]) return
+    Object.keys(rtpSender[id]).forEach(k => rtpSender[id][k].track?.stop())
+    delete rtpSender[id]
 }
 
 export const destroySession = (): AppThunk => (dispatch, getState) => {

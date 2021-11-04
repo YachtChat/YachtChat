@@ -137,11 +137,10 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 const fromId: string = data.sender_id;
                 if (fromId !== getUserID(getState())) {
                     // TODO check this random wait
-                    const randomWait = Math.floor(Math.random() * Math.floor(200))
                     const signal_content = data.content
                     switch (signal_content.signal_type) {
                         case "candidate":
-                            setTimeout(() => dispatch(handleCandidate(signal_content.candidate, fromId)), randomWait)
+                            dispatch(handleCandidate(signal_content.candidate, fromId))
                             break;
                         case "sdp":
                             // TODO timeout here is not good, because a candidate would already be send form the caller
