@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="FrontendWebscoket" type="CompoundRunConfigurationType">
+    <toRun name="WebsocketServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Frontend_Websocket_Local" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

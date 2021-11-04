@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Frontend_Websocket_Local" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/frontend/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="start" />
+    </scripts>
+    <node-interpreter value="project" />
+    <envs>
+      <env name="REACT_APP_SIGNAL_URL" value="localhost" />
+      <env name="REACT_APP_SPACES_URL" value="spaces.yacht.chat" />
+      <env name="REACT_APP_AUTH_URL" value="auth.yacht.chat" />
+      <env name="REACT_APP_REALM" value="Application" />
+      <env name="REACT_APP_KEYCLOAK_CLIENT" value="frontend-dev" />
+      <env name="REACT_APP_FRONTEND_URL" value="localhost:3000" />
+      <env name="REACT_APP_ACCOUNT_URL" value="account.yacht.chat" />
+      <env name="REACT_APP_SIGNAL_PORT" value="8085" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>

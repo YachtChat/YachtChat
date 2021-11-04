@@ -1,11 +1,11 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {connectToServer, send} from "./webSocketSlice";
+import {connectToServer, send, triggerReconnection} from "./webSocketSlice";
 import {rtcConfiguration} from "./config";
 import {
     forgetUsers,
     getOnlineUsers,
-    getUser,
+    getUser, getUserById,
     getUserID,
     gotRemoteStream,
     handlePositionUpdate,
@@ -58,6 +58,7 @@ let localStream: MediaStream | undefined = undefined // local video and audio
 let screenStream: MediaStream | undefined = undefined // stream of the display video when shared
 let streams: { [key: string]: MediaStream } = {}; // incoming streams of the other users
 let mediaDevices: { [key: string]: MediaDeviceInfo } = {}; // media devices
+let connectionTimer: {[key: string]: number} = {}; // Connection retry timer
 
 const offerOptions = {
     offerToReceiveVideo: true,
@@ -366,7 +367,16 @@ export const unsendAudio = (id: string): AppThunk => (dispatch, getState) => {
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
 }
 
-export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, getState) => {
+// User is still in space when his rtcConnection element exist and if he is still online
+// this function should be called before every rtcConnection eventlistener to make sure we don't trigger connection when
+// the user is not longer in the space
+function isUserInSpace(state: RootState, id: string){
+    const user = getUserById(state, id)
+    if (!user) return false
+    return !!rtcConnections[id] && user.online
+}
+
+export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppThunk => (dispatch, getState) => {
     // get client ids
     const clients = getOnlineUsers(getState()).map(k => k.id)
     const localClient: string = getUserID(getState())
@@ -386,6 +396,7 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                 // onnegotiationneeded
 
                 rtcConnections[userId].onicecandidate = (event) => {
+                    if (!isUserInSpace(getState(), userId)) return
                     if (event.candidate) {
                         console.log(localClient, 'send candidate to ', userId);
                         dispatch(send({
@@ -400,23 +411,21 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                 };
 
                 rtcConnections[userId].ontrack = (event: RTCTrackEvent) => {
-                    //console.log(`On track event handler of ${localClient} triggered with streams:`);
-                    //console.dir(event.streams);
+                    if (!isUserInSpace(getState(), userId)) return
                     streams[userId] = event.streams[0]
                     dispatch(gotRemoteStream(userId));
-                    //console.log("I HAVE A TRACK");
                 }
 
                 rtcConnections[userId].onicegatheringstatechange = (event) => {
-                    //console.log(event)
                 }
 
-                // this event should get triggered after the tracks are added to the local stream and the client
-                // is ready to start sending the sdp offer
-                // on negotionneeded should only be part of the caller??
-                if (localClient === joinedUserId) {
+                // onnegotiationneeded is called when a track is added to the RTPConncetion.
+                // Only the caller needs this eventlistener to send the offer
+                // the caller is either the user who recently joined the space or if this is a reconnection try, the user
+                // that was the previous caller.
+                if (localClient === joinedUserId || isCaller) {
                     rtcConnections[userId].onnegotiationneeded = (event) => {
-                        console.log(userId)
+                        if (!isUserInSpace(getState(), userId)) return
                         rtcConnections[userId].createOffer(offerOptions).then((description) => {
                             rtcConnections[userId].setLocalDescription(description).then(() => {
                                 console.log(localClient, ' Send offer to ', userId);
@@ -425,7 +434,6 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                                     target_id: userId,
                                     content: {
                                         signal_type: 'sdp',
-                                        // TODO shouldn't this here be the localClient
                                         description: rtcConnections[userId].localDescription,
                                     }
                                 }));
@@ -444,6 +452,24 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
                 getStream(getState(), localClient)!.getTracks().forEach(track => {
                     rtpSender[userId][track.kind] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
+
+                // Reconnection functionality
+                if (localClient === joinedUserId || isCaller){
+                    var timer = setTimeout(() => {
+                        // delete old reference to timer
+                        delete connectionTimer[userId];
+                        // if the connection was not established in time, try to reconnect
+                        if(!getUserById(getState(), userId).userStream) {
+                            // This if statement only yields true if the peer is still in the space and I am still in the Space.
+                            // if this is true we want to try a reconnection.
+                            if (getUserById(getState(), userId) !== undefined) {
+                                dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
+                                dispatch(triggerReconnection(getUserById(getState(), userId)));
+                            }
+                        }
+                    }, 3000);
+                    connectionTimer[userId] = timer;
+                }
             }
         });
         dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position!}))
@@ -451,6 +477,7 @@ export const handleRTCEvents = (joinedUserId: string): AppThunk => (dispatch, ge
 }
 
 export const handleCandidate = (candidate: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
+    if(!isUserInSpace(getState(), fromId)) return
     rtcConnections[fromId].addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e.stack));
     let connection_type = new RTCIceCandidate(candidate)
     if (connection_type.type !== null) {
@@ -472,22 +499,14 @@ export const handleCandidate = (candidate: any, fromId: string): AppThunk => (di
 }
 
 export const handleSdp = (description: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
-    //console.log("Start handleSdp with description:");
-    //console.dir(description);
+    if(!isUserInSpace(getState(), fromId)) return
     if (!!description) {
         const clientId: string = getUserID(getState());
-
-        //console.log(clientId, ' Receive sdp from ', fromId);
-        // TODO this should happen in the first place
         if (clientId === fromId)
             return
-        // TODO why is this existing here already?
-        // here we get the description from the caller and set them to our remoteDescription
-        // maybe here not create the RTCSesseionDescription with the whole description but just with description.sdp
-        // TODO: Should we not already set out track to the connection here
+
         rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))
             .then(() => {
-                 // TODO why description type offer here?
                 if (description.type === 'offer') {
                     rtcConnections[fromId].createAnswer()
                         .then((desc) => {
@@ -522,14 +541,18 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
 }
 
 export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => {
-    if (!(id in getState().userState.spaceUsers)) {
-        return
-    }
-    Object.keys(rtpSender[id]).forEach(k => rtpSender[id][k].track?.stop())
-    delete rtpSender[id]
+    if (!isUserInSpace(getState(), id)) return
     rtcConnections[id].close()
     delete rtcConnections[id]
     dispatch(setUserOffline(id))
+    // clear potential timer which was set up for the user that just left
+    if (connectionTimer[id]){
+        clearTimeout(connectionTimer[id]);
+        delete connectionTimer[id];
+    }
+    if (!rtpSender[id]) return
+    Object.keys(rtpSender[id]).forEach(k => rtpSender[id][k].track?.stop())
+    delete rtpSender[id]
 }
 
 export const destroySession = (): AppThunk => (dispatch, getState) => {
@@ -537,6 +560,13 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
 
     screenStream?.getTracks().forEach(t => t.stop())
     dispatch(setScreen(false))
+    // dispatch(setUser({...getUser(getState()), online: false}))
+
+    // clear all timer when we are leaving the space
+    Object.keys(connectionTimer).forEach(userId => {
+        clearTimeout(connectionTimer[userId]);
+    });
+    connectionTimer = {};
 
     Object.keys(streams).forEach(k => {
         getStream(getState(), k)!.getTracks().forEach(t => {
