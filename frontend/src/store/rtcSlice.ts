@@ -5,7 +5,8 @@ import {rtcConfiguration} from "./config";
 import {
     forgetUsers,
     getOnlineUsers,
-    getUser, getUserById,
+    getUser,
+    getUserById,
     getUserID,
     gotRemoteStream,
     handlePositionUpdate,
@@ -323,6 +324,8 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 // This will switch back to normal video and deinitialize the screen
 export const unshareScreen = (): AppThunk => (dispatch, getState) => {
     const state = getState()
+
+    dispatch(setMediaChangeOngoing(true))
 
     // end all streams
     screenStream?.getTracks().forEach(t => t.stop())
