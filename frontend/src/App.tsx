@@ -15,6 +15,7 @@ import {IoCogOutline} from "react-icons/all";
 import CreateSpace from "./components/Spaces/CreateSpace";
 import InviteSpace from "./components/Spaces/InviteSpace";
 import JoinSpace from "./components/Spaces/JoinSpace";
+import mobile from "is-mobile";
 
 interface Props {
     loggedIn: boolean
@@ -30,9 +31,12 @@ interface State {
 export class App extends Component<Props, State> {
 
     componentDidMount() {
-        const search = window.location.search;
-        const id_token = new URLSearchParams(search).get('id_token');
+        const search = window.location.search
+        const id_token = new URLSearchParams(search).get('id_token')
         this.props.checkAuth((id_token) ? id_token : undefined)
+
+        if (mobile())
+            window.alert("This website is not optimized for mobile devices.")
     }
 
     render() {
