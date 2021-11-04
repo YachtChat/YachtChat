@@ -279,7 +279,7 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 
     // If not enabled yet try to enable the screen sharing
     if (!state.rtc.screen) {
-        navigator.mediaDevices.getDisplayMedia(getScreenSharingConstraints(state)).then((stream) => {
+        navigator.mediaDevices.getDisplayMedia(getScreenSharingConstraints()).then((stream) => {
             dispatch(toggleScreen())
             // make sure that the stream is ended when the user f.e. closes the window
             stream!.getTracks().forEach(t => t.onended = () => {
@@ -673,7 +673,7 @@ export const getMediaConstrains = (state: RootState, type?: string) => {
         } : undefined
     }
 }
-export const getScreenSharingConstraints = (state: RootState) => {
+export const getScreenSharingConstraints = () => {
     return {
         video: {
             width: { ideal: 4096 },
