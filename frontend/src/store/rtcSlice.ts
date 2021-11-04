@@ -279,7 +279,7 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 
     // If not enabled yet try to enable the screen sharing
     if (!state.rtc.screen) {
-        navigator.mediaDevices.getDisplayMedia().then((stream) => {
+        navigator.mediaDevices.getDisplayMedia(getScreenSharingConstraints()).then((stream) => {
             dispatch(toggleScreen())
             // make sure that the stream is ended when the user f.e. closes the window
             stream!.getTracks().forEach(t => t.onended = () => {
@@ -664,6 +664,7 @@ export const getMediaConstrains = (state: RootState, type?: string) => {
             width: 320,
             height: 320,
             facingMode: "user",
+            frameRate: { max: 10 },
             deviceId: getCamera(state)
         } : undefined,
         audio: (type !== 'video') ? {
@@ -672,6 +673,18 @@ export const getMediaConstrains = (state: RootState, type?: string) => {
         } : undefined
     }
 }
+export const getScreenSharingConstraints = () => {
+    return {
+        video: {
+            width: { ideal: 4096 },
+            height: { ideal: 2160 },
+            frameRate: { max: 5 },
+            mediaSource: 'screen',
+        },
+        audio: false
+    }
+}
+
 export const getMicrophone = (state: RootState): string => {
     const sel = state.rtc.selected.microphone
     if (sel && state.rtc.microphones.find(c => c === sel))
