@@ -403,15 +403,14 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                     var timer = setTimeout(() => {
                         // delete old reference to timer
                         delete connectionTimer[userId];
-
-                        //TODO later we need this if statement for testing reasons I excluded it here
-                        // if(!getUserById(getState(), userId).userStream){
-
-                        // This if statement only yields true if the peer is still in the space and I am still in the Space.
-                        // if this is true we want to try a reconnection.
-                        if(getUserById(getState(), userId) !== undefined){
-                            dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
-                            dispatch(triggerReconnection(getUserById(getState(), userId)));
+                        // if the connection was not established in time, try to reconnect
+                        if(!getUserById(getState(), userId).userStream) {
+                            // This if statement only yields true if the peer is still in the space and I am still in the Space.
+                            // if this is true we want to try a reconnection.
+                            if (getUserById(getState(), userId) !== undefined) {
+                                dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
+                                dispatch(triggerReconnection(getUserById(getState(), userId)));
+                            }
                         }
                     }, 3000);
                     connectionTimer[userId] = timer;
@@ -431,18 +430,11 @@ export const handleSdp = (description: any, fromId: string): AppThunk => (dispat
     if(!isUserInSpace(getState(), fromId)) return
     if (!!description) {
         const clientId: string = getUserID(getState());
-
-        //console.log(clientId, ' Receive sdp from ', fromId);
-        // TODO this should happen in the first place
         if (clientId === fromId)
             return
-        // TODO why is this existing here already?
-        // here we get the description from the caller and set them to our remoteDescription
-        // maybe here not create the RTCSesseionDescription with the whole description but just with description.sdp
-        // TODO: Should we not already set out track to the connection here
+
         rtcConnections[fromId].setRemoteDescription(new RTCSessionDescription(description))
             .then(() => {
-                 // TODO why description type offer here?
                 if (description.type === 'offer') {
                     rtcConnections[fromId].createAnswer()
                         .then((desc) => {
