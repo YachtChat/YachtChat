@@ -4,7 +4,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";
 import {userProportion} from "../../store/userSlice";
-import {Tooltip, Zoom} from "@material-ui/core";
+import {CircularProgress, Tooltip, Zoom} from "@material-ui/core";
 
 interface OwnProps {
     user: User
@@ -146,7 +146,12 @@ export class UserComponent extends Component<Props> {
                                    autoPlay muted={this.props.isActiveUser}
                                    playsInline
                                    ref={this.videoObject}
-                                   className={((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : ""}/>
+                                   className={
+                                       ((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : "" +
+                                           ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
+                            }
+                            {!this.props.user.userStream &&
+                            <CircularProgress/>
                             }
                         </div>
                     </Tooltip>
