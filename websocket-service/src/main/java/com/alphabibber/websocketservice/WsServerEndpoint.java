@@ -54,7 +54,7 @@ public class WsServerEndpoint {
     public void openOpen(@PathParam("roomID") String roomId, Session session) {
         // increase the idle timeout time otherwise the user will be disconnected after a minute
         // set to 10 hours
-        session.setMaxIdleTimeout(36000000);
+        session.setMaxIdleTimeout(15000);
 
         // Get the room form the roomMap
         Map<String, User> room = roomMap.get(roomId);
@@ -81,6 +81,8 @@ public class WsServerEndpoint {
             throw new IllegalArgumentException("Field 'type' should be provided");
         }
         String type = jsonObject.get("type").getAsString();
+
+        if (type.equals("ping")) return;
 
         // if the user is not yet part of the room the type has to be 'login'
         if (!room.containsKey(session.getId())) {
