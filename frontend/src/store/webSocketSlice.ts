@@ -26,6 +26,7 @@ interface WebSocketState {
 }
 
 let socket: WebSocket | null = null;
+let heartBeat: number | null = null;
 
 const initialState: WebSocketState = {
     connected: false,
@@ -71,7 +72,10 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
         dispatch(connect())
         dispatch(handleSuccess("Connected to the signaling server"))
         dispatch(requestLogin())
-    };
+        heartBeat = setInterval(() => {
+            dispatch(send({type: "ping"}));
+        }, 5000);
+    }
 
     socket.onerror = (err) => {
         console.error("Got error", err);
@@ -81,6 +85,9 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
 
     socket.onclose = () => {
         dispatch(destroySession())
+        if (heartBeat){
+            clearInterval(heartBeat);
+        }
     }
 
     socket.onmessage = function (msg) {
