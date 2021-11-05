@@ -61,7 +61,8 @@ let camera_processor: CameraProcessor | undefined = undefined // if virtual back
 let screenStream: MediaStream | undefined = undefined // stream of the display video when shared
 let streams: { [key: string]: MediaStream } = {}; // incoming streams of the other users
 let mediaDevices: { [key: string]: MediaDeviceInfo } = {}; // media devices
-let connectionTimer: {[key: string]: number} = {}; // Connection retry timer
+let connectionTimer: { [key: string]: number } = {}; // Connection retry timer
+let bytesReceived: { [key: string]: number } = {}; // Stores bytes received per user
 
 const offerOptions = {
     offerToReceiveVideo: true,
@@ -474,31 +475,59 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                     rtpSender[userId][track.kind] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
 
-                // Reconnection functionality
-                if (localClient === joinedUserId || isCaller){
-                    var timer = setTimeout(() => {
-                        // delete old reference to timer
-                        delete connectionTimer[userId];
-                        // if the connection was not established in time, try to reconnect
-                        if(!getUserById(getState(), userId).userStream) {
-                            // This if statement only yields true if the peer is still in the space and I am still in the Space.
-                            // if this is true we want to try a reconnection.
-                            if (getUserById(getState(), userId) !== undefined) {
-                                dispatch(handleError(`Connection to ${getUserById(getState(), userId).firstName} was not established. Trying again now!`));
-                                dispatch(triggerReconnection(getUserById(getState(), userId)));
-                            }
+                const interval = setInterval(() => {
+                    if (!rtcConnections[userId]) {
+                        clearInterval(interval)
+                        return
+                    }
+
+                    rtcConnections[userId].getStats().then(
+                        (report: RTCStatsReport) => {
+                            const br = bytesReceived[userId]
+                            const user = getUserById(getState(), userId)
+                            report.forEach(k => {
+                                if (k.type === "inbound-rtp" && k.kind === "video") {
+                                    if (br === k.bytesReceived && user.video) {
+                                        console.log(`${user.firstName} does not send any data.`)
+                                        clearInterval(interval)
+                                        dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
+                                        dispatch(triggerReconnection(userId));
+                                    }
+                                    bytesReceived[userId] = k.bytesReceived
+                                }
+                            })
                         }
-                    }, 3000);
-                    connectionTimer[userId] = timer;
-                }
+                    )
+                }, 5000)
+
+                dispatch(setupReconnectionLoop(userId, !!(localClient === joinedUserId || isCaller)))
             }
         });
         dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position!}))
     }
 }
 
+export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThunk => (dispatch: any, getState: any) => {
+// Reconnection functionality
+    if (isCaller) {
+        connectionTimer[userId] = setTimeout(() => {
+            // delete old reference to timer
+            delete connectionTimer[userId];
+            // if the connection was not established in time, try to reconnect
+            if (!getUserById(getState(), userId).userStream) {
+                // This if statement only yields true if the peer is still in the space and I am still in the Space.
+                // if this is true we want to try a reconnection.
+                if (getUserById(getState(), userId) !== undefined) {
+                    dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
+                    dispatch(triggerReconnection(userId));
+                }
+            }
+        }, 3000);
+    }
+}
+
 export const handleCandidate = (candidate: any, fromId: string): AppThunk => (dispatch: any, getState: any) => {
-    if(!isUserInSpace(getState(), fromId)) return
+    if (!isUserInSpace(getState(), fromId)) return
     rtcConnections[fromId].addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e.stack));
     let connection_type = new RTCIceCandidate(candidate)
     if (connection_type.type !== null) {
