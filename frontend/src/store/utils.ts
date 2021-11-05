@@ -126,5 +126,7 @@ export function stopAllVideoEffects(cam?: CameraProcessor) {
 }
 
 export function playNotificationSound() {
-    new Audio(process.env.PUBLIC_URL + "/rsc/notification.wav").play()
+    const notification = new Audio(process.env.PUBLIC_URL + "/rsc/notification.wav")
+    notification.volume = 0.5
+    notification.play()
 }
