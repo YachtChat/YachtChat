@@ -140,7 +140,7 @@ export class UserComponent extends Component<Props> {
                                          this.props.user.message
                                      : ""} placement="top" arrow>
                         <div>
-                            {(!!this.props.user.userStream && ((this.props.isActiveUser && this.props.screen) || user.video)) &&
+                            {(!!this.props.user.userStream) &&
                             <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                                    key={this.props.camera}
                                    autoPlay muted={this.props.isActiveUser}
@@ -151,7 +151,7 @@ export class UserComponent extends Component<Props> {
                                            ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
                             {!this.props.user.userStream &&
-                            <CircularProgress/>
+                            <CircularProgress className={"loader"}/>
                             }
                         </div>
                     </Tooltip>
