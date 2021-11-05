@@ -305,8 +305,7 @@ export class Canvas extends Component<Props, State> {
                 {this.props.spaceUsers.map(user => {
                     if (!user.online)
                         return null
-                    return <UserComponent key={user.id} isActiveUser={false}
-                                          selected={false} user={user}/>
+                    return <UserComponent key={user.id} isActiveUser={false} selected={false} user={user}/>
                 })}
                 <UserComponent user={this.props.activeUser}
                                selected={

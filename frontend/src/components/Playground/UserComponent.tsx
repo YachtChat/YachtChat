@@ -3,7 +3,7 @@ import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";
-import {destroyMessage, userProportion} from "../../store/userSlice";
+import {userProportion} from "../../store/userSlice";
 import {Tooltip, Zoom} from "@material-ui/core";
 
 interface OwnProps {
@@ -22,7 +22,6 @@ interface OtherProps {
     getStream: (id: string) => MediaStream | undefined
     getScreenStream: (id: string) => MediaStream | undefined
     mediaChangeOngoing: boolean
-    destroyMessage: () => void
 }
 
 type Props = OwnProps & OtherProps
@@ -131,7 +130,6 @@ export class UserComponent extends Component<Props> {
                              onClick={e => {
                                  e.preventDefault()
                                  e.stopPropagation()
-                                 this.props.destroyMessage()
                              }}
                              title={
                                  (this.props.user.message) ?
@@ -172,8 +170,4 @@ const mapStateToProps = (state: RootState) => ({
     getScreenStream: (id: string) => getScreenStream(state, id),
 })
 
-const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
-    destroyMessage: () => dispatch(destroyMessage(ownProps.user.id))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserComponent)
+export default connect(mapStateToProps)(UserComponent)
