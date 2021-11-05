@@ -1,6 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
-import {User, UserCoordinates, UserPayload} from "./models";
+import {UserCoordinates, UserPayload} from "./models";
 import {
     getOnlineUsers,
     getUser,
@@ -234,10 +234,10 @@ export const handleLeave = (): AppThunk => (dispatch, getState) => {
     dispatch(leftRoom())
 }
 
-export const triggerReconnection = (target: User): AppThunk => (dispatch => {
+export const triggerReconnection = (id: string): AppThunk => (dispatch => {
     dispatch(send({
         type: "reconnection",
-        user_id: target.id
+        user_id: id
     }))
 })
 
