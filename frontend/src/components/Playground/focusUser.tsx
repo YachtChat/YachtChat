@@ -6,6 +6,7 @@ import {RootState} from "../../store/store";
 import {Tooltip, Zoom} from "@material-ui/core";
 import {User} from "../../store/models";
 import {getUserById} from "../../store/userSlice";
+import {IoCloseOutline} from "react-icons/all";
 
 interface StateProps {
     getStream: (uid: string) => MediaStream | undefined
@@ -19,6 +20,7 @@ interface OwnProps {
 
 interface State {
     ready: boolean
+    fullscreen: boolean
 }
 
 type Props = OwnProps & StateProps
@@ -33,6 +35,11 @@ export class FocusUser extends Component<Props, State> {
 
         this.videoObject = React.createRef()
         this.videoDiv = React.createRef()
+
+        this.state = {
+            fullscreen: false,
+            ready: false
+        }
     }
 
     componentWillUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
@@ -79,7 +86,39 @@ export class FocusUser extends Component<Props, State> {
             this.videoObject.current.srcObject = null
 
             this.videoObject.current.id = ""
-            this.setState({ready: false})
+            this.setState({
+                ready: false,
+                fullscreen: false
+            })
+
+            // close fullscreen if enabled
+            if (document.fullscreenElement)
+                document.exitFullscreen()
+        }
+    }
+
+    toggleFullScreen(e: React.MouseEvent) {
+        e.stopPropagation()
+        e.nativeEvent.stopPropagation()
+        if (this.videoDiv.current &&
+            !document.fullscreenElement &&
+            !this.state.fullscreen)
+            // If it is possible to make real fullscreen
+            // else just make fullscreen whole size
+            if (this.videoDiv.current?.requestFullscreen)
+                this.videoDiv.current?.requestFullscreen()
+            else
+                this.setState({
+                    fullscreen: true
+                })
+        else if (document.fullscreenElement) {
+            // Exit fullscreen if on fullscreen
+            document.exitFullscreen()
+        } else if (this.state.fullscreen) {
+            // Exit fullscreen if on fake fullscreen
+            this.setState({
+                fullscreen: false
+            })
         }
     }
 
@@ -99,18 +138,20 @@ export class FocusUser extends Component<Props, State> {
                         maxWidth={"lg"}
                         fullWidth={true}
                         style={style}>
-                    <div className={"panel"}
+                    <div className={"focus-video " +
+                    ((this.state.fullscreen) ? "fullscreen" : "")}
                          onClick={e => e.stopPropagation()}>
-                        <div ref={this.videoDiv} className={"panelContent"}>
+                        <div className={"closeButton"}
+                             onClick={this.handleClose.bind(this)}>
+                            <IoCloseOutline/>
+                        </div>
+                        <div ref={this.videoDiv} className={"panel-content"}
+                             onClick={this.toggleFullScreen.bind(this)}>
                             <Tooltip TransitionComponent={Zoom} disableFocusListener
                                      title={"Click for fullscreen"} placement="top" arrow>
                                 <video autoPlay muted
                                        playsInline
-                                       onClick={e => {
-                                           e.stopPropagation()
-                                           if (this.videoDiv.current)
-                                               this.videoDiv.current?.requestFullscreen()
-                                       }}
+                                       className={"video"}
                                        ref={this.videoObject}/>
                             </Tooltip>
 
