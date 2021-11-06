@@ -312,7 +312,9 @@ export class Canvas extends Component<Props, State> {
                                    //this.state.mapDragActive ||
                                    this.state.userDragActive}
                                isActiveUser={true}/>
+                {this.state.focusUser &&
                 <FocusUser userID={this.state.focusUser} onClose={() => this.handleClose("focusUser")}/>
+                }
             </div>
         )
     }
