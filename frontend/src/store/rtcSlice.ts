@@ -475,6 +475,30 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                     rtpSender[userId][track.kind] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
 
+                dispatch(setupReconnectionLoop(userId, !!(localClient === joinedUserId || isCaller)))
+            }
+        });
+        dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position!}))
+    }
+}
+
+export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThunk => (dispatch: any, getState: any) => {
+// Reconnection functionality
+    if (isCaller) {
+        connectionTimer[userId] = setTimeout(() => {
+            // delete old reference to timer
+            delete connectionTimer[userId];
+            // if the connection was not established in time, try to reconnect
+            if (!getUserById(getState(), userId).userStream) {
+                // This if statement only yields true if the peer is still in the space and I am still in the Space.
+                // if this is true we want to try a reconnection.
+                if (getUserById(getState(), userId) !== undefined) {
+                    dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
+                    dispatch(triggerReconnection(userId));
+                }
+            } else {
+                // Setup reconnection loop after first connection establishment
+                // Check every 7sec if stream still streaming
                 const interval = setInterval(() => {
                     if (!rtcConnections[userId]) {
                         clearInterval(interval)
@@ -498,29 +522,7 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                             })
                         }
                     )
-                }, 5000)
-
-                dispatch(setupReconnectionLoop(userId, !!(localClient === joinedUserId || isCaller)))
-            }
-        });
-        dispatch(handlePositionUpdate({id: joinedUserId, position: getUser(getState()).position!}))
-    }
-}
-
-export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThunk => (dispatch: any, getState: any) => {
-// Reconnection functionality
-    if (isCaller) {
-        connectionTimer[userId] = setTimeout(() => {
-            // delete old reference to timer
-            delete connectionTimer[userId];
-            // if the connection was not established in time, try to reconnect
-            if (!getUserById(getState(), userId).userStream) {
-                // This if statement only yields true if the peer is still in the space and I am still in the Space.
-                // if this is true we want to try a reconnection.
-                if (getUserById(getState(), userId) !== undefined) {
-                    dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
-                    dispatch(triggerReconnection(userId));
-                }
+                }, 7000)
             }
         }, 3000);
     }
