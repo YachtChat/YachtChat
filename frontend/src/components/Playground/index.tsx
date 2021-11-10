@@ -12,6 +12,7 @@ import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice
 import {Link} from "react-router-dom";
 import {IoCamera, IoHome, IoMic} from "react-icons/all";
 import {applicationName} from "../../store/config";
+import {sendLogout} from "../../store/webSocketSlice";
 
 interface Props {
     activeUser: User
@@ -27,7 +28,8 @@ interface Props {
     userMedia: boolean
     cameras: string[]
     microphones: string[]
-    joinedSpace: boolean
+    joinedSpace: boolean,
+    sendLogout: () => void,
 }
 
 export class Playground extends Component<Props> {
@@ -39,6 +41,9 @@ export class Playground extends Component<Props> {
             if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
                 this.props.requestUserMedia(this.props.match!.params.spaceID)
         })
+        window.onpopstate = (event) => {
+            this.props.sendLogout();
+        };
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
@@ -116,6 +121,7 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
+    sendLogout: () => dispatch(sendLogout()),
     handleZoom: (z: number) => dispatch(handleZoom(z)),
     requestSpaces: () => dispatch(requestSpaces()),
     initPlayground: () => dispatch(initPlayground()),
