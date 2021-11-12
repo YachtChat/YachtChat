@@ -66,6 +66,8 @@ export function applyVirtualBackground(stream: MediaStream, kind?: string, camer
     camera_processor.setCameraStream(new MediaStream([stream.getVideoTracks()[0].clone()])); // Set the camera stream from somewhere
     camera_processor.start(); // Start the camera processor
 
+    // https://github.com/spasimir21/time-worker/blob/main/src/
+
     // Add the segmentation analyzer
     const segmentation_analyzer = camera_processor.addAnalyzer(
         'segmentation',

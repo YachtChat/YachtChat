@@ -123,25 +123,28 @@ export class MediaSettings extends Component<Props> {
                     </div>
                 </div>
                 }
-                {/*{this.props.cameras.length !== 0 &&*/}
-                {/*<div className={"settings-item"}>*/}
-                {/*    <label>*/}
-                {/*        Virtual Background*/}
-                {/*    </label>*/}
-                {/*    <div className="dropdown">*/}
-                {/*        /!*<label htmlFor="spaces">Choose a Space:</label>*!/*/}
-                {/*        <select value={this.props.virtualBackground}*/}
-                {/*                onChange={({target: {value}}) => this.props.changeVirtualBackground(value)}*/}
-                {/*                className="audiodevices" name="audiodevices">*/}
-                {/*            {virtualBackgrounds.map(c => (*/}
-                {/*                <option key={c} value={c}>*/}
-                {/*                    {c[0].toUpperCase() + c.slice(1)}*/}
-                {/*                </option>*/}
-                {/*            ))}*/}
-                {/*        </select>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
-                {/*}*/}
+
+                {// If cameras are loaded and Workers as well as canvas filters are supported
+                    (this.props.cameras.length !== 0 && window.Worker &&
+                        document.createElement('canvas').getContext('2d')?.filter) &&
+                    <div className={"settings-item"}>
+                        <label>
+                            Virtual Background
+                        </label>
+                        <div className="dropdown">
+                            {/*<label htmlFor="spaces">Choose a Space:</label>*/}
+                            <select value={this.props.virtualBackground}
+                                    onChange={({target: {value}}) => this.props.changeVirtualBackground(value)}
+                                    className="audiodevices" name="audiodevices">
+                                {virtualBackgrounds.map(c => (
+                                    <option key={c} value={c}>
+                                        {c[0].toUpperCase() + c.slice(1)}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                }
                 {this.props.microphones.length !== 0 &&
                 <div className={"settings-item"}>
                     <label>
