@@ -377,5 +377,15 @@ label, .required {
   fill: white;
   stroke: white;
 }
+.kc-social-provider-logo .kc-social-gray .fa .fa-google {
+  background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) 73% 55%/150% 150% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.kc-social-provider-logo .kc-social-gray .fa .fa-linkedin {
+  background: #0E76A8;
+}
 
 /*# sourceMappingURL=style.css.map */
