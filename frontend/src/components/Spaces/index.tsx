@@ -3,7 +3,7 @@ import './style.scss';
 import {Space, User} from "../../store/models";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
-import {deleteSpace, requestSpaces} from "../../store/spaceSlice";
+import {deleteSpaceForUser, requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
 import {IoAddOutline, IoChevronForwardOutline, IoEllipsisHorizontal, IoPeople, IoTrashOutline} from "react-icons/all";
 import {Link} from "react-router-dom";
@@ -13,13 +13,14 @@ import keycloak from "../../store/keycloak";
 import {ClickAwayListener, Grow, MenuList, Paper, Popper} from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import {getUser, getUserID} from "../../store/userSlice";
 
 interface Props {
     activeUser: User
     spaces: Space[]
     logout: () => void
     requestSpaces: () => void
-    deleteSpace: (id: string) => void
+    deleteSpaceForUser: (id: string) => void
 }
 
 interface State {
@@ -163,7 +164,7 @@ export class Spaces extends Component<Props, State> {
                             className={"menuItem"}
                             onClick={() => {
                                 this.handleClose()
-                                this.props.deleteSpace(this.state.space!.id)
+                                this.props.deleteSpaceForUser(this.state.space!.id)
                             }}>
                             <IoTrashOutline/> Delete
                         </MenuItem>
@@ -183,10 +184,10 @@ const mapStateToProps = (state: RootState) => ({
     spaces: state.space.spaces,
 })
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any, getState: any) => ({
     requestSpaces: () => dispatch(requestSpaces()),
     logout: () => dispatch(logout()),
-    deleteSpace: (id: string) => dispatch(deleteSpace(id)),
+    deleteSpaceForUser: (id: string) => dispatch(deleteSpaceForUser(id)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Spaces)

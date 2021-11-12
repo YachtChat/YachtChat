@@ -6,6 +6,7 @@ import {handleError, handleSuccess} from "./statusSlice";
 import {complete_spaces_url, SPACES_URL} from "./config";
 import {getHeaders} from "./authSlice";
 import {push} from "connected-react-router";
+import {getUserID} from "./userSlice";
 
 // either the spaces server is run locally or on the server
 
@@ -93,9 +94,9 @@ export const returnHome = (): AppThunk => (dispatch) => {
     dispatch(push("/"))
 }
 
-export const deleteSpace = (id: string): AppThunk => (dispatch, getState) => {
+export const deleteSpaceForUser = (spaceId: string): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
-        axios.delete(complete_spaces_url + "/api/v1/spaces/" + id + "/", header).then(response => {
+        axios.delete(complete_spaces_url + "/api/v1/spaces/" + spaceId + "/members/?memberId=" + getUserID(getState()), header).then(response => {
             dispatch(handleSuccess("Space successfully deleted"))
             dispatch(requestSpaces())
         }).catch(e => {

@@ -8,7 +8,7 @@ import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {getUser, getUsers, kickUser} from "../../store/userSlice";
 import {
-    deleteSpace,
+    deleteSpaceForUser,
     downgradeUser,
     getInvitationToken,
     isHost,
@@ -33,7 +33,7 @@ interface MoreProps {
     makeHost: (uid: string) => void
     removeHost: (uid: string) => void
     logout: () => void
-    removeSpace: () => void
+    removeSpaceForUser: () => void
     kick: (uid: string) => void
 }
 
@@ -74,7 +74,7 @@ class UserList extends Component<Props> {
                                 <Tooltip title="Remove yourself" arrow placement={"right"}>
                                     <button onClick={() => {
                                         this.props.logout()
-                                        this.props.removeSpace()
+                                        this.props.removeSpaceForUser()
                                     }} className={"menuIcon"}>
                                         <IoTrashOutline/>
                                     </button>
@@ -141,7 +141,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
 
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     logout: () => dispatch(sendLogout()),
-    removeSpace: () => dispatch(deleteSpace(ownProps.spaceID)),
+    removeSpaceForUser: () => dispatch(deleteSpaceForUser(ownProps.spaceID)),
     success: (s: string) => dispatch(handleSuccess(s)),
     error: (s: string) => dispatch(handleError(s)),
     getHosts: () => dispatch(requestHosts(ownProps.spaceID)),
