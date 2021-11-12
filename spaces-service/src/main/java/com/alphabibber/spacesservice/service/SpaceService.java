@@ -80,13 +80,19 @@ public class SpaceService {
         var user = userService.getContextUserIfExistsElseCreate();
 
         var spaceHost = new SpaceHost(user, space);
+        var spaceMember = new SpaceMember(user, space);
+
         user.addHostSpace(spaceHost);
+        user.addMemberSpace(spaceMember);
+
         space.addSpaceHost(spaceHost);
+        space.addSpaceMember(spaceMember);
 
         // order matters here!
         userRepository.save(user);
         space = spaceRepository.save(space);
         spaceHostRepository.save(spaceHost);
+        spaceMemberRepository.save(spaceMember);
 
         return space;
     }
@@ -184,28 +190,89 @@ public class SpaceService {
         return addSpaceMember(space, invitee);
     }
 
+    private Space removeNormalSpaceMember(Space space, User toBeKicked) {
+        var spaceMember = spaceMemberRepository.findSpaceMemberBySpaceIsAndMemberIs(space, toBeKicked);
+
+        toBeKicked.removeMemberSpace(spaceMember);
+        space.removeSpaceMember(spaceMember);
+
+        userRepository.save(toBeKicked);
+        space = spaceRepository.save(space);
+        spaceMemberRepository.delete(spaceMember);
+        return space;
+    }
+
+    private Space removeUserTriggeredBySomeoneElse(User remover, User toBeKicked, Space space) {
+        var removerIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), remover.getHostSpaces());
+        var memberToBeRemovedIsHost = !Collections.disjoint(space.getSpaceHosts(), toBeKicked.getHostSpaces());
+
+        if (removerIsNotHostInSpace)
+            throw new AccessDeniedException("Not host of space. Only hosts can remove other members.");
+        if (space.isPublic())
+            throw new AccessDeniedException("Not allowed to kick User from the public space");
+        if (memberToBeRemovedIsHost)
+            throw new AccessDeniedException("You cannot remove a host from a space");
+         return removeNormalSpaceMember(space, toBeKicked);
+    }
+
+    private Space removeUserTriggeredByHimself(User user, Space space){
+        boolean userIsHostInSpace = !Collections.disjoint(space.getSpaceHosts(), user.getHostSpaces());
+
+        // if the user is also a host in the space first unpromote him
+        if (userIsHostInSpace) {
+            var spaceHost = spaceHostRepository.findSpaceHostBySpaceIsAndHostIs(space, user);
+
+            user.removeHostSpace(spaceHost);
+            space.removeSpaceHost(spaceHost);
+
+            userRepository.save(user);
+            space = spaceRepository.save(space);
+            spaceHostRepository.delete(spaceHost);
+        }
+        // then kick him as a normal user
+        return removeNormalSpaceMember(space, user);
+    }
+
     public Space removeSpaceMember(String spaceId, String memberId) {
         var space = this.getSpaceById(spaceId);
         var remover = userService.getContextUserIfExistsElseCreate();
-        var member = userService.getUserById(memberId);
+        var toBeKicked = userService.getUserById(memberId);
+        // Either the user wants to be kicked (when he wants to delete the space for himself)
+        Space updatedSpace = null;
+        if(toBeKicked.getId().equals(remover.getId()))
+            updatedSpace = removeUserTriggeredByHimself(toBeKicked, space);
+        else
+        // Or the remover and the toBeKicked is not the same user
+            updatedSpace =  removeUserTriggeredBySomeoneElse(remover, toBeKicked, space);
+        // check member and host count
+        checkSpaceMemberAndHostCount(space);
+        return updatedSpace;
+    }
 
-        boolean userIsNotHostInSpace = Collections.disjoint(space.getSpaceHosts(), remover.getHostSpaces());
+    /***
+     * Checks if the space has at least one member and one host. If the space does not have one host, a random user is
+     * promoted to host. If the space does not have one member, the space is deleted.
+     * @param space that should be checked
+     * @return updated space
+     */
+    private Space checkSpaceMemberAndHostCount(Space space){
+        if(space.getSpaceHosts().isEmpty()){
+        // Promote random user to host if a user is left
+            if (!space.getSpaceMembers().isEmpty()){
+                // get a random member of the space which cannot be a host yet
+                var randomSpaceMember = space.getSpaceMembers().iterator().next().getMember();
+                var spaceHost = new SpaceHost(randomSpaceMember, space);
 
-        if (userIsNotHostInSpace && !space.isPublic())
-            throw new AccessDeniedException("Not host of space. Only hosts can remove other members.");
-
-        if (space.isPublic() && !memberId.equals(remover.getId()))
-            throw new AccessDeniedException("You can only remove yourself from public spaces");
-
-        var spaceMember = spaceMemberRepository.findSpaceMemberBySpaceIsAndMemberIs(space, member);
-
-        member.removeMemberSpace(spaceMember);
-        space.removeSpaceMember(spaceMember);
-
-        userRepository.save(member);
-        space = spaceRepository.save(space);
-        spaceMemberRepository.delete(spaceMember);
-
+                randomSpaceMember.addHostSpace(spaceHost);
+                space.addSpaceHost(spaceHost);
+                userRepository.save(randomSpaceMember);
+                space = spaceRepository.save(space);
+                spaceHostRepository.save(spaceHost);
+            }
+        }
+        if(space.getSpaceMembers().isEmpty()){
+            spaceRepository.delete(space);
+        }
         return space;
     }
 
@@ -294,6 +361,8 @@ public class SpaceService {
         space = spaceRepository.save(space);
         spaceHostRepository.delete(spaceHost);
 
+        // check the host count for this space
+        checkSpaceMemberAndHostCount(space);
         return space;
     }
 
