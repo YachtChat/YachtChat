@@ -262,10 +262,25 @@ export class NavigationBar extends Component<Props, State> {
                                 </li>
                                 <li className="menu-item" >
                                     <div className="inner-item">
-                                        <Tooltip  disableFocusListener
-                                                  title={"Log Out"} placement="right" arrow>
-                                            <span className="icon-wrapper" >
-                                                <span onClick={() => this.setState({confirmlogout: true})} className="icon" ref={this.anchorRef}>
+                                            { this.state.confirmlogout ?
+                                            <span className="icon-wrapper clicked" onClick={this.props.logout}>
+
+                                                    <ClickAwayListener onClickAway={() => this.setState({confirmlogout: false})}>
+                                                        <span  className="icon"><FaSignOutAlt/>  </span>
+                                                    </ClickAwayListener>
+                                            </span>
+                                                    :
+                                                <Tooltip  disableFocusListener
+                                                               title={"Log Out"} placement="right" arrow>
+                                                <span className="icon-wrapper" >
+                                                    <span onClick={() => this.setState({confirmlogout: true})} className="icon" >
+                                                    <FaSignOutAlt/>
+                                                    </span>
+                                                </span>
+                                            </Tooltip>
+
+                                                }
+                                                {/*<span onClick={() => this.setState({confirmlogout: true})} className="icon" ref={this.anchorRef}>
                                                     <FaSignOutAlt/>
                                                 </span>
                                                 <Popper open={this.state.confirmlogout}
@@ -275,6 +290,7 @@ export class NavigationBar extends Component<Props, State> {
 
                                                         >
                                                     {({TransitionProps, placement}) => (
+
                                                         <Grow
 
                                                             {...TransitionProps}
@@ -283,15 +299,15 @@ export class NavigationBar extends Component<Props, State> {
                                                             <Paper className={"logoutbutton"} onClick={this.props.logout}>
                                                                 <ClickAwayListener onClickAway={() => this.setState({confirmlogout: false})}>
 
-                                                                    <span onClick={this.props.logout}><FaSignOutAlt/> Logout </span>
+                                                                    <span onClick={this.props.logout} className="icon"><FaSignOutAlt/>  </span>
 
                                                                 </ClickAwayListener>
                                                             </Paper>
                                                         </Grow>
                                                     )}
-                                                </Popper>
-                                            </span>
-                                        </Tooltip>
+                                                </Popper>*/}
+
+
                                         <span className="item-content">
                                             Log Out
                                         </span>

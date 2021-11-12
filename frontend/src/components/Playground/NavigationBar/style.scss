@@ -147,6 +147,10 @@
                 border-radius: 50%;
                 border: solid 1px $accent_light;
 
+                &.clicked {
+                  background: $logout_button_color;
+                }
+
                 @media (prefers-color-scheme: dark) {
                   & {
                     border: solid 1px $accent_dark;
@@ -158,9 +162,6 @@
                   height: 100%;
                   align-items: center;
                   justify-content: center;
-                }
-                .logoutbutton {
-                  background-color: $logout_button_color;
                 }
               }
 
