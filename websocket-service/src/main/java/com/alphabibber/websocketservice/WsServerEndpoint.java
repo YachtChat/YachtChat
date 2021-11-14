@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     Gson gson = new GsonBuilder().create();
+    private final PingHandler pingHandler = new PingHandler();
     private final LoginHandler loginHandler = new LoginHandler();
     private final PositionChangeHandler positionChangeHandler = new PositionChangeHandler();
     private final LeaveHandler leaveHandler = new LeaveHandler();
@@ -54,7 +55,8 @@ public class WsServerEndpoint {
     public void openOpen(@PathParam("roomID") String roomId, Session session) {
         // increase the idle timeout time otherwise the user will be disconnected after a minute
         // set to 10 hours
-        session.setMaxIdleTimeout(15000);
+        session.setMaxIdleTimeout(1000 * 60 * 60);
+
 
         // Get the room form the roomMap
         Map<String, User> room = roomMap.get(roomId);
@@ -82,8 +84,6 @@ public class WsServerEndpoint {
         }
         String type = jsonObject.get("type").getAsString();
 
-        if (type.equals("ping")) return;
-
         // if the user is not yet part of the room the type has to be 'login'
         if (!room.containsKey(session.getId())) {
             if (!type.equals("login")) {
@@ -91,8 +91,13 @@ public class WsServerEndpoint {
             }
             String token = jsonObject.get("token").getAsString();
             String userId = jsonObject.get("id").getAsString();
-            loginHandler.handleLogin(room, roomId, token, userId, session);
+            loginHandler.handleLogin(room, roomId, token, userId, session, pingHandler);
         }
+
+        if (type.equals("ping")){
+            pingHandler.handlePing(session.getId());
+        }
+
 
         // if the user is already logged in the space, it can be various type
         else {
