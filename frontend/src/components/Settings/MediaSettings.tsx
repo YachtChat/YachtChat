@@ -125,7 +125,7 @@ export class MediaSettings extends Component<Props> {
                 }
 
                 {// If cameras are loaded and Workers as well as canvas filters are supported
-                    (this.props.cameras.length !== 0 && window.Worker &&
+                    (this.props.cameras.length !== 0 && window.Worker && typeof OffscreenCanvas !== "undefined" &&
                         document.createElement('canvas').getContext('2d')?.filter) &&
                     <div className={"settings-item"}>
                         <label>
