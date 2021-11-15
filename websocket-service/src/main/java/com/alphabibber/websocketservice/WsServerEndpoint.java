@@ -38,7 +38,7 @@ public class WsServerEndpoint {
     private final KickHandler kickHandler = new KickHandler();
     private final ReconnectionHandler reconnectionHandler = new ReconnectionHandler();
 
-    private final SpacesService spacesService = new SpacesService();
+    private final PingHandler pingHandler = PingHandler.getInstance();
 
 
     // Have a look at the ConcurrentHashMap here:
@@ -54,7 +54,8 @@ public class WsServerEndpoint {
     public void openOpen(@PathParam("roomID") String roomId, Session session) {
         // increase the idle timeout time otherwise the user will be disconnected after a minute
         // set to 10 hours
-        session.setMaxIdleTimeout(15000);
+        session.setMaxIdleTimeout(1000 * 60 * 60);
+
 
         // Get the room form the roomMap
         Map<String, User> room = roomMap.get(roomId);
@@ -66,6 +67,9 @@ public class WsServerEndpoint {
             log.info("Room {} newly opend", roomId);
         }
         log.info("User joined the room {}", roomId);
+
+        // we expect the user to send a ping every 5 seconds
+        pingHandler.initPing(session);
     }
 
     @OnMessage(maxMessageSize = -1L)
@@ -82,8 +86,6 @@ public class WsServerEndpoint {
         }
         String type = jsonObject.get("type").getAsString();
 
-        if (type.equals("ping")) return;
-
         // if the user is not yet part of the room the type has to be 'login'
         if (!room.containsKey(session.getId())) {
             if (!type.equals("login")) {
@@ -93,6 +95,11 @@ public class WsServerEndpoint {
             String userId = jsonObject.get("id").getAsString();
             loginHandler.handleLogin(room, roomId, token, userId, session);
         }
+
+        if (type.equals("ping")){
+            pingHandler.handlePing(session.getId());
+        }
+
 
         // if the user is already logged in the space, it can be various type
         else {
@@ -167,6 +174,7 @@ public class WsServerEndpoint {
         } catch (NullPointerException e){
             log.error("Room {} does not exist but user closed connection on that room", roomId);
         }
+        pingHandler.handleLeave(session.getId());
         if (sender != null){
             leaveHandler.handleLeave(roomMap.get(roomId), sender);
             log.info("User {} has left the room {}", sender.getId(), roomId);
