@@ -1210,15 +1210,15 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@camera-processor/virtual-background@^0.9.10":
-  version "0.9.10"
-  resolved "https://registry.yarnpkg.com/@camera-processor/virtual-background/-/virtual-background-0.9.10.tgz#33d72580e46b5b309342eb5caa9a6d395f08ff6f"
-  integrity sha512-Q8OxXiw/0QnrBsdY9ltVmj1512xyOyiQDltPwjbDEIsOEyfpiggM0VtP1EV1dmglYcvdijmighD3DcI/I+EHxQ==
+  version "0.9.11"
+  resolved "https://registry.yarnpkg.com/@camera-processor/virtual-background/-/virtual-background-0.9.11.tgz#f0dd65704948dc31908c75f3ab6d8a6f55ac7607"
+  integrity sha512-F+laexzA7CnOhmDQk2CQwhgusstZO2YBOQLiuY+DenfQ4zUH5osllyc/P0JckfT3i4RMu01da+AWzx9ZhwbR6Q==
   dependencies:
     "@tensorflow-models/body-pix" "^2.2.0"
     "@tensorflow/tfjs" "^3.8.0"
     "@tensorflow/tfjs-backend-cpu" "^3.8.0"
     "@tensorflow/tfjs-backend-webgl" "^3.8.0"
-    camera-processor "^0.9.4"
+    camera-processor "^0.9.5"
     tflite-helper "^0.9.4"
 
 "@cnakazawa/watch@^1.0.3":
@@ -2131,9 +2131,9 @@
     form-data "^3.0.0"
 
 "@types/node@*":
-  version "16.11.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.6.tgz#6bef7a2a0ad684cf6e90fcfe31cecabd9ce0a3ae"
-  integrity sha512-ua7PgUoeQFjmWPcoo9khiPum3Pd60k4/2ZGXt18sm2Slk0W0xZTqt5Y0Ny1NyBiN1EVQ/+FaF9NcY4Qe6rwk5w==
+  version "16.11.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.7.tgz#36820945061326978c42a01e56b61cd223dfdc42"
+  integrity sha512-QB5D2sqfSjCmTuWcBWyJ+/44bcjO7VbjSbOE0ucoVbAsSNQc4Lt6QkgkVXkTDwkL4z/beecZNDvVX15D4P8Jbw==
 
 "@types/node@^12.0.0":
   version "12.20.36"
@@ -3599,10 +3599,12 @@ camelcase@^6.0.0, camelcase@^6.1.0, camelcase@^6.2.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.2.0.tgz#924af881c9d525ac9d87f40d964e5cea982a1809"
   integrity sha512-c7wVvbw3f37nuobQNtgsgG9POC9qMbNuMQmTCqZv23b6MIz0fcYpBiOlv9gEN/hdLdnZTDQhg6e9Dq5M1vKvfg==
 
-camera-processor@^0.9.4:
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/camera-processor/-/camera-processor-0.9.4.tgz#b9b1ed60b984aaba82397dc04f8f03ae8eab8cb7"
-  integrity sha512-hJ0KzepyhJIVDaGDccCbkyPbSNg6V8soIEDf4bbJsKvqsmp22eKabo5lKT02epP9JHiPI4A+V1QXZO2YO40rHQ==
+camera-processor@^0.9.5:
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/camera-processor/-/camera-processor-0.9.5.tgz#5f5bf31a0952ad49bc2ff3a6a39d177eae922104"
+  integrity sha512-5f0NwUW99y83Q+C1LejxR08o3W62R6+jcJuuRizyXh6xCpw02H6joaxgo+ehnK6zBlRa7fmkzERDQ7uDonhiVQ==
+  dependencies:
+    time-worker "^1.0.4"
 
 caniuse-api@^3.0.0:
   version "3.0.0"
@@ -7871,7 +7873,19 @@ mime-db@1.50.0, "mime-db@>= 1.43.0 < 2":
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.50.0.tgz#abd4ac94e98d3c0e185016c67ab45d5fde40c11f"
   integrity sha512-9tMZCDlYHqeERXEHO9f/hKfNXhre5dK2eE/krIvUjZbS2KPcqGDfNShIWS1uW9XOTKQKqK6qbeOci18rbfW77A==
 
-mime-types@^2.1.12, mime-types@^2.1.27, mime-types@~2.1.17, mime-types@~2.1.24:
+mime-db@1.51.0:
+  version "1.51.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.51.0.tgz#d9ff62451859b18342d960850dc3cfb77e63fb0c"
+  integrity sha512-5y8A56jg7XVQx2mbv1lu49NR4dokRnhZYTtL+KGfaa27uq4pSTXkwQkFJl4pkRMyNFz/EtYDSkiiEHx3F7UN6g==
+
+mime-types@^2.1.12:
+  version "2.1.34"
+  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.34.tgz#5a712f9ec1503511a945803640fafe09d3793c24"
+  integrity sha512-6cP692WwGIs9XXdOO4++N+7qjqv0rqxxVvJ3VHPh/Sc9mVZcQP+ZGhkKiTvWMQRr2tbHkJP/Yn7Y0npb3ZBs4A==
+  dependencies:
+    mime-db "1.51.0"
+
+mime-types@^2.1.27, mime-types@~2.1.17, mime-types@~2.1.24:
   version "2.1.33"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.33.tgz#1fa12a904472fafd068e48d9e8401f74d3f70edb"
   integrity sha512-plLElXp7pRDd0bNZHw+nMd52vRYjLwQjygaNg7ddJ2uJtTlmnTCjWuPKxVu6//AdaRuME84SvLW91sIkBqGT0g==
