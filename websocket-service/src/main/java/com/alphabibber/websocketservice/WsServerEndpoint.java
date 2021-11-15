@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     Gson gson = new GsonBuilder().create();
-    private final PingHandler pingHandler = new PingHandler();
     private final LoginHandler loginHandler = new LoginHandler();
     private final PositionChangeHandler positionChangeHandler = new PositionChangeHandler();
     private final LeaveHandler leaveHandler = new LeaveHandler();
@@ -39,7 +38,7 @@ public class WsServerEndpoint {
     private final KickHandler kickHandler = new KickHandler();
     private final ReconnectionHandler reconnectionHandler = new ReconnectionHandler();
 
-    private final SpacesService spacesService = new SpacesService();
+    private final PingHandler pingHandler = PingHandler.getInstance();
 
 
     // Have a look at the ConcurrentHashMap here:
@@ -68,6 +67,9 @@ public class WsServerEndpoint {
             log.info("Room {} newly opend", roomId);
         }
         log.info("User joined the room {}", roomId);
+
+        // we expect the user to send a ping every 5 seconds
+        pingHandler.initPing(session);
     }
 
     @OnMessage(maxMessageSize = -1L)
@@ -91,7 +93,7 @@ public class WsServerEndpoint {
             }
             String token = jsonObject.get("token").getAsString();
             String userId = jsonObject.get("id").getAsString();
-            loginHandler.handleLogin(room, roomId, token, userId, session, pingHandler);
+            loginHandler.handleLogin(room, roomId, token, userId, session);
         }
 
         if (type.equals("ping")){
@@ -172,6 +174,7 @@ public class WsServerEndpoint {
         } catch (NullPointerException e){
             log.error("Room {} does not exist but user closed connection on that room", roomId);
         }
+        pingHandler.handleLeave(session.getId());
         if (sender != null){
             leaveHandler.handleLeave(roomMap.get(roomId), sender);
             log.info("User {} has left the room {}", sender.getId(), roomId);

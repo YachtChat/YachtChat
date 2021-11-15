@@ -23,7 +23,7 @@ public class LoginHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final LeaveHandler leaveHandler = new LeaveHandler();
 
-    public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session, PingHandler pingHandler) {
+    public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session) {
         if (!spacesService.isUserAllowedToJoin(roomId, token)) {
             // if the user is not allowed to enter the room the websocket connection will be closed
             try {
@@ -61,9 +61,6 @@ public class LoginHandler {
           log.error(String.valueOf(e.getStackTrace()));
         }
         log.info("User {} is now part of room {}", userId, roomId);
-
-        // when the user is part of a room we expect him to send a ping every 5 seconds
-        pingHandler.initPing(session.getId(), user, room);
 
         // tell all other users that a new User joined
         NewUserAnswer newUserAnswer = new NewUserAnswer(user.getId(), user.getPosition());
