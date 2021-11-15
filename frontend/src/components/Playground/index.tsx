@@ -5,7 +5,7 @@ import NavigationBar from "./NavigationBar";
 import {handleZoom, initPlayground} from "../../store/playgroundSlice";
 import Canvas from "./Canvas";
 import Wrapper, {Loading} from "../Wrapper";
-import {User} from "../../store/models";
+import {Space, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
 import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";
@@ -27,6 +27,7 @@ interface Props {
     loadMediaDevices: (callback?: () => void) => void
     userMedia: boolean
     cameras: string[]
+    spaces: Space[]
     microphones: string[]
     joinedSpace: boolean,
     sendLogout: () => void,
@@ -44,6 +45,9 @@ export class Playground extends Component<Props> {
         window.onpopstate = (event) => {
             this.props.sendLogout();
         };
+
+        const spaceName = this.props.spaces.find(space => space.id === this.props.match!.params.spaceID)?.name
+        document.title = (spaceName) ? spaceName : applicationName
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
