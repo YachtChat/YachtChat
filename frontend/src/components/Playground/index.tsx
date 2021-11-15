@@ -47,7 +47,7 @@ export class Playground extends Component<Props> {
         };
 
         const spaceName = this.props.spaces.find(space => space.id === this.props.match!.params.spaceID)?.name
-        document.title = (spaceName) ? spaceName : applicationName
+        document.title = (spaceName) ? spaceName + " - " + applicationName : applicationName
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
