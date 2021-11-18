@@ -11,6 +11,7 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /etc/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
+      - /home/git_environment/NotZoom/posthog/prod/nginx.conf:/etc/nginx/vhost.d/${POSTHOG_URL}_location:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
 #      - /home/git_environment/NotZoom/keycloak/Prometheus/vhost.d/${PROMETHEUS_URL}:/etc/nginx/vhost.d/${PROMETHEUS_URL}
 #      - /etc/.htpasswd:/etc/.htpasswd
