@@ -10,9 +10,11 @@ import {Tutorial} from "./components/tutorial";
 import {Usp} from "./components/usp";
 import {Contact} from "./components/contact";
 import {ParallaxProvider} from "react-scroll-parallax";
-
+import posthog from 'posthog-js';
 
 function App() {
+    posthog.init("phc_8McKDIRFPbkreZyJSh8A4MtoL4dUHaB7eICFmoPFKsC", {api_host: 'https://posthog.yacht.chat'});
+
     return (
         <ReactKeycloakProvider authClient={auth} initOptions={{
             onLoad: "check-sso",

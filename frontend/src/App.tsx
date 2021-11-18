@@ -16,6 +16,7 @@ import CreateSpace from "./components/Spaces/CreateSpace";
 import InviteSpace from "./components/Spaces/InviteSpace";
 import JoinSpace from "./components/Spaces/JoinSpace";
 import mobile from "is-mobile";
+import posthog from 'posthog-js';
 
 interface Props {
     loggedIn: boolean
@@ -40,6 +41,8 @@ export class App extends Component<Props, State> {
     }
 
     render() {
+        posthog.init("phc_8McKDIRFPbkreZyJSh8A4MtoL4dUHaB7eICFmoPFKsC", {api_host: 'https://posthog.yacht.chat'});
+
         return (
             <div className={"App"}>
                 {/*{!this.props.joinedRoom && !this.props.loggedIn &&*/}
