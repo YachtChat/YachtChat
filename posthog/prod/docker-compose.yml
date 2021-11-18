@@ -9,10 +9,14 @@ services:
     image: postgres:13-alpine
     volumes:
       - posthog-data:/var/lib/postgresql/data
+    networks:
+      - application
 
   redis:
     container_name: posthog_redis
     image: redis:6-alpine
+    networks:
+      - application
 
   web:
     container_name: posthog_web
