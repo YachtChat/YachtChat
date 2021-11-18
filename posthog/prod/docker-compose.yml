@@ -31,6 +31,7 @@ services:
       - TRUST_ALL_PROXIES=true
       - DATABASE_URL=postgres://posthog:${POSTHOG_DATA_PW}@db:5432/posthog
       - REDIS_URL=redis://redis:6379/
+      - DISABLE_SECURE_SSL_REDIRECT=1
       - SECRET_KEY=${POSTHOG_KEY}
       - IS_DOCKER=true
     image: posthog/posthog:latest
