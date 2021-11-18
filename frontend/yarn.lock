@@ -1710,6 +1710,11 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
+"@sentry/types@^6.11.0":
+  version "6.15.0"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-6.15.0.tgz#a2917f8aed91471bdfd6651384ffcd47b95c43ad"
+  integrity sha512-zBw5gPUsofXUSpS3ZAXqRNedLRBvirl3sqkj2Lez7X2EkKRgn5D8m9fQIrig/X3TsKcXUpijDW5Buk5zeCVzJA==
+
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/@sheerun/mutationobserver-shim/-/mutationobserver-shim-0.3.3.tgz#5405ee8e444ed212db44e79351f0c70a582aae25"
@@ -5455,6 +5460,11 @@ fb-watchman@^2.0.0:
   integrity sha512-DkPJKQeY6kKwmuMretBhr7G6Vodr7bFwDYTXIkfG1gjvNpaxBTQV3PbXg6bR1c1UP4jPOX0jHUbbHANL9vRjVg==
   dependencies:
     bser "2.1.1"
+
+fflate@^0.4.1:
+  version "0.4.8"
+  resolved "https://registry.yarnpkg.com/fflate/-/fflate-0.4.8.tgz#f90b82aefbd8ac174213abb338bd7ef848f0f5ae"
+  integrity sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==
 
 figgy-pudding@^3.5.1:
   version "3.5.2"
@@ -9483,6 +9493,15 @@ postcss@^8.1.0:
     picocolors "^1.0.0"
     source-map-js "^0.6.2"
 
+posthog-js@^1.16.4:
+  version "1.16.4"
+  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.16.4.tgz#2e043aa6b32e260a8deb9964a67d2ef75c29b699"
+  integrity sha512-gfTLmM/hL/R4tlki+XI2omKObSMwnCTz2BUQyO/TO3QfrV7wnJZPWzfO3FiTLkrcVjY17cyGBCxdvD3SzGDjgw==
+  dependencies:
+    "@sentry/types" "^6.11.0"
+    fflate "^0.4.1"
+    rrweb-snapshot "^1.1.7"
+
 prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
@@ -10382,6 +10401,11 @@ rollup@^1.31.1:
     "@types/estree" "*"
     "@types/node" "*"
     acorn "^7.1.0"
+
+rrweb-snapshot@^1.1.7:
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/rrweb-snapshot/-/rrweb-snapshot-1.1.10.tgz#309af4caf7dc9ce057295bb55c13ab8f1ec04d52"
+  integrity sha512-31u0PtpM6qzEww7PajYLM9X0Nf2UA/arFA2tEFTnAVNfxX2TL12BifQYdX0l4fMtu5rnJia4GDiQO9Gwf7pIAg==
 
 rsvp@^4.8.4:
   version "4.8.5"
