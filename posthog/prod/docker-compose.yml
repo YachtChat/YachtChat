@@ -25,7 +25,7 @@ services:
       - VIRTUAL_PORT=${POSTHOG_PORT}
       - IS_BEHIND_PROXY=true
       - TRUST_ALL_PROXIES=true
-      - DATABASE_URL=postgres://posthog:posthog@db:5432/posthog
+      - DATABASE_URL=postgres://posthog:${POSTHOG_DATA_PW}@db:5432/posthog
       - REDIS_URL=redis://redis:6379/
       - SECRET_KEY=${POSTHOG_KEY}
       - IS_DOCKER=true
