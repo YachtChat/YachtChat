@@ -41,7 +41,11 @@ export class App extends Component<Props, State> {
     }
 
     render() {
-        posthog.init("phc_8McKDIRFPbkreZyJSh8A4MtoL4dUHaB7eICFmoPFKsC", {api_host: 'https://posthog.yacht.chat'});
+        if (!window.location.href.includes('localhost')) {
+            posthog.init("phc_8McKDIRFPbkreZyJSh8A4MtoL4dUHaB7eICFmoPFKsC", {api_host: 'https://posthog.yacht.chat'});
+        }
+        // for local development with posthog
+        // posthog.init("", {api_host: 'http://localhost:8000'});
 
         return (
             <div className={"App"}>
