@@ -52,42 +52,12 @@
     }
   }
 
-  h1 {
-    font-size: 3rem;
-    color: $accent_light;
-    padding: 1rem 0 0;
-    text-align: center;
-    margin: 0;
-
-    @media (prefers-color-scheme: dark) {
-      & {
-        color: $accent_dark;
-      }
-    }
-  }
-
-  h2.subtitle {
-    font-size: 1.5rem;
-    text-align: center;
-    font-weight: normal;
-    padding: 0;
-    margin: 0 0 2rem;
-    color: black;
-
-    @media (prefers-color-scheme: dark) {
-      & {
-        color: white;
-      }
-    }
-  }
-
   .list {
     margin: auto;
-    max-width: 700px;
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
-    align-content: stretch;
+    flex-direction: row;
+    align-content: center;
     align-items: stretch;
     flex: 1;
     padding-bottom: 5rem;
@@ -95,13 +65,15 @@
     .listItem {
       z-index: 1;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
+      text-align: center;
       align-content: center;
       align-items: center;
       justify-content: center;
       justify-items: center;
       margin: 0.75rem;
-      flex-grow: 1;
+      min-width: 200px;
+      flex: 1;
       background: $background_light;
       border-radius: $border_radius;
       padding: 4rem 3rem;
@@ -128,7 +100,7 @@
         text-align: center;
         flex-shrink: 0;
         flex-grow: 0;
-        padding-right: 2rem;
+        padding-bottom: 2rem;
         width: 4rem;
         font-size: 2rem;
         box-sizing: border-box;
@@ -139,6 +111,20 @@
           }
         }
 
+      }
+
+      .itemText {
+        h3 {
+          color: $accent_dark;
+          padding-top: 0;
+          margin-top: 0;
+
+          @media (prefers-color-scheme: dark) {
+            & {
+              color: $accent_light;
+            }
+          }
+        }
       }
 
       .animateicon {
@@ -159,6 +145,16 @@
         }
       }
     }
+  }
+
+  .join {
+    display: block;
+    position: relative;
+    margin: auto;
+    text-align: center;
+    width: 30%;
+    box-shadow: $shadow;
+    margin-bottom: 3rem;
   }
 
   @keyframes mouse_move {
