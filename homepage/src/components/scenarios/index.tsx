@@ -70,7 +70,7 @@ export function Scenarios(props: Props) {
             <div className={"backgroundBall"}/>
             <Separator/>
             <div {...handlers} className="contentWrapper">
-                <h1>Use cases</h1>
+                <h1>{applicationName} will help every day</h1>
                 <h2 className={"subtitle"}>
                     See some examples where
                     <br/>{applicationName} provides great value.</h2>
