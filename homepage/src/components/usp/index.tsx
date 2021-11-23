@@ -1,4 +1,4 @@
-import {IoBrush, IoLockClosed, IoMdClock} from "react-icons/all";
+import {IoLockClosed, IoMdClock} from "react-icons/all";
 import React from "react";
 import "./style.scss"
 import {applicationName} from "../../util/config";
@@ -13,12 +13,12 @@ export function Usp() {
             {/*<div className={"backgroundBall"}/>*/}
             <Separator/>
             <div className={"contentWrapper"}>
-                <h1>Why {applicationName}?</h1>
-                <h2 className={"subtitle"}>What makes {applicationName} so special?</h2>
+                <h1>Just you and your Team</h1>
+                <h2 className={"subtitle"}>This is why {applicationName} is so special</h2>
 
                 <div className={classNames({"aboutCards": true})}>
                     <Card>
-                        <IoMdHeart/>
+                        <IoMdHeart className={"heart"}/>
                         <label>Revives teamspirit</label>
                         <p>
                             With its unique way of communication, {applicationName} promotes spontaneous conversations
@@ -27,7 +27,7 @@ export function Usp() {
                         </p>
                     </Card>
                     <Card>
-                        <IoMdClock/>
+                        <IoMdClock className={"clock"}/>
                         <label>Saves time</label>
                         <p>
                             With {applicationName} you can simply talk to anybody in a room.
@@ -35,17 +35,17 @@ export function Usp() {
                             to them.
                         </p>
                     </Card>
+                    {/*<Card>*/}
+                    {/*    <IoBrush/>*/}
+                    {/*    <label>Easy to use and understand</label>*/}
+                    {/*    <p>*/}
+                    {/*        At {applicationName}, everything revolves around you. In order to provide you with the best*/}
+                    {/*        possible experience, we rely on a minimalistic yet highly appealing design. This*/}
+                    {/*        makes {applicationName} intuitive for everyone to use.*/}
+                    {/*    </p>*/}
+                    {/*</Card>*/}
                     <Card>
-                        <IoBrush/>
-                        <label>Easy to use and understand</label>
-                        <p>
-                            At {applicationName}, everything revolves around you. In order to provide you with the best
-                            possible experience, we rely on a minimalistic yet highly appealing design. This
-                            makes {applicationName} intuitive for everyone to use.
-                        </p>
-                    </Card>
-                    <Card>
-                        <IoLockClosed/>
+                        <IoLockClosed className={"lock"}/>
                         <label>Privacy at its core</label>
                         <p>
                             {applicationName} is a solution built with privacy in mind.
