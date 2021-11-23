@@ -2,105 +2,122 @@
 
 #landing {
   width: 100%;
-  height: 100vh;
+  max-height: 100vh;
   position: relative;
+  background: $background_light;
 
-  .video-wrapper {
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    position: absolute;
-
-    #video {
-      position: absolute;
-      min-width: 100%;
-      min-height: 100%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: $background_dark;
     }
   }
 
   #intro {
+    width: 100%;
+    max-height: 100vh;
     position: relative;
-    height: 100vh;
+
     z-index: 1;
 
-    .landing-parallax {
-      position: absolute;
-      bottom: 0;
+    .contentWrapper {
+      position: relative;
       width: 100%;
-    }
+      max-height: 100vh;
+      min-height: 80vh;
+      margin: auto;
 
-    .background {
-      width: 75vh;
-      height: 75vh;
-      border-radius: 50vh;
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(1rem);
-      transform: translate(-30%, 30%);
-      bottom: 0;
-      margin-left: 0;
-      z-index: 1;
-      position: absolute;
+      display: flex;
+      align-content: center;
+      align-items: center;
+      justify-content: center;
+      justify-items: center;
+      flex-wrap: wrap;
+      flex-direction: row-reverse;
 
-      @media (prefers-color-scheme: dark) {
-        & {
-          background: rgba(0, 0, 0, 0.5);
-        }
-      }
-    }
+      .screenshot {
+        max-width: 600px;
+        padding: 0 2rem;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 20;
+        flex-grow: 2;
+        flex-shrink: 0;
 
-    .content {
-      width: 40vh;
-      display: block;
-      position: absolute;
-      bottom: 0;
-      box-sizing: border-box;
-      padding: 2rem;
-      color: black;
-      z-index: 3;
+        .demo {
+          position: relative;
+          width: 100%;
+          max-width: 90vw;
+          box-shadow: $shadow;
+          transform: translateX(30%) scale(1.6);
 
-      @media (prefers-color-scheme: dark) {
-        & {
-          color: white;
-        }
-      }
-
-      .headings {
-        margin: 3vh 0;
-
-        h2 {
-          padding: 0;
-          margin: 0;
-          font-size: 3vh;
-
-          &.subheading {
-            font-weight: normal;
+          @media screen and (max-width: 1200px) {
+            & {
+              transform: none;
+            }
           }
         }
       }
 
-      .button {
-        font-size: 1.5vh;
-        transition: transform 0.2s, opacity 0.2s;
 
-        &:hover {
-          transform: translateX(5px);
-          opacity: 0.5;
+      .content {
+        max-width: 600px;
+        display: block;
+        position: relative;
+        width: 100%;
+        flex-grow: 1;
+        flex-shrink: 1;
+
+        .landing-parallax {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
         }
-      }
 
-      .links {
-        font-size: 1.5vh;
+        .background {
+          width: 150vh;
+          height: 150vh;
+          border-radius: 100vh;
+          background: $background_2_light;
+          transform: translateY(-50%);
+          top: 50%;
+          right: 0;
+          z-index: -1;
+          position: absolute;
 
-        a {
-          margin-right: 0.5rem;
+          @media (prefers-color-scheme: dark) {
+            & {
+              background: rgba(0, 0, 0, 1);
+            }
+          }
         }
-      }
 
-      img {
-        max-width: 35vh;
+        .introText {
+          display: block;
+          position: relative;
+          box-sizing: border-box;
+          padding: 2rem;
+          color: $accent_dark;
+
+          @media (prefers-color-scheme: dark) {
+            & {
+              color: white;
+            }
+          }
+
+          .headings {
+            margin: 3vh 0;
+
+            h2 {
+              padding: 0;
+              margin: 0;
+              font-size: 4vh;
+
+              &.subheading {
+                font-weight: normal;
+              }
+            }
+          }
+        }
       }
     }
   }
