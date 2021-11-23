@@ -17,16 +17,17 @@
   }
 
   .backgroundBall {
-    z-index: -1;
     display: block;
     position: absolute;
     width: 200vw;
     height: 200vw;
     background: $background_2_light;
+    margin-right: 0;
     left: 0;
     top: 0;
     border-radius: 50%;
-    transform: translate(-50%, -40vh);
+    transform: translate(-50%, 40vh);
+
     @media (prefers-color-scheme: dark) {
       & {
         background: $background_2_dark;
@@ -35,48 +36,18 @@
   }
 
   .separator {
-    z-index: 0;
     position: absolute;
     bottom: 0;
     left: 0;
 
-    fill: $background_2_light;
-
     width: 100%;
-    height: 40rem;
+    height: 30%;
+
+    fill: $background_light;
 
     @media (prefers-color-scheme: dark) {
       & {
-        fill: $background_2_dark;
-      }
-    }
-  }
-
-  h1 {
-    font-size: 3rem;
-    color: $accent_light;
-    padding: 1rem 0 0;
-    text-align: center;
-    margin: 0;
-
-    @media (prefers-color-scheme: dark) {
-      & {
-        color: $accent_dark;
-      }
-    }
-  }
-
-  h2.subtitle {
-    font-size: 1.5rem;
-    text-align: center;
-    font-weight: normal;
-    padding: 0;
-    margin: 0 0 2rem;
-    color: black;
-
-    @media (prefers-color-scheme: dark) {
-      & {
-        color: $headline_dark;
+        fill: $background_dark;
       }
     }
   }
@@ -115,9 +86,28 @@
       }
 
       svg {
+        position: relative;
+        background: $accent_light;
         display: block;
-        margin: 1rem auto 2rem;
+        margin: 1rem auto;
+        padding: 1rem;
         font-size: 3rem;
+        border-radius: 3rem;
+      }
+
+      .heart {
+        fill: red;
+        background: #ffd3d3;
+      }
+
+      .clock {
+        fill: #537a78;
+        background: #d1fffc;
+      }
+
+      .lock {
+        fill: #565f62;
+        background: $accent_light;
       }
 
       &:hover {
