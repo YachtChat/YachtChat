@@ -1,0 +1,30 @@
+@import "../frontend/src/variables.module";
+
+.joinButton {
+  transition: transform 0.2s, opacity 0.2s;
+  color: $button_font_dark;
+  background: $accent_dark;
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
+  border-radius: 2rem;
+  width: 50%;
+
+  @media (prefers-color-scheme: dark) {
+    color: $button_font_light;
+    background: $accent_light;
+  }
+
+  &:hover {
+    transform: translateX(5px);
+    opacity: 0.5;
+  }
+}
+
+.links {
+  font-size: 2vh;
+  margin: 2rem 2rem 1rem 0;
+
+  a {
+    margin-right: 1rem;
+  }
+}
