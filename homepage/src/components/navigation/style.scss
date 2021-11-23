@@ -10,6 +10,7 @@
   left: 0;
   right: 0;
   display: block;
+  transition: background 0.3s;
 
   @media (prefers-color-scheme: dark) {
     & {
@@ -17,18 +18,35 @@
     }
   }
 
+  &.notscroll {
+    background: transparent;
+    backdrop-filter: none;
+  }
+
   .logo {
     flex-grow: 0;
-    padding: 1rem 2rem;
-    width: 3rem;
-    height: 3rem;
-    filter: drop-shadow(0 0 0.5rem rgba(0, 0, 0, .7));
+    transition: transform 0.3s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    align-content: center;
     float: left;
 
-    transition: transform 0.3s;
+    .logo-pic {
+      padding: 1rem 1rem 1rem 2rem;
+      width: 3rem;
+      height: 3rem;
+      filter: drop-shadow(0 0 0.5rem rgba(0, 0, 0, .7));
+      float: left;
+    }
+
+    .logo-text {
+      height: 1.5rem;
+    }
+
 
     &:hover {
-      transform: scale(1.15);
+      transform: scale(1.01);
     }
   }
 
@@ -42,12 +60,13 @@
     justify-content: stretch;
     left: 0;
     right: 0;
-    margin: 0;
+    margin: auto;
 
     .nav-items {
       flex-grow: 0;
       padding: 0;
       height: auto;
+      margin: auto;
 
       button {
         margin: 0 1rem;
@@ -64,6 +83,16 @@
         &:hover {
           opacity: 0.5;
         }
+
+        &.active {
+          color: $accent_dark;
+
+          @media (prefers-color-scheme: dark) {
+            & {
+              color: $accent_light;
+            }
+          }
+        }
       }
     }
 
@@ -72,7 +101,7 @@
       float: right;
 
       padding-right: 2rem;
-      flex-grow: 3;
+      flex-grow: 0;
 
       .buttons {
         right: 0;
