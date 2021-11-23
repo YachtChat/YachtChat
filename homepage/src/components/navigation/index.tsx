@@ -13,9 +13,19 @@ interface Props {
 export const Navigation = (props: Props) => {
 
     const [open, setOpen] = useState(false)
+    const [scroll, setScroll] = useState(false)
+
+    window.addEventListener("scroll", () => {
+            if (window.scrollY > 0) {
+                setScroll(true)
+            } else {
+                setScroll(false)
+            }
+        }
+    )
 
     return (
-        <header id={"navigation"}>
+        <header id={"navigation"} className={((!scroll) ? "notscroll" : "")}>
             <div className={"contentWrapper"}>
 
                 <div id={"nav-content-desktop"}>
