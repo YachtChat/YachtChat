@@ -3,7 +3,10 @@ package com.alphabibber.websocketservice.handler;
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.model.answer.LoginAnswer;
 import com.alphabibber.websocketservice.model.answer.NewUserAnswer;
+import com.alphabibber.websocketservice.service.PosthogService;
 import com.alphabibber.websocketservice.service.SpacesService;
+import com.alphabibber.websocketservice.service.PosthogService;
+import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +15,7 @@ import javax.websocket.Session;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class LoginHandler {
@@ -22,6 +26,8 @@ public class LoginHandler {
             .build();
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final LeaveHandler leaveHandler = new LeaveHandler();
+    private final PosthogService posthogService = PosthogService.getInstance();
+
 
     public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session) {
         if (!spacesService.isUserAllowedToJoin(roomId, token)) {
@@ -44,7 +50,7 @@ public class LoginHandler {
             if (user.getId().equals(userId)){
                 // kick this user that was already in the space
                 log.error("A user with id: {} is already part of room {} and will be kicked", userId, roomId);
-                leaveHandler.handleLeave(room, user);
+                leaveHandler.handleLeave(roomId, room, user);
             }
         }
 
@@ -54,6 +60,14 @@ public class LoginHandler {
 
         // tell the user that he was added to the room
         LoginAnswer loginAnswer = new LoginAnswer(true, new ArrayList<>(room.values()), userId);
+
+        // tell posthog that the user logged into that space
+        posthogService.sendEvent(user.getId(), "spaceJoined", new HashMap<String, Object>(){
+            {
+                put("spaceId", roomId);
+            }
+        });
+
         try {
             session.getBasicRemote().sendObject(loginAnswer);
         } catch (EncodeException | IOException e) {

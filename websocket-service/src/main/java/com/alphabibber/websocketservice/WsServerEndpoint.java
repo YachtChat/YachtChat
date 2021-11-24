@@ -5,7 +5,6 @@ import com.alphabibber.websocketservice.handler.MessageHandler;
 import com.alphabibber.websocketservice.handler.*;
 import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
-import com.alphabibber.websocketservice.service.SpacesService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -130,7 +129,7 @@ public class WsServerEndpoint {
                     log.info("User {} send message to user {} in room {}", sender.getId(), targetId, roomId);
                     break;
                 case "leave":
-                    leaveHandler.handleLeave(roomMap.get(roomId), sender);
+                    leaveHandler.handleLeave(roomId, roomMap.get(roomId), sender);
                     log.info("User {} has left the room {}", sender.getId(), roomId);
                     break;
                 case "media":
@@ -176,7 +175,7 @@ public class WsServerEndpoint {
         }
         pingHandler.handleLeave(session.getId());
         if (sender != null){
-            leaveHandler.handleLeave(roomMap.get(roomId), sender);
+            leaveHandler.handleLeave(roomId, roomMap.get(roomId), sender);
             log.info("User {} has left the room {}", sender.getId(), roomId);
         }
     }

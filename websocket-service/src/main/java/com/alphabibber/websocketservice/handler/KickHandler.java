@@ -51,6 +51,6 @@ public class KickHandler {
         }
 
         // tell the room that a user left
-        leaveHandler.handleLeave(room, user);
+        leaveHandler.handleLeave(roomId, room, user);
     }
 }
