@@ -2,6 +2,7 @@ package com.alphabibber.websocketservice.handler;
 
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.model.answer.LeaveAnswer;
+import com.alphabibber.websocketservice.service.PosthogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,12 +10,23 @@ import javax.websocket.EncodeException;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class LeaveHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final PosthogService posthogService = PosthogService.getInstance();
 
-    public void handleLeave(Map<String, User> room, User sender) {
+    public void handleLeave(String roomId, Map<String, User> room, User sender) {
+        // tell posthog that the user left the space
+        if (room.containsKey(sender.getSession().getId())) {
+            posthogService.sendEvent(sender.getId(), "spaceLeft", new HashMap<String, Object>(){
+                {
+                    put("spaceId", roomId);
+                }
+            });
+        }
+
         room.remove(sender.getSession().getId());
         LeaveAnswer leaveAnswer = new LeaveAnswer(sender.getId());
         ArrayList<User> users = new ArrayList<>(room.values());
