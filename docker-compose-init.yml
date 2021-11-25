@@ -63,7 +63,7 @@ services:
       - VIRTUAL_PORT=${KEYCLOAK_PORT}
     volumes:
       - ./frontend/login-theme:/opt/jboss/keycloak/themes/login
-
+      - ./keycloak/standalone-ha.xml:/opt/jboss/keycloak/standalone/configuration/standalone-ha.xml
     networks:
       - application
     depends_on:
