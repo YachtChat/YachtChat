@@ -11,8 +11,8 @@ export function NavButtons(props: Props) {
 
     const [curEl, setCurEl] = useState<string>("")
 
-    const elids = ["landing", "about", "usp", "scenarios", "tutorial", "contact"]
-    const names = ["Home", "About", "Features", "Use cases", "How To", "Contact"]
+    const elids = ["landing", "about", "usp", "tutorial", "scenarios", "contact"]
+    const names = ["Home", "About", "Features", "How To", "Use cases", "Contact"]
 
     const updateActiveElement = () => {
         const els = elids.map(el => Math.abs(getPosition(document.getElementById(el)).y))

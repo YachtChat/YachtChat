@@ -29,8 +29,8 @@ function App() {
                     <Landing/>
                     <About/>
                     <Usp/>
-                    <Scenarios/>
                     <Tutorial/>
+                    <Scenarios/>
                     <Contact/>
                 </div>
             </ParallaxProvider>

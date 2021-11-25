@@ -1,5 +1,4 @@
 import "./style.scss"
-import {Parallax} from "react-scroll-parallax";
 import Fade from "react-reveal/Fade";
 import {applicationName} from "../../util/config";
 import {JoinButton} from "../joinButton";
@@ -16,7 +15,7 @@ export function About() {
     })
 
     return (
-        <div id={"about"} className={((!scrolled) ? "scrolled" : "")}>
+        <div id={"about"}>
             <IoArrowDown className={"scrollArrow"}/>
             <div className={'backgroundBall'}/>
             <svg className={"separator"} width="100%" height="100%" viewBox="0 0 1181 178" version="1.1"
@@ -27,14 +26,14 @@ export function About() {
             </svg>
             <div className={"contentWrapper"}>
                 <div className={"content"}>
-                    <Parallax className={"image"} y={[-20, 20]}>
+                    <div className={"image"}>
                         <img src={YachtChat} alt={"Yacht in action on a desk"}/>
-                    </Parallax>
+                    </div>
                     <div className={"text"}>
-                        <Parallax className={"parallax"} y={[-10, 10]}>
+                        <div className={"parallax"}>
                             <div className={"paragraphs"}>
                                 <h1>
-                                    Presenting: {applicationName}
+                                    {applicationName}
                                 </h1>
                                 <h2 className={"subtitle"}>
                                     The future of remote collaboration
@@ -67,7 +66,8 @@ export function About() {
                                             Feel like a team again.{" "}
                                         </h2>
                                         <p>
-                                            {applicationName} helps increase information exchange and lets you feel like
+                                            {applicationName} helps to increase information exchange and lets you feel
+                                            like
                                             a
                                             team again.{" "}
                                             {applicationName} combines the collaborative working methods of an office
@@ -79,7 +79,7 @@ export function About() {
                                     </div>
                                 </div>
                             </div>
-                        </Parallax>
+                        </div>
                     </div>
                 </div>
                 <Fade bottom>

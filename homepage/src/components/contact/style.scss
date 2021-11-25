@@ -5,11 +5,19 @@
   overflow: hidden;
   padding-bottom: 10rem;
 
-  background: $background_2_light;
+  background: $accent_dark;
   @media (prefers-color-scheme: dark) {
     & {
       background: $background_2_dark;
     }
+  }
+
+  h1 {
+    color: $headline_light;
+  }
+
+  h2 {
+    color: white;
   }
 
   .contentWrapper {
@@ -27,7 +35,7 @@
     border-radius: 50%;
     transform: translate(50%, 0);
 
-    background: $background_light;
+    background: $accent_light;
     @media (prefers-color-scheme: dark) {
       & {
         background: $background_dark;

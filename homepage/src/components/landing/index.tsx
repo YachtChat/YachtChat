@@ -12,7 +12,7 @@ export function Landing() {
         <div id={"landing"}>
             <div id={"intro"}>
                 <div className={"contentWrapper"}>
-                    <Parallax className={"screenshot"} y={[-50, 50]}>
+                    <Parallax className={"screenshot"} y={[-20, 20]}>
                         <img className={"demo light"} src={YachtScreenshot} alt={"Yacht Screenshot"}/>
                         <video className={"demo dark"} autoPlay loop muted>
                             <source src={Yacht} type={"video/mp4"}/>

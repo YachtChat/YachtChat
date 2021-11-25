@@ -3,9 +3,9 @@
 #tutorial {
   position: relative;
   overflow: hidden;
-  padding-top: 5rem;
+  padding: 5rem 0;
 
-  background: $background_2_light;
+  background: $accent_dark;
   @media (prefers-color-scheme: dark) {
     & {
       background: $background_2_dark;
@@ -16,40 +16,12 @@
     padding: 2rem;
   }
 
-  .backgroundBall {
-    z-index: 0;
-    display: block;
-    position: absolute;
-    width: 200vw;
-    height: 200vw;
-    left: 0;
-    top: 0;
-    border-radius: 50%;
-    transform: translate(-50%, 0);
-
-    background: $background_light;
-    @media (prefers-color-scheme: dark) {
-      & {
-        background: $background_dark;
-      }
-    }
+  h1 {
+    color: $headline_light;
   }
 
-  .separator {
-    z-index: 0;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-
-    fill: $background_2_light;
-
-    width: 100%;
-
-    @media (prefers-color-scheme: dark) {
-      & {
-        fill: $background_2_dark;
-      }
-    }
+  h2 {
+    color: $accent_light;
   }
 
   .list {
@@ -155,6 +127,8 @@
     width: 30%;
     box-shadow: $shadow;
     margin-bottom: 3rem;
+    background: $background_light;
+    color: $accent_dark
   }
 
   @keyframes mouse_move {
