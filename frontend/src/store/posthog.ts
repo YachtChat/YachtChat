@@ -3,7 +3,7 @@ import {User} from "./models";
 
 export function identifyUser(user: User) {
     posthog.identify(
-        user.email,
+        user.id,
         {},
         {
             firstName: user.firstName,
