@@ -493,7 +493,7 @@ export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThu
                 // This if statement only yields true if the peer is still in the space and I am still in the Space.
                 // if this is true we want to try a reconnection.
                 if (getUserById(getState(), userId) !== undefined) {
-                    dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
+                    // dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
                     dispatch(triggerReconnection(userId));
                 }
             } else {
@@ -514,7 +514,7 @@ export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThu
                                     if (br === k.bytesReceived && user.video) {
                                         console.log(`${user.firstName} does not send any data.`)
                                         clearInterval(interval)
-                                        dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
+                                        // dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
                                         dispatch(triggerReconnection(userId));
                                     }
                                     bytesReceived[userId] = k.bytesReceived
