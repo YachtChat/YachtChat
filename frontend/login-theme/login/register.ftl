@@ -8,6 +8,23 @@
             </a>
         </div>
         <h1>${msg("registerTitle")}</h1>
+        <#if realm.password && social.providers??>
+            <h2>${msg("doLogIn")}</h2>
+            <ul id="kc-social-providers" class="${properties.kcFormSocialAccountSectionClass!} login-buttons">
+                <#list social.providers as p>
+                    <a href="${p.loginUrl}">
+                        <div id="social-${p.alias}"
+                             class="social-button ${properties.kcFormSocialAccountListButtonClass!} <#if social.providers?size gt 3>${properties.kcFormSocialAccountGridItem!}</#if>">
+                            <#if p.iconClasses?has_content>
+                                <i class="${properties.kcCommonLogoIdP!} ${p.iconClasses!}" aria-hidden="true"></i>
+                            <#else>
+                                <span class="${properties.kcFormSocialAccountNameClass!}">${p.displayName!}</span>
+                            </#if>
+                        </div>
+                    </a>
+                </#list>
+            </ul>
+        </#if>
     <#elseif section = "form">
         <form id="kc-register-form" class="${properties.kcFormClass!}" action="${url.registrationAction}" method="post">
             <div class="${properties.kcFormGroupClass!}">
