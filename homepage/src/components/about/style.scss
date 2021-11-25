@@ -45,7 +45,7 @@
     position: absolute;
     width: 200vw;
     height: 200vw;
-    background: $background_2_light;
+    background: $accent_dark;
     margin-right: 0;
     right: 0;
     border-radius: 50%;
@@ -121,12 +121,13 @@
         }
 
         h1 {
-          font-size: 2.5rem;
+          font-size: 3rem;
+          color: $headline_light;
         }
 
         h2 {
+          color: $accent_light;
           font-weight: normal;
-          color: $accent_dark;
 
           @media (prefers-color-scheme: dark) {
             & {
@@ -138,6 +139,7 @@
         .paragraphs {
           padding: 1rem;
           box-sizing: border-box;
+          color: $font_light;
 
           .card {
             margin-top: 1rem;
@@ -151,13 +153,13 @@
               border-radius: 4rem;
 
               &.colleagues {
-                color: $accent_light;
-                background: $accent_dark;
+                color: $accent_dark;
+                background: $accent_light;
               }
 
               &.bubbles {
-                color: $accent_light;
-                background: $accent_dark;
+                color: $accent_dark;
+                background: $accent_light;
               }
             }
 
@@ -205,6 +207,14 @@
     width: 100%;
     padding: 2rem;
     box-sizing: border-box;
+
+    h1 {
+      color: $headline_light;
+    }
+
+    h2 {
+      color: $accent_light;
+    }
 
     .youtube {
       z-index: 13;

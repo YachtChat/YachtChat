@@ -27,6 +27,16 @@ export function Usp() {
                         </p>
                     </Card>
                     <Card>
+                        <IoLockClosed className={"lock"}/>
+                        <label>Privacy at its core</label>
+                        <p>
+                            {applicationName} is built with privacy in mind.
+                            It was engineered in Germany and tries to make the user experience as secure as possible.
+                            Every media connection is encrypted and based on the peer-to-peer principle. We store as
+                            little data as possible on our EU-located servers.
+                        </p>
+                    </Card>
+                    <Card>
                         <IoMdClock className={"clock"}/>
                         <label>Saves time</label>
                         <p>
@@ -44,16 +54,6 @@ export function Usp() {
                     {/*        makes {applicationName} intuitive for everyone to use.*/}
                     {/*    </p>*/}
                     {/*</Card>*/}
-                    <Card>
-                        <IoLockClosed className={"lock"}/>
-                        <label>Privacy at its core</label>
-                        <p>
-                            {applicationName} is a solution built with privacy in mind.
-                            It was engineered in Germany and tries to make the user experience as secure as possible.
-                            Every media connection is encrypted and based on the peer-to-peer principle. We store as
-                            little data as possible on our servers.
-                        </p>
-                    </Card>
                 </div>
 
             </div>

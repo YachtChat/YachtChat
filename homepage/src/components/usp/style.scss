@@ -57,15 +57,16 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    margin-bottom: 2rem;
+    margin-bottom: 4rem;
+    align-items: stretch;
+    align-content: flex-start;
 
     .card {
-      box-shadow: $shadow;
       color: $accent_light;
       flex-shrink: 1;
       flex-grow: 1;
       width: 300px;
-      background: $background_light;
+      background: $background_2_light;
       margin: 0.75rem;
       padding: 2rem;
       text-align: center;
@@ -92,7 +93,7 @@
         margin: 1rem auto;
         padding: 1rem;
         font-size: 3rem;
-        border-radius: 3rem;
+        border-radius: $border_radius;
       }
 
       .heart {
