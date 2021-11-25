@@ -8,6 +8,7 @@ import axios from "axios";
 import {ACCOUNT_URL, complete_spaces_url} from "./config";
 import {keycloakUserToUser, playNotificationSound} from "./utils";
 import {handleError, handleSuccess} from "./statusSlice";
+import {identifyUser} from "./posthog";
 
 interface UserState {
     activeUser: User
@@ -153,6 +154,7 @@ export const handleLoginUser = (user: UserPayload): AppThunk => (dispatch, getSt
     getHeaders(getState()).then(headers =>
         axios.get("https://" + ACCOUNT_URL + "/account/", headers).then(response => {
             const user = keycloakUserToUser(response.data, true)
+            identifyUser(user)
             console.log("ActiveUser", user)
             dispatch(initUser(user))
         })
