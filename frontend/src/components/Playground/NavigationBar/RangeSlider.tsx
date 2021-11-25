@@ -10,11 +10,13 @@ import {Slider} from "@material-ui/core";
 interface Props {
     activeUser: User
     changeRadius: (range: number) => void
+    sendToPosthog: (event: string) => void
 }
 
 export class RangeSlider extends Component<Props> {
 
     handleChangeRange(event: any) {
+        this.props.sendToPosthog("radius")
         this.props.changeRadius(event.target.value)
     }
 

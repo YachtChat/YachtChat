@@ -16,6 +16,7 @@ import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
 import MembersComponent from "./Members";
 import {ClickAwayListener, Grow, Paper, Popper, Tooltip} from "@material-ui/core";
+import posthog, {PostHog} from "posthog-js";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -99,6 +100,10 @@ export class NavigationBar extends Component<Props, State> {
         }
     }
 
+    sendToPosthog(action: string){
+        posthog.capture('Navbar', {'action': action})
+    }
+
 
     render() {
         const micIcon = (this.props.muted) ? this.icons.micOffIcon : this.icons.micOnIcon
@@ -110,7 +115,9 @@ export class NavigationBar extends Component<Props, State> {
                     <div className="navbar-layout">
                         <div className="menu">
                             <ul>
-                                <li className="menu-item" onClick={this.handleCollapse.bind(this)}>
+                                <li className="menu-item" onClick={(e)=>{
+                                    this.sendToPosthog("menu");
+                                    this.handleCollapse(e)}}>
                                     <div className="inner-item">
                                         <Tooltip  disableFocusListener
                                                   title={"Menu"} placement="right" arrow>
@@ -125,7 +132,10 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                     </div>
                                 </li>
-                                <li className="menu-item" onClick={this.props.toggleVideo}>
+                                <li className="menu-item" onClick={()=>{
+                                    this.sendToPosthog("video");
+                                    this.props.toggleVideo()
+                                }}>
                                     <div className="inner-item">
                                         <span className="icon-wrapper">
                                             <Tooltip  disableFocusListener
@@ -140,7 +150,10 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                     </div>
                                 </li>
-                                <li className="menu-item" onClick={this.props.toggleAudio}>
+                                <li className="menu-item" onClick={()=> {
+                                    this.sendToPosthog("microphone")
+                                    this.props.toggleAudio()
+                                }}>
                                     <div className="inner-item">
                                         <Tooltip  disableFocusListener
                                                   title={"Microphone"} placement="right" arrow>
@@ -155,7 +168,10 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                     </div>
                                 </li>
-                                <li className="menu-item" onClick={this.props.toggleScreen}>
+                                <li className="menu-item" onClick={()=>{
+                                    this.sendToPosthog("screen")
+                                    this.props.toggleScreen()
+                                }}>
                                     <div className="inner-item">
                                         <Tooltip  disableFocusListener
                                                   title={(this.props.screen) ? "Stop Sharing" : "Share Screen"} placement="right" arrow>
@@ -172,7 +188,10 @@ export class NavigationBar extends Component<Props, State> {
                                 </li>
                                 <li className="menu-item">
                                     <div
-                                        onClick={e => this.handleOpen(e, "users")}
+                                        onClick={(e)=>{
+                                            this.sendToPosthog("users")
+                                            this.handleOpen(e, "users")
+                                        }}
                                         className="inner-item">
                                         <Tooltip  disableFocusListener
                                                   title={"Users"} placement="right" arrow>
@@ -192,7 +211,10 @@ export class NavigationBar extends Component<Props, State> {
                                                           onClose={() => this.handleClose("users")}/>
                                     </div>
                                 </li>
-                                <li className="menu-item" onClick={this.props.center}>
+                                <li className="menu-item" onClick={()=>{
+                                    this.sendToPosthog("center")
+                                    this.props.center()
+                                }}>
                                     <div className="inner-item">
                                         <Tooltip  disableFocusListener
                                                   title={"Center user"} placement="right" arrow>
@@ -211,7 +233,7 @@ export class NavigationBar extends Component<Props, State> {
                                 </li>
                                 <li className="menu-item">
                                     <div className="inner-item rangeslider">
-                                        <RangeSlider/>
+                                        <RangeSlider sendToPosthog={this.sendToPosthog.bind(this)}/>
                                     </div>
                                     <span className={"item-content"}>Range</span>
                                 </li>
@@ -221,7 +243,10 @@ export class NavigationBar extends Component<Props, State> {
                             <ul>
                                 <li className="menu-item">
                                     <div
-                                        onClick={e => this.handleOpen(e, "messages")}
+                                        onClick={(e)=> {
+                                            this.sendToPosthog("message")
+                                            this.handleOpen(e, "messages")
+                                        }}
                                         className="inner-item">
                                         <Tooltip  disableFocusListener
                                                   title={"Message"} placement="right" arrow>
@@ -242,7 +267,10 @@ export class NavigationBar extends Component<Props, State> {
                                 </li>
                                 <li className="menu-item">
                                     <div className="inner-item"
-                                         onClick={e => this.handleOpen(e, "settings")}>
+                                         onClick={(e)=>{
+                                             this.sendToPosthog("settings")
+                                             this.handleOpen(e, "settings")
+                                         }}>
                                         <Tooltip  disableFocusListener
                                                   title={"Settings"} placement="right" arrow>
                                             <span className="icon-wrapper">
@@ -263,7 +291,10 @@ export class NavigationBar extends Component<Props, State> {
                                 <li className="menu-item" >
                                     <div className="inner-item">
                                             { this.state.confirmlogout ?
-                                            <span className="icon-wrapper clicked" onClick={this.props.logout}>
+                                            <span className="icon-wrapper clicked" onClick={()=>{
+                                                this.sendToPosthog("logout")
+                                                this.props.logout()
+                                            }}>
 
                                                     <ClickAwayListener onClickAway={() => this.setState({confirmlogout: false})}>
                                                         <span  className="icon"><FaSignOutAlt/>  </span>
