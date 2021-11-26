@@ -19,13 +19,11 @@
     position: relative;
 
     .separator {
-      position: absolute;
-      bottom: 0;
+      width: 100vw;
       left: 50%;
-      transform: translateX(-50%);
-      width: 200vw;
-      height: 30vh;
+      transform: translateX(-50%) translateY(1px);
       fill: $accent_dark;
+
       z-index: 5;
 
       @media (prefers-color-scheme: dark) {
