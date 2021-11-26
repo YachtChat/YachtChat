@@ -30,8 +30,8 @@ export function Usp() {
                         <IoLockClosed className={"lock"}/>
                         <label>Privacy at its core</label>
                         <p>
-                            {applicationName} is built with privacy in mind.
-                            It was engineered in Germany and tries to make the user experience as secure as possible.
+                            {applicationName} was built in Germany with privacy in mind and tries to make the user
+                            experience as secure as possible.
                             Every media connection is encrypted and based on the peer-to-peer principle. We store as
                             little data as possible on our EU-located servers.
                         </p>

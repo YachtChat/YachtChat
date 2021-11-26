@@ -3,7 +3,7 @@
 #tutorial {
   position: relative;
   overflow: hidden;
-  padding: 5rem 0;
+  padding: 0 0 5rem;
 
   background: $accent_dark;
   @media (prefers-color-scheme: dark) {
@@ -12,8 +12,26 @@
     }
   }
 
+  .separator {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30%;
+    fill: $background_light;
+
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        fill: $background_dark;
+      }
+    }
+  }
+
+
   .contentWrapper {
     padding: 2rem;
+    padding-top: 0;
+    padding-bottom: 10%;
   }
 
   h1 {

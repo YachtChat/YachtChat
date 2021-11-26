@@ -4,7 +4,6 @@ import {getSzenarios} from "../../util/szenarios";
 import {ScenarioNavigation} from "./scenarioNavigation";
 import {useSwipeable} from "react-swipeable";
 import {Scenario} from "./scenario";
-import {Separator} from "../separator";
 import {applicationName} from "../../util/config";
 
 interface Props {
@@ -68,7 +67,6 @@ export function Scenarios(props: Props) {
     return (
         <div className="scenarios" id="scenarios">
             <div className={"backgroundBall"}/>
-            <Separator/>
             <div {...handlers} className="contentWrapper">
                 <h1>{applicationName} will help every day</h1>
                 <h2 className={"subtitle"}>

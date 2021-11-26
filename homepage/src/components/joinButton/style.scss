@@ -25,6 +25,21 @@
   margin: 2rem 2rem 1rem 0;
 
   a {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    float: left;
+    padding: 0.5rem;
     margin-right: 1rem;
+    color: $accent_dark;
+    background: $background_2_light;
+    border-radius: 2rem;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $accent_light;
+        background: none;
+      }
+    }
   }
 }

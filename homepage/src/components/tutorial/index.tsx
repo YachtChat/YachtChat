@@ -3,15 +3,16 @@ import React from "react";
 import "./style.scss"
 import {applicationName} from "../../util/config";
 import {JoinButton} from "../joinButton";
+import {Separator} from "../separator";
 
 export function Tutorial() {
     return (
         <div id={"tutorial"}>
+            <Separator/>
             <div className={"contentWrapper"}>
                 <h1>How to</h1>
                 <h2 className={"subtitle"}>How does {applicationName} work?</h2>
                 <div className={"list"}>
-
                     <div className={"listItem"}>
                         <div className={"itemIcon code"}>
                             {">"}<span className={"animateicon"} id={"cursoricon"}>_</span>
