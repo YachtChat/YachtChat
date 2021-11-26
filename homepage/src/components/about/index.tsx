@@ -43,15 +43,14 @@ export function About() {
                                     <IoPeopleOutline className={'colleagues'}/>
                                     <div className={"paragraph"}>
                                         <h2 className={"title"}>
-                                            Move freely and talk spontaneously with anyone.
+                                            Move around - colleagues close to you will hear you.
                                         </h2>
 
                                         <p>
-                                            Unlike existing communication solutions, {applicationName} allows each team
-                                            member
-                                            to move around freely in a virtual space and adjust their speaking
-                                            radius.{" "}
-                                            Conversations can emerge spontaneously and adapt to team dynamics.{" "}
+                                            Unlike Zoom or MS-Teams, {applicationName} allows you to move around
+                                            in a virtual space, collaboration can dynamically emerge.
+                                            Conversations will arise spontaneously in a way that fits your
+                                            your team’s workflow.
                                         </p>
                                     </div>
                                 </div>
@@ -69,7 +68,7 @@ export function About() {
                                             {applicationName} combines the collaborative working methods of an office
                                             with
                                             the
-                                            advantages of remote work and encourages you and your team to talk
+                                            advantages of remote work and encourages you and your team to connect
                                             again.{" "}
                                         </p>
                                     </div>
