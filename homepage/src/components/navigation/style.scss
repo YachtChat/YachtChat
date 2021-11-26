@@ -150,13 +150,18 @@
       position: absolute;
       overflow-x: hidden;
       overflow-y: auto;
-      display: block;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+
+      align-content: center;
+      align-items: center;
 
       top: 0;
       left: 0;
       bottom: 0;
       right: 0;
-      width: 100%;
+      width: 100vw;
 
       .nav-items {
         display: flex;
@@ -166,8 +171,8 @@
         button {
           position: relative;
           width: 100%;
-          padding: 2rem;
-          font-size: 5vh;
+          padding: 1rem;
+          font-size: 1.5rem;
           font-weight: bold;
           transition: opacity 0.5s, transform 0.5s;
           text-align: center;
@@ -214,7 +219,7 @@
 
     .open {
       height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.95);
       transition: transform 1s, background 1s;
 
     }
