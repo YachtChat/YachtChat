@@ -59,12 +59,7 @@
   }
 
   .separator {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 30%;
     fill: $background_light;
-
 
     @media (prefers-color-scheme: dark) {
       & {
@@ -201,12 +196,22 @@
       width: 50%;
       margin: 1rem auto;
       box-sizing: border-box;
+      background: $foreground_light;
+      color: $accent_dark;
+      box-shadow: $shadow;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          color: $foreground_dark;
+          background: $accent_light;
+        }
+      }
     }
   }
 
   .youtubeWrapper {
     width: 100%;
-    padding: 0 2rem 8rem;
+    padding: 0 2rem 15%;
     box-sizing: border-box;
 
     h1 {

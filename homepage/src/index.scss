@@ -50,6 +50,28 @@ code {
 
 }
 
+.separator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: auto;
+
+  transform: translateY(1px);
+
+  stroke: transparent;
+  stroke-width: 0px;
+  border: none;
+
+  path {
+    stroke: transparent;
+    stroke-width: 0px;
+    border: none;
+  }
+
+}
+
 .contentWrapper {
   max-width: 1200px;
   margin: auto;
