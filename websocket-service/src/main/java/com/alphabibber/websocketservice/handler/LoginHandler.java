@@ -28,7 +28,6 @@ public class LoginHandler {
     private final LeaveHandler leaveHandler = new LeaveHandler();
     private final PosthogService posthogService = PosthogService.getInstance();
 
-
     public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session) {
         if (!spacesService.isUserAllowedToJoin(roomId, token)) {
             // if the user is not allowed to enter the room the websocket connection will be closed
@@ -62,11 +61,13 @@ public class LoginHandler {
         LoginAnswer loginAnswer = new LoginAnswer(true, new ArrayList<>(room.values()), userId);
 
         // tell posthog that the user logged into that space
-        posthogService.sendEvent(user.getId(), "spaceJoined", new HashMap<String, Object>(){
+        posthogService.sendEvent(user.getId(), posthogService.getSpaceJoinedString(), new HashMap<String, Object>(){
             {
-                put("spaceId", roomId);
+                put(posthogService.getSpaceIdString(), roomId);
             }
         });
+        // tell posthog that the video is enabled since the video is alwyas enabled when the user joins the space
+        posthogService.sendEvent(user.getId(), posthogService.getVideoOnOnString(), null);
 
         try {
             session.getBasicRemote().sendObject(loginAnswer);
