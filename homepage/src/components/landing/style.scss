@@ -5,6 +5,7 @@
   max-height: 100vh;
   position: relative;
   background: $background_light;
+  overflow: hidden;
 
   @media (prefers-color-scheme: dark) {
     & {
@@ -17,13 +18,28 @@
     max-height: 100vh;
     position: relative;
 
-    z-index: 1;
+    .separator {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200vw;
+      height: 30vh;
+      fill: $accent_dark;
+      z-index: 5;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          fill: $background_2_dark;
+        }
+      }
+    }
 
     .contentWrapper {
       position: relative;
       width: 100%;
       max-height: 100vh;
-      min-height: 80vh;
+      min-height: 90vh;
       margin: auto;
 
       display: flex;
@@ -33,6 +49,10 @@
       justify-items: center;
       flex-wrap: wrap;
       flex-direction: row-reverse;
+
+      @media screen and (max-width: 1000px) {
+        min-height: 100vh;
+      }
 
       .screenshot {
         max-width: 600px;
@@ -58,30 +78,18 @@
         }
       }
 
-
-      .content {
-        max-width: 600px;
-        display: block;
-        position: relative;
-        width: 100%;
-        flex-grow: 1;
-        flex-shrink: 1;
-
-        .landing-parallax {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-        }
+      .backgroundWrapper {
+        width: 50%;
+        position: absolute;
 
         .background {
-          width: 150vh;
-          height: 150vh;
+          width: 100vh;
+          height: 100vh;
           border-radius: 100vh;
           background: $background_2_light;
-          transform: translateY(-50%);
+          transform: translate(-50%, -50%);
           top: 50%;
-          right: 0;
-          z-index: -1;
+          left: 0;
           position: absolute;
 
           @media (prefers-color-scheme: dark) {
@@ -90,13 +98,40 @@
             }
           }
         }
+      }
+
+      .content {
+        max-width: 600px;
+        display: block;
+        position: relative;
+        height: 100%;
+        width: 90vh;
+        flex-grow: 1;
+        flex-shrink: 1;
+        z-index: 10;
+
+        .landing-parallax {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+        }
+
+        .joinButton {
+          border: 3px solid $background_2_light;
+
+          @media (prefers-color-scheme: dark) {
+            & {
+              border: none;
+            }
+          }
+        }
 
         .introText {
-          display: block;
           position: relative;
           box-sizing: border-box;
           padding: 2rem;
           color: $accent_dark;
+          z-index: 100;
 
           @media (prefers-color-scheme: dark) {
             & {
@@ -107,13 +142,15 @@
           .headings {
             margin: 3vh 0;
 
-            h2 {
+            h1, h2 {
               padding: 0;
               margin: 0;
               font-size: 4vh;
+              text-align: left;
 
               &.subheading {
                 font-weight: normal;
+                font-size: 2vh;
               }
             }
           }

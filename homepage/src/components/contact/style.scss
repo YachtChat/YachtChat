@@ -3,17 +3,17 @@
 #contact {
   position: relative;
   overflow: hidden;
-  padding-bottom: 10rem;
+  padding: 8rem 0;
 
-  background: $accent_dark;
+  background: $background_light;
   @media (prefers-color-scheme: dark) {
     & {
-      background: $background_2_dark;
+      background: $background_dark;
     }
   }
 
   h1 {
-    color: $headline_light;
+    color: $accent_light;
   }
 
   h2 {
@@ -30,15 +30,15 @@
     position: absolute;
     width: 200vw;
     height: 200vw;
-    right: 0;
+    left: 50%;
     top: 0;
     border-radius: 50%;
-    transform: translate(50%, 0);
+    transform: translate(-50%, 0);
 
-    background: $accent_light;
+    background: $accent_dark;
     @media (prefers-color-scheme: dark) {
       & {
-        background: $background_dark;
+        background: $background_2_dark;
       }
     }
   }

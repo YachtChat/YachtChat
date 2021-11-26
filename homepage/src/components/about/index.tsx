@@ -15,7 +15,7 @@ export function About() {
     })
 
     return (
-        <div id={"about"}>
+        <div id={"about"} className={((!scrolled) ? "scrolled" : "")}>
             <IoArrowDown className={"scrollArrow"}/>
             <div className={'backgroundBall'}/>
             <svg className={"separator"} width="100%" height="100%" viewBox="0 0 1181 178" version="1.1"
@@ -36,7 +36,7 @@ export function About() {
                                     {applicationName}
                                 </h1>
                                 <h2 className={"subtitle"}>
-                                    The future of remote collaboration
+                                    A platform for you and your team
                                 </h2>
                                 {/*<p>*/}
                                 {/*    But: {applicationName} is made for you and your social needs.{" "}*/}
@@ -47,7 +47,7 @@ export function About() {
                                     <IoPeopleOutline className={'colleagues'}/>
                                     <div className={"paragraph"}>
                                         <h2 className={"title"}>
-                                            A platform for you and your colleagues.
+                                            Move freely and talk spontaneously with anyone.
                                         </h2>
 
                                         <p>

@@ -5,6 +5,7 @@ import {JoinButton} from "../joinButton";
 import {Links} from "../joinButton/links";
 import Yacht from "../../rsc/yacht.mp4"
 import {Parallax} from "react-scroll-parallax";
+import {Separator} from "../separator";
 
 export function Landing() {
     const {keycloak} = useKeycloak()
@@ -12,6 +13,11 @@ export function Landing() {
         <div id={"landing"}>
             <div id={"intro"}>
                 <div className={"contentWrapper"}>
+                    <Separator/>
+
+                    <div className={"backgroundWrapper"}>
+                        <div className={"background"}/>
+                    </div>
                     <Parallax className={"screenshot"} y={[-20, 20]}>
                         <img className={"demo light"} src={YachtScreenshot} alt={"Yacht Screenshot"}/>
                         <video className={"demo dark"} autoPlay loop muted>
@@ -20,12 +26,12 @@ export function Landing() {
                     </Parallax>
                     <div className={"content"}>
 
-                        <div className={"background"}/>
 
                         <div className={"introText"}>
                             <div className={"headings"}>
-                                <h2>Bring your team home.</h2>
-                                <h2 className={"subheading"}>With the future of communication.</h2>
+                                <h1>Bring your team home.</h1>
+                                <h2 className={"subheading"}>Experience a new and private way of spontaneous remote
+                                    communication.</h2>
                             </div>
 
                             <JoinButton/>
