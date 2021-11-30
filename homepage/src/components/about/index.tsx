@@ -4,7 +4,7 @@ import {applicationName} from "../../util/config";
 import {JoinButton} from "../joinButton";
 import YachtChat from "../../rsc/Screenshot2.png";
 import {useState} from "react";
-import {IoArrowDown, IoChatbubblesOutline, IoPeopleOutline} from "react-icons/all";
+import {IoArrowDown, IoChatbubblesOutline, IoPeopleOutline, IoWalkOutline} from "react-icons/all";
 import {Separator} from "../separator";
 
 export function About() {
@@ -40,17 +40,37 @@ export function About() {
                                 {/*    remotely working team mates.{" "}*/}
                                 {/*</p>*/}
                                 <div className={"card"}>
-                                    <IoPeopleOutline className={'colleagues'}/>
+                                    <IoWalkOutline className={'colleagues'}/>
                                     <div className={"paragraph"}>
                                         <h2 className={"title"}>
                                             Move around - colleagues close to you will hear you.
                                         </h2>
 
                                         <p>
-                                            Unlike Zoom or MS-Teams, {applicationName} allows you to move around
+                                            {applicationName} allows you to move around
                                             in a virtual space, collaboration can dynamically emerge.
                                             Conversations will arise spontaneously in a way that fits your
                                             your team’s workflow.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className={"card"}>
+                                    <IoPeopleOutline className={'colleagues'}/>
+                                    <div className={"paragraph"}>
+                                        <h2 className={"title"}>
+                                            Work. Together.
+                                        </h2>
+
+                                        <p>
+                                            {applicationName} is a great addition to Zoom and MS-Teams, since it is
+                                            something different.<br/>
+                                            <br/>
+                                            Those tools lead to coworkers not seeing anyone for the majority of their
+                                            working time, which decreases team spirit.
+                                            In contrast, we created {applicationName} for you and your team to stay the
+                                            whole
+                                            working day - to collaborate, to ask a quick question, or from time to time
+                                            just work together in silence.
                                         </p>
                                     </div>
                                 </div>
@@ -61,10 +81,9 @@ export function About() {
                                             Feel like a team again.{" "}
                                         </h2>
                                         <p>
-                                            {applicationName} helps to increase information exchange and lets you feel
-                                            like
-                                            a
-                                            team again.{" "}
+                                            {applicationName} decreases the barrier between you and your colleages,
+                                            helps to increase information exchange and lets you feel like a team
+                                            again.{" "}
                                             {applicationName} combines the collaborative working methods of an office
                                             with
                                             the
