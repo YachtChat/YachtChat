@@ -1,14 +1,14 @@
 import "./style.scss"
-import {useKeycloak} from "@react-keycloak/web";
-import YachtScreenshot from "../../rsc/Landingshot.png"
+import YachtScreenshot from "../../rsc/demo_thumb_light.png"
+import YachtScreenshotDark from "../../rsc/demo_thumb_dark.png"
 import {JoinButton} from "../joinButton";
 import {Links} from "../joinButton/links";
-import Yacht from "../../rsc/yacht.mp4"
+import Yacht from "../../rsc/demo_light.mp4"
+import YachtDark from "../../rsc/demo_dark.mp4"
 import {Parallax} from "react-scroll-parallax";
 import {Separator} from "../separator";
 
 export function Landing() {
-    const {keycloak} = useKeycloak()
     return (
         <div id={"landing"}>
             <div id={"intro"}>
@@ -19,9 +19,13 @@ export function Landing() {
                         <div className={"background"}/>
                     </div>
                     <Parallax className={"screenshot"} y={[-20, 20]}>
-                        <img className={"demo light"} src={YachtScreenshot} alt={"Yacht Screenshot"}/>
-                        <video className={"demo dark"} autoPlay loop muted>
+                        <video className={"demo light"} autoPlay loop muted>
                             <source src={Yacht} type={"video/mp4"}/>
+                            <img className={"demo light"} src={YachtScreenshot} alt={"Yacht Screenshot"}/>
+                        </video>
+                        <video className={"demo dark"} autoPlay loop muted>
+                            <source src={YachtDark} type={"video/mp4"}/>
+                            <img className={"demo light"} src={YachtScreenshotDark} alt={"Yacht Screenshot"}/>
                         </video>
                     </Parallax>
                     <div className={"content"}>
