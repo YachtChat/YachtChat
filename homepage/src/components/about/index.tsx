@@ -2,7 +2,8 @@ import "./style.scss"
 import Fade from "react-reveal/Fade";
 import {applicationName} from "../../util/config";
 import {JoinButton} from "../joinButton";
-import YachtChat from "../../rsc/Screenshot2.png";
+import YachtChat from "../../rsc/mock_light.png";
+import YachtChatDark from "../../rsc/mock_dark.png";
 import {useState} from "react";
 import {IoArrowDown, IoChatbubblesOutline, IoPeopleOutline, IoWalkOutline} from "react-icons/all";
 import {Separator} from "../separator";
@@ -23,7 +24,8 @@ export function About() {
             <div className={"contentWrapper"}>
                 <div className={"content"}>
                     <div className={"image"}>
-                        <img src={YachtChat} alt={"Yacht in action on a desk"}/>
+                        <img className={"light"} src={YachtChat} alt={"Yacht in action on a desk"}/>
+                        <img className={"dark"} src={YachtChatDark} alt={"Yacht in action on a desk"}/>
                     </div>
                     <div className={"text"}>
                         <div className={"parallax"}>
