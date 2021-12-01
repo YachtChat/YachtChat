@@ -8,6 +8,7 @@
   font-size: 1.5rem;
   border-radius: 2rem;
   width: 50%;
+  cursor: pointer;
 
   @media (prefers-color-scheme: dark) {
     color: $button_font_light;
