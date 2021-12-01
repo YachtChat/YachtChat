@@ -8877,10 +8877,10 @@ postcss@^8.1.0:
     nanoid "^3.1.20"
     source-map "^0.6.1"
 
-posthog-js@^1.16.4:
-  version "1.16.4"
-  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.16.4.tgz#2e043aa6b32e260a8deb9964a67d2ef75c29b699"
-  integrity sha512-gfTLmM/hL/R4tlki+XI2omKObSMwnCTz2BUQyO/TO3QfrV7wnJZPWzfO3FiTLkrcVjY17cyGBCxdvD3SzGDjgw==
+posthog-js@^1.16.7:
+  version "1.16.7"
+  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.16.7.tgz#8f1a8a1405ecd2a022348abac6d2973823a075c9"
+  integrity sha512-NUgRE1Ifp+S6dfNdv2jFJiWTnue7xLgT+cTg9xI2b5qYNa7o3gsv0gwFyjQV8xp2BP0Ai5mJV01xKOGnXagGug==
   dependencies:
     "@sentry/types" "^6.11.0"
     fflate "^0.4.1"
