@@ -27,9 +27,16 @@ public class SpacesServiceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		if (spaceRepository.findAllByName("Free For All").isEmpty()) {
-			var starterSpace = new Space("Free For All", true);
-			spaceService.saveSpace(starterSpace);
+//		if (spaceRepository.findAllByName("Free For All").isEmpty()) {
+//			var starterSpace = new Space("Free For All", true);
+//			spaceService.saveSpace(starterSpace);
+//		}
+//
+		// delete the Free for all Space this code snipit can be removed after it was triggered once
+		if (!spaceRepository.findAllByPublicAccessIsTrue().isEmpty()){
+			spaceRepository.findAllByPublicAccessIsTrue().forEach(space ->{
+				spaceRepository.delete(space);
+			});
 		}
 	}
 
