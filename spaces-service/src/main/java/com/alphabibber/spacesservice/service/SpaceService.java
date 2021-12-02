@@ -9,7 +9,9 @@ import com.alphabibber.spacesservice.repository.SpaceMemberRepository;
 import com.alphabibber.spacesservice.repository.SpaceRepository;
 import com.alphabibber.spacesservice.repository.UserRepository;
 import io.jsonwebtoken.Claims;
+import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.AccessDeniedException;
@@ -64,17 +66,26 @@ public class SpaceService {
             );
             result.addAll(spaceRepository.findAllByPublicAccessIsTrue());
 
+            // check if the user has at least one space if not create his "<Username's> First Space"
+            if (result.isEmpty()) {
+                AccessToken accessToken = ((KeycloakAuthenticationToken) principal).getAccount()
+                        .getKeycloakSecurityContext().getToken();
+                Space starterSpace = createSpace(new Space(accessToken.getGivenName() + "'s First Space", false));
+                result.add(starterSpace);
+            }
+
             return result;
         }
 
-        return spaceRepository.findAllByPublicAccessIsTrue();
+        throw new AccessDeniedException("User is not authenticated");
     }
 
     public Space createSpace(Space spaceDTO) {
         String spaceName = spaceDTO.getName();
-        Boolean publicAccess = spaceDTO.isPublic() != null ? spaceDTO.isPublic() : false;
+        // Boolean publicAccess = spaceDTO.isPublic() != null ? spaceDTO.isPublic() : false;
         // initial save to set id
-        var space = spaceRepository.save(new Space(spaceName, publicAccess));
+        // publicAccess should always be set to false
+        var space = spaceRepository.save(new Space(spaceName, false));
 
         // assumption: Space does not contain spaceHosts or spaceMembers after init
         var user = userService.getContextUserIfExistsElseCreate();
