@@ -70,7 +70,7 @@ public class SpaceService {
             if (result.isEmpty()) {
                 AccessToken accessToken = ((KeycloakAuthenticationToken) principal).getAccount()
                         .getKeycloakSecurityContext().getToken();
-                Space starterSpace = createSpace(new Space(accessToken.getGivenName() + "'s First Space", false));
+                Space starterSpace = createSpace(new Space(accessToken.getGivenName() + "'s Space", false));
                 result.add(starterSpace);
             }
 
