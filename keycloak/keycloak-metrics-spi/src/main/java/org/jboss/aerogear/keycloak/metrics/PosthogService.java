@@ -22,4 +22,8 @@ public class PosthogService {
     public void sendEvent(String id, String eventName, Map<String, Object> eventProperties){
         posthog.capture(id, eventName, eventProperties);
     }
+
+    public void identify(String mail){
+        posthog.identify(mail, null);
+    }
 }
