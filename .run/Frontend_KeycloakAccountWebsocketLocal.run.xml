@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Frontend_KeycloakSpacesAccountWebsocketLocal" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/frontend/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="start" />
+    </scripts>
+    <node-interpreter value="project" />
+    <envs>
+      <env name="REACT_APP_SIGNAL_URL" value="8085" />
+      <env name="REACT_APP_SPACES_URL" value="localhost" />
+      <env name="REACT_APP_AUTH_URL" value="localhost:8080" />
+      <env name="REACT_APP_REALM" value="Application" />
+      <env name="REACT_APP_KEYCLOAK_CLIENT" value="frontend-dev" />
+      <env name="REACT_APP_FRONTEND_URL" value="localhost:3000" />
+      <env name="REACT_APP_ACCOUNT_URL" value="localhost:8082" />
+      <env name="REACT_APP_SPACES_PORT" value="8081" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>

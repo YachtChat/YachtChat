@@ -1,74 +1,53 @@
 package org.jboss.aerogear.keycloak.metrics;
 
-import org.jboss.logging.Logger;
 import org.keycloak.events.Event;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.admin.AdminEvent;
+import java.util.HashMap;
 
 public class MetricsEventListener implements EventListenerProvider {
 
-    public final static String ID = "metrics-listener";
+    public final static String ID = "posthog-metrics-listener";
 
-    private final static Logger logger = Logger.getLogger(MetricsEventListener.class);
+    private final static PosthogService posthogService = PosthogService.getInstance();
 
     @Override
     public void onEvent(Event event) {
-        logEventDetails(event);
-
+        System.out.println("+++++++++++++++++++++++++++++++==============++++++++");
         switch (event.getType()) {
-            case LOGIN:
-                PrometheusExporter.instance().recordLogin(event);
-                break;
-            case CLIENT_LOGIN:
-                PrometheusExporter.instance().recordClientLogin(event);
-                break;
             case REGISTER:
-                PrometheusExporter.instance().recordRegistration(event);
+                posthogService.sendEvent(event.getUserId(), "register", getHasMapOfEventDetails(event));
                 break;
-            case REFRESH_TOKEN:
-                PrometheusExporter.instance().recordRefreshToken(event);
+            case LOGIN:
+                posthogService.sendEvent(event.getUserId(), "login", getHasMapOfEventDetails(event));
                 break;
-            case CODE_TO_TOKEN:
-                PrometheusExporter.instance().recordCodeToToken(event);
+            case LOGOUT:
+                posthogService.sendEvent(event.getUserId(), "logout", null);
                 break;
-            case REGISTER_ERROR:
-                PrometheusExporter.instance().recordRegistrationError(event);
+            case SEND_VERIFY_EMAIL:
+                posthogService.sendEvent(event.getUserId(), "send_verify_email", null);
                 break;
-            case LOGIN_ERROR:
-                PrometheusExporter.instance().recordLoginError(event);
+            case VERIFY_EMAIL:
+                posthogService.sendEvent(event.getUserId(), "verify_email", null);
                 break;
-            case CLIENT_LOGIN_ERROR:
-                PrometheusExporter.instance().recordClientLoginError(event);
-                break;
-            case REFRESH_TOKEN_ERROR:
-                PrometheusExporter.instance().recordRefreshTokenError(event);
-                break;
-            case CODE_TO_TOKEN_ERROR:
-                PrometheusExporter.instance().recordCodeToTokenError(event);
-                break;
-            default:
-                PrometheusExporter.instance().recordGenericEvent(event);
         }
     }
 
     @Override
     public void onEvent(AdminEvent event, boolean includeRepresentation) {
-        logAdminEventDetails(event);
-
-        PrometheusExporter.instance().recordGenericAdminEvent(event);
+        // unused
     }
 
-    private void logEventDetails(Event event) {
-        logger.debugf("Received user event of type %s in realm %s",
-                event.getType().name(),
-                event.getRealmId());
-    }
-
-    private void logAdminEventDetails(AdminEvent event) {
-        logger.debugf("Received admin event of type %s (%s) in realm %s",
-                event.getOperationType().name(),
-                event.getResourceType().name(),
-                event.getRealmId());
+    private HashMap<String, Object> getHasMapOfEventDetails (Event event) {
+        HashMap<String, Object> res = new HashMap<>();
+        if (event.getDetails() != null) {
+             if (event.getDetails().containsKey("identity_provider")){
+                 res.put("identity_provider", event.getDetails().get("identity_provider"));
+             } else{
+                 res.put("identity_provider", "email");
+             }
+         }
+        return res;
     }
 
     @Override
