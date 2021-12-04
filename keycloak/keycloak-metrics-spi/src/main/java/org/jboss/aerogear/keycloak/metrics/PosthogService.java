@@ -33,46 +33,4 @@ public class PosthogService {
         posthog.capture(id, eventName, eventProperties);
         posthog.capture(id, eventName);
     }
-    private static String getISO8601StringForDate(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.GERMANY);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return dateFormat.format(date);
-    }
-
-
-    
-    
-    public void sendEvent(String id, String eventName){
-//        Date now = new Date();
-//        RequestBody formBody = new FormBody.Builder()
-//                .add("api_key", POSTHOG_API_KEY)
-//                .add("event", eventName)
-//                .add("distinct_id", id)
-//                .add("timestamp", getISO8601StringForDate(now))
-//                .build();
-//        Request request = new Request.Builder()
-//                .url(POSTHOG_HOST + "/capture/")
-//                .addHeader("Content-Type", "application/json")
-//                .post(formBody)
-//                .build();
-//        try {
-//            httpClient.newCall(request).execute();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-    }
-//    POST https://[your-instance].com/capture/
-//    Content-Type: application/json
-//    Body:
-//    {
-//        "api_key": "<ph_project_api_key>",
-//            "event": "[event name]",
-//            "properties": {
-//        "distinct_id": "[your users' distinct id]",
-//                "key1": "value1",
-//                "key2": "value2"
-//    },
-//        "timestamp": "[optional timestamp in ISO 8601 format]"
-//    }
-
 }
