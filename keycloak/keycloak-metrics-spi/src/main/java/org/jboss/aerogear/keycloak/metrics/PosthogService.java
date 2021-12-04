@@ -21,6 +21,5 @@ public class PosthogService {
 
     public void sendEvent(String id, String eventName, Map<String, Object> eventProperties){
         posthog.capture(id, eventName, eventProperties);
-        posthog.capture(id, eventName);
     }
 }
