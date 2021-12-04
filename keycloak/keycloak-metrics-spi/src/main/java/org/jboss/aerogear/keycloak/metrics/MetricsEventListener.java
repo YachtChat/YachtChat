@@ -13,7 +13,7 @@ public class MetricsEventListener implements EventListenerProvider {
 
     @Override
     public void onEvent(Event event) {
-        System.out.println("+++++++++++++++++++++++++++++++==============++++++++");
+        identifyUserIfPossible(event);
         switch (event.getType()) {
             case REGISTER:
                 posthogService.sendEvent(event.getUserId(), "register", getHasMapOfEventDetails(event));
@@ -36,6 +36,14 @@ public class MetricsEventListener implements EventListenerProvider {
     @Override
     public void onEvent(AdminEvent event, boolean includeRepresentation) {
         // unused
+    }
+
+    private void identifyUserIfPossible(Event event) {
+        if (event.getDetails() != null) {
+            if (event.getDetails().containsKey("email")){
+                posthogService.identify(event.getDetails().get("email"));
+            }
+        }
     }
 
     private HashMap<String, Object> getHasMapOfEventDetails (Event event) {
