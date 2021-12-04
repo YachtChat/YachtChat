@@ -1,14 +1,6 @@
 package org.jboss.aerogear.keycloak.metrics;
 
 import com.posthog.java.PostHog;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PosthogService {
@@ -16,8 +8,6 @@ public class PosthogService {
     private static final String POSTHOG_HOST = "https://posthog.yacht.chat";
     private static final PostHog posthog = new PostHog.Builder(POSTHOG_API_KEY).host(POSTHOG_HOST).build();
     private static PosthogService instance;
-
-//    private final OkHttpClient httpClient = new OkHttpClient();
 
     private PosthogService(){
 
