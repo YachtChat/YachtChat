@@ -42,6 +42,7 @@ public class MetricsEventListener implements EventListenerProvider {
         if (event.getDetails() != null) {
             if (event.getDetails().containsKey("email")){
                 posthogService.identify(event.getDetails().get("email"));
+                posthogService.alis(event.getUserId(), event.getDetails().get("email"));
             }
         }
     }
