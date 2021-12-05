@@ -8,7 +8,7 @@ import {Imprint} from "../imprint";
 
 export function Contact() {
 
-    const [legal, setLegal] = useState(false)
+    const [legal, setLegal] = useState<string | undefined>("")
 
     return (
         <div id={"contact"}>
@@ -46,8 +46,12 @@ export function Contact() {
             </div>
             <div id={"legal"}>
                 <label>copyright 2021 by yacht.chat</label>
-                <button onClick={() => setLegal(true)}>Legal</button>
-                <Imprint visible={legal} onClick={() => setLegal(false)}/>
+                <br/>
+                <button onClick={() => setLegal("terms")}>Terms & Conditions</button>
+                <button onClick={() => setLegal("privacy")}>Privacy Policy</button>
+                <Imprint visible={!!legal}
+                         page={legal ? legal : ""}
+                         onClick={() => setLegal(undefined)}/>
             </div>
         </div>
     )

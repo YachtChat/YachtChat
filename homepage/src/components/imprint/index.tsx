@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import "./style.scss"
 import Fade from "react-reveal/Fade";
 import {IoMdClose} from "react-icons/io";
@@ -8,11 +8,12 @@ import {Privacy} from "./Privacy";
 interface Props {
     visible: boolean;
     onClick: () => void;
+    page: string;
 }
 
 export function Imprint(props: Props) {
 
-    const [page, setPage] = useState("terms")
+    const page = props.page;
 
     return (
         <div className="imprintComponent" id="imprint" onClick={props.onClick}>
@@ -22,16 +23,6 @@ export function Imprint(props: Props) {
                         <div className="imprintWrapper">
                             <div className="closeButton"><IoMdClose/></div>
                             <div className="contentWrapper">
-                                <button onClick={e => {
-                                    e.stopPropagation()
-                                    setPage("terms")
-                                }}>Terms & Conditions
-                                </button>
-                                <button onClick={e => {
-                                    e.stopPropagation()
-                                    setPage("privacy")
-                                }}>Privacy Policy
-                                </button>
                                 {(page === "terms") &&
                                 <Terms/>
                                 }
