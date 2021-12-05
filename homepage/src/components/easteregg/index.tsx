@@ -28,6 +28,17 @@ export function EasterEgg(props: Props) {
         }, 1000);
     })
 
+    const submit = () => {
+        if (email.length > 0) {
+            posthog.capture("EasterEgg", {email});
+            props.onClick()
+            setAlert(false)
+        } else {
+            setAlert(true)
+            reward?.punishMe()
+        }
+    }
+
     return (
         <div className="popup" onClick={() => {
             props.onClick()
@@ -63,23 +74,20 @@ export function EasterEgg(props: Props) {
                                     zIndex: 9999,
                                     spread: 100,
                                 }}>
-                                    <input className={alert ? "alert" : ""}
+                                    <input onKeyPress={(e) => {
+                                        if (e.key === "Enter" || e.keyCode === 13) {
+                                            submit()
+                                        }
+                                    }}
+                                           onSubmit={submit}
+                                           className={alert ? "alert" : ""}
                                            type="text"
                                            placeholder={"E-Mail, @Instagram or linkedin.com/in/"}
                                            value={email}
                                            onChange={(e) => setEmail(e.target.value)}
                                     />
                                 </Reward>
-                                <button onClick={() => {
-                                    if (email.length > 0) {
-                                        posthog.capture("EasterEgg", {email});
-                                        props.onClick()
-                                        setAlert(false)
-                                    } else {
-                                        setAlert(true)
-                                        reward?.punishMe()
-                                    }
-                                }}>
+                                <button onClick={submit}>
                                     {buttonName} <IoArrowForward/>
                                 </button>
                                 <label className={"legal"}>
