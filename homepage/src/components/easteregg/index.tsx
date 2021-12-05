@@ -1,9 +1,10 @@
 import posthog from "posthog-js";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {IoMdClose} from "react-icons/io";
 import Fade from "react-reveal/Fade";
 import "./style.scss";
 import {IoArrowForward} from "react-icons/all";
+import Reward, {RewardElement} from 'react-rewards';
 
 
 interface Props {
@@ -18,6 +19,14 @@ export function EasterEgg(props: Props) {
     const [email, setEmail] = useState("");
     const [alert, setAlert] = useState(false);
     const buttonName = "Submit"
+
+    let reward: RewardElement | null = null;
+
+    useEffect(() => {
+        setTimeout(() => {
+            reward?.rewardMe()
+        }, 1000);
+    })
 
     return (
         <div className="popup" onClick={() => {
@@ -48,14 +57,19 @@ export function EasterEgg(props: Props) {
                                 instagram-tag or linkedin-page below.
                             </p>
                             <div>
-                                <div>
+                                <Reward
+                                    type={'confetti'}
+                                    ref={(ref) => reward = ref} config={{
+                                    zIndex: 9999,
+                                    spread: 100,
+                                }}>
                                     <input className={alert ? "alert" : ""}
                                            type="text"
                                            placeholder={"E-Mail, @Instagram or linkedin.com/in/"}
                                            value={email}
                                            onChange={(e) => setEmail(e.target.value)}
                                     />
-                                </div>
+                                </Reward>
                                 <button onClick={() => {
                                     if (email.length > 0) {
                                         posthog.capture("EasterEgg", {email});
@@ -63,6 +77,7 @@ export function EasterEgg(props: Props) {
                                         setAlert(false)
                                     } else {
                                         setAlert(true)
+                                        reward?.punishMe()
                                     }
                                 }}>
                                     {buttonName} <IoArrowForward/>
