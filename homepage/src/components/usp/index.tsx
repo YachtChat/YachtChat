@@ -1,17 +1,36 @@
 import {IoLockClosed, IoMdClock} from "react-icons/all";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "./style.scss"
 import {applicationName} from "../../util/config";
 import classNames from "classnames";
 import {Card} from "../card";
 import {IoMdHeart} from "react-icons/io";
 import {Separator} from "../separator";
+import christmasyacht from "../../rsc/christmasyacht.png";
+import {EasterEgg} from "../easteregg";
 
 export function Usp() {
+
+    const [click, setClick] = useState(false);
+    const [showEasterEgg, setShowEasterEgg] = useState(false);
+
+    useEffect(() => {
+        const current = new Date();
+        const expiry = new Date("December 07, 2021 15:00:00")
+
+        if (current.getTime() < expiry.getTime()) {
+            setShowEasterEgg(true)
+            console.log(current.getTime(), expiry.getTime())
+        } else {
+            setShowEasterEgg(false)
+        }
+    }, []);
+
     return (
         <div id={"usp"}>
             {/*<div className={"backgroundBall"}/>*/}
             <Separator/>
+            <EasterEgg visible={click} onClick={() => setClick(false)}/>
             <div className={"contentWrapper"}>
                 <h1>Just you and your Team</h1>
                 <h2 className={"subtitle"}>This is why {applicationName} is so special</h2>
@@ -55,7 +74,10 @@ export function Usp() {
                     {/*    </p>*/}
                     {/*</Card>*/}
                 </div>
-
+                {showEasterEgg &&
+                <img className={"christmasyacht"} src={christmasyacht} alt={"The christmas yacht.chat"}
+                     onClick={() => setClick(true)}/>
+                }
             </div>
         </div>
     )
