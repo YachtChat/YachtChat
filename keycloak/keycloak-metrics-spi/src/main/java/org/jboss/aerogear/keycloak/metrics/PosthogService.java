@@ -26,4 +26,8 @@ public class PosthogService {
     public void identify(String mail){
         posthog.identify(mail, null);
     }
+
+    public void alis(String newId, String oldId){
+        posthog.alias(newId, oldId);
+    }
 }
