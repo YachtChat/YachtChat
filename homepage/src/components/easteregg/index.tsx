@@ -59,7 +59,6 @@ export function EasterEgg(props: Props) {
                                 <button onClick={() => {
                                     if (email.length > 0) {
                                         posthog.capture("EasterEgg", {email});
-                                        posthog.identify(email)
                                         props.onClick()
                                         setAlert(false)
                                     } else {
