@@ -1,0 +1,114 @@
+@import "../frontend/src/variables.module";
+
+.popup {
+  .overlay {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(1px);
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    position: fixed;
+    overflow: hidden;
+    z-index: 1000;
+  }
+
+  .wrapper {
+
+    max-width: 600px;
+    width: 90vw;
+    margin: 2rem;
+    padding: 2rem;
+    box-sizing: border-box;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+
+    overflow-y: auto;
+    z-index: 9999;
+
+    .closeButton {
+      position: absolute;
+      font-size: 1.2rem;
+      top: 5%;
+      right: 5%;
+      color: black;
+      transition: color 0.2s;
+      cursor: pointer;
+      z-index: 9991;
+
+      &:hover {
+        color: rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+      }
+    }
+
+    .contentWrapper {
+      padding: 5vw;
+      position: relative;
+      color: black;
+      max-width: 500px;
+      margin: auto auto;
+      text-align: left;
+
+      h1, h2, a, li, p {
+        text-align: left;
+        padding: 0;
+        display: block;
+      }
+
+      .legal {
+        font-size: 0.5rem;
+        color: gray;
+        margin-top: 1rem;
+        float: right;
+      }
+
+      input {
+        width: 100%;
+        margin-top: 1rem;
+        padding: 1rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 2rem;
+        box-sizing: border-box;
+        font-size: 1rem;
+        color: black;
+        background: #fafafa;
+        transition: border-color 0.2s;
+
+        &.alert {
+          border-color: red;
+        }
+
+        &:focus {
+          background: #fff;
+          outline: none;
+          border-color: $accent_dark;
+        }
+      }
+
+      button {
+        transition: transform 0.2s, opacity 0.2s;
+        color: $button_font_dark;
+        background: $accent_dark;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        border-radius: 2rem;
+        width: 100%;
+        cursor: pointer;
+        margin-top: 0.5rem;
+
+        &:hover {
+          transform: scale(1.01);
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+}
