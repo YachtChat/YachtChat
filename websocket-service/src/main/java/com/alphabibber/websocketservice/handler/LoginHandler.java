@@ -69,6 +69,19 @@ public class LoginHandler {
         // tell posthog that the video is enabled since the video is alwyas enabled when the user joins the space
         posthogService.sendEvent(user.getId(), posthogService.getVideoOnOnString(), null);
 
+        // check if someone else is in the room. If this is the case tell posthog for both users that they have been
+        // in a space with at least one other user
+        if (room.size() > 1) {
+            for (User u:room.values()) {
+                posthogService.sendEvent(u.getId(), posthogService.getSpaceWithOtherUserString(), new HashMap<String, Object>() {
+                    {
+                        put(posthogService.getRoomSizeString(), room.size());
+                    }
+                });
+            }
+        }
+
+
         try {
             session.getBasicRemote().sendObject(loginAnswer);
         } catch (EncodeException | IOException e) {
