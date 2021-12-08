@@ -30,6 +30,11 @@ public class PosthogService {
     @Getter
     private static final String spaceIdString = "spaceId";
 
+    @Getter
+    private static final String spaceWithOtherUserString = "spaceWithOtherUser";
+    @Getter
+    private static final String roomSizeString = "roomSize";
+
     private PosthogService(){
 
     }
