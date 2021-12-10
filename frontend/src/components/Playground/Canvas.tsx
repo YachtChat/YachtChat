@@ -4,7 +4,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import './style.scss';
 import {getUsers, submitMovement} from "../../store/userSlice";
-import {displayVideo, mute} from "../../store/rtcSlice";
+import {toggleUserVideo, mute} from "../../store/rtcSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
@@ -311,7 +311,8 @@ export class Canvas extends Component<Props, State> {
                                selected={
                                    //this.state.mapDragActive ||
                                    this.state.userDragActive}
-                               isActiveUser={true}/>
+                               isActiveUser={true}
+                />
                 {this.state.focusUser &&
                 <FocusUser userID={this.state.focusUser} onClose={() => this.handleClose("focusUser")}/>
                 }
@@ -335,7 +336,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     handleZoom: (z: number, x?: number, y?: number) => dispatch(handleZoom(z, x, y)),
     setScale: (z: number, x?: number, y?: number) => dispatch(setScale(z, x, y)),
     toggleAudio: () => dispatch(mute()),
-    toggleVideo: () => dispatch(displayVideo())
+    toggleVideo: () => dispatch(toggleUserVideo())
 })
 
 
