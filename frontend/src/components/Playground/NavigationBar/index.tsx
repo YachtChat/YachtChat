@@ -7,7 +7,7 @@ import {FaBars, FaCog, FaMicrophone, FaMicrophoneSlash, FaSignOutAlt, FaVideo, F
 import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../../store/webSocketSlice";
-import {displayVideo, mute, shareScreen} from "../../../store/rtcSlice";
+import {toggleUserVideo, mute, toggleUserScreen} from "../../../store/rtcSlice";
 import Settings from "../../Settings";
 import {centerUser} from "../../../store/playgroundSlice";
 import {IoChatbubble, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
@@ -365,8 +365,8 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: any) => ({
     success: (s: string) => dispatch(handleSuccess(s)),
     toggleAudio: () => dispatch(mute()),
-    toggleVideo: () => dispatch(displayVideo()),
-    toggleScreen: () => dispatch(shareScreen()),
+    toggleVideo: () => dispatch(toggleUserVideo()),
+    toggleScreen: () => dispatch(toggleUserScreen()),
     logout: () => dispatch(sendLogout()),
     center: () => dispatch(centerUser()),
 })

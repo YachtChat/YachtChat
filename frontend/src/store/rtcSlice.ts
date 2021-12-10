@@ -23,6 +23,7 @@ import CameraProcessor from "camera-processor";
 interface RTCState {
     muted: boolean
     video: boolean
+    previousVideo: boolean
     cameras: string[]
     microphones: string[]
     speakers: string[]
@@ -41,6 +42,7 @@ const initialState: RTCState = {
     muted: false,
     video: true,
     screen: false,
+    previousVideo: true,
     cameras: [],
     microphones: [],
     speakers: [],
@@ -83,6 +85,9 @@ export const rtcSlice = createSlice({
         },
         toggleVideo: (state) => {
             state.video = !state.video
+        },
+        setPreviousVideo: (state, action: PayloadAction<boolean>) => {
+            state.previousVideo = action.payload
         },
         toggleScreen: (state) => {
             state.screen = !state.screen
@@ -130,6 +135,7 @@ export const rtcSlice = createSlice({
 export const {
     initAllMediaDevices,
     toggleVideo,
+    setPreviousVideo,
     toggleMute,
     toggleScreen,
     setCamera,
@@ -224,36 +230,29 @@ export const mute = (): AppThunk => (dispatch, getState) => {
     }
 }
 
-export const displayVideo = (): AppThunk => (dispatch, getState) => {
-    // If currently sharing screen --> interrupt
-    // Video and screen not at the same time
-    if (!getState().rtc.video && getState().rtc.screen) {
-        dispatch(shareScreen())
-    }
+export const toggleUserVideo = (): AppThunk => (dispatch, getState) => {
+    // get state screen state
+    const screen:boolean = getState().rtc.screen
+    if (screen){
+        // if the screen was on till now let unshareScreen handle it
+        dispatch(unshareScreen(true))
+    } else{
+        dispatch(toggleVideo())
 
-    dispatch(toggleVideo())
+        // TODO this call should later be deleted because video state is redundant
+        dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: getState().rtc.video}))
 
-    const state = getState()
-    const userID = getUserID(state)
-    const video = state.rtc.video
+        // handle video changes
+        if (getState().rtc.video){
+            dispatch(setMediaChangeOngoing(true))
+            dispatch(handleInputChange('video'))
+        }else{
+            dispatch(stopVideo())
+        }
 
-    if (!getStream(state, userID)) {
-        dispatch(send({'type': 'media', 'id': userID, 'media': 'video', 'event': false}))
-        return
-    }
-    dispatch(setMedia({id: userID, type: MediaType.VIDEO, state: state.rtc.video}))
 
-    // If video is enabled
-    if (video) {
-        // replace streams
-        dispatch(setMediaChangeOngoing(true))
-        dispatch(handleInputChange('video'))
-
-        dispatch(updateRemoteVideoStatus())
-    } else {
-        dispatch(updateRemoteVideoStatus())
-
-        dispatch(stopVideo())
+        // tell websocket about video changes
+        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': getState().rtc.video}))
     }
 }
 
@@ -282,76 +281,82 @@ export const stopVideo = (): AppThunk => (dispatch, getState) => {
     }
 }
 
-export const shareScreen = (): AppThunk => (dispatch, getState) => {
+export const toggleUserScreen = (): AppThunk => (dispatch, getState) => {
     dispatch(setMediaChangeOngoing(true))
-    const state = getState()
-    const userID = getUserID(state)
-    const users = getOnlineUsers(state)
-
-    // If not enabled yet try to enable the screen sharing
-    if (!state.rtc.screen) {
-        navigator.mediaDevices.getDisplayMedia(getScreenSharingConstraints()).then((stream) => {
-
-            // If currently sharing video --> interrupt
-            // Video and screen not at the same time
-            if (state.rtc.video) {
-                dispatch(stopVideo())
-            }
-
-            dispatch(setScreen(true))
-
-            screenStream = stream
-
-            // If screen stream ends stop screen sharing
-            stream.getTracks().forEach(t => t.onended = () => {
-                dispatch(unshareScreen())
-            })
-
-            // iterate over all user and replace my video stream with the stream of my screen.
-            users.forEach(u => {
-                if (u.id === userID) return
-                rtpSender[u.id]["video"].replaceTrack(stream!.getVideoTracks()[0].clone());
-            })
-        }).catch((e) => {
-            dispatch(handleError("Unable to share the screen", e))
-        }).finally(() => {
-            dispatch(setMediaChangeOngoing(false))
-            dispatch(updateRemoteVideoStatus())
-        })
+    if (!getState().rtc.screen) {
+        // If not enabled yet try to enable the screen sharing
+        dispatch(shareScreen())
     } else {
-        dispatch(unshareScreen())
+        // If enabled, disable screen sharing
+        dispatch(unshareScreen(false))
     }
 }
+export const shareScreen = (): AppThunk => (dispatch, getState) => {
+    // remember the current video state to know wheter to turn on camer or not when sreensharing is turned off
+    dispatch(setPreviousVideo(getState().rtc.video))
+    navigator.mediaDevices.getDisplayMedia(getScreenSharingConstraints()).then((stream) => {
 
-// This will switch back to normal video and deinitialize the screen
-export const unshareScreen = (): AppThunk => (dispatch, getState) => {
-    const state = getState()
+        // Should the websocket be updated?
+        let isChanged:boolean = true
 
-    dispatch(setMediaChangeOngoing(true))
+        // if the video was turned on until now turn it off
+        if (getState().rtc.video) {
+            dispatch(toggleVideo())
+            dispatch(stopVideo())
+            // TODO this call should later be deleted because video state is redundant
+            dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: false}))
+            isChanged = false
+        }
+        // change the screen state
+        dispatch(setScreen(true))
 
-    // end all streams
+        // set stream to class wide variable
+        screenStream = stream
+
+        // If screen stream ends stop screen sharing
+        stream.getTracks().forEach(t => t.onended = () => {
+            dispatch(unshareScreen(false))
+        })
+
+        // iterate over all user and replace my video stream with the stream of my screen
+        getOnlineUsers(getState()).forEach(u => {
+            if (u.id === getUserID(getState())) return
+            rtpSender[u.id]["video"].replaceTrack(stream!.getVideoTracks()[0].clone());
+        })
+        // if we just the video was off and we turned the screen on now tell the websocket
+        if (isChanged) {
+            dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': true}));
+        }
+    }).catch((e) => {
+        dispatch(handleError("Unable to share the screen", e))
+    }).finally(() => {
+        dispatch(setMediaChangeOngoing(false))
+        }
+    )
+}
+
+
+// unshares the screen and turns the video on or not depending on the previous camera state and whether the call came from
+// the camera button
+export const unshareScreen = (isFromCamera:boolean): AppThunk => (dispatch, getState) => {
+    // change the screen state
+    dispatch(setScreen(false))
+
+    // change the class wide variable of the stream
     screenStream?.getTracks().forEach(t => t.stop())
     screenStream = undefined
 
-    dispatch(setScreen(false))
-
-    if (state.rtc.video) {
-        // share the normal video again with each user
-        dispatch(handleInputChange("video"))
+    // depending on the previousVideo and whether the call came from the camera button start the video or not
+    if(getState().rtc.previousVideo || isFromCamera) {
+        dispatch(toggleVideo())
+        dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
+        dispatch(setMediaChangeOngoing(true))
+        dispatch(handleInputChange('video'))
+    }else{
+        // tell the websocket that the screen is stopped
+        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': false}))
+        dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: false}))
     }
-    dispatch(updateRemoteVideoStatus())
-}
-
-export const updateRemoteVideoStatus = (): AppThunk => (dispatch, getState) => {
-    const state = getState()
-    const video = state.rtc.video
-    const screen = state.rtc.screen
-
-    dispatch(send({
-        'type': 'media',
-        'media': 'video',
-        'event': ((video || screen) && !!getStream(state, getUserID(state)))
-    }))
 }
 
 // Function that will enable spatial audio to a given user
