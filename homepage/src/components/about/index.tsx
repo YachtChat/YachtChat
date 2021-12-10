@@ -108,7 +108,7 @@ export function About() {
                             Learn about Yacht and see how it works.
                         </h2>
                         <div className={"youtube"}>
-                            <iframe src="https://www.youtube-nocookie.com/embed/CN1HuE_Yalo"
+                            <iframe src="https://www.youtube-nocookie.com/embed/awFxmewPixU"
                                     title="YouTube video player" frameBorder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen/>
