@@ -42,6 +42,10 @@ export interface Space {
     public: boolean
     hosts: string[]
 }
+export interface Point {
+    x: number
+    y: number
+}
 
 export enum MediaType {
     AUDIO = "AUDIO",
