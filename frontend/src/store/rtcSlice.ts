@@ -249,8 +249,6 @@ export const toggleUserVideo = (): AppThunk => (dispatch, getState) => {
         }else{
             dispatch(stopVideo())
         }
-
-
         // tell websocket about video changes
         dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': getState().rtc.video}))
     }
@@ -323,10 +321,10 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
             if (u.id === getUserID(getState())) return
             rtpSender[u.id]["video"].replaceTrack(stream!.getVideoTracks()[0].clone());
         })
-        // if we just the video was off and we turned the screen on now tell the websocket
-        if (isChanged) {
-            dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': true}));
-        }
+
+        // tell the weboscket that the screen is now shared
+        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'screen', 'event': true}));
+
     }).catch((e) => {
         dispatch(handleError("Unable to share the screen", e))
     }).finally(() => {
@@ -352,9 +350,10 @@ export const unshareScreen = (isFromCamera:boolean): AppThunk => (dispatch, getS
         dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
         dispatch(setMediaChangeOngoing(true))
         dispatch(handleInputChange('video'))
+        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'screen', 'event': false, 'changeToVideo': true}));
     }else{
         // tell the websocket that the screen is stopped
-        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': false}))
+        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'screen', 'event': false, 'changeToVideo': false}));
         dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: false}))
     }
 }
