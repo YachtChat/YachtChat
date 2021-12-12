@@ -12,6 +12,19 @@
     }
   }
 
+  .christmasyacht {
+    float: left;
+    width: 6rem;
+    height: 6rem;
+    transform: rotate(20deg);
+    transition: transform 0.5s;
+    z-index: 1000;
+
+    &:hover {
+      transform: scale(1.5);
+    }
+  }
+
   .separator {
     fill: $background_light;
 
