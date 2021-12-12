@@ -11,6 +11,7 @@ public class User {
         this.session = session;
         this.position = new Position(0, 0, 20);
         this.video = true;
+        this.screen = false;
         this.id = id;
     }
     @Getter @Setter @Expose(serialize = false)
@@ -24,4 +25,8 @@ public class User {
     @Setter
     @Expose
     private Boolean video;
+    @Getter
+    @Setter
+    @Expose
+    private Boolean screen;
 }

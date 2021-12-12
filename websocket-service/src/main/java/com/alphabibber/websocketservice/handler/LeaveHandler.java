@@ -20,16 +20,7 @@ public class LeaveHandler {
     public void handleLeave(String roomId, Map<String, User> room, User sender) {
         // tell posthog that the user left the space
         if (room.containsKey(sender.getSession().getId())) {
-            if (sender.getVideo()){
-                posthogService.sendEvent(sender.getId(), posthogService.getVideoOnOffString(), null);
-            }else{
-                posthogService.sendEvent(sender.getId(), posthogService.getVideoOffOffString(), null);
-            }
-            posthogService.sendEvent(sender.getId(), posthogService.getSpaceLeftString(), new HashMap<String, Object>(){
-                {
-                    put(posthogService.getSpaceIdString(), roomId);
-                }
-            });
+            posthogService.handleLeave(sender, roomId);
         }
 
         room.remove(sender.getSession().getId());
