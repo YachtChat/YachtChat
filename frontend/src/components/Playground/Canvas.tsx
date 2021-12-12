@@ -13,7 +13,7 @@ import FocusUser from "./focusUser";
 interface Props {
     activeUser: User
     spaceUsers: User[]
-    move: (userCoordinates: UserCoordinates) => void
+    move: (userCoordinates: UserCoordinates, isDragActivated: boolean) => void
     offset: PlaygroundOffset
     changeSizeMultiplier: (size: number) => void
     movePlayground: (offset: PlaygroundOffset) => void
@@ -155,15 +155,18 @@ export class Canvas extends Component<Props, State> {
                     x: e.clientX / scaling - x + this.props.offset.x,
                     y: e.clientY / scaling - y + this.props.offset.y,
                     range: this.props.activeUser.position!.range
-                })
+                }, this.state.userDragActive)
             }
         }
         this.dragEnd(e)
     }
 
     // function that sets the state of dragActive on false
-    // if the mouse left the playground or is not holded anymore
+    // if the mouse left the playground or is not pressed anymore
     dragEnd(e: React.MouseEvent | React.TouchEvent) {
+        if(this.state.userDragActive){
+            this.props.move(this.props.activeUser.position!, false)
+        }
         this.setState({
             userDragActive: false,
             mapDragActive: false,
@@ -212,7 +215,7 @@ export class Canvas extends Component<Props, State> {
                 x: clientX / scaling + this.props.offset.x - this.state.userOffset!.x,
                 y: clientY / scaling + this.props.offset.y - this.state.userOffset!.y,
                 range: this.props.activeUser.position!.range
-            })
+            }, this.state.userDragActive)
         }
         if (this.state.mapDragActive) {
             const prev = this.state.previousOffset!
@@ -271,8 +274,6 @@ export class Canvas extends Component<Props, State> {
         // window.addEventListener("touchstart", (e: any) => e.preventDefault())
         // window.addEventListener("touchmove", (e: any) => e.preventDefault())
         // window.addEventListener("touchend", (e: any) => e.preventDefault())
-
-
     }
 
     render() {
@@ -329,7 +330,7 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    move: (userCoordinates: UserCoordinates) => dispatch(submitMovement(userCoordinates)),
+    move: (userCoordinates: UserCoordinates, isDragActivated: boolean) => dispatch(submitMovement(userCoordinates, isDragActivated)),
     changeSizeMultiplier: (scale: number) => dispatch(scalePlayground(scale)),
     movePlayground: (offset: PlaygroundOffset) => dispatch(movePlayground(offset)),
     handleZoom: (z: number, x?: number, y?: number) => dispatch(handleZoom(z, x, y)),

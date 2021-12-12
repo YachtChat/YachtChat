@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {MediaType, User, UserCoordinates, UserPayload} from "./models";
+import {MediaType, Point, User, UserCoordinates, UserPayload} from "./models";
 import {send, sendPosition, userSetupReady} from "./webSocketSlice";
 import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
 import {getHeaders, getToken} from "./authSlice";
@@ -9,6 +9,7 @@ import {ACCOUNT_URL, complete_spaces_url} from "./config";
 import {keycloakUserToUser, playNotificationSound} from "./utils";
 import {handleError, handleSuccess} from "./statusSlice";
 import {identifyUser} from "./posthog";
+import {getNextValidPostion, isPostionValid} from "./positionUtils";
 
 interface UserState {
     activeUser: User
@@ -179,8 +180,24 @@ export const handleSpaceUser = (userId : string, position : UserCoordinates, isC
 }
 
 // When the user moves to send the position to the other users
-export const submitMovement = (coordinates: UserCoordinates): AppThunk => (dispatch, getState) => {
+export const submitMovement = (coordinates: UserCoordinates, dragActivated: boolean): AppThunk => (dispatch, getState) => {
     const user = getUser(getState())
+
+    // if the user drag is not activated we should check whether the move is valid and if not we change it
+    if(!dragActivated){
+        // get user position as Point and other users position as Point array
+        let userPositions: Point[] = []
+        getUsers(getState()).forEach(u => {if (u.position) userPositions.push({x: u.position.x, y: u.position.y})});
+        let point: Point = {x: coordinates.x, y: coordinates.y}
+
+        // check if the position is valid and if not change it
+        let possiblePoint: Point = {x: 0, y: 0}
+        if (!isPostionValid(point, userPositions)) {
+            possiblePoint = getNextValidPostion(point, userPositions)
+            coordinates = {x: possiblePoint.x, y: possiblePoint.y, range: coordinates.range}
+        }
+    }
+
     if (user.position !== coordinates) {
         // Position will be send over Websocket
         dispatch(sendPosition(coordinates))
