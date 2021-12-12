@@ -135,7 +135,11 @@ public class WsServerEndpoint {
                 case "media":
                     String media = jsonObject.get("media").getAsString();
                     Boolean event = jsonObject.get("event").getAsBoolean();
-                    mediaHandler.handleMedia(roomMap.get(roomId), sender, media, event);
+                    Boolean changeToVideo = null;
+                    if (jsonObject.get("changeToVideo") != null) {
+                        changeToVideo = jsonObject.get("changeToVideo").getAsBoolean();
+                    }
+                    mediaHandler.handleMedia(roomMap.get(roomId), sender, media, event, changeToVideo);
                     log.info("User {} changed his media type for {} to {}", sender.getId(), media, event);
                     break;
                 case "kick":

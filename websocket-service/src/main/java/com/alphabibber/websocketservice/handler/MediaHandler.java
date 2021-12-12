@@ -15,40 +15,42 @@ public class MediaHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final PosthogService posthogService = PosthogService.getInstance();
 
-    public void handleMedia(Map<String, User> room, User sender, String media, Boolean event) {
-        MediaAnswer answer;
+    public void handleMedia(Map<String, User> room, User sender, String media, Boolean event, Boolean changeToVideo) {
+        boolean prevMediaShared = (sender.getVideo() || sender.getScreen());
         switch (media){
             case "video":
+                // track the event if something has changed
+                if (!(event == sender.getVideo())) posthogService.trackVideo(sender.getId(), event);
                 sender.setVideo(event);
-                answer = new MediaAnswer(sender.getId(), media, event);
-                // tell posthog about this event
-
-                // user enabled the video
-                if (event){
-                    posthogService.sendEvent(sender.getId(), posthogService.getVideoOnOnString(), null);
-                    posthogService.sendEvent(sender.getId(), posthogService.getVideoOffOffString(), null);
-                }
-                // user disabled the video
-                else{
-                    posthogService.sendEvent(sender.getId(), posthogService.getVideoOnOffString(), null);
-                    posthogService.sendEvent(sender.getId(), posthogService.getVideoOffOnString(), null);
-                }
                 break;
+            case "screen":
+                // track the event if something has changed
+                if(!(event == sender.getScreen())){
+                    posthogService.trackScreen(sender.getId(), event, sender.getVideo(), changeToVideo);
+                }
+                sender.setScreen(event);
+                // set video to true if its an off event and the change back is to video else set to false
+                sender.setVideo(!event && changeToVideo);
+                break;
+
             default:
                 log.error("The media " + media + " is not known.");
                 return;
         }
+        if(prevMediaShared != (sender.getVideo() || sender.getScreen())){
+            MediaAnswer answer = new MediaAnswer(sender.getId(), media, (sender.getScreen() || sender.getVideo()));
 
-        ArrayList<User> users = new ArrayList<>(room.values());
-        users.forEach(user -> {
-            if (user.getId() == sender.getId()){return;}
-            synchronized (user){
-                try{
-                    user.getSession().getBasicRemote().sendObject(answer);
-                } catch (EncodeException | IOException e) {
-                    log.error("Could not send media {} with event {} to user {}.", media, event, user.getId());
+            ArrayList<User> users = new ArrayList<>(room.values());
+            users.forEach(user -> {
+                if (user.getId() == sender.getId()){return;}
+                synchronized (user){
+                    try{
+                        user.getSession().getBasicRemote().sendObject(answer);
+                    } catch (EncodeException | IOException e) {
+                        log.error("Could not send media {} with event {} to user {}.", media, event, user.getId());
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
