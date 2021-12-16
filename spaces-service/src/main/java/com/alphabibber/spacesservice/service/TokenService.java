@@ -21,15 +21,18 @@ import java.util.function.Function;
 public class TokenService {
 
     private final UserService userService;
+    private final PosthogService posthogService;
 
     @Value("${JWT_SECRET}")
     private String jwtSecret;
 
     @Autowired
     public TokenService(
-            UserService userService
+            UserService userService,
+            PosthogService posthogService
     ) {
         this.userService = userService;
+        this.posthogService = posthogService;
     }
 
     private Key getSignature() {
@@ -73,8 +76,22 @@ public class TokenService {
         // validated that necessary information is in token
         String spaceId = (String) claims.get("space");
 
+        String inviterId = (String) claims.get("sub");
+
+        // user is the user that used the invite link
+        var user = userService.getContextUserIfExistsElseCreate();
+
         if (spaceId == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is not valid");
+
+        posthogService.sendEvent(user.getId(), "invited", new HashMap<>(){{
+            put("inviter", inviterId);
+            put("space", spaceId);
+        }});
+        posthogService.sendEvent(inviterId, "inviteUsed", new HashMap<>(){{
+            put("invited", user.getId());
+            put("space", spaceId);
+        }});
 
         return callback.apply(claims);
     }
