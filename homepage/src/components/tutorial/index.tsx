@@ -4,7 +4,6 @@ import "./style.scss"
 import {applicationName} from "../../util/config";
 import {JoinButton} from "../joinButton";
 import {Separator} from "../separator";
-import {EasterEgg} from "../easteregg";
 
 export function Tutorial() {
     return (
@@ -52,7 +51,6 @@ export function Tutorial() {
                     </div>
                 </div>
                 <JoinButton className={"join"}/>
-                <EasterEgg/>
             </div>
         </div>
     )
