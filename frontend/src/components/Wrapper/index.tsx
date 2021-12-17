@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import './style.scss';
 import {IoWifi} from "react-icons/all";
 import {CircularProgress} from "@material-ui/core";
+import {EasterEgg} from "../easteregg";
 
 interface Props {
     className: string
@@ -17,6 +18,7 @@ export class Wrapper extends Component<Props> {
                 <div className={"contentBox " + this.props.className}>
                     {this.props.children}
                 </div>
+                <EasterEgg expiry={"December 23, 2021 23:59:00"} />
             </div>
         )
     }

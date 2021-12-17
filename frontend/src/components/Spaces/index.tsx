@@ -13,7 +13,6 @@ import keycloak from "../../store/keycloak";
 import {ClickAwayListener, Grow, MenuList, Paper, Popper} from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import {getUser, getUserID} from "../../store/userSlice";
 
 interface Props {
     activeUser: User
@@ -184,7 +183,7 @@ const mapStateToProps = (state: RootState) => ({
     spaces: state.space.spaces,
 })
 
-const mapDispatchToProps = (dispatch: any, getState: any) => ({
+const mapDispatchToProps = (dispatch: any) => ({
     requestSpaces: () => dispatch(requestSpaces()),
     logout: () => dispatch(logout()),
     deleteSpaceForUser: (id: string) => dispatch(deleteSpaceForUser(id)),

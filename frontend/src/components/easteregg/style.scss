@@ -1,10 +1,12 @@
-@import "../frontend/src/variables.module";
+@import "src/variables.module";
 
 .EasterEgg {
   .christmasyacht {
-    float: right;
-    width: 6rem;
-    height: 6rem;
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    width: 4rem;
+    height: 4rem;
     transform: rotate(20deg);
     transition: transform 0.5s;
     z-index: 1000;
@@ -31,7 +33,6 @@
 
       max-width: 600px;
       width: 90vw;
-      margin: 2rem;
       padding: 2rem;
       box-sizing: border-box;
 
@@ -39,6 +40,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      margin: 0;
 
       background: white;
       border-radius: 5px;
@@ -64,12 +66,14 @@
       }
 
       .contentWrapper {
-        padding: 5vw;
+        padding: 2vw;
         position: relative;
         color: black;
         max-width: 500px;
         margin: auto auto;
         text-align: left;
+        display: block;
+        box-sizing: border-box;
 
         h1, h2 {
           color: $accent_dark;
