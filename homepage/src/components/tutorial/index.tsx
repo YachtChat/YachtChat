@@ -1,28 +1,12 @@
 import {BiMouse, IoVolumeHigh} from "react-icons/all";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import "./style.scss"
 import {applicationName} from "../../util/config";
 import {JoinButton} from "../joinButton";
 import {Separator} from "../separator";
 import {EasterEgg} from "../easteregg";
-import christmasyacht from "../../rsc/christmasyacht.png";
 
 export function Tutorial() {
-    const [click, setClick] = useState(false);
-    const [showEasterEgg, setShowEasterEgg] = useState(false);
-
-    useEffect(() => {
-        const current = new Date();
-        const expiry = new Date("December 14, 2021 15:00:00")
-
-        if (current.getTime() < expiry.getTime()) {
-            setShowEasterEgg(true)
-            console.log(current.getTime(), expiry.getTime())
-        } else {
-            setShowEasterEgg(false)
-        }
-    }, []);
-
     return (
         <div id={"tutorial"}>
             <Separator/>
@@ -68,14 +52,7 @@ export function Tutorial() {
                     </div>
                 </div>
                 <JoinButton className={"join"}/>
-
-                {showEasterEgg &&
-                    <div>
-                        <EasterEgg visible={click} onClick={() => setClick(false)}/>
-                        <img className={"christmasyacht"} src={christmasyacht} alt={"The christmas yacht.chat"}
-                             onClick={() => setClick(true)}/>
-                    </div>
-                }
+                <EasterEgg/>
             </div>
         </div>
     )
