@@ -64,7 +64,7 @@ public class PosthogService {
         startTracking(id, video, true);
 
         // track room size
-        if (room.size() == 1) {
+        if (room.size() > 1) {
             for (User u : room.values()) {
                 sendEvent(u.getId(), spaceWithOtherUserString, new HashMap<String, Object>() {{
                     put(roomSizeString, room.size());
