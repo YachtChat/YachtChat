@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import Wrapper from "../Wrapper";
 import {Link} from "react-router-dom";
 import {FaChevronLeft} from "react-icons/fa";
-import {IoPeopleOutline} from "react-icons/all";
 import {connect} from "react-redux";
 import {createSpace} from "../../store/spaceSlice";
 
@@ -27,14 +26,11 @@ export class CreateSpace extends Component<Props, State> {
         return (
             <Wrapper className={"create spaces"}>
                 <div className={"headlineBox"}>
-                    <div className={"buttons"}>
-                        <Link to={"/spaces"}>
-                            <button className={"iconButton"}><FaChevronLeft/></button>
-                        </Link>
-                    </div>
+                    <Link to={"/spaces"}>
+                        <button className={"outlined"}><FaChevronLeft/> back to spaces</button>
+                    </Link>
 
                     <h1>
-                        <IoPeopleOutline/><br/>
                         Create a space
                     </h1>
                     A space is a private location where you can meet with every member of a space.

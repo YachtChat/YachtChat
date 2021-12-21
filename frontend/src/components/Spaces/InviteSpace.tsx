@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import Wrapper from "../Wrapper";
 import {Link} from "react-router-dom";
 import {FaChevronLeft} from "react-icons/fa";
-import {IoPeopleOutline} from "react-icons/all";
+import {IoArrowForward, IoCopyOutline} from "react-icons/all";
 import {connect} from "react-redux";
 import {getInvitationToken} from "../../store/spaceSlice";
 import {RootState} from "../../store/store";
@@ -54,18 +54,16 @@ export class CreateSpace extends Component<Props, State> {
         return (
             <Wrapper className={"create spaces"}>
                 <div className={"headlineBox"}>
-                    <div className={"buttons"}>
-                        <Link to={"/spaces"}>
-                            <button className={"iconButton"}><FaChevronLeft/></button>
-                        </Link>
-                    </div>
+                     <Link to={"/spaces"}>
+                            <button className={"outlined"}><FaChevronLeft/> back to spaces</button>
+                     </Link>
 
                     <h1>
-                        <IoPeopleOutline/><br/>
-                        Invite people
-                        to <i>{this.props.spaces.find(s => s.id === this.props.match?.params.spaceID)?.name}</i>
+                        Invite your team.
                     </h1>
-                    Let people join your private Space with an invitation link.
+                    Share this link to let people join
+                    "{this.props.spaces.find(s => s.id === this.props.match?.params.spaceID)?.name}".<br />
+                    After sharing your team just has to open this link in their browser to join your Space.
                 </div>
                 <form className={"spacesWrapper"}>
                     {(!!this.state.token) ?
@@ -86,16 +84,11 @@ export class CreateSpace extends Component<Props, State> {
                             this.props.success("Invite link copied")
                         }
                     }}>
-                        Copy Link
+                        <IoCopyOutline /> Copy Link
                     </button>
                     <Link to={"/spaces/" + this.props.match?.params.spaceID}>
-                        <button>
-                            Join space
-                        </button>
-                    </Link>
-                    <Link to={"/spaces"}>
-                        <button>
-                            Go back to spaces
+                        <button className={"outlined submit"}>
+                            Join space <IoArrowForward />
                         </button>
                     </Link>
                 </form>

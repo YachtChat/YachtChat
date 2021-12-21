@@ -1,20 +1,22 @@
 @import "src/variables.module";
 
 .spaces {
-  min-width: 400px;
+  min-width: 800px;
   max-width: 100%;
   text-align: left;
-  height: 50%;
+  max-height: 90%;
   min-height: 500px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
   .headlineBox {
     position: relative;
     display: flex;
     flex-direction: column;
     flex: 0 0;
+    padding: 3rem;
     justify-content: center;
+    box-sizing: border-box;
 
     .buttons {
       position: absolute;
@@ -22,11 +24,6 @@
       left: 0;
       padding: inherit;
       box-sizing: border-box;
-    }
-
-    h1 {
-      width: 10rem;
-      border-bottom: 5px solid $headline_light;
     }
   }
 
@@ -72,18 +69,27 @@
   }
 
   &.create .spacesWrapper {
-    padding: 2rem 2rem;
+    padding: 3rem 3rem;
   }
 
-  .spacesContent {
+  .spacesWrapper {
+    background-color: $background_light;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
     display: flex;
-    flex: 1;
+    overflow: auto;
     flex-direction: column;
-    height: 100%;
+    margin-bottom: 2rem;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        background: $background_dark;
+      }
+    }
 
     .itemWrapper {
       min-width: 300px;
-      padding: 0.7rem 2rem;
+      padding: 2rem 2rem;
       overflow-y: auto;
       bottom: 0;
       margin-bottom: 0;
@@ -101,6 +107,12 @@
         display: flex;
         flex-direction: row;
         padding-right: 1rem;
+
+        button {
+          margin-bottom: 0;
+          padding: 0.5rem 1rem;
+          font-size: 0.6rem;
+        }
       }
 
       .item {
@@ -110,6 +122,8 @@
         margin-top: 0.5rem;
         display: flex;
         align-items: center;
+        border: 1px solid transparent;
+        transition: background-color 0.2s, border 0.2s;
 
         .menuIcon {
           margin: auto;
@@ -126,7 +140,7 @@
         }
 
         &:hover {
-          background: $background_2_light;
+          background: $focus_light;
 
           @media (prefers-color-scheme: dark) {
             & {

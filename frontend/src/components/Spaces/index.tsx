@@ -1,21 +1,22 @@
 import React, {Component} from "react";
 import './style.scss';
-import {Space, User} from "../../store/models";
+import {Space} from "../../store/models";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {deleteSpaceForUser, requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
-import {IoAddOutline, IoChevronForwardOutline, IoEllipsisHorizontal, IoPeople, IoTrashOutline} from "react-icons/all";
+import {
+    IoAddOutline, IoChatbubblesOutline,
+    IoCogOutline, IoCreateOutline,
+    IoEllipsisHorizontal,
+    IoTrashOutline
+} from "react-icons/all";
 import {Link} from "react-router-dom";
-import {FaCog, FaPowerOff} from "react-icons/fa";
 import {logout} from "../../store/authSlice";
-import keycloak from "../../store/keycloak";
-import {ClickAwayListener, Grow, MenuList, Paper, Popper} from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 
 interface Props {
-    activeUser: User
     spaces: Space[]
     logout: () => void
     requestSpaces: () => void
@@ -23,7 +24,6 @@ interface Props {
 }
 
 interface State {
-    profileOpen: boolean
     mouseX?: number
     mouseY?: number
     space?: Space
@@ -38,22 +38,11 @@ export class Spaces extends Component<Props, State> {
 
         this.anchorRef = React.createRef()
 
-        this.state = {
-            profileOpen: false,
-        }
+        this.state = {}
     }
 
     componentDidMount() {
         this.props.requestSpaces()
-    }
-
-    handleClose() {
-        this.setState({
-            profileOpen: false,
-            mouseX: undefined,
-            mouseY: undefined,
-            space: undefined
-        })
     }
 
     handleContext(e: React.MouseEvent, space: Space) {
@@ -66,63 +55,39 @@ export class Spaces extends Component<Props, State> {
         })
     }
 
+    handleClose() {
+        this.setState({
+            mouseX: undefined,
+            mouseY: undefined,
+            space: undefined
+        })
+    }
+
     render() {
-        const open = this.state.profileOpen
         return (
             <Wrapper className="spaces">
                 <div className={"headlineBox"}>
-                    <div className={"buttons"}>
-                        <button
-                            className={"iconButton profilePic"}
-                            ref={this.anchorRef}
-                            onMouseOver={() => this.setState({profileOpen: true})}
-                            onMouseLeave={() => this.setState({profileOpen: false})}
-                            style={{backgroundImage: `url(${this.props.activeUser.profile_image})`}}
-                        />
-                        <Popper open={open}
-                                anchorEl={this.anchorRef.current}
-                                role={undefined} placement={"bottom"}
-                                onMouseOver={() => this.setState({profileOpen: true})}
-                                onMouseLeave={() => this.setState({profileOpen: false})}
-                                transition disablePortal>
-                            {({TransitionProps, placement}) => (
-                                <Grow
-                                    {...TransitionProps}
-                                    style={{transformOrigin: placement === 'bottom' ? 'top' : 'top'}}
-                                >
-                                    <Paper>
-                                        <ClickAwayListener onClickAway={this.handleClose.bind(this)}>
-                                            <MenuList autoFocusItem={open} id="menu-list-grow">
-                                                <Link to={keycloak.createAccountUrl()}>
-                                                    <MenuItem className={"menuItem"}
-                                                              onClick={this.handleClose.bind(this)}>
-                                                        <FaCog/> Account
-                                                    </MenuItem>
-                                                </Link>
-                                                <Link to={"/friends"}>
-                                                    <MenuItem className={"menuItem"}
-                                                              onClick={this.handleClose.bind(this)}><IoPeople/> Friends</MenuItem>
-                                                </Link>
-                                                <MenuItem onClick={this.props.logout}><FaPowerOff/> Logout</MenuItem>
-                                            </MenuList>
-                                        </ClickAwayListener>
-                                    </Paper>
-                                </Grow>
-                            )}
-                        </Popper>
+                    <div>
+                        <div className={"nav-buttons"}>
+                            <Link to={"/create-space"}>
+                                <button className={"outlined spaceRight"}>
+                                    <IoAddOutline/> add space
+                                </button>
+                            </Link>
+                            <Link to={"/settings"}>
+                                <button className={"outlined spaceRight"}>
+                                    <IoCogOutline/> settings
+                                </button>
+                            </Link>
+                        </div>
+                        <h1>
+                            Spaces <IoChatbubblesOutline />
+                        </h1>
                     </div>
-                    <h1>Hello, {this.props.activeUser.firstName}</h1>
                     <p>To join a space, select a space on the right, or create a new one.</p>
                 </div>
-                <div className={"spacesContent"}>
+                <div className={"spacesWrapper"}>
 
-                    <h2>Spaces
-                        <Link to={"/create-space"}>
-                            <span className={"minimalButton"}>
-                            <IoAddOutline/>
-                            </span>
-                        </Link>
-                    </h2>
                     <div className={"itemWrapper"}>
                         {this.props.spaces.map((s, idx) => (
                             <Link to={`/spaces/${s.id}`} key={idx}>
@@ -134,10 +99,15 @@ export class Spaces extends Component<Props, State> {
                                     {s.name}
                                     <div className={"buttons"}>
                                         <button onClick={e => this.handleContext(e, s)}
-                                                className={"menuIcon"}>
+                                                className={"nostyle outlined"}>
                                             <IoEllipsisHorizontal/>
                                         </button>
-                                        <IoChevronForwardOutline/>
+                                        <button className={"outlined spaceRight"}>
+                                            Invite
+                                        </button>
+                                        <button>
+                                            Join
+                                        </button>
                                     </div>
                                 </div>
                             </Link>
@@ -159,27 +129,32 @@ export class Spaces extends Component<Props, State> {
                         }
                     >
                         {!!this.state.space && !this.state.space.public &&
-                        <MenuItem
-                            className={"menuItem"}
-                            onClick={() => {
-                                this.handleClose()
-                                this.props.deleteSpaceForUser(this.state.space!.id)
-                            }}>
-                            <IoTrashOutline/> Delete
-                        </MenuItem>
+                            <MenuItem
+                                className={"menuItem"}
+                                onClick={() => {
+                                    this.handleClose()
+                                    this.props.deleteSpaceForUser(this.state.space!.id)
+                                }}>
+                                <IoTrashOutline/> Delete
+                            </MenuItem>
                         }
-                        <Link to={"/invite/" + this.state.space?.id}>
-                            <MenuItem onClick={this.handleClose.bind(this)}>Invite</MenuItem>
-                        </Link>
+                        <MenuItem onClick={() => {
+                            alert("This feature is not available yet.")
+                            this.handleClose()
+                        }}><IoCreateOutline /> Rename</MenuItem>
                     </Menu>
                 </div>
+                <Link to={"/create-space"}>
+                    <button className={"outlined"}>
+                        <IoAddOutline/> add space
+                    </button>
+                </Link>
             </Wrapper>
         )
     }
 }
 
 const mapStateToProps = (state: RootState) => ({
-    activeUser: state.userState.activeUser,
     spaces: state.space.spaces,
 })
 
