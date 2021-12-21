@@ -49,6 +49,7 @@ export function Contact() {
                 <br/>
                 <button onClick={() => setLegal("terms")}>Terms & Conditions</button>
                 <button onClick={() => setLegal("privacy")}>Privacy Policy</button>
+                <button onClick={() => setLegal("impressum")}>Imprint</button>
                 <Imprint visible={!!legal}
                          page={legal ? legal : ""}
                          onClick={() => setLegal(undefined)}/>

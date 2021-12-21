@@ -4,6 +4,7 @@ import Fade from "react-reveal/Fade";
 import {IoMdClose} from "react-icons/io";
 import {Terms} from "./Terms";
 import {Privacy} from "./Privacy";
+import {Impressum} from "./Impressum";
 
 interface Props {
     visible: boolean;
@@ -28,6 +29,9 @@ export function Imprint(props: Props) {
                                 }
                                 {(page === "privacy") &&
                                 <Privacy/>
+                                }
+                                {(page === "impressum") &&
+                                <Impressum/>
                                 }
                             </div>
                         </div>
