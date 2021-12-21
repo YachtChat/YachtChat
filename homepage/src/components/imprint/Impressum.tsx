@@ -18,8 +18,11 @@ export function Impressum() {
 
             <h2>Contact</h2>
 
+            <p>E-Mail:</p>
             <p><a href={"mailto:contact@yacht.chat"}>contact@yacht.chat</a></p>
+            <p>Tel:</p>
             <p>+49 6151 3929500</p>
+            <p>Available daily between 8am (CET) and 6pm (CET)</p>
         </div>
     )
 }
