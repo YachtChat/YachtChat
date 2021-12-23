@@ -98,91 +98,95 @@ export class MediaSettings extends Component<Props> {
 
         return (
             <div className={"mediaSettings"}>
-                <div className={"videoPreview"}>
-                    <video key={this.props.camera} autoPlay muted ref={ref => {
-                        if (ref && !this.props.mediaChangeOngoing && this.stream)
-                            ref.srcObject = this.stream
-                    }}/>
-                </div>
-                <VolumeIndicator audio={this.stream}/>
-                {this.props.cameras.length !== 0 &&
-                <div className={"settings-item"}>
-                    <label>
-                        Change Video Input
-                    </label>
-                    <div className="dropdown">
-                        <select value={this.props.camera}
-                                onChange={({target: {value}}) => this.props.changeVideoInput(value)}
-                                className="videodevices" name="videodevices">
-                            {this.props.cameras.map(c => (
-                                <option key={c} value={c}>
-                                    {mediaDevices[c].label}
-                                </option>
-                            ))}
-                        </select>
+                <div className={"preview"}>
+                    <div className={"videoPreview"}>
+                        <video key={this.props.camera} autoPlay muted ref={ref => {
+                            if (ref && !this.props.mediaChangeOngoing && this.stream)
+                                ref.srcObject = this.stream
+                        }}/>
                     </div>
+                    <VolumeIndicator audio={this.stream}/>
                 </div>
-                }
-
-                {// If cameras are loaded and Workers as well as canvas filters are supported
-                    (this.props.cameras.length !== 0 && window.Worker && typeof OffscreenCanvas !== "undefined" &&
-                        document.createElement('canvas').getContext('2d')?.filter) &&
-                    <div className={"settings-item"}>
-                        <label>
-                            Virtual Background
-                        </label>
-                        <div className="dropdown">
-                            {/*<label htmlFor="spaces">Choose a Space:</label>*/}
-                            <select value={this.props.virtualBackground}
-                                    onChange={({target: {value}}) => this.props.changeVirtualBackground(value)}
-                                    className="audiodevices" name="audiodevices">
-                                {virtualBackgrounds.map(c => (
-                                    <option key={c} value={c}>
-                                        {c[0].toUpperCase() + c.slice(1)}
-                                    </option>
-                                ))}
-                            </select>
+                <div className={"toggles"}>
+                    {this.props.cameras.length !== 0 &&
+                        <div className={"settings-item"}>
+                            <label>
+                                Change Video Input
+                            </label>
+                            <div className="dropdown">
+                                <select value={this.props.camera}
+                                        onChange={({target: {value}}) => this.props.changeVideoInput(value)}
+                                        className="videodevices" name="videodevices">
+                                    {this.props.cameras.map(c => (
+                                        <option key={c} value={c}>
+                                            {mediaDevices[c].label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                }
-                {this.props.microphones.length !== 0 &&
-                <div className={"settings-item"}>
-                    <label>
-                        Change Audio Input
-                    </label>
-                    <div className="dropdown">
-                        {/*<label htmlFor="spaces">Choose a Space:</label>*/}
-                        <select value={this.props.microphone}
-                                onChange={({target: {value}}) => this.props.changeAudioInput(value)}
-                                className="audiodevices" name="audiodevices">
-                            {this.props.microphones.map(c => (
-                                <option key={c} value={c}>
-                                    {mediaDevices[c].label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    }
+
+                    {// If cameras are loaded and Workers as well as canvas filters are supported
+                        (this.props.cameras.length !== 0 && window.Worker && typeof OffscreenCanvas !== "undefined" &&
+                            document.createElement('canvas').getContext('2d')?.filter) &&
+                        <div className={"settings-item"}>
+                            <label>
+                                Virtual Background
+                            </label>
+                            <div className="dropdown">
+                                {/*<label htmlFor="spaces">Choose a Space:</label>*/}
+                                <select value={this.props.virtualBackground}
+                                        onChange={({target: {value}}) => this.props.changeVirtualBackground(value)}
+                                        className="audiodevices" name="audiodevices">
+                                    {virtualBackgrounds.map(c => (
+                                        <option key={c} value={c}>
+                                            {c[0].toUpperCase() + c.slice(1)}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    }
+                    {this.props.microphones.length !== 0 &&
+                        <div className={"settings-item"}>
+                            <label>
+                                Change Audio Input
+                            </label>
+                            <div className="dropdown">
+                                {/*<label htmlFor="spaces">Choose a Space:</label>*/}
+                                <select value={this.props.microphone}
+                                        onChange={({target: {value}}) => this.props.changeAudioInput(value)}
+                                        className="audiodevices" name="audiodevices">
+                                    {this.props.microphones.map(c => (
+                                        <option key={c} value={c}>
+                                            {mediaDevices[c].label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    }
+                    {this.props.speakers.length !== 0 &&
+                        <div className={"settings-item"}>
+                            <label>
+                                Change Audio Output
+                            </label>
+                            <div className="dropdown">
+                                {/*<label htmlFor="spaces">Choose a Space:</label>*/}
+                                <select value={this.props.speaker}
+                                        onChange={({target: {value}}) => this.props.changeAudioOutput(value)}
+                                        className="audiodevices" name="audiodevices">
+                                    {this.props.speakers.map(c => (
+                                        <option key={c} value={c}>
+                                            {mediaDevices[c].label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    }
                 </div>
-                }
-                {this.props.speakers.length !== 0 &&
-                <div className={"settings-item"}>
-                    <label>
-                        Change Audio Output
-                    </label>
-                    <div className="dropdown">
-                        {/*<label htmlFor="spaces">Choose a Space:</label>*/}
-                        <select value={this.props.speaker}
-                                onChange={({target: {value}}) => this.props.changeAudioOutput(value)}
-                                className="audiodevices" name="audiodevices">
-                            {this.props.speakers.map(c => (
-                                <option key={c} value={c}>
-                                    {mediaDevices[c].label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-                }
             </div>
         );
     }

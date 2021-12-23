@@ -1,47 +1,79 @@
 @import "../../variables.module";
 
-#form-dialog-title {
-  background-color: $accent_light;
-  color: $headline_light;
-
-  & h2 {
-    font-weight: bold;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    & {
-      background-color: $accent_dark;
-      color: $headline_light;
-    }
-  }
-}
-
 .settingsPanel {
   background: transparent;
   border-radius: $border_radius;
   overflow: hidden;
-}
 
-.settingsPanel .MuiPaper-root, .MuiDialog-paper {
-  border-radius: $border_radius;
-  background: $foreground_light;
-  color: $button_font_light;
-  overflow: hidden;
+  .buttons {
+    color: black;
+    padding: 0;
+    margin: 0;
 
-  @media (prefers-color-scheme: dark) {
-    & {
-      color: $button_font_dark;
-      background: $foreground_dark;
+    .iconButton.nostyle {
+      color: black;
+      font-size: 2rem;
+    }
+  }
+
+  .MuiPaper-root, .MuiDialog-paper {
+    border-radius: $border_radius;
+    background: $foreground_light;
+    color: $button_font_light;
+    overflow: hidden;
+    width: 800px;
+    max-width: 100%;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $button_font_dark;
+        background: $foreground_dark;
+      }
     }
   }
 }
 
 .settings {
+  box-sizing: border-box;
   padding: 1.5rem 2.5rem;
-  background: $foreground_light;
-  color: $button_font_light;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
+  width: 800px;
+  max-width: 100%;
+  text-align: left;
+  max-height: 90%;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+
+  .content {
+    background: $foreground_light;
+    border-radius: $border_radius;
+    box-shadow: $shadow;
+    overflow-y: auto;
+  }
+
+  .mediaSettings {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: border-box;
+
+    .preview {
+      margin-right: 2rem;
+      min-width: 250px;
+      height: auto;
+      flex: 1;
+    }
+
+    .toggles {
+      flex: 1;
+      min-width: 250px;
+    }
+  }
 
   @media (prefers-color-scheme: dark) {
     & {
