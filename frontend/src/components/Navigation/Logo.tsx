@@ -1,10 +1,27 @@
-export function Logo() {
+import {RootState} from "../../store/store";
+import {
+    getInvitationToken,
+} from "../../store/spaceSlice";
+import {handleError, handleSuccess} from "../../store/statusSlice";
+import {connect} from "react-redux";
+import {FRONTEND_URL} from "../../store/config";
+import {IoLink} from "react-icons/all";
+import {Tooltip} from "@material-ui/core";
+import React from "react";
 
-    const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({behavior: 'smooth'})
+interface Props {
+    title?: string
+    spaceID?: string
+    getToken: (sid: string) => Promise<string>
+    success: (s: string) => void
+    error: (s: string) => void
+}
+
+export function Logo(props: Props) {
 
     return (
         <div className={"logo"}>
-            <svg onClick={() => scrollTo("landing")} className={"logo-pic"} width="100%" height="100%"
+            <svg className={"logo-pic"} width="100%" height="100%"
                  viewBox="0 0 2796 2796"
                  style={{
                      fillRule: "evenodd",
@@ -51,6 +68,32 @@ export function Logo() {
                     </g>
                 </g>
             </svg>
+            <h1>{props.title}</h1>
+            {!!props.spaceID &&
+            <Tooltip title={"Get invitation link"} placement={"top"} arrow>
+                <button onClick={e => {
+                        props.getToken(props.spaceID!).then(token => {
+                            e.preventDefault()
+                            navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + token)
+                            props.success("Invite link copied")
+                        }).catch(() => props.error("Unable to request token"))
+                    }
+                } className={""}>
+                    <IoLink/> invite link
+                </button>
+            </Tooltip>
+            }
         </div>
     )
 }
+
+const mapStateToProps = (state: RootState) => ({
+    getToken: (sid: string) => getInvitationToken(state, sid),
+})
+
+const mapDispatchToProps = (dispatch: any) => ({
+    success: (s: string) => dispatch(handleSuccess(s)),
+    error: (s: string) => dispatch(handleError(s))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Logo)

@@ -1,12 +1,11 @@
-import {IoChevronDownOutline, IoPeople} from "react-icons/all";
+import {IoChevronDownOutline, IoCogOutline, IoPowerOutline,} from "react-icons/all";
 import {ClickAwayListener, Grow, MenuList, Paper, Popper} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import MenuItem from "@material-ui/core/MenuItem";
-import {FaCog, FaPowerOff} from "react-icons/fa";
 import React, {Component, createRef} from "react";
-import {User} from "../../../store/models";
-import {RootState} from "../../../store/store";
-import {logout} from "../../../store/authSlice";
+import {User} from "../../store/models";
+import {RootState} from "../../store/store";
+import {logout} from "../../store/authSlice";
 import {connect} from "react-redux";
 
 interface Props {
@@ -22,7 +21,7 @@ interface State {
 
 export class AuthButtons extends Component<Props, State> {
 
-    private anchorRef: React.RefObject<HTMLButtonElement>
+    private anchorRef: React.RefObject<HTMLDivElement>
 
     constructor(props: Props) {
         super(props);
@@ -46,17 +45,19 @@ export class AuthButtons extends Component<Props, State> {
         const open = this.state.profileOpen
 
         return (
-            <div className={"authentification"}>
-                <div>
-                    <button
-                        className={"iconButton profilePic"}
-                        ref={this.anchorRef}
-                        onMouseOver={() => this.setState({profileOpen: true})}
-                        onMouseLeave={() => this.setState({profileOpen: false})}
-                        style={{backgroundImage: `url(${this.props.activeUser.profile_image})`}}
-                    />
-                    <IoChevronDownOutline />
-                </div>
+            <div className={"authentification"}
+                 onMouseOver={() => this.setState({profileOpen: true})}
+                 onMouseLeave={() => this.setState({profileOpen: false})}
+                 ref={this.anchorRef}>
+                <span>
+                    {this.props.activeUser.firstName + " "}
+                    {this.props.activeUser.lastName}
+                </span>
+                <button
+                    className={"iconButton profilePic"}
+                    style={{backgroundImage: `url(${this.props.activeUser.profile_image})`}}
+                />
+                <IoChevronDownOutline className={"icon"}/>
                 <Popper open={open}
                         anchorEl={this.anchorRef.current}
                         role={undefined} placement={"bottom"}
@@ -71,17 +72,17 @@ export class AuthButtons extends Component<Props, State> {
                             <Paper>
                                 <ClickAwayListener onClickAway={this.handleClose.bind(this)}>
                                     <MenuList autoFocusItem={open} id="menu-list-grow">
-                                        <Link to={""}>
+                                        {/*<Link to={""}>*/}
+                                        {/*    <MenuItem className={"menuItem"}*/}
+                                        {/*              onClick={this.handleClose.bind(this)}>*/}
+                                        {/*        <FaCog/> Account*/}
+                                        {/*    </MenuItem>*/}
+                                        {/*</Link>*/}
+                                        <Link to={"/settings"}>
                                             <MenuItem className={"menuItem"}
-                                                      onClick={this.handleClose.bind(this)}>
-                                                <FaCog/> Account
-                                            </MenuItem>
+                                                      onClick={this.handleClose.bind(this)}><IoCogOutline/> Settings</MenuItem>
                                         </Link>
-                                        <Link to={"/friends"}>
-                                            <MenuItem className={"menuItem"}
-                                                      onClick={this.handleClose.bind(this)}><IoPeople/> Friends</MenuItem>
-                                        </Link>
-                                        <MenuItem onClick={this.props.logout}><FaPowerOff/> Logout</MenuItem>
+                                        <MenuItem onClick={this.props.logout}><IoPowerOutline/> Logout</MenuItem>
                                     </MenuList>
                                 </ClickAwayListener>
                             </Paper>

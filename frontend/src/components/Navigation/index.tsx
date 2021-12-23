@@ -1,12 +1,16 @@
 import './style.scss'
-import {Logo} from "./Logo";
 import {IoMenu} from "react-icons/all";
 import {useState} from "react";
 import AuthButtons from "./AuthButtons";
 import {NavButtons} from "./NavButtons";
+import Logo from "./Logo";
 
+interface Props {
+    title?: string
+    spaceID?: string
+}
 
-export const Navigation = () => {
+export const Navigation = (props: Props) => {
 
     const [open, setOpen] = useState(false)
 
@@ -15,7 +19,7 @@ export const Navigation = () => {
             <div className={"contentWrapper"}>
 
                 <div id={"nav-content-desktop"}>
-                    <Logo/>
+                    <Logo title={props.title} spaceID={props.spaceID} />
                     <NavButtons/>
                     <AuthButtons/>
                 </div>

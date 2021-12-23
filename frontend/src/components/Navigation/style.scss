@@ -2,7 +2,7 @@
 
 #navigation {
   z-index: 500;
-  position: fixed;
+  position: relative;
   backdrop-filter: blur(2rem);
   top: 0;
   width: 100%;
@@ -26,8 +26,11 @@
     transition: transform 0.3s;
     position: relative;
     display: flex;
+    flex-direction: row;
     align-items: center;
     align-content: center;
+    justify-items: center;
+    justify-content: center;
     float: left;
 
     .logo-pic {
@@ -42,9 +45,23 @@
       height: 1.5rem;
     }
 
+    h1 {
+      font-size: 1rem;
+      color: white;
+      margin-left: 1rem;
+    }
 
-    &:hover {
-      transform: scale(1.01);
+    button {
+      font-size: 0.6rem;
+      background-color: $accent_light;
+      padding: 0.25rem 0.5rem;
+      color: black;
+      margin-left: 1rem;
+      margin-bottom: 0;
+
+      &:hover {
+
+      }
     }
   }
 
@@ -102,6 +119,11 @@
     .authentification {
       justify-self: right;
       float: right;
+      display: flex;
+      justify-content: center;
+      justify-items: center;
+      align-items: center;
+      align-content: center;
 
       padding-right: 2rem;
       flex-grow: 0;
@@ -111,6 +133,15 @@
         margin-right: 0;
         float: right;
 
+      }
+
+      .icon {
+        color: white;
+      }
+
+      span {
+        color: white;
+        font-size: 0.8rem;
       }
     }
   }

@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import './style.scss';
 import {IoWifi} from "react-icons/all";
 import {CircularProgress} from "@material-ui/core";
-import Navigation from "./navigation";
+import Navigation from "../Navigation";
 
 interface Props {
     className: string
