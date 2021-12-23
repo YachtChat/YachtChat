@@ -70,7 +70,6 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
 
     socket.onopen = () => {
         dispatch(connect())
-        dispatch(handleSuccess("Connected to the signaling server"))
         dispatch(requestLogin())
         heartBeat = setInterval(() => {
             dispatch(send({type: "ping"}));
@@ -216,6 +215,7 @@ export const handleLogin = (success: boolean, spaceid: string, users: UserPayloa
     if (!success) {
         dispatch(handleError("Join failed. Try again later."))
     } else {
+        dispatch(handleSuccess("Connected to space. Connecting to other users..."))
         dispatch(handleSpaceUsers(spaceid, users))
     }
 }
