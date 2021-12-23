@@ -23,6 +23,7 @@ interface Props {
     toggleVideo: () => void
     video: boolean
     muted: boolean
+    spaceID: string
 }
 
 interface State {
@@ -55,7 +56,7 @@ export class Canvas extends Component<Props, State> {
         }
     }
 
-    handleClose(component: string) {
+    handleClose() {
         if (this.state.focusUser) {
             this.setState({
                 focusUser: undefined
@@ -315,7 +316,7 @@ export class Canvas extends Component<Props, State> {
                                isActiveUser={true}
                 />
                 {this.state.focusUser &&
-                <FocusUser userID={this.state.focusUser} onClose={() => this.handleClose("focusUser")}/>
+                <FocusUser userID={this.state.focusUser} spaceID={this.props.spaceID} onClose={() => this.handleClose()}/>
                 }
             </div>
         )

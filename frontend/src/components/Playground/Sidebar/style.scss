@@ -73,6 +73,10 @@
   position: relative;
   z-index: 1009;
 
+  &.minimal {
+    height: auto;
+  }
+
   @media (prefers-color-scheme: dark) {
     & {
       color: $button_font_dark;

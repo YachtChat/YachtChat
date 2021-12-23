@@ -56,7 +56,7 @@ export class Playground extends Component<Props, State> {
             if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
                 this.props.requestUserMedia(this.props.match!.params.spaceID)
         })
-        window.onpopstate = (event) => {
+        window.onpopstate = () => {
             this.props.sendLogout();
         };
     }
@@ -107,17 +107,17 @@ export class Playground extends Component<Props, State> {
                 </Wrapper>
             )
 
+        if (!this.props.joinedSpace)
+            return (
+                <Loading/>
+            )
+
         return (
             <div id={"PlaygroundWrapper"}>
                 <Navigation title={this.state.spaceName} spaceID={this.props.match?.params.spaceID} />
                 <div id={"Playground"} className={"contentWrapper"}>
-                    <div className={"navwrapper"}>
-                        <Sidebar spaceID={this.props.match!.params.spaceID}/>
-                    </div>
-                    {this.props.joinedSpace ?
-                        <Canvas/>
-                        : <Loading/>
-                    }
+                    <Sidebar spaceID={this.props.match!.params.spaceID}/>
+                    <Canvas spaceID={this.props.match?.params.spaceID ?? ""}/>
                     <div className="btn">
                         <button onClick={this.handleZoomIn.bind(this)}>+</button>
                         <button onClick={this.handleZoomOut.bind(this)}>-</button>
