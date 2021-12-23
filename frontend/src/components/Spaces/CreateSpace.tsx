@@ -5,6 +5,7 @@ import {FaChevronLeft} from "react-icons/fa";
 import {connect} from "react-redux";
 import {createSpace} from "../../store/spaceSlice";
 import {handleError} from "../../store/statusSlice";
+import {Steps} from "./Steps";
 
 interface Props {
     createSpace: (name: string) => void
@@ -27,11 +28,11 @@ export class CreateSpace extends Component<Props, State> {
     render() {
         return (
             <Wrapper className={"create spaces"}>
+                    <Steps active={0} />
                 <div className={"headlineBox"}>
                     <Link to={"/spaces"}>
                         <button className={"outlined"}><FaChevronLeft/> back to spaces</button>
                     </Link>
-
                     <h1>
                         Create a space
                     </h1>

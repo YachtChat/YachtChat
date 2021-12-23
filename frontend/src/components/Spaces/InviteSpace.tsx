@@ -6,11 +6,12 @@ import {IoArrowForward, IoCopyOutline} from "react-icons/all";
 import {connect} from "react-redux";
 import {getInvitationToken} from "../../store/spaceSlice";
 import {RootState} from "../../store/store";
-import {CircularProgress} from "@material-ui/core";
-import {FRONTEND_URL} from "../../store/config";
+import {CircularProgress, Tooltip} from "@material-ui/core";
+import {applicationName, FRONTEND_URL} from "../../store/config";
 import {push} from "connected-react-router";
 import {Space} from "../../store/models";
 import {handleSuccess} from "../../store/statusSlice";
+import {Steps} from "./Steps";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -26,6 +27,7 @@ interface Props {
 
 interface State {
     token?: string
+    invite: boolean
 }
 
 export class CreateSpace extends Component<Props, State> {
@@ -34,7 +36,7 @@ export class CreateSpace extends Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {}
+        this.state = {invite: false}
         this.copyText = React.createRef()
     }
 
@@ -53,17 +55,19 @@ export class CreateSpace extends Component<Props, State> {
     render() {
         return (
             <Wrapper className={"create spaces"}>
+                <Steps active={(this.state.invite) ? 2 : 1}/>
                 <div className={"headlineBox"}>
-                     <Link to={"/spaces"}>
-                            <button className={"outlined"}><FaChevronLeft/> back to spaces</button>
-                     </Link>
+                    <Link to={"/spaces"}>
+                        <button className={"outlined"}><FaChevronLeft/> back to spaces</button>
+                    </Link>
 
                     <h1>
-                        Invite your team.
+                        Share your space.
                     </h1>
                     Share this link to let people join
-                    "{this.props.spaces.find(s => s.id === this.props.match?.params.spaceID)?.name}".<br />
-                    After sharing your team just has to open this link in their browser to join your Space.
+                    "{this.props.spaces.find(s => s.id === this.props.match?.params.spaceID)?.name}".<br/>
+                    After sharing this link your team just has to open this link in their browser to join your Space.<br/>
+                    A joy that's shared is a joy made double.
                 </div>
                 <form className={"spacesWrapper"}>
                     {(!!this.state.token) ?
@@ -74,6 +78,7 @@ export class CreateSpace extends Component<Props, State> {
                     }
                     <button onClick={e => {
                         e.preventDefault()
+                        this.setState({invite: true})
 
                         if (this.copyText.current) {
                             this.copyText.current.select();
@@ -84,13 +89,19 @@ export class CreateSpace extends Component<Props, State> {
                             this.props.success("Invite link copied")
                         }
                     }}>
-                        <IoCopyOutline /> Copy invite Link
+                        <IoCopyOutline/> Copy invite Link
                     </button>
-                    <Link to={"/spaces/" + this.props.match?.params.spaceID}>
-                        <button className={"outlined submit"}>
-                            Join space <IoArrowForward />
-                        </button>
-                    </Link>
+                    <Tooltip title={(this.state.invite) ? "" :
+                        <h2 style={{ textAlign: "center"}}>
+                            Invite friends & colleagues first to make the most out of {applicationName}
+                        </h2>} arrow placement={"bottom"}>
+
+                        <Link to={"/spaces/" + this.props.match?.params.spaceID}>
+                            <button className={"outlined submit"}>
+                                Join space {this.state.invite ? "" : "allone"} <IoArrowForward/>
+                            </button>
+                        </Link>
+                    </Tooltip>
                 </form>
             </Wrapper>
         );
