@@ -67,8 +67,8 @@
   text-align: center;
   color: $button_font_light;
   height: 100%;
-  width: 200px;
-  min-width: 200px;
+  width: 80px;
+  min-width: 80px;
   transition: width 0.3s, left 0.3s, right 0.3s;
   position: relative;
   z-index: 1009;
@@ -77,11 +77,6 @@
     & {
       color: $button_font_dark;
     }
-  }
-
-  &.collapsed {
-    width: 80px;
-    min-width: 80px;
   }
 
   > .navbar-inner {

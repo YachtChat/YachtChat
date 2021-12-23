@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import './style.scss';
-import NavigationBar from "./Sidebar";
+import Sidebar from "./Sidebar";
 import {handleZoom, initPlayground} from "../../store/playgroundSlice";
 import Canvas from "./Canvas";
 import Wrapper, {Loading} from "../Wrapper";
@@ -112,7 +112,7 @@ export class Playground extends Component<Props, State> {
                 <Navigation title={this.state.spaceName} spaceID={this.props.match?.params.spaceID} />
                 <div id={"Playground"} className={"contentWrapper"}>
                     <div className={"navwrapper"}>
-                        <NavigationBar spaceID={this.props.match!.params.spaceID}/>
+                        <Sidebar spaceID={this.props.match!.params.spaceID}/>
                     </div>
                     {this.props.joinedSpace ?
                         <Canvas/>
