@@ -25,6 +25,12 @@ interface State {
 
 export class MembersComponent extends Component<Props, State> {
 
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {token: ""}
+    }
+
     componentDidMount() {
         this.props.getToken(this.props.spaceID).then(token => {
             console.log(token)
@@ -48,27 +54,27 @@ export class MembersComponent extends Component<Props, State> {
 
                         <div className={"headlineBox"}>
                             <div className={"buttons"}>
-                                <Tooltip title={"Get invitation link"} placement={"top"} arrow>
-                                    <button onClick={e => {
-                                        e.preventDefault()
-                                        navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + this.state.token)
-                                        this.props.success("Invite link copied")
-                                        console.log(this.state)
-                                    }} className={"iconButton"}>
-                                        <IoLink/>
-                                    </button>
-                                </Tooltip>
-
-                                <button onClick={this.props.onClose} className={"iconButton"}>
+                                <button onClick={this.props.onClose} className={"iconButton nostyle"}>
                                     <IoCloseOutline/>
                                 </button>
                             </div>
-                            <h2> Members of <i>{this.props.getSpaceName(this.props.spaceID)}</i></h2>
+                            <Tooltip title={"https://" + FRONTEND_URL + "/join/" + this.state.token} placement={"top"}
+                                     arrow>
+                                <button onClick={e => {
+                                    e.preventDefault()
+                                    navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + this.state.token)
+                                    this.props.success("Invite link copied")
+                                    console.log(this.state)
+                                }} className={"outlined"}>
+                                    <IoLink/> copy invite link
+                                </button>
+                            </Tooltip>
+
+                            <h1>Space Members</h1>
                             {/*<h2>Space Members</h2>*/}
                             See every member of this space - present or not
                         </div>
                         <div className={"panelContent"}>
-                            <h2>Space Members</h2>
                             <UserList type={"users"} spaceID={this.props.spaceID}/>
                         </div>
                     </div>

@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
-import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
 import {sendMessage} from "../../../store/webSocketSlice";
+import {IoCloseOutline} from "react-icons/all";
+import {Popover} from "@material-ui/core";
 
 interface Props {
     open: boolean
     onClose: () => void
     sendMessage: (msg: string) => void
+    button: Element | null
 }
 
 interface State {
@@ -39,15 +41,26 @@ export class MessageComponent extends Component<Props, State> {
         const style = {
             display: (this.props.open) ? "block" : "none"
         }
-
+        if (!this.props.button)
+            return (<div />)
         return (
             <div>
-                <Dialog open={this.props.open}
+                <Popover open={this.props.open}
                         onClose={this.handleClose.bind(this)}
-                        style={style}>
+                        style={style}
+                         anchorEl={this.props.button}
+                         anchorOrigin={{
+                             vertical: 'bottom',
+                             horizontal: 'right',
+                         }}>
                     <div className={"panel"}>
                         <div className={"headlineBox"}>
-                            <h2>Send message</h2>
+                            <div className={"buttons"}>
+                                <button onClick={this.props.onClose} className={"iconButton nostyle"}>
+                                    <IoCloseOutline/>
+                                </button>
+                            </div>
+                            <h1>Send message</h1>
                             Send a message to everyone in your proximity
                         </div>
                         <div className={"panelContent"}>
@@ -60,16 +73,13 @@ export class MessageComponent extends Component<Props, State> {
                                        placeholder={"write message..."}
                                        value={this.state.message}
                                        onChange={({target: {value}}) => this.setState({message: value})}/>
-                                <button type={"submit"} className={"Button"}>
+                                <button type={"submit"} className={"Button submit"}>
                                     send
-                                </button>
-                                <button onClick={this.handleClose.bind(this)} className={"Button"}>
-                                    dismiss
                                 </button>
                             </form>
                         </div>
                     </div>
-                </Dialog>
+                </Popover>
             </div>
         );
     }

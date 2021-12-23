@@ -39,6 +39,8 @@
       width: auto;
       height: auto;
       margin-bottom: auto;
+      background: transparent;
+      color: $accent_dark;
 
       &:hover {
         opacity: 0.5;

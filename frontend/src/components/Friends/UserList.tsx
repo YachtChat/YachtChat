@@ -99,7 +99,7 @@ class UserList extends Component<Props> {
                             <div>
                                 {!this.props.isHost(u.id) &&
                                 <Tooltip title="Promote user to Host" arrow placement={"right"}>
-                                    <button onClick={e => {
+                                    <button onClick={() => {
                                         this.props.makeHost(u.id)
                                     }} className={"menuIcon"}>
                                         <FaCrown/>
@@ -107,16 +107,16 @@ class UserList extends Component<Props> {
                                 </Tooltip>
                                 }
                                 {this.props.isHost(u.id) &&
-                                <Tooltip title="Unpromote user" arrow placement={"right"}>
-                                    <button onClick={e => {
+                                <Tooltip title={"Unpromote " + u.firstName} arrow placement={"right"}>
+                                    <button onClick={() => {
                                         this.props.removeHost(u.id)
                                     }} className={"menuIcon"}>
                                         <IoHandRight/>
                                     </button>
                                 </Tooltip>
                                 }
-                                <Tooltip title="Remove User from Space" arrow placement={"right"}>
-                                    <button onClick={e => {
+                                <Tooltip title={"Remove " + u.firstName + " from Space"} arrow placement={"right"}>
+                                    <button onClick={() => {
                                         this.props.kick(u.id)
                                     }} className={"menuIcon"}>
                                         <IoTrashOutline/>
