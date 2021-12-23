@@ -50,9 +50,10 @@ export class MessageComponent extends Component<Props, State> {
                         style={style}
                          anchorEl={this.props.button}
                          anchorOrigin={{
-                             vertical: 'bottom',
+                             vertical: 'top',
                              horizontal: 'right',
-                         }}>
+                         }}
+                >
                     <div className={"panel"}>
                         <div className={"headlineBox"}>
                             <div className={"buttons"}>

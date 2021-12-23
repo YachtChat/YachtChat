@@ -177,6 +177,60 @@ export class NavigationBar extends Component<Props, State> {
                                         <li className="menu-item">
                                             <div
                                                 onClick={(e) => {
+                                                    this.sendToPosthog("message")
+                                                    this.handleOpen(e, "messages")
+                                                }}
+                                                className="inner-item">
+                                                <Tooltip disableFocusListener
+                                                         title={"Message"} placement="right" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <IoChatbubble/>
+                                                </span>
+                                            </span>
+                                                </Tooltip>
+                                            </div>
+                                            <div>
+                                                <MessageComponent button={this.anchorRef.current}
+
+                                                                  open={this.state.open["messages"]}
+                                                                  onClose={() => this.handleClose("messages")}/>
+                                            </div>
+                                        </li>
+                                    }
+                                    {!this.props.minimal &&
+                                        <li className="menu-item">
+                                            <div className="inner-item rangeslider">
+                                                <RangeSlider sendToPosthog={this.sendToPosthog.bind(this)}/>
+                                            </div>
+                                            <span className={"item-content"}>Range</span>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <div className="menu bottom">
+                                <ul>
+                                    {!this.props.minimal &&
+                                        <li className="menu-item" onClick={() => {
+                                            this.sendToPosthog("center")
+                                            this.props.center()
+                                        }}>
+                                            <div className="inner-item">
+                                                <Tooltip disableFocusListener
+                                                         title={"Center user"} placement="right" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <MdFilterCenterFocus/>
+                                                </span>
+                                            </span>
+                                                </Tooltip>
+                                            </div>
+                                        </li>
+                                    }
+                                    {!this.props.minimal &&
+                                        <li className="menu-item">
+                                            <div
+                                                onClick={(e) => {
                                                     this.sendToPosthog("users")
                                                     this.handleOpen(e, "users")
                                                 }}
@@ -197,58 +251,6 @@ export class NavigationBar extends Component<Props, State> {
                                             </div>
                                         </li>
                                     }
-                                    {!this.props.minimal &&
-                                        <li className="menu-item" onClick={() => {
-                                            this.sendToPosthog("center")
-                                            this.props.center()
-                                        }}>
-                                            <div className="inner-item">
-                                                <Tooltip disableFocusListener
-                                                         title={"Center user"} placement="right" arrow>
-                                            <span className="icon-wrapper">
-                                                <span className="icon">
-                                                    <MdFilterCenterFocus/>
-                                                </span>
-                                            </span>
-                                                </Tooltip>
-                                            </div>
-                                        </li>
-                                    }
-                                    {!this.props.minimal &&
-                                        <li className="menu-item">
-                                            <div className="inner-item rangeslider">
-                                                <RangeSlider sendToPosthog={this.sendToPosthog.bind(this)}/>
-                                            </div>
-                                            <span className={"item-content"}>Range</span>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                            <div className="menu bottom">
-                                <ul>
-                                    <li className="menu-item">
-                                        <div
-                                            onClick={(e) => {
-                                                this.sendToPosthog("message")
-                                                this.handleOpen(e, "messages")
-                                            }}
-                                            className="inner-item">
-                                            <Tooltip disableFocusListener
-                                                     title={"Message"} placement="right" arrow>
-                                            <span className="icon-wrapper">
-                                                <span className="icon">
-                                                    <IoChatbubble/>
-                                                </span>
-                                            </span>
-                                            </Tooltip>
-                                        </div>
-                                        <div>
-                                            <MessageComponent button={this.anchorRef.current}
-
-                                                              open={this.state.open["messages"]}
-                                                              onClose={() => this.handleClose("messages")}/>
-                                        </div>
-                                    </li>
                                     {!this.props.minimal &&
                                         <li className="menu-item">
                                             <div className="inner-item"
