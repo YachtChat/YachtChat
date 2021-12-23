@@ -3,20 +3,21 @@ import './style.scss';
 import {User} from "../../../store/models";
 import {RootState} from "../../../store/store";
 import {connect} from "react-redux";
-import {FaBars, FaCog, FaMicrophone, FaMicrophoneSlash, FaSignOutAlt, FaVideo, FaVideoSlash} from 'react-icons/fa';
+import {FaCog, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash} from 'react-icons/fa';
 import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../../store/webSocketSlice";
 import {toggleUserVideo, mute, toggleUserScreen} from "../../../store/rtcSlice";
 import Settings from "../../Settings/SpaceSettings";
 import {centerUser} from "../../../store/playgroundSlice";
-import {IoChatbubble, IoChevronBackOutline, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
+import {IoChatbubble, IoChevronBackOutline, IoMoon, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
 import MessageComponent from "./Message";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
 import MembersComponent from "./Members";
 import {ClickAwayListener, Tooltip} from "@material-ui/core";
 import posthog from "posthog-js";
+import VideoIcon from "./VideoIcon";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -101,7 +102,7 @@ export class NavigationBar extends Component<Props, State> {
                                                      title={"Menu"} placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
-                                                    <FaBars/>
+                                                    <VideoIcon />
                                                 </span>
                                             </span>
                                             </Tooltip>
