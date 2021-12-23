@@ -28,9 +28,26 @@
       background: $focus_light;
       color: gray;
 
+
       &.active {
         background: $accent_dark;
         color: white;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .label {
+        color: white;
+      }
+
+      .stepIcon {
+        background: $background_2_dark;
+        color: gray;
+
+        &.active {
+          background: $accent_dark;
+          color: white;
+        }
       }
     }
   }
@@ -94,7 +111,7 @@
 
     @media (prefers-color-scheme: dark) {
       & {
-        background: $background_dark;
+        background: $foreground_dark;
       }
     }
 

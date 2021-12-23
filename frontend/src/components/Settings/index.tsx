@@ -16,7 +16,7 @@ export class Settings extends Component<Props> {
 
     render() {
         return (
-            <Wrapper className={"settings"}>
+            <Wrapper id={"settingsMenu"} className={"settings"}>
                 <div className={"headlineBox"}>
                     <Link to={"/spaces"}>
                         <button className={"outlined"}>

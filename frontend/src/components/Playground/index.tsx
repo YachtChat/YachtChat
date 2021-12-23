@@ -10,7 +10,7 @@ import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
 import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";
 import {Link} from "react-router-dom";
-import {IoCamera, IoHome, IoMic} from "react-icons/all";
+import {IoCamera, IoChevronBack, IoMic} from "react-icons/all";
 import {applicationName} from "../../store/config";
 import {sendLogout} from "../../store/webSocketSlice";
 import Navigation from "../Navigation";
@@ -89,22 +89,31 @@ export class Playground extends Component<Props, State> {
             return (
                 <Wrapper className={"mediaPermission"}>
                     <div className={"headlineBox"}>
-                        <div className={"buttons"}>
                             <Link to={"/"}>
-                                <button className={"iconButton"}><IoHome/></button>
+                                <button className={"outlined"}><IoChevronBack /> back to spaces</button>
                             </Link>
-                        </div>
                         <h1><IoCamera/> <IoMic/></h1>
                         <h1>Hey, {this.props.activeUser.firstName}</h1>
                         <p>
                             {applicationName} is a video chatting app.<br/>So please click and confirm video to
-                            continue.
+                            continue with the best experience.
                         </p>
                     </div>
                     <div className={"content"}>
-                        <button onClick={() => {
+                        <button className={"submit"} onClick={() => {
                             this.props.requestUserMedia(this.props.match!.params.spaceID)
-                        }}>Request media
+                        }}>Request camera & microphone
+                        </button>
+                    </div>
+                    <div className={"headlineBox"}>
+                        <label>
+                            If you are having trouble with joining a space we are happy to help you.
+                        </label>
+                        <button style={{
+                            display: "block",
+                            margin: "auto"
+                        }} className={"outlined"}>
+                            Get help
                         </button>
                     </div>
                 </Wrapper>
@@ -117,12 +126,12 @@ export class Playground extends Component<Props, State> {
 
         if (this.props.dnd)
             return (
-                <DoNotDisturb />
+                <DoNotDisturb/>
             )
 
         return (
             <div id={"PlaygroundWrapper"}>
-                <Navigation title={this.state.spaceName} spaceID={this.props.match?.params.spaceID} />
+                <Navigation title={this.state.spaceName} spaceID={this.props.match?.params.spaceID}/>
                 <div id={"Playground"} className={"contentWrapper"}>
                     <Sidebar spaceID={this.props.match!.params.spaceID}/>
                     <Canvas spaceID={this.props.match?.params.spaceID ?? ""}/>

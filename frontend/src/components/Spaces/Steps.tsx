@@ -15,8 +15,10 @@ export function Steps(props: Props) {
     return (
         <Stepper className={"stepper"} activeStep={props.active}>
             {steps.map((label) => (
-                <Step color={"#326789"} key={label}>
-                    <StepLabel StepIconComponent={ElTy} color={"#326789"}>{label}</StepLabel>
+                <Step key={label}>
+                    <StepLabel StepIconComponent={ElTy}>
+                        <span className={"label"}>{label}</span>
+                    </StepLabel>
                 </Step>
             ))}
         </Stepper>

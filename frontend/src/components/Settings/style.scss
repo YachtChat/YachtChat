@@ -37,9 +37,12 @@
   }
 }
 
+#settingsMenu {
+  background: transparent;
+}
+
 .settings {
   box-sizing: border-box;
-  padding: 1.5rem 2.5rem;
   overflow: hidden;
   width: 800px;
   max-width: 100%;
@@ -48,7 +51,7 @@
   min-height: 500px;
   display: flex;
   flex-direction: column;
-  padding-bottom: 3rem;
+  padding: 1.5rem 2.5rem 3rem;
 
   .mediaSettings {
     width: 100%;

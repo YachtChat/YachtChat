@@ -5,7 +5,8 @@ import {CircularProgress} from "@material-ui/core";
 import Navigation from "../Navigation";
 
 interface Props {
-    className: string
+    className?: string
+    id?: string
 }
 
 export class Wrapper extends Component<Props> {
@@ -15,7 +16,7 @@ export class Wrapper extends Component<Props> {
             <div className={"contentWrapper"}>
                 <div className={"backgroundRange"}/>
                 <div className={"backgroundBall"}/>
-                <div className={"contentBox " + this.props.className}>
+                <div id={this.props.id} className={"contentBox " + this.props.className}>
                     {this.props.children}
                 </div>
                 <Navigation />
