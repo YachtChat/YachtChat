@@ -8,15 +8,15 @@ import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../../store/webSocketSlice";
 import {toggleUserVideo, mute, toggleUserScreen} from "../../../store/rtcSlice";
-import Settings from "../../Settings";
+import Settings from "../../Settings/SpaceSettings";
 import {centerUser} from "../../../store/playgroundSlice";
-import {IoChatbubble, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
+import {IoChatbubble, IoChevronBackOutline, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
 import MessageComponent from "./Message";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
 import MembersComponent from "./Members";
-import {ClickAwayListener, Grow, Paper, Popper, Tooltip} from "@material-ui/core";
-import posthog, {PostHog} from "posthog-js";
+import {ClickAwayListener, Tooltip} from "@material-ui/core";
+import posthog from "posthog-js";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -41,7 +41,7 @@ interface State {
 
 export class NavigationBar extends Component<Props, State> {
 
-    anchorRef: React.RefObject<HTMLSpanElement>
+    anchorRef: React.RefObject<HTMLDivElement>
 
     icons = {
         videoOnIcon: <FaVideo/>,
@@ -109,7 +109,7 @@ export class NavigationBar extends Component<Props, State> {
         const micIcon = (this.props.muted) ? this.icons.micOffIcon : this.icons.micOnIcon
         const videoIcon = (this.props.video) ? this.icons.videoOnIcon : this.icons.videoOffIcon
         return (
-            <div id="sidebar" className={"navbar " + ((this.state.collapsed) ? "collapsed" : "")}
+            <div id="sidebar" ref={this.anchorRef} className={"navbar " + ((this.state.collapsed) ? "collapsed" : "")}
                  onMouseLeave={this.handleHoverCollapse.bind(this)}>
                 <div className="navbar-inner">
                     <div className="navbar-layout">
@@ -261,7 +261,9 @@ export class NavigationBar extends Component<Props, State> {
                                         </span>
                                     </div>
                                     <div>
-                                        <MessageComponent open={this.state.open["messages"]}
+                                        <MessageComponent button={this.anchorRef.current}
+
+                                                        open={this.state.open["messages"]}
                                                           onClose={() => this.handleClose("messages")}/>
                                     </div>
                                 </li>
@@ -297,15 +299,15 @@ export class NavigationBar extends Component<Props, State> {
                                             }}>
 
                                                     <ClickAwayListener onClickAway={() => this.setState({confirmlogout: false})}>
-                                                        <span  className="icon"><FaSignOutAlt/>  </span>
+                                                        <span className="icon"><IoChevronBackOutline/>  </span>
                                                     </ClickAwayListener>
                                             </span>
                                                     :
                                                 <Tooltip  disableFocusListener
-                                                               title={"Log Out"} placement="right" arrow>
+                                                               title={"back to spaces"} placement="right" arrow>
                                                 <span className="icon-wrapper" >
                                                     <span onClick={() => this.setState({confirmlogout: true})} className="icon" >
-                                                    <FaSignOutAlt/>
+                                                    <IoChevronBackOutline />
                                                     </span>
                                                 </span>
                                             </Tooltip>
@@ -340,7 +342,7 @@ export class NavigationBar extends Component<Props, State> {
 
 
                                         <span className="item-content">
-                                            Log Out
+                                            back to spaces
                                         </span>
                                     </div>
                                 </li>

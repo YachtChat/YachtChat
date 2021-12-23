@@ -55,22 +55,6 @@
   }
 }
 
-.contentWrapper {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  background-color: $background_2_light;
-
-  @media (prefers-color-scheme: dark) {
-    & {
-      background-color: $background_2_dark;
-    }
-  }
-}
-
 .roomgrid {
   min-height: 100%;
   display: flex;
@@ -78,10 +62,20 @@
   flex-direction: row;
 }
 
-
-.Playground {
-  flex-grow: 1;
+#PlaygroundWrapper {
   height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#Playground {
+  position: relative;
+}
+
+#PlaygroundCanvas {
+  flex-grow: 1;
+  height: 100%;
   position: relative;
   overflow: hidden;
   user-select: none;

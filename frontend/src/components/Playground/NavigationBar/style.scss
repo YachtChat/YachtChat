@@ -69,7 +69,7 @@
   height: 100%;
   width: 200px;
   min-width: 200px;
-  transition: width, left, right, 0.3s;
+  transition: width 0.3s, left 0.3s, right 0.3s;
   position: relative;
   z-index: 1009;
 
@@ -146,6 +146,7 @@
                 display: inline-block;
                 border-radius: 50%;
                 border: solid 1px $accent_light;
+                overflow: hidden;
 
                 &.clicked {
                   background: $logout_button_color;
@@ -155,6 +156,11 @@
                   & {
                     border: solid 1px $accent_dark;
                   }
+                }
+
+                video {
+                  width: 100%;
+                  height: 100%;
                 }
 
                 .icon {
@@ -195,7 +201,7 @@
           }
 
           .spacer-50 {
-            height: 0px;
+            height: 0;
           }
         }
       }
@@ -209,19 +215,22 @@
 }
 
 .panel {
-  height: 50%;
-  display: flex;
   flex-direction: row;
+  max-height: 90%;
 
   .headlineBox {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    flex: 0 0;
-    justify-content: center;
+    padding: 2rem;
+  }
 
-    .buttons {
-      width: 10rem;
+  .buttons {
+    color: black;
+    padding: 0;
+    margin: 0;
+
+    .iconButton.nostyle {
+      color: black;
+      font-size: 2rem;
     }
   }
 

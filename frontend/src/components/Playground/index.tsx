@@ -13,6 +13,7 @@ import {Link} from "react-router-dom";
 import {IoCamera, IoHome, IoMic} from "react-icons/all";
 import {applicationName} from "../../store/config";
 import {sendLogout} from "../../store/webSocketSlice";
+import Navigation from "../Navigation";
 
 interface Props {
     activeUser: User
@@ -33,7 +34,20 @@ interface Props {
     sendLogout: () => void,
 }
 
-export class Playground extends Component<Props> {
+interface State {
+    spaceName: string
+}
+
+export class Playground extends Component<Props, State> {
+
+    constructor(props: Props) {
+        super(props);
+
+        const spaceName = this.props.spaces.find(space => space.id === this.props.match!.params.spaceID)?.name
+        this.state = {spaceName: spaceName ?? ""}
+        document.title = (spaceName) ? spaceName + " - " + applicationName : applicationName
+
+    }
 
     componentDidMount() {
         this.props.initPlayground()
@@ -45,9 +59,6 @@ export class Playground extends Component<Props> {
         window.onpopstate = (event) => {
             this.props.sendLogout();
         };
-
-        const spaceName = this.props.spaces.find(space => space.id === this.props.match!.params.spaceID)?.name
-        document.title = (spaceName) ? spaceName + " - " + applicationName : applicationName
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
@@ -97,17 +108,20 @@ export class Playground extends Component<Props> {
             )
 
         return (
-            <div className={"contentWrapper"}>
-                <div className={"navwrapper"}>
-                    <NavigationBar spaceID={this.props.match!.params.spaceID}/>
-                </div>
-                {this.props.joinedSpace ?
-                    <Canvas/>
-                    : <Loading/>
-                }
-                <div className="btn">
-                    <button onClick={this.handleZoomIn.bind(this)}>+</button>
-                    <button onClick={this.handleZoomOut.bind(this)}>-</button>
+            <div id={"PlaygroundWrapper"}>
+                <Navigation title={this.state.spaceName} spaceID={this.props.match?.params.spaceID} />
+                <div id={"Playground"} className={"contentWrapper"}>
+                    <div className={"navwrapper"}>
+                        <NavigationBar spaceID={this.props.match!.params.spaceID}/>
+                    </div>
+                    {this.props.joinedSpace ?
+                        <Canvas/>
+                        : <Loading/>
+                    }
+                    <div className="btn">
+                        <button onClick={this.handleZoomIn.bind(this)}>+</button>
+                        <button onClick={this.handleZoomOut.bind(this)}>-</button>
+                    </div>
                 </div>
             </div>
         )

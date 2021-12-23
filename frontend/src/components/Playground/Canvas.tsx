@@ -283,7 +283,7 @@ export class Canvas extends Component<Props, State> {
             backgroundSize: `${3 * scaling}rem ${3 * scaling}rem`
         }
         return (
-            <div id="Playground" style={style} className="Playground"
+            <div id="PlaygroundCanvas" style={style} className="PlaygroundCanvas"
                  onMouseMove={this.moveMouse.bind(this)}
                  onMouseLeave={this.dragEnd.bind(this)}
                  onMouseUp={this.onMouseUp.bind(this)}
