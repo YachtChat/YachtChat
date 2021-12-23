@@ -3,12 +3,15 @@ import {connect} from "react-redux";
 import {sendMessage} from "../../../store/webSocketSlice";
 import {IoCloseOutline} from "react-icons/all";
 import {Popover} from "@material-ui/core";
+import messages from "../Messages";
+import {handleError} from "../../../store/statusSlice";
 
 interface Props {
     open: boolean
     onClose: () => void
     sendMessage: (msg: string) => void
     button: Element | null
+    error: (s: string) => void
 }
 
 interface State {
@@ -26,6 +29,10 @@ export class MessageComponent extends Component<Props, State> {
     }
 
     handleSubmit() {
+        if (this.state.message.trim() === "") {
+            this.props.error("The message contains no content")
+            return
+        }
         this.props.sendMessage(this.state.message)
         this.handleClose()
     }
@@ -88,6 +95,7 @@ export class MessageComponent extends Component<Props, State> {
 
 const mapDispatchToProps = (dispatch: any) => ({
     sendMessage: (msg: string) => dispatch(sendMessage(msg)),
+    error: (msg: string) => dispatch(handleError(msg)),
 })
 
 export default connect(undefined, mapDispatchToProps)(MessageComponent)
