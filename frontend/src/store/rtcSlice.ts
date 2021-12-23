@@ -177,7 +177,7 @@ export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatc
 
 }
 
-export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch, getState) => {
+export const requestUserMedia = (spaceID: string): AppThunk => (dispatch, getState) => {
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
         const [ls, cp] = applyVirtualBackground(e, getState().rtc.selected.virtualBackground, camera_processor)
@@ -187,12 +187,19 @@ export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch,
         dispatch(gotRemoteStream(localClient))
         dispatch(loadAllMediaDevices())
         dispatch(setUserMedia(true))
-    }).then(() =>
-        dispatch(connectToServer(spaceID))
-    ).catch(() => {
+    }).catch(() => {
         dispatch(handleError("Unable to get media."))
         dispatch(setUserMedia(false))
     })
+}
+
+export const joinSpace = (spaceID: string): AppThunk => (dispatch, getState) => {
+    const localClient = getUserID(getState())
+    localStream = new MediaStream()
+    dispatch(gotRemoteStream(localClient))
+    dispatch(loadAllMediaDevices())
+    dispatch(setUserMedia(false))
+    dispatch(connectToServer(spaceID))
 }
 
 export const mute = (): AppThunk => (dispatch, getState) => {

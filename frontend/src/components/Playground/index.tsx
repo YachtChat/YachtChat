@@ -8,7 +8,7 @@ import Wrapper, {Loading} from "../Wrapper";
 import {Space, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
-import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";
+import {loadAllMediaDevices, requestUserMedia, joinSpace} from "../../store/rtcSlice";
 import {Link} from "react-router-dom";
 import {IoCamera, IoHome, IoMic} from "react-icons/all";
 import {applicationName} from "../../store/config";
@@ -23,6 +23,7 @@ interface Props {
         }
     }
     requestUserMedia: (spaceID: string) => void
+    joinSpace: (spaceID: string) => void
     initPlayground: () => void
     loadMediaDevices: (callback?: () => void) => void
     userMedia: boolean
@@ -71,7 +72,7 @@ export class Playground extends Component<Props> {
     }
 
     render() {
-        if (this.props.cameras.length === 0 && this.props.microphones.length === 0)
+        /*if (this.props.cameras.length === 0 && this.props.microphones.length === 0)
             return (
                 <Wrapper className={"mediaPermission"}>
                     <div className={"headlineBox"}>
@@ -89,12 +90,13 @@ export class Playground extends Component<Props> {
                     </div>
                     <div className={"content"}>
                         <button onClick={() => {
-                            this.props.requestUserMedia(this.props.match!.params.spaceID)
+                            this.props.joinSpace(this.props.match!.params.spaceID)
                         }}>Request media
                         </button>
                     </div>
                 </Wrapper>
-            )
+            )*/
+        this.props.joinSpace(this.props.match!.params.spaceID)
 
         return (
             <div className={"contentWrapper"}>
@@ -129,7 +131,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     handleZoom: (z: number) => dispatch(handleZoom(z)),
     requestSpaces: () => dispatch(requestSpaces()),
     initPlayground: () => dispatch(initPlayground()),
-    requestUserMedia: (spaceID: string) => dispatch(requestUserMediaAndJoin(spaceID)),
+    requestUserMedia: (spaceID: string) => dispatch(requestUserMedia(spaceID)),
+    joinSpace: (spaceID: string) => dispatch(joinSpace(spaceID)),
     loadMediaDevices: (callback?: () => void) => dispatch(loadAllMediaDevices(callback)),
 })
 
