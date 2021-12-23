@@ -1,10 +1,10 @@
 import React, {Component} from "react";
-import {PlaygroundOffset, User} from "../../store/models";
+import {Message, PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";
-import {userProportion} from "../../store/userSlice";
-import {CircularProgress, Tooltip, Zoom} from "@material-ui/core";
+import {getUserMessages, userProportion} from "../../store/userSlice";
+import {CircularProgress, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
 import {IoCopyOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
 
@@ -26,20 +26,33 @@ interface OtherProps {
     getScreenStream: (id: string) => MediaStream | undefined
     mediaChangeOngoing: boolean
     success: (s: string) => void
+    messages: Message[]
 }
 
 type Props = OwnProps & OtherProps
 
-export class UserComponent extends Component<Props> {
+interface State {
+    hovered: boolean
+    onMessages: boolean
+}
+
+export class UserComponent extends Component<Props, State> {
 
     private myName: React.RefObject<HTMLMediaElement>;
     private videoObject: React.RefObject<HTMLVideoElement>;
+    private messagesEnd: React.RefObject<HTMLDivElement>;
+    private closeTimeout: number = -1;
 
     constructor(props: Props) {
         super(props);
 
         this.videoObject = React.createRef();
+        this.messagesEnd = React.createRef();
         this.myName = React.createRef();
+        this.state = {
+            hovered: false,
+            onMessages: false
+        }
     }
 
     componentDidMount() {
@@ -59,9 +72,12 @@ export class UserComponent extends Component<Props> {
                 //@ts-ignore
                 this.videoObject.current.setSinkId(this.props.speaker)
         }
+
+        if (this.messagesEnd.current)
+            this.messagesEnd.current.scrollIntoView({behavior: "smooth"});
     }
 
-    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
         if (this.props.user.userStream && this.videoObject.current && !this.props.mediaChangeOngoing) {
 
             if (!this.videoObject.current.srcObject ||
@@ -78,7 +94,40 @@ export class UserComponent extends Component<Props> {
             if (this.videoObject.current.setSinkId)
                 //@ts-ignore
                 this.videoObject.current.setSinkId(this.props.speaker)
+
+
         }
+        if (this.messagesEnd.current &&
+            (prevProps.messages !== this.props.messages ||
+             prevState.onMessages !== this.state.onMessages))
+            this.messagesEnd.current.scrollIntoView({behavior: "smooth"});
+    }
+
+    removeTimeout(onMessages?: boolean) {
+        if (this.messagesEnd.current && onMessages !== this.state.onMessages)
+            setTimeout(() => {
+                    if (this.messagesEnd.current)
+                         this.messagesEnd.current!.scrollIntoView({behavior: "smooth"})
+                },
+            500, [this])
+
+
+        clearTimeout(this.closeTimeout)
+        this.setState({
+            hovered: true,
+            onMessages: !!onMessages
+        })
+
+    }
+
+    startTimeout() {
+        clearTimeout(this.closeTimeout)
+        this.closeTimeout = setTimeout(() =>
+                this.setState({
+                    hovered: false,
+                    onMessages: false
+                })
+            , 500)
     }
 
     render() {
@@ -151,39 +200,82 @@ export class UserComponent extends Component<Props> {
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                      className={"User " + this.props.className}
                      style={userStyle}>
+                    <Popper placement={"right"}
+                            data-class={"clickable"}
+                            onClick={() => this.setState({hovered: false})}
+                            anchorEl={this.videoObject.current}
+                            open={this.state.hovered && this.props.messages.length > 0}>
+                        <Grow in={this.state.hovered}>
+                            <div onMouseOver={() => {
+                                this.removeTimeout(true)
+                            }}
+                                 onMouseLeave={() => {
+                                     this.startTimeout()
+                                 }}
+                                 onWheel={e => e.stopPropagation()}
+                                 className={"messages clickable"}>
+                                <label className={"clickable"}>Messages</label>
+                                {this.state.onMessages &&
+                                    <Grow in={this.state.onMessages}>
+                                        <div className={"messagesWrapper"}>
+
+                                            <table cellSpacing="0" cellPadding="0" className={"clickable"}>
+
+                                                {this.props.messages.map((m) =>
+                                                    <tr className={"clickable message"}>
+                                                        <td className={"clickable"}>
+                                                            <label className={"clickable"}>{m.time}</label>
+                                                        </td>
+                                                        <td className={"clickable"}><span ref={this.messagesEnd}
+                                                                                          className={"clickable"}>
+                                                            {(
+                                                                m.message.toLocaleLowerCase().startsWith("http") ||
+                                                                m.message.toLocaleLowerCase().startsWith("www.")
+                                                            ) ?
+                                                                <a href={m.message}
+                                                                   className={"clickable"}
+                                                                   target="_blank" rel="noopener noreferrer"
+                                                                >{m.message}</a> :
+                                                                m.message}
+                                                        </span></td>
+                                                        <td className={"clickable"}><IoCopyOutline
+                                                            className={"icon clickable"} onClick={(e) => {
+                                                            e.preventDefault()
+                                                            e.nativeEvent.preventDefault()
+                                                            e.stopPropagation()
+                                                            e.nativeEvent.stopPropagation()
+                                                            navigator.clipboard.writeText(this.props.user.message ?? "")
+                                                            this.props.success("copied message")
+                                                        }}/></td>
+                                                    </tr>
+                                                )}
+                                            </table>
+                                        </div>
+                                    </Grow>
+                                }
+                            </div>
+                        </Grow>
+                    </Popper>
                     <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message} interactive
-                             onClick={e => {
-                                 e.preventDefault()
-                                 e.nativeEvent.preventDefault()
-                                 e.stopPropagation()
-                                 e.nativeEvent.stopPropagation()
-                             }}
+                             data-class={"clickable"}
                              title={
 
                                  (this.props.user.message) ?
-                                     <div>
+                                     <div className={"clickable"}>
                                          {(
-                                         this.props.user.message.toLocaleLowerCase().startsWith("http") ||
-                                         this.props.user.message.toLocaleLowerCase().startsWith("www.")
+                                             this.props.user.message.toLocaleLowerCase().startsWith("http") ||
+                                             this.props.user.message.toLocaleLowerCase().startsWith("www.")
                                          ) ?
-                                         <a href={this.props.user.message}
-                                            onClick={e => {
-                                                e.preventDefault()
-                                                e.nativeEvent.preventDefault()
-                                                e.stopPropagation()
-                                                e.nativeEvent.stopPropagation()
-                                            }}
-                                            target="_blank" rel="noopener noreferrer"
-                                         >{this.props.user.message}</a> :
-                                         this.props.user.message}
-                                         {" "}<IoCopyOutline onClick={(e) => {
-                                             e.preventDefault()
-                                             e.nativeEvent.preventDefault()
-                                             e.stopPropagation()
-                                             e.nativeEvent.stopPropagation()
-                                             navigator.clipboard.writeText(this.props.user.message ?? "")
-                                             this.props.success("copied message")
-                                         }}/>
+                                             <a href={this.props.user.message}
+                                                className={"clickable"}
+                                                target="_blank" rel="noopener noreferrer"
+                                             >{this.props.user.message}</a> :
+                                             this.props.user.message}
+                                         {" "}<IoCopyOutline className={"clickable"}
+                                                             onClick={() => {
+                                                                 navigator.clipboard.writeText(this.props.user.message ?? "")
+                                                                 this.props.success("copied message")
+                                                             }}/>
                                      </div>
                                      : ""} placement="top" arrow>
                         <div>
@@ -193,6 +285,8 @@ export class UserComponent extends Component<Props> {
                                        autoPlay muted={this.props.isActiveUser}
                                        playsInline
                                        ref={this.videoObject}
+                                       onMouseOver={() => this.removeTimeout()}
+                                       onMouseLeave={this.startTimeout.bind(this)}
                                        className={
                                            ((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
@@ -210,7 +304,7 @@ export class UserComponent extends Component<Props> {
     }
 }
 
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     playgroundOffset: state.playground.offset,
     muted: state.rtc.muted,
     screen: state.rtc.screen,
@@ -220,6 +314,7 @@ const mapStateToProps = (state: RootState) => ({
     mediaChangeOngoing: state.rtc.mediaChangeOngoing,
     getStream: (id: string) => getStream(state, id),
     getScreenStream: (id: string) => getScreenStream(state, id),
+    messages: getUserMessages(state, ownProps.user.id)
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

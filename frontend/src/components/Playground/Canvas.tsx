@@ -87,6 +87,10 @@ export class Canvas extends Component<Props, State> {
     // if the mouse is clicked on the active user
     dragStart(event: React.MouseEvent | React.TouchEvent) {
         event.stopPropagation()
+        if ((event.target as HTMLElement).classList.contains("clickable")) {
+            console.log((event.target as HTMLElement))
+            return
+        }
         const activeUser = ((event.target as HTMLVideoElement).dataset.id === "activeUser")
         const message = ((event.target as HTMLDivElement).dataset.id === "message")
 
@@ -128,6 +132,13 @@ export class Canvas extends Component<Props, State> {
     }
 
     onMouseUp(e: React.MouseEvent) {
+        // If labeled as clickable no action is done
+        if ((e.target as HTMLElement).classList.contains("clickable")) {
+            this.dragEnd(e)
+            return
+        }
+
+
         // if the user is currently in the focus user mode this.state.focusUser will not be undefined and therefore we
         // don't want to move
         if (((!this.state.dragStart ||

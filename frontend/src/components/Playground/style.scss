@@ -98,6 +98,7 @@
     &.clicked {
       transition: 0.2s opacity, height 0.3s, width 0.3s, left 0.3s, top 0.3s;
     }
+
     position: absolute;
     background: $focus_light;
     border-radius: 50%;
@@ -192,8 +193,9 @@
     transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s;
 
     &.clicked {
-        transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s, left 0.3s, top 0.3s;
+      transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s, left 0.3s, top 0.3s;
     }
+
     //background-color: $foreground_light;
 
     @media (prefers-color-scheme: dark) {
@@ -303,4 +305,65 @@
 
 .profile-picture {
   display: none;
+}
+
+.messages {
+  padding: 1rem;
+  background: $foreground_light;
+  border-radius: $border-radius;
+  transition: width 0.5s, height 0.5s;
+  overflow-x: hidden;
+
+  .messagesWrapper {
+    max-height: 30vh;
+    overflow-y: auto;
+  }
+
+  label {
+    color: $accent_dark;
+    padding: 1rem;
+    margin: 0;
+  }
+
+  table, th, tr, td {
+    margin: 0;
+    padding: 0;
+    border-collapse: separate;
+    vertical-align: center;
+  }
+
+  td {
+    display: table-cell;
+  }
+
+
+  .message {
+    display: table-row;
+    border-radius: $border-radius;
+    transition: background 0.3s;
+
+    &:hover {
+      border: 100px solid #000;
+      background: $focus_light;
+    }
+
+    label {
+      color: $accent_light;
+    }
+
+    span {
+      display: block;
+      width: 200px;
+      font-size: 0.8rem;
+    }
+
+    span, label, .icon {
+      padding: 1rem;
+      transition: opacity 0.2s;
+    }
+
+    .icon:hover {
+      opacity: 0.5;
+    }
+  }
 }
