@@ -14,6 +14,7 @@ import {IoCamera, IoHome, IoMic} from "react-icons/all";
 import {applicationName} from "../../store/config";
 import {sendLogout} from "../../store/webSocketSlice";
 import Navigation from "../Navigation";
+import DoNotDisturb from "./DoNotDisturb";
 
 interface Props {
     activeUser: User
@@ -26,12 +27,14 @@ interface Props {
     requestUserMedia: (spaceID: string) => void
     initPlayground: () => void
     loadMediaDevices: (callback?: () => void) => void
+    requestSpaces: () => void
     userMedia: boolean
     cameras: string[]
     spaces: Space[]
     microphones: string[]
     joinedSpace: boolean,
     sendLogout: () => void,
+    dnd: boolean
 }
 
 interface State {
@@ -45,8 +48,8 @@ export class Playground extends Component<Props, State> {
 
         const spaceName = this.props.spaces.find(space => space.id === this.props.match!.params.spaceID)?.name
         this.state = {spaceName: spaceName ?? ""}
-        document.title = (spaceName) ? spaceName + " - " + applicationName : applicationName
-
+        if (!spaceName)
+            this.props.requestSpaces()
     }
 
     componentDidMount() {
@@ -62,11 +65,11 @@ export class Playground extends Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        // console.log("TESTTSTST", this.props.joinedSpace)
-        // if (!this.props.joinedSpace) {
-        //         console.log("WAS IST DAS DENN HIER", (!this.props.joinedSpace && prevProps.joinedSpace !== !this.props.joinedSpace))
-        //      this.props.requestUserMedia(this.props.match!.params.spaceID)
-        // }
+        if (prevProps.spaces !== this.props.spaces) {
+            const spaceName = this.props.spaces.find(space => space.id === this.props.match!.params.spaceID)?.name
+            this.setState({spaceName: spaceName ?? ""})
+            document.title = (spaceName) ? spaceName + " - " + applicationName : applicationName
+        }
     }
 
     // function handleZoomIn increases the sizeMultiplier
@@ -112,6 +115,11 @@ export class Playground extends Component<Props, State> {
                 <Loading/>
             )
 
+        if (this.props.dnd)
+            return (
+                <DoNotDisturb />
+            )
+
         return (
             <div id={"PlaygroundWrapper"}>
                 <Navigation title={this.state.spaceName} spaceID={this.props.match?.params.spaceID} />
@@ -136,6 +144,7 @@ const mapStateToProps = (state: RootState) => ({
     cameras: state.rtc.cameras,
     userMedia: state.rtc.userMedia,
     joinedSpace: state.webSocket.joinedRoom,
+    dnd: state.rtc.doNotDisturb,
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

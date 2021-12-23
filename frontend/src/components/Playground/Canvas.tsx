@@ -4,7 +4,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import './style.scss';
 import {getUsers, submitMovement} from "../../store/userSlice";
-import {toggleUserVideo, mute} from "../../store/rtcSlice";
+import {toggleUserVideo, toggleUserAudio} from "../../store/rtcSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
@@ -337,7 +337,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     movePlayground: (offset: PlaygroundOffset) => dispatch(movePlayground(offset)),
     handleZoom: (z: number, x?: number, y?: number) => dispatch(handleZoom(z, x, y)),
     setScale: (z: number, x?: number, y?: number) => dispatch(setScale(z, x, y)),
-    toggleAudio: () => dispatch(mute()),
+    toggleAudio: () => dispatch(toggleUserAudio()),
     toggleVideo: () => dispatch(toggleUserVideo())
 })
 

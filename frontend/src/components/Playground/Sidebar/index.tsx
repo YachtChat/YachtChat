@@ -7,7 +7,7 @@ import {FaCog, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash} from 'rea
 import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../../store/webSocketSlice";
-import {toggleUserVideo, mute, toggleUserScreen} from "../../../store/rtcSlice";
+import {toggleUserVideo, toggleUserAudio, toggleUserScreen, toggleDoNotDisturb} from "../../../store/rtcSlice";
 import Settings from "../../Settings/SpaceSettings";
 import {centerUser} from "../../../store/playgroundSlice";
 import {IoChatbubble, IoChevronBackOutline, IoMoon, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
@@ -28,6 +28,7 @@ interface Props {
     toggleAudio: () => void
     toggleVideo: () => void
     toggleScreen: () => void
+    toggleDoNotDisturb: () => void
     center: () => void
     video: boolean
     muted: boolean
@@ -99,7 +100,9 @@ export class NavigationBar extends Component<Props, State> {
                                     }}>
                                         <div className="inner-item">
                                             <Tooltip disableFocusListener
-                                                     title={"Menu"} placement="right" arrow>
+                                                     title={
+                                                         <VideoIcon className={"videoPreview"} />
+                                                     } placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     <VideoIcon />
@@ -149,6 +152,22 @@ export class NavigationBar extends Component<Props, State> {
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     {(this.props.screen) ? <IoTv/> : <IoTvOutline/>}
+                                                </span>
+                                            </span>
+                                            </Tooltip>
+                                        </div>
+                                    </li>
+                                    <li onClick={() => {
+                                        this.sendToPosthog("donotdisturb")
+                                        this.props.toggleDoNotDisturb()
+                                    }} className="menu-item">
+                                        <div className="inner-item">
+                                            <Tooltip disableFocusListener
+                                                     title={"Do not disturb"}
+                                                     placement="right" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <IoMoon />
                                                 </span>
                                             </span>
                                             </Tooltip>
@@ -300,9 +319,10 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     success: (s: string) => dispatch(handleSuccess(s)),
-    toggleAudio: () => dispatch(mute()),
+    toggleAudio: () => dispatch(toggleUserAudio()),
     toggleVideo: () => dispatch(toggleUserVideo()),
     toggleScreen: () => dispatch(toggleUserScreen()),
+    toggleDoNotDisturb: () => dispatch(toggleDoNotDisturb()),
     logout: () => dispatch(sendLogout()),
     center: () => dispatch(centerUser()),
 })

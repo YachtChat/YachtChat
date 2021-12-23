@@ -38,6 +38,25 @@ export class UserComponent extends Component<Props> {
         this.myName = React.createRef();
     }
 
+    componentDidMount() {
+        if (this.props.user.userStream && this.videoObject.current && !this.props.mediaChangeOngoing) {
+
+            if (!this.videoObject.current.srcObject) {
+                if (this.props.screen && this.props.isActiveUser) {
+                    this.videoObject.current.srcObject = this.props.getScreenStream(this.props.user.id)!
+                } else {
+                    this.videoObject.current.srcObject = this.props.getStream(this.props.user.id)!
+                }
+                //console.log(this.props.getStream(this.props.user.id)!)
+            }
+
+            //@ts-ignore
+            if (this.videoObject.current.setSinkId)
+                //@ts-ignore
+                this.videoObject.current.setSinkId(this.props.speaker)
+        }
+    }
+
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
         if (this.props.user.userStream && this.videoObject.current && !this.props.mediaChangeOngoing) {
 
