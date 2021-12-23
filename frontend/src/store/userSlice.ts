@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {MediaType, Point, User, UserCoordinates, UserPayload} from "./models";
+import {MediaType, Message, Point, User, UserCoordinates, UserPayload} from "./models";
 import {send, sendPosition, userSetupReady} from "./webSocketSlice";
 import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
 import {getHeaders, getToken} from "./authSlice";
@@ -14,11 +14,13 @@ import {getNextValidPostion, isPostionValid} from "./positionUtils";
 interface UserState {
     activeUser: User
     spaceUsers: { [key: string]: User },
+    messages: Message[]
 }
 
 const initialState: UserState = {
     activeUser: {id: "-1", online: true},
     spaceUsers: {},
+    messages: []
 };
 
 export const userProportion = 100
@@ -83,12 +85,20 @@ export const userSlice = createSlice({
         },
         forgetUsers: (state) => {
             state.spaceUsers = {}
+            state.messages = []
         },
         setMessage: (state, action: PayloadAction<{ message: string, id: string }>) => {
             if (state.spaceUsers[action.payload.id])
                 state.spaceUsers[action.payload.id].message = action.payload.message
             if (state.activeUser.id === action.payload.id)
                 state.activeUser.message = action.payload.message
+            const date = new Date();
+            state.messages.push({
+                message: action.payload.message,
+                user: action.payload.id,
+                time: `${date.getHours() < 10 ? "0" : ""}${date.getHours()}:${date.getMinutes() < 10 ? "0" : ""}${date.getMinutes()}`
+            })
+
         },
         destroyMessage: (state, action: PayloadAction<string>) => {
             if (state.spaceUsers[action.payload])
@@ -299,6 +309,7 @@ export const requestFriends = (): AppThunk => dispatch => {
     // request and commit friends here
 }
 
+export const getUserMessages = (state: RootState, id: string) => state.userState.messages.filter(m => m.user === id);
 export const getUser = (state: RootState) => state.userState.activeUser;
 export const getUserID = (state: RootState) => state.userState.activeUser.id;
 export const getUserById = (state: RootState, id: string) => {

@@ -22,6 +22,12 @@ export interface UserPayload {
     video?: boolean
 }
 
+export interface Message {
+    message: string,
+    user: string,
+    time: string
+}
+
 
 export interface UserCoordinates {
     x: number
@@ -42,6 +48,7 @@ export interface Space {
     public: boolean
     hosts: string[]
 }
+
 export interface Point {
     x: number
     y: number
