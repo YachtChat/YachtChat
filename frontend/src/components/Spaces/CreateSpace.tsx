@@ -4,9 +4,11 @@ import {Link} from "react-router-dom";
 import {FaChevronLeft} from "react-icons/fa";
 import {connect} from "react-redux";
 import {createSpace} from "../../store/spaceSlice";
+import {handleError} from "../../store/statusSlice";
 
 interface Props {
     createSpace: (name: string) => void
+    error: (s: string) => void
 }
 
 interface State {
@@ -35,24 +37,29 @@ export class CreateSpace extends Component<Props, State> {
                     </h1>
                     A space is a private location where you can meet with every member of a space.
                 </div>
-                <form className={"spacesWrapper"}>
+                <form className={"spacesWrapper"} onSubmit={e => {
+                        e.preventDefault()
+                        if (this.state.spaceName.trim() === "") {
+                            this.props.error("The name is not valid")
+                            return
+                        }
+                        this.props.createSpace(this.state.spaceName.trim())
+                }}>
                     <input value={this.state.spaceName}
                            placeholder={"space name"}
                            onChange={({target: {value}}) => this.setState({spaceName: value})} type={"text"}/>
-                    <button onClick={e => {
-                        e.preventDefault()
-                        this.props.createSpace(this.state.spaceName)
-                    }}>
-                        Create Space
-                    </button>
+                    <input type={"submit"} title={"Create Space"} />
                 </form>
             </Wrapper>
         );
     }
 }
 
+const mapStateToProps = () => ({})
+
 const mapDispatchToProps = (dispatch: any) => ({
-    createSpace: (name: string) => dispatch(createSpace(name))
+    createSpace: (name: string) => dispatch(createSpace(name)),
+    error: (s: string) => dispatch(handleError(s))
 })
 
-export default connect(undefined, mapDispatchToProps)(CreateSpace)
+export default connect(mapStateToProps, mapDispatchToProps)(CreateSpace)
