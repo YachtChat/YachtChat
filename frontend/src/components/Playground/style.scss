@@ -313,6 +313,7 @@
   border-radius: $border-radius;
   transition: width 0.5s, height 0.5s;
   overflow-x: hidden;
+  box-shadow: $shadow;
 
   .messagesWrapper {
     max-height: 30vh;
@@ -343,7 +344,6 @@
     transition: background 0.3s;
 
     &:hover {
-      border: 100px solid #000;
       background: $focus_light;
     }
 
@@ -364,6 +364,21 @@
 
     .icon:hover {
       opacity: 0.5;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: $foreground_dark;
+    label {
+      color: $accent_light;
+    }
+
+    span, .icon {
+      color: white;
+    }
+
+    .message:hover {
+      background: $focus_dark;
     }
   }
 }

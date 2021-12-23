@@ -1,4 +1,4 @@
-import {IoChatbubblesOutline, IoCogOutline, IoPeopleOutline} from "react-icons/all";
+import {IoAddOutline, IoChatbubblesOutline, IoCogOutline, IoPeopleOutline} from "react-icons/all";
 
 interface Props {
     closeButton?: boolean
@@ -7,9 +7,26 @@ interface Props {
 export function NavButtons(props: Props) {
     return (
         <nav className={"nav-items"}>
-            <button><IoChatbubblesOutline /> Spaces</button>
-            <button><IoPeopleOutline /> Support</button>
-            <button><IoCogOutline /> Settings</button>
+            <button>
+                <IoChatbubblesOutline />
+                <br />
+                Spaces
+            </button>
+            <button>
+                <IoAddOutline />
+                <br />
+                New Space
+            </button>
+            <button>
+                <IoPeopleOutline />
+                <br />
+                Support
+            </button>
+            <button>
+                <IoCogOutline />
+                <br/>
+                Settings
+            </button>
 
         </nav>
     )

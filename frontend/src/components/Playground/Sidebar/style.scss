@@ -225,6 +225,11 @@
 .panel {
   flex-direction: row;
   max-height: 90%;
+  background: $foreground_light;
+
+  @media (prefers-color-scheme: dark) {
+    background: $foreground_dark;
+  }
 
   .headlineBox {
     position: relative;
@@ -239,6 +244,10 @@
     .iconButton.nostyle {
       color: black;
       font-size: 2rem;
+
+      @media (prefers-color-scheme: dark) {
+        color: white
+      }
     }
   }
 

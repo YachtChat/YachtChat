@@ -64,11 +64,12 @@ button, input[type=submit] {
   @media (prefers-color-scheme: dark) {
     & {
       background-color: $accent_light;
+      color: black;
     }
     &.outlined {
       background-color: transparent;
-      color: $accent_dark;
-      border: 1px solid $accent_light;
+      color: $accent_light;
+      border: 1px solid $accent_dark;
     }
   }
 
@@ -147,7 +148,7 @@ label, .required {
 
   @media (prefers-color-scheme: dark) {
     & {
-      color: $accent_dark;
+      color: $accent_light;
     }
   }
 
@@ -176,4 +177,12 @@ label, .required {
 
 .content {
   padding: 2rem;
+  background: $foreground_light;
+  border-radius: $border_radius;
+  box-shadow: $shadow;
+  overflow-y: auto;
+
+  @media (prefers-color-scheme: dark) {
+    background: $foreground_dark;
+  }
 }

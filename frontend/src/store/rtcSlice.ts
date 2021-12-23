@@ -262,7 +262,6 @@ export const toggleUserVideo = (): AppThunk => (dispatch, getState) => {
             dispatch(setMediaChangeOngoing(true))
             dispatch(handleInputChange('video'))
         } else {
-            alert("YES")
             dispatch(stopVideo())
         }
         // tell websocket about video changes

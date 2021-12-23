@@ -13,6 +13,10 @@
     .iconButton.nostyle {
       color: black;
       font-size: 2rem;
+
+      @media (prefers-color-scheme: dark) {
+        color: white;
+      }
     }
   }
 
@@ -44,13 +48,7 @@
   min-height: 500px;
   display: flex;
   flex-direction: column;
-
-  .content {
-    background: $foreground_light;
-    border-radius: $border_radius;
-    box-shadow: $shadow;
-    overflow-y: auto;
-  }
+  padding-bottom: 3rem;
 
   .mediaSettings {
     width: 100%;

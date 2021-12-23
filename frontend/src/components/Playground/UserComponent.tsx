@@ -214,7 +214,12 @@ export class UserComponent extends Component<Props, State> {
                                  }}
                                  onWheel={e => e.stopPropagation()}
                                  className={"messages clickable"}>
-                                <label className={"clickable"}>Messages</label>
+                                <label className={"clickable"}>
+                                    {(this.props.isActiveUser) &&
+                                        "Your "}
+                                    {(!this.props.isActiveUser) &&
+                                        user.firstName + "'s "}
+                                    Messages</label>
                                 {this.state.onMessages &&
                                     <Grow in={this.state.onMessages}>
                                         <div className={"messagesWrapper"}>

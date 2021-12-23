@@ -18,7 +18,9 @@
   }
 
   .contentWrapper {
-    background: $accent_dark;
+    //background: $accent_dark;
+    background: $foreground_light;
+    box-shadow: $shadow
   }
 
   .logo {
@@ -37,7 +39,7 @@
       padding: 0.5rem 1rem 0.5rem 2rem;
       width: 40px;
       height: 40px;
-      filter: drop-shadow(0 0 0.5rem rgba(0, 0, 0, .7));
+      filter: drop-shadow(0 0 0.4rem rgba(0, 0, 0, .9));
       float: left;
     }
 
@@ -47,7 +49,7 @@
 
     h1 {
       font-size: 1rem;
-      color: white;
+      color: black;
       margin-left: 1rem;
     }
 
@@ -87,10 +89,13 @@
 
       button {
         margin: 0 1rem;
-        padding: 0;
+        padding: 0.5rem 0.5rem;
         font-size: 0.7rem;
         list-style: none;
-        color: $headline_light;
+        color: black;
+        background: none;
+        border-radius: 0;
+
         text-transform: uppercase;
         border: none;
         width: unset;
@@ -105,7 +110,8 @@
         }
 
         &.active {
-          color: $accent_dark;
+          color: $accent_light;
+          border-bottom: 5px solid $accent_dark;
 
           @media (prefers-color-scheme: dark) {
             & {
@@ -115,6 +121,7 @@
         }
       }
     }
+
 
     .authentification {
       justify-self: right;
@@ -136,14 +143,48 @@
       }
 
       .icon {
-        color: white;
+        color: black;
       }
 
       span {
-        color: white;
-        font-size: 0.8rem;
+        color: black;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 0.7rem;
       }
     }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .contentWrapper {
+      background: $foreground_dark;
+
+      .logo {
+        h1 {
+          color: white;
+        }
+      }
+
+      #nav-content-desktop {
+        .nav-items {
+          button {
+            color: white;
+          }
+        }
+
+        .authentification {
+          .icon {
+            color: white;
+          }
+
+          span {
+            color: white;
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+
   }
 
   #nav-content-mobile {
