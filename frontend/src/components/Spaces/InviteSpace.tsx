@@ -84,7 +84,7 @@ export class CreateSpace extends Component<Props, State> {
                             this.props.success("Invite link copied")
                         }
                     }}>
-                        <IoCopyOutline /> Copy Link
+                        <IoCopyOutline /> Copy invite Link
                     </button>
                     <Link to={"/spaces/" + this.props.match?.params.spaceID}>
                         <button className={"outlined submit"}>

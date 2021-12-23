@@ -1,7 +1,7 @@
 @import "src/variables.module";
 
 .spaces {
-  min-width: 800px;
+  width: 800px;
   max-width: 100%;
   text-align: left;
   max-height: 90%;
@@ -17,21 +17,6 @@
     padding: 3rem;
     justify-content: center;
     box-sizing: border-box;
-
-    .buttons {
-      position: absolute;
-      top: 0;
-      left: 0;
-      padding: inherit;
-      box-sizing: border-box;
-    }
-  }
-
-  .iconButton.profilePic {
-    width: 4rem;
-    height: 4rem;
-    padding-top: 2rem;
-    margin: auto;
   }
 
   .loadingAnimation {
@@ -150,5 +135,9 @@
         }
       }
     }
+  }
+
+  footer {
+    padding: 0 3rem;
   }
 }

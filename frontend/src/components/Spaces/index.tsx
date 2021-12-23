@@ -6,7 +6,7 @@ import {RootState} from "../../store/store";
 import {deleteSpaceForUser, requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
 import {
-    IoAddOutline, IoChatbubblesOutline,
+    IoAddOutline, IoArrowForward, IoChatbubblesOutline,
     IoCogOutline, IoCreateOutline,
     IoEllipsisHorizontal,
     IoTrashOutline
@@ -81,10 +81,14 @@ export class Spaces extends Component<Props, State> {
                             </Link>
                         </div>
                         <h1>
-                            Spaces <IoChatbubblesOutline />
+                            Spaces <IoChatbubblesOutline/>
                         </h1>
                     </div>
-                    <p>To join a space, select a space on the right, or create a new one.</p>
+                    <p>
+                        To join a space, select a space on the right, or create a new one.<br/>
+                        Invite your team to a space to collaborate.{" "}
+                        <a href={"/"}>Get help <IoArrowForward/></a>
+                    </p>
                 </div>
                 <div className={"spacesWrapper"}>
 
@@ -141,14 +145,16 @@ export class Spaces extends Component<Props, State> {
                         <MenuItem onClick={() => {
                             alert("This feature is not available yet.")
                             this.handleClose()
-                        }}><IoCreateOutline /> Rename</MenuItem>
+                        }}><IoCreateOutline/> Rename</MenuItem>
                     </Menu>
                 </div>
-                <Link to={"/create-space"}>
-                    <button className={"outlined"}>
-                        <IoAddOutline/> add space
-                    </button>
-                </Link>
+                <footer>
+                    <Link to={"/create-space"}>
+                        <button className={"outlined "}>
+                            <IoAddOutline/> add space
+                        </button>
+                    </Link>
+                </footer>
             </Wrapper>
         )
     }
