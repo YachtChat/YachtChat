@@ -299,17 +299,24 @@ export class Canvas extends Component<Props, State> {
                     if (!user.online)
                         return null
                     return <RangeComponent key={user.id} isActiveUser={false}
+                                           className={(this.state.userDragActive || this.state.mapDragActive) ? "" : "clicked"}
                                            selected={false} user={user}/>
                 })}
                 <RangeComponent user={this.props.activeUser}
+                                className={(this.state.userDragActive || this.state.mapDragActive) ? "" : "clicked"}
                                 selected={this.state.mapDragActive || this.state.userDragActive}
                                 isActiveUser={true}/>
                 {this.props.spaceUsers.map(user => {
                     if (!user.online)
                         return null
-                    return <UserComponent key={user.id} isActiveUser={false} selected={false} user={user}/>
+                    return <UserComponent key={user.id}
+                                          className={(this.state.userDragActive || this.state.mapDragActive) ? "" : "clicked"}
+                                          isActiveUser={false}
+                                          selected={false}
+                                          user={user}/>
                 })}
-                <UserComponent user={this.props.activeUser}
+                <UserComponent className={(this.state.userDragActive || this.state.mapDragActive) ? "" : "clicked"}
+                               user={this.props.activeUser}
                                selected={
                                    //this.state.mapDragActive ||
                                    this.state.userDragActive}

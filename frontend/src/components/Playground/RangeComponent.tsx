@@ -10,6 +10,7 @@ interface Props {
     isActiveUser: boolean
     playgroundOffset: PlaygroundOffset
     muted: boolean
+    className?: string
 }
 
 export class RangeComponent extends Component<Props> {
@@ -38,8 +39,8 @@ export class RangeComponent extends Component<Props> {
         }
 
         return (
-            <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
-                <div className={"userRange"} style={rangeStyle}/>
+            <div className={((this.props.isActiveUser) ? "activeUser" : "")}>
+                <div className={"userRange " + this.props.className} style={rangeStyle}/>
             </div>
         )
     }

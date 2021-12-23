@@ -5,11 +5,14 @@ import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";
 import {userProportion} from "../../store/userSlice";
 import {CircularProgress, Tooltip, Zoom} from "@material-ui/core";
+import {IoCopyOutline} from "react-icons/all";
+import {handleSuccess} from "../../store/statusSlice";
 
 interface OwnProps {
     user: User
     selected: boolean
     isActiveUser: boolean
+    className?: string
 }
 
 interface OtherProps {
@@ -22,6 +25,7 @@ interface OtherProps {
     getStream: (id: string) => MediaStream | undefined
     getScreenStream: (id: string) => MediaStream | undefined
     mediaChangeOngoing: boolean
+    success: (s: string) => void
 }
 
 type Props = OwnProps & OtherProps
@@ -144,38 +148,62 @@ export class UserComponent extends Component<Props> {
 
         return (
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
-                <div data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id} className="User" style={userStyle}>
+                <div data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
+                     className={"User " + this.props.className}
+                     style={userStyle}>
                     <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message} interactive
                              onClick={e => {
                                  e.preventDefault()
+                                 e.nativeEvent.preventDefault()
                                  e.stopPropagation()
+                                 e.nativeEvent.stopPropagation()
                              }}
                              title={
+
                                  (this.props.user.message) ?
-                                     (this.props.user.message.toLocaleLowerCase().startsWith("http")) ?
+                                     <div>
+                                         {(
+                                         this.props.user.message.toLocaleLowerCase().startsWith("http") ||
+                                         this.props.user.message.toLocaleLowerCase().startsWith("www.")
+                                         ) ?
                                          <a href={this.props.user.message}
+                                            onClick={e => {
+                                                e.preventDefault()
+                                                e.nativeEvent.preventDefault()
+                                                e.stopPropagation()
+                                                e.nativeEvent.stopPropagation()
+                                            }}
                                             target="_blank" rel="noopener noreferrer"
                                          >{this.props.user.message}</a> :
-                                         this.props.user.message
+                                         this.props.user.message}
+                                         {" "}<IoCopyOutline onClick={(e) => {
+                                             e.preventDefault()
+                                             e.nativeEvent.preventDefault()
+                                             e.stopPropagation()
+                                             e.nativeEvent.stopPropagation()
+                                             navigator.clipboard.writeText(this.props.user.message ?? "")
+                                             this.props.success("copied message")
+                                         }}/>
+                                     </div>
                                      : ""} placement="top" arrow>
                         <div>
                             {(!!this.props.user.userStream) &&
-                            <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
-                                   key={this.props.camera}
-                                   autoPlay muted={this.props.isActiveUser}
-                                   playsInline
-                                   ref={this.videoObject}
-                                   className={
-                                       ((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : "" +
-                                           ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
+                                <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
+                                       key={this.props.camera}
+                                       autoPlay muted={this.props.isActiveUser}
+                                       playsInline
+                                       ref={this.videoObject}
+                                       className={
+                                           ((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : "" +
+                                               ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
                             {!this.props.user.userStream &&
-                            <CircularProgress className={"loader"}/>
+                                <CircularProgress className={"loader"}/>
                             }
                         </div>
                     </Tooltip>
                 </div>
-                <span ref={this.myName} className={"userName"}
+                <span ref={this.myName} className={"userName " + this.props.className}
                       style={userNameStyle}>{(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
             </div>
         )
@@ -194,4 +222,8 @@ const mapStateToProps = (state: RootState) => ({
     getScreenStream: (id: string) => getScreenStream(state, id),
 })
 
-export default connect(mapStateToProps)(UserComponent)
+const mapDispatchToProps = (dispatch: any) => ({
+    success: (s: string) => dispatch(handleSuccess(s))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserComponent)

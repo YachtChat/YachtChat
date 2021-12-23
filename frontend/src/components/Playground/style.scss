@@ -93,12 +93,16 @@
   }
 
   .userRange {
+    transition: 0.2s opacity, height 0.3s, width 0.3s;
+
+    &.clicked {
+      transition: 0.2s opacity, height 0.3s, width 0.3s, left 0.3s, top 0.3s;
+    }
     position: absolute;
     background: $focus_light;
     border-radius: 50%;
     background: radial-gradient(circle, $accent_light 0%, $accent_light_alpha 70%);
     //border: solid 1px rgba(255, 0, 0, .4);
-    transition: 0.2s opacity;
 
     @media (prefers-color-scheme: dark) {
       & {
@@ -118,6 +122,14 @@
     0.2s height,
     0.2s transition;
     color: $button_font_light;
+
+    &.clicked {
+      transition: 0.2s width,
+      0.2s height,
+      0.2s transition,
+      0.3s left,
+      0.3s top;
+    }
 
     @media (prefers-color-scheme: dark) {
       & {
@@ -179,6 +191,9 @@
     overflow: hidden;
     transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s;
 
+    &.clicked {
+        transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s, left 0.3s, top 0.3s;
+    }
     //background-color: $foreground_light;
 
     @media (prefers-color-scheme: dark) {
