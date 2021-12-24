@@ -38,6 +38,17 @@ services:
     networks:
       - application
 
+  wiki:
+    container_name: wiki
+    build:
+      context: ./wiki
+      dockerfile: ./Dockerfile
+    environment:
+      - VIRTUAL_HOST=${WIKI_URL}
+      - LETSENCRYPT_HOST=${WIKI_URL}
+    networks:
+      - application
+
   websocket-service:
     container_name: websocket-service
     build:
