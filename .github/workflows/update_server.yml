@@ -72,6 +72,21 @@ jobs:
         env:
           TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
+      - name: build wiki when changed
+          if: contains(env.TEST_STATEMENT, 'wiki/')
+          uses: tarunjangra/ssh-remote-cmd@v1
+          with:
+            command: |
+              cd /home/git_environment/NotZoom/
+              sudo docker-compose build wiki
+              sudo docker-compose down wiki
+              sudo docker-compose up --no-deps -d wiki
+            host: ${{ secrets.HOST}}
+            user: ${{ secrets.USERNAME}}
+            key: ${{ secrets.KEY}}
+          env:
+            TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
+
       - name: build spaces-service when changed
         if: contains(env.TEST_STATEMENT, 'spaces-service/')
         uses: tarunjangra/ssh-remote-cmd@v1
