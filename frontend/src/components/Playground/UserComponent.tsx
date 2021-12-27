@@ -4,7 +4,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
-import {CircularProgress, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
+import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
 import {IoCopyOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
 
@@ -99,7 +99,7 @@ export class UserComponent extends Component<Props, State> {
         }
         if (this.messagesEnd.current &&
             (prevProps.messages !== this.props.messages ||
-             prevState.onMessages !== this.state.onMessages))
+                prevState.onMessages !== this.state.onMessages))
             this.messagesEnd.current.scrollIntoView({behavior: "smooth"});
     }
 
@@ -107,9 +107,9 @@ export class UserComponent extends Component<Props, State> {
         if (this.messagesEnd.current && onMessages !== this.state.onMessages)
             setTimeout(() => {
                     if (this.messagesEnd.current)
-                         this.messagesEnd.current!.scrollIntoView({behavior: "smooth"})
+                        this.messagesEnd.current!.scrollIntoView({behavior: "smooth"})
                 },
-            500, [this])
+                500, [this])
 
 
         clearTimeout(this.closeTimeout)
@@ -200,12 +200,12 @@ export class UserComponent extends Component<Props, State> {
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                      className={"User " + this.props.className}
                      style={userStyle}>
-                    <Popper placement={"right"}
+                    <Popper placement={"bottom"}
                             data-class={"clickable"}
                             onClick={() => this.setState({hovered: false})}
                             anchorEl={this.videoObject.current}
-                            open={this.state.hovered && this.props.messages.length > 0}>
-                        <Grow in={this.state.hovered}>
+                            open={true}>
+                        <Grow in={this.state.hovered && !this.props.selected && user.inProximity} unmountOnExit>
                             <div onMouseOver={() => {
                                 this.removeTimeout(true)
                             }}
@@ -220,12 +220,10 @@ export class UserComponent extends Component<Props, State> {
                                     {(!this.props.isActiveUser) &&
                                         user.firstName + "'s "}
                                     Messages</label>
-                                {this.state.onMessages &&
-                                    <Grow in={this.state.onMessages}>
-                                        <div className={"messagesWrapper"}>
-
+                                <Collapse in={this.state.onMessages} unmountOnExit>
+                                    <div className={"messagesWrapper"}>
+                                        {this.props.messages.length > 0 &&
                                             <table cellSpacing="0" cellPadding="0" className={"clickable"}>
-
                                                 {this.props.messages.map((m) =>
                                                     <tr className={"clickable message"}>
                                                         <td className={"clickable"}>
@@ -254,10 +252,20 @@ export class UserComponent extends Component<Props, State> {
                                                         }}/></td>
                                                     </tr>
                                                 )}
+                                            </table>}
+                                        {this.props.messages.length === 0 &&
+                                            <table cellSpacing="0" cellPadding="0" className={"clickable"}>
+                                                <tr className={"clickable message"}>
+                                                    <td>
+                                                            <span>
+                                                                No messages yet.
+                                                            </span>
+                                                    </td>
+                                                </tr>
                                             </table>
-                                        </div>
-                                    </Grow>
-                                }
+                                        }
+                                    </div>
+                                </Collapse>
                             </div>
                         </Grow>
                     </Popper>
