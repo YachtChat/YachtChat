@@ -3,6 +3,8 @@ import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {maxRange, userProportion} from "../../store/userSlice";
+import {getStream} from "../../store/rtcSlice";
+import VolumeIndicator from "../Settings/VolumeIndicator";
 
 interface Props {
     user: User
@@ -10,6 +12,7 @@ interface Props {
     isActiveUser: boolean
     playgroundOffset: PlaygroundOffset
     muted: boolean
+    getStream: (id: string) => MediaStream | undefined,
     className?: string
 }
 
@@ -40,7 +43,18 @@ export class RangeComponent extends Component<Props> {
 
         return (
             <div className={((this.props.isActiveUser) ? "activeUser" : "")}>
-                <div className={"userRange " + this.props.className} style={rangeStyle}/>
+                <div className={"userRange " + this.props.className} style={rangeStyle}>
+                    <VolumeIndicator
+                        className={"speakingIndicator"}
+                        animateHeight
+                        audio={this.props.getStream(this.props.user.id)}
+                        minWidth={!user.inProximity ? userSize * 0.8 : userSize * 0.98}
+                        minHeight={!user.inProximity ? userSize * 0.8 : userSize * 0.98}
+                        maxWidth={userSize * 2}
+                        maxHeight={userSize * 2}
+                        unit={"px"}
+                    />
+                </div>
             </div>
         )
     }
@@ -48,7 +62,8 @@ export class RangeComponent extends Component<Props> {
 
 const mapStateToProps = (state: RootState) => ({
     playgroundOffset: state.playground.offset,
-    muted: state.rtc.muted
+    muted: state.rtc.muted,
+    getStream: (id: string): MediaStream | undefined => getStream(state, id),
 })
 
 export default connect(mapStateToProps)(RangeComponent)

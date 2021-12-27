@@ -105,7 +105,7 @@ export class MediaSettings extends Component<Props> {
                                 ref.srcObject = this.stream
                         }}/>
                     </div>
-                    <VolumeIndicator audio={this.stream}/>
+                    <VolumeIndicator className={"settings-item"} audio={this.stream} label/>
                 </div>
                 <div className={"toggles"}>
                     {this.props.cameras.length !== 0 &&

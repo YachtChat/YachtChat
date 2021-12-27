@@ -110,6 +110,20 @@
         background: radial-gradient(circle, $accent_dark 0%, $accent_dark_alpha 70%);
       }
     }
+
+    .speakingIndicator {
+      .volumeIndicator {
+        .volume {
+          position: absolute;
+          background: $online_color;
+          top: 50%;
+          right: 50%;
+          border-radius: 50%;
+          transform: rotateY(180deg) translate(-50%, -50%);
+          transition: width 0.2s, height 0.2s;
+        }
+      }
+    }
   }
 
   .userName {

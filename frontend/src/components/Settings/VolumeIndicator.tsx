@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, CSSProperties} from 'react';
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import "./style.scss";
@@ -6,6 +6,15 @@ import "./style.scss";
 interface Props {
     audio?: MediaStream
     mediaChangeOngoing: boolean
+    className?: string
+    animateHeight?: boolean
+    animateWidth?: boolean // default true
+    minWidth?: number
+    minHeight?: number
+    maxWidth?: number
+    maxHeight?: number
+    unit?: string // percent px
+    label?: boolean // percent px
 }
 
 interface State {
@@ -78,11 +87,28 @@ export class MediaSettings extends Component<Props, State> {
 
         volume /= bufferSize
 
+        const animateHeight = !!this.props.animateHeight
+        const animateWidth = this.props.animateWidth === undefined || this.props.animateWidth // default to true
+
+        const unit = this.props.unit ?? "%"
+        const minWidth = this.props.minWidth ?? 0
+        const maxWidth = this.props.maxWidth ?? 100
+        const minHeight = this.props.minWidth ?? 0
+        const maxHeight = this.props.maxHeight ?? 100
+        const width = (maxWidth - minWidth) * volume + minWidth
+        const height = (maxHeight - minHeight) * volume + minHeight
+
         return (
-            <div className={"settings-item"}>
-                <label>Volume</label>
+            <div className={this.props.className}>
+                {this.props.label &&
+                    <label>Volume</label>
+                }
                 <div className={"volumeIndicator"}>
-                    <div className={"volume"} style={{width: `${volume * 100}%`}}/>
+                    <div className={"volume"}
+                         style={{
+                             width: animateWidth ? `${width}${unit}` : undefined, // Use animate width by standard
+                             height: animateHeight ? `${height}${unit}` : undefined
+                         }}/>
                 </div>
             </div>
         );
