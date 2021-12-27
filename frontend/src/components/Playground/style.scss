@@ -227,6 +227,14 @@
         opacity: 0.7;
       }
     }
+
+    .loader {
+      color: $accent_dark;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 
   .focusUser {
@@ -311,7 +319,6 @@
   padding: 1rem;
   background: $foreground_light;
   border-radius: $border-radius;
-  transition: width 0.5s, height 0.5s;
   overflow-x: hidden;
   box-shadow: $shadow;
 
