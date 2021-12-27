@@ -1,13 +1,18 @@
 import {IoAddOutline, IoChatbubblesOutline, IoCogOutline, IoPeopleOutline} from "react-icons/all";
 import {Link} from "react-router-dom"
+import {connect} from "react-redux";
+import {sendLogout} from "../../store/webSocketSlice";
 
 interface Props {
     closeButton?: boolean
+    logout: () => void
+
 }
 
 export function NavButtons(props: Props) {
+
     return (
-        <nav className={"nav-items"}>
+        <nav className={"nav-items"} onClick={props.logout}>
             <Link to={"/spaces"}>
                 <button>
                     <IoChatbubblesOutline />
@@ -38,3 +43,9 @@ export function NavButtons(props: Props) {
         </nav>
     )
 }
+
+const mapDispatchToProps = (dispatch: any) => ({
+    logout: () => dispatch(sendLogout()),
+})
+
+export default connect(undefined, mapDispatchToProps)(NavButtons)

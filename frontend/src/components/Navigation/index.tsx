@@ -2,7 +2,7 @@ import './style.scss'
 import {IoMenu} from "react-icons/all";
 import {useState} from "react";
 import AuthButtons from "./AuthButtons";
-import {NavButtons} from "./NavButtons";
+import NavButtons from "./NavButtons";
 import Logo from "./Logo";
 
 interface Props {
