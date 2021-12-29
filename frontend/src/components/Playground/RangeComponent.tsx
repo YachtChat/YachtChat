@@ -8,8 +8,8 @@ import VolumeIndicator from "../Settings/VolumeIndicator";
 
 interface Props {
     user: User
-    selected: boolean
-    isActiveUser: boolean
+    selected?: boolean
+    isActiveUser?: boolean
     playgroundOffset: PlaygroundOffset
     muted: boolean
     getStream: (id: string) => MediaStream | undefined,
@@ -47,9 +47,10 @@ export class RangeComponent extends Component<Props> {
                     <VolumeIndicator
                         className={"speakingIndicator"}
                         animateHeight
+                        proximityWarning
                         audio={this.props.getStream(this.props.user.id)}
-                        minWidth={!user.inProximity ? userSize * 0.8 : userSize * 0.98}
-                        minHeight={!user.inProximity ? userSize * 0.8 : userSize * 0.98}
+                        minWidth={!user.inProximity ? userSize * 0.8 : userSize * 0.99}
+                        minHeight={!user.inProximity ? userSize * 0.8 : userSize * 0.99}
                         maxWidth={userSize * 2}
                         maxHeight={userSize * 2}
                         unit={"px"}

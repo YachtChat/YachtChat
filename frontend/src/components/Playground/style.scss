@@ -82,6 +82,10 @@
   cursor: move;
   background: url("../../rsc/background.png") repeat 0 0;
 
+  &.animate {
+    transition: background-position 0.3s, background-size 0.3s, background 0.3s;
+  }
+
   .playgroundPinch {
     width: 100%;
     height: 100%;
@@ -93,10 +97,18 @@
   }
 
   .userRange {
-    transition: 0.2s opacity, height 0.3s, width 0.3s;
 
-    &.clicked {
+    &.animate {
       transition: 0.2s opacity, height 0.3s, width 0.3s, left 0.3s, top 0.3s;
+
+      .speakingIndicator {
+        .volumeIndicator {
+          .volume {
+            transition: width 0.2s, height 0.2s;
+
+          }
+        }
+      }
     }
 
     position: absolute;
@@ -120,7 +132,7 @@
           right: 50%;
           border-radius: 50%;
           transform: rotateY(180deg) translate(-50%, -50%);
-          transition: width 0.2s, height 0.2s;
+
         }
       }
     }
@@ -138,7 +150,7 @@
     0.2s transition;
     color: $button_font_light;
 
-    &.clicked {
+    &.animate {
       transition: 0.2s width,
       0.2s height,
       0.2s transition,
@@ -206,7 +218,7 @@
     overflow: hidden;
     transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s;
 
-    &.clicked {
+    &.animate {
       transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s, left 0.3s, top 0.3s;
     }
 

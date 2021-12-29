@@ -10,8 +10,8 @@ import {handleSuccess} from "../../store/statusSlice";
 
 interface OwnProps {
     user: User
-    selected: boolean
-    isActiveUser: boolean
+    selected?: boolean
+    isActiveUser?: boolean
     className?: string
 }
 

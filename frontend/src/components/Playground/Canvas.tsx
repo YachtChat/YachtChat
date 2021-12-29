@@ -9,6 +9,7 @@ import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
 import FocusUser from "./focusUser";
+import {Fade} from "@material-ui/core";
 
 interface Props {
     activeUser: User
@@ -29,6 +30,7 @@ interface Props {
 interface State {
     userDragActive: boolean
     mapDragActive: boolean
+    scrolling: boolean
     previousOffset?: { x: number, y: number }
     previousPosition?: { x: number, y: number }
     dragStart?: { x: number, y: number }
@@ -45,6 +47,7 @@ export class Canvas extends Component<Props, State> {
         this.state = {
             userDragActive: false,
             mapDragActive: false,
+            scrolling: false,
         }
     }
 
@@ -176,7 +179,7 @@ export class Canvas extends Component<Props, State> {
     // function that sets the state of dragActive on false
     // if the mouse left the playground or is not pressed anymore
     dragEnd(e: React.MouseEvent | React.TouchEvent) {
-        if(this.state.userDragActive){
+        if (this.state.userDragActive) {
             this.props.move(this.props.activeUser.position!, false)
         }
         this.setState({
@@ -249,6 +252,10 @@ export class Canvas extends Component<Props, State> {
     onWheel(event: React.WheelEvent) {
         event.preventDefault()
 
+        this.setState({
+            scrolling: true
+        })
+
         if (!event.ctrlKey)
             this.props.handleZoom(event.deltaY / 100, event.clientX, event.clientY)
         else
@@ -265,16 +272,30 @@ export class Canvas extends Component<Props, State> {
         }
     }
 
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
+        if (this.state.scrolling) {
+            if (prevProps.offset.scale === this.props.offset.scale) {
+                this.setState({
+                    scrolling: false
+                })
+            }
+        }
+    }
+
     componentDidMount() {
         // Enable Safari pinch to zoom gesture
         window.addEventListener("gesturestart", (e: any) => {
             e.preventDefault()
             this.setState({
+                scrolling: true,
                 pinchStart: {x1: 0, x2: 0, y1: 0, y2: 0, scale: this.props.offset.trueScale}
             })
         })
         window.addEventListener("gesturechange", (e: any) => {
             e.preventDefault();
+            this.setState({
+                scrolling: true,
+            })
             this.props.setScale(this.state.pinchStart!.scale * e.scale)
             e.stopPropagation()
         })
@@ -295,7 +316,9 @@ export class Canvas extends Component<Props, State> {
             backgroundSize: `${3 * scaling}rem ${3 * scaling}rem`
         }
         return (
-            <div id="PlaygroundCanvas" style={style} className="PlaygroundCanvas"
+            <div id="PlaygroundCanvas" style={style} className={"PlaygroundCanvas " +
+                ((this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate")
+            }
                  onMouseMove={this.moveMouse.bind(this)}
                  onMouseLeave={this.dragEnd.bind(this)}
                  onMouseUp={this.onMouseUp.bind(this)}
@@ -306,35 +329,39 @@ export class Canvas extends Component<Props, State> {
                  onTouchMove={this.moveTouch.bind(this)}
                  onTouchEnd={this.dragEnd.bind(this)}
                  tabIndex={0}>
-                {this.props.spaceUsers.map(user => {
-                    if (!user.online)
-                        return null
-                    return <RangeComponent key={user.id} isActiveUser={false}
-                                           className={(this.state.userDragActive || this.state.mapDragActive) ? "" : "clicked"}
-                                           selected={false} user={user}/>
-                })}
+                {this.props.spaceUsers.map(user => (
+                    <Fade in={user.online} unmountOnExit>
+                        <div>
+                            <RangeComponent key={user.id}
+                                            className={(this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate"}
+                                            user={user}/>
+                        </div>
+                    </Fade>
+                ))}
                 <RangeComponent user={this.props.activeUser}
-                                className={(this.state.userDragActive || this.state.mapDragActive) ? "" : "clicked"}
+                                className={(this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate"}
                                 selected={this.state.mapDragActive || this.state.userDragActive}
-                                isActiveUser={true}/>
-                {this.props.spaceUsers.map(user => {
-                    if (!user.online)
-                        return null
-                    return <UserComponent key={user.id}
-                                          className={(this.state.userDragActive || this.state.mapDragActive) ? "" : "clicked"}
-                                          isActiveUser={false}
-                                          selected={false}
-                                          user={user}/>
-                })}
-                <UserComponent className={(this.state.userDragActive || this.state.mapDragActive) ? "" : "clicked"}
-                               user={this.props.activeUser}
-                               selected={
-                                   //this.state.mapDragActive ||
-                                   this.state.userDragActive}
-                               isActiveUser={true}
-                />
+                                isActiveUser/>
+                {this.props.spaceUsers.map(user =>
+                    <Fade in={user.online} unmountOnExit>
+                        <div>
+                            <UserComponent key={user.id}
+                                           className={(this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate"}
+                                           user={user}/>
+                        </div>
+                    </Fade>
+                )}
+                <UserComponent
+                    className={(this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate"}
+                    user={this.props.activeUser}
+                    selected={
+                        //this.state.mapDragActive ||
+                        this.state.userDragActive
+                    }
+                    isActiveUser/>
                 {this.state.focusUser &&
-                <FocusUser userID={this.state.focusUser} spaceID={this.props.spaceID} onClose={() => this.handleClose()}/>
+                    <FocusUser userID={this.state.focusUser} spaceID={this.props.spaceID}
+                               onClose={() => this.handleClose()}/>
                 }
             </div>
         )
