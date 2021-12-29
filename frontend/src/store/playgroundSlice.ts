@@ -52,17 +52,30 @@ export const {
 export const initPlayground = (): AppThunk => (dispatch, getState) => {
     window.addEventListener("resize", (): void => {
         const newScale = (getState().playground.offset.trueScale / 1080) * ((window.innerWidth > window.innerHeight) ? window.innerWidth : window.innerHeight)
+        const offset = getState().playground.offset
 
+        // change the scale
         dispatch(scalePlayground(
             newScale
         ))
 
-        const offset = getState().playground.offset
+        // delta (change in width)
+        const d = {
+            x: (window.innerWidth - prevWidth),
+            y: (window.innerHeight - prevHeight)
+        }
+
+        // old scale
+        const d_os = {x: d.x / offset.scale, y: d.y / offset.scale }
+        // new scale
+        const d_ns = {x: d.x / offset.scale, y: d.y / offset.scale }
+        // d delta (change in position --> delta on old scale substracted by delta of new scale = total change)
+        const d_d = {x: d_os.x - d_ns.x, y: d_os.y - d_ns.y}
 
         dispatch(movePlayground({
-            ...offset,
-            x: offset.x - (window.innerWidth - prevWidth) / offset.scale / 2,
-            y: offset.y - (window.innerHeight - prevHeight) / offset.scale / 2
+            ...getState().playground.offset,
+            x: offset.x - d_d.x / 2,
+            y: offset.y - d_d.y / 2
         }))
 
         prevHeight = window.innerHeight
