@@ -8,11 +8,11 @@ import Wrapper, {Loading} from "../Wrapper";
 import {Space, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
-import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";
+import {joinWithOnlyMicrophone, loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtc/rtcSlice";
 import {Link} from "react-router-dom";
 import {IoCamera, IoHome, IoMic} from "react-icons/all";
 import {applicationName} from "../../store/config";
-import {sendLogout} from "../../store/webSocketSlice";
+import {connectToServer, sendLogout} from "../../store/webSocketSlice";
 
 interface Props {
     activeUser: User
@@ -23,6 +23,7 @@ interface Props {
         }
     }
     requestUserMedia: (spaceID: string) => void
+    joinOnlyWithMicrophone: (spaceID: string) => void
     initPlayground: () => void
     loadMediaDevices: (callback?: () => void) => void
     userMedia: boolean
@@ -71,6 +72,7 @@ export class Playground extends Component<Props> {
     }
 
     render() {
+        // check if the user has already enabled the camera if not ask him to do it
         if (this.props.cameras.length === 0 && this.props.microphones.length === 0)
             return (
                 <Wrapper className={"mediaPermission"}>
@@ -91,6 +93,10 @@ export class Playground extends Component<Props> {
                         <button onClick={() => {
                             this.props.requestUserMedia(this.props.match!.params.spaceID)
                         }}>Request media
+                        </button>
+                        <button onClick={() => {
+                            this.props.joinOnlyWithMicrophone(this.props.match!.params.spaceID)
+                        }}>Request only my microphone
                         </button>
                     </div>
                 </Wrapper>
@@ -130,6 +136,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     requestSpaces: () => dispatch(requestSpaces()),
     initPlayground: () => dispatch(initPlayground()),
     requestUserMedia: (spaceID: string) => dispatch(requestUserMediaAndJoin(spaceID)),
+    joinOnlyWithMicrophone: (spaceID: string) => dispatch(joinWithOnlyMicrophone(spaceID)),
+    joinSpace: (spaceID: string) => dispatch(connectToServer(spaceID)),
     loadMediaDevices: (callback?: () => void) => dispatch(loadAllMediaDevices(callback)),
 })
 

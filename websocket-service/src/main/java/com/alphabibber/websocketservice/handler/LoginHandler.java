@@ -28,7 +28,7 @@ public class LoginHandler {
     private final LeaveHandler leaveHandler = new LeaveHandler();
     private final PosthogService posthogService = PosthogService.getInstance();
 
-    public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session) {
+    public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session, boolean video) {
         if (!spacesService.isUserAllowedToJoin(roomId, token)) {
             // if the user is not allowed to enter the room the websocket connection will be closed
             try {
@@ -54,7 +54,7 @@ public class LoginHandler {
         }
 
         // user is allowed to log in
-        User user = new User(session, userId);
+        User user = new User(session, userId, video);
         room.put(session.getId(), user);
 
         // tell the user that he was added to the room
@@ -72,7 +72,7 @@ public class LoginHandler {
         log.info("User {} is now part of room {}", userId, roomId);
 
         // tell all other users that a new User joined
-        NewUserAnswer newUserAnswer = new NewUserAnswer(user.getId(), user.getPosition());
+        NewUserAnswer newUserAnswer = new NewUserAnswer(user.getId(), user.getPosition(), video);
         ArrayList<User> users = new ArrayList<>(room.values());
         // this should only skip this iteration
         users.stream().filter(target -> !target.getId().equals(user.getId())).forEach(target -> {

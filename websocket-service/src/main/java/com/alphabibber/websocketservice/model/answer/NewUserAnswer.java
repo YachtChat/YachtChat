@@ -9,9 +9,12 @@ public class NewUserAnswer extends Answer{
     private String id;
     @Getter @Setter
     private Position position;
-    public NewUserAnswer(String id, Position position){
+    @Getter @Setter
+    private boolean video;
+    public NewUserAnswer(String id, Position position, boolean video){
         super("new_user");
         this.id = id;
         this.position = position;
+        this.video = video;
     }
 }

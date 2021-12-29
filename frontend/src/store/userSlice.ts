@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, Point, User, UserCoordinates, UserPayload} from "./models";
 import {send, sendPosition, userSetupReady} from "./webSocketSlice";
-import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
+import {handleRTCEvents, sendAudio, unsendAudio} from "./rtc/rtcSlice";
 import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
 import {ACCOUNT_URL, complete_spaces_url} from "./config";
@@ -163,11 +163,11 @@ export const handleLoginUser = (user: UserPayload): AppThunk => (dispatch, getSt
 }
 
 // called when new user joins / including the activeUser in order to get user information for the user
-export const handleSpaceUser = (userId : string, position : UserCoordinates, isCaller? : boolean): AppThunk => (dispatch, getState) => {
+export const handleSpaceUser = (userId : string, position : UserCoordinates, isVideoOn : boolean,  isCaller? : boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         // axios load user info
         axios.get("https://" + ACCOUNT_URL + "/account/" + userId + "/", headers).then(response => {
-            dispatch(setUser(keycloakUserToUser(response.data, true, position, true)))
+            dispatch(setUser(keycloakUserToUser(response.data, true, position, isVideoOn)))
             // if the user.id is ourselves skip the next steps
             if (getUser(getState()).id !== userId) {
                 // isCaller is true if this is a reconncetion and the local user was the previous caller

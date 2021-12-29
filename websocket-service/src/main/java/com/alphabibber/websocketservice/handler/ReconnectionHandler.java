@@ -53,8 +53,8 @@ public class ReconnectionHandler {
             Thread.currentThread().interrupt();
         }
 
-        ReconnectionAnswer reconnectionAnswerToSender = new ReconnectionAnswer(target.getId(), target.getPosition(), true);
-        ReconnectionAnswer reconnectionAnswerToTarget = new ReconnectionAnswer(sender.getId(), sender.getPosition(), false);
+        ReconnectionAnswer reconnectionAnswerToSender = new ReconnectionAnswer(target.getId(), target.getPosition(), true, target.getVideo());
+        ReconnectionAnswer reconnectionAnswerToTarget = new ReconnectionAnswer(sender.getId(), sender.getPosition(), false, sender.getVideo());
 
         synchronized (sender){
             try{

@@ -7,7 +7,7 @@ import {FaBars, FaCog, FaMicrophone, FaMicrophoneSlash, FaSignOutAlt, FaVideo, F
 import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../../store/webSocketSlice";
-import {toggleUserVideo, mute, toggleUserScreen} from "../../../store/rtcSlice";
+import {toggleUserVideo, mute, toggleUserScreen} from "../../../store/rtc/rtcSlice";
 import Settings from "../../Settings";
 import {centerUser} from "../../../store/playgroundSlice";
 import {IoChatbubble, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
@@ -64,15 +64,7 @@ export class NavigationBar extends Component<Props, State> {
 
     // function that switches the state of the navigationbar bar (collapsed/not collapsed)
     handleCollapse(event: any) {
-        if (this.state.collapsed) {
-            this.setState({
-                collapsed: false,
-            })
-        } else if (!this.state.collapsed) {
-            this.setState({
-                collapsed: true,
-            })
-        }
+        this.setState({collapsed: !this.state.collapsed})
     }
 
     // function that switches the state of the navigationbar bar (collapsed/not collapsed)

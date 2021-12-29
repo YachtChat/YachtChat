@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppThunk, RootState} from './store';
-import {connectToServer, send, triggerReconnection} from "./webSocketSlice";
-import {rtcConfiguration} from "./config";
+import {AppThunk, RootState} from '../store';
+import {connectToServer, send, triggerReconnection} from "../webSocketSlice";
+import {rtcConfiguration} from "../config";
 import {
     forgetUsers,
     getOnlineUsers,
@@ -12,12 +12,12 @@ import {
     handlePositionUpdate,
     setMedia,
     setUserOffline
-} from "./userSlice";
-import {resetPlayground} from "./playgroundSlice";
-import {requestSpaces, returnHome} from "./spaceSlice";
-import {handleError} from "./statusSlice";
-import {MediaType} from "./models";
-import {applyVirtualBackground, stopAllVideoEffects} from "./utils";
+} from "../userSlice";
+import {resetPlayground} from "../playgroundSlice";
+import {requestSpaces, returnHome} from "../spaceSlice";
+import {handleError} from "../statusSlice";
+import {MediaType} from "../models";
+import {applyVirtualBackground, stopAllVideoEffects} from "../utils";
 import CameraProcessor from "camera-processor";
 
 interface RTCState {
@@ -177,6 +177,26 @@ export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatc
 
 }
 
+export const joinWithOnlyMicrophone = (spaceID: string): AppThunk => (dispatch, getState) => {
+    navigator.mediaDevices.getUserMedia(getMediaConstrainsAudioOnly(getState())).then((e) => {
+        const localClient = getUserID(getState())
+        localStream = e
+
+        dispatch(gotRemoteStream(localClient))
+        dispatch(loadAllMediaDevices())
+        dispatch(setUserMedia(false))
+        // todo video for user is set twice -> update this
+        dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: false}))
+        // video is initialized to true, but we want to set it to false here
+        dispatch(toggleVideo())
+    }).then(() =>
+        dispatch(connectToServer(spaceID))
+    ).catch(() => {
+        dispatch(handleError("Unable to get media."))
+        dispatch(setUserMedia(false))
+    })
+}
+
 export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch, getState) => {
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
@@ -245,12 +265,10 @@ export const toggleUserVideo = (): AppThunk => (dispatch, getState) => {
         // handle video changes
         if (getState().rtc.video){
             dispatch(setMediaChangeOngoing(true))
-            dispatch(handleInputChange('video'))
+            dispatch(handleInputChange())
         }else{
             dispatch(stopVideo())
         }
-        // tell websocket about video changes
-        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': getState().rtc.video}))
     }
 }
 
@@ -391,8 +409,22 @@ function isUserInSpace(state: RootState, id: string){
     return !!rtcConnections[id] && user.online
 }
 
+export const handleRTCEventsNew = (joinedUserId: string, isCaller?: boolean): AppThunk => (dispatch, getState) => {
+    const listOfClientIds = getOnlineUsers(getState()).map(k => k.id)
+    const givenUserId: string = getUserID(getState())
+
+    listOfClientIds.forEach(userId =>{
+
+    })
+}
+
+/**
+ * Called when either the current user joins or another user
+ * @param joinedUserId: id of the given user
+ * @param isCaller: boolean that is true if the given user should be the initiator of the rtp call
+ */
 export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppThunk => (dispatch, getState) => {
-    // get client ids
+
     const clients = getOnlineUsers(getState()).map(k => k.id)
     const localClient: string = getUserID(getState())
     clients.push(localClient)
@@ -476,6 +508,7 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
 
                 // todo maybe do not send the stream until the connection is established
                 mediaStream.getTracks().forEach(track => {
+                    // todo check what happens when the user only joins with microphone
                     rtpSender[userId][track.kind] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
 
@@ -674,10 +707,11 @@ export const changeVirtualBackground = (background: string): AppThunk => (dispat
     dispatch(handleInputChange("video"))
 }
 
+
+
 export const handleInputChange = (type?: string): AppThunk => (dispatch, getState) => {
     const state = getState()
     const localClient = getUserID(state)
-    const oldStream = getStream(state, localClient)
 
     // If true all tracks have to be replaced otherwise just of type
     const replaceAllTracks = state.rtc.video && !state.rtc.muted
@@ -685,33 +719,51 @@ export const handleInputChange = (type?: string): AppThunk => (dispatch, getStat
     navigator.mediaDevices.getUserMedia(getMediaConstrains(state, (replaceAllTracks) ? undefined : type)).then((e) => {
         // If type is not set or no localStream available reset the whole stream object
         const [ls, cp] = applyVirtualBackground(e, getState().rtc.selected.virtualBackground, camera_processor)
-        localStream = ls
         camera_processor = cp
 
+        dispatch(gotRemoteStream(localClient))
+        dispatch(loadAllMediaDevices())
         dispatch(setMediaChangeOngoing(false))
-        getStream(state, localClient)!.getTracks().forEach(s => {
-            // replace only stream of type and only if the video/audio aint muted
-            if ((!type || type === s.kind) &&
-                ((s.kind === 'audio' && !state.rtc.muted) || (s.kind === 'video' && state.rtc.video))) {
-                getOnlineUsers(state).forEach(u => {
-                    Object.keys(rtpSender[u.id]).forEach(k => {
-                        const rs = rtpSender[u.id][k]
-                        if (rs.track && rs.track.kind === s.kind) {
-                            const clone = s.clone()
-                            if (clone.kind === 'audio')
-                                clone.enabled = !!u.inProximity
-                            rs.track.stop()
-                            rs.replaceTrack(clone)
-                        }
-                    })
-                })
+
+        ls.getTracks().forEach(track => {
+            // change the local stream
+            const trackIndexToChange = localStream?.getTracks().findIndex(localStream => localStream.kind === track.kind)
+            if (trackIndexToChange != -1){
+                // localStream?.getTracks()[trackIndexToChange].stop()
+                localStream?.removeTrack(localStream?.getTracks()[trackIndexToChange!])
+                localStream?.addTrack(track.clone())
+            }else{
+                localStream?.addTrack(track.clone())
             }
+
+            getOnlineUsers(state).forEach(user => {
+                let trackUpdated = false
+                Object.keys(rtpSender[user.id]).forEach(currentType => {
+                    if(track.kind == currentType){
+                        if (track.kind === "audio"){
+                            track.enabled = user.inProximity!
+                        }
+                        const clone = track.clone()
+                        rtpSender[user.id][currentType].track?.stop()
+                        rtpSender[user.id][currentType].replaceTrack(clone)
+                        trackUpdated = true
+                        // remove the old track and repleace it with the new one
+                    }
+                })
+                if (!trackUpdated){
+                    // if some track was not added before (probably the video track) we want to add the new track to the
+                    // connection but also to the oldStream
+                    rtpSender[user.id][track.kind] = rtcConnections[user.id].addTrack(track.clone(), localStream!)
+                }
+            })
         })
-        oldStream!.getTracks().forEach(t => t.stop())
         dispatch(setUserMedia(true))
-    }).catch(() => {
+    }).catch((e) => {
         dispatch(setUserMedia(false))
         dispatch(handleError("Cannot get user media"))
+    }).then(()=>{// tell websocket about video changes
+
+        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': getState().rtc.video}))
     })
 
 }
@@ -736,6 +788,17 @@ export const getMediaConstrains = (state: RootState, type?: string) => {
         } : undefined
     }
 }
+
+export const getMediaConstrainsAudioOnly = (state: RootState, type?: string) => {
+    return {
+        audio: (type !== 'video') ? {
+            deviceId: getMicrophone(state),
+            echoCancellation: true
+        } : undefined
+    }
+}
+
+
 export const getScreenSharingConstraints = () => {
     return {
         video: {

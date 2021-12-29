@@ -15,7 +15,7 @@ import {
     setMedia
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
-import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
+import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtc/rtcSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./config";
 import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
@@ -102,12 +102,12 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 break;
             case "new_user":
                 if (loggedIn) {
-                    dispatch(handleSpaceUser(data.id, data.position));
+                    dispatch(handleSpaceUser(data.id, data.position, data.video));
                 }
                 break;
             case "reconnection":
                 if (loggedIn){
-                    dispatch(handleSpaceUser(data.id, data.position, data.isCaller))
+                    dispatch(handleSpaceUser(data.id, data.position, data.video, data.isCaller))
                 }
                 break;
             case "leave":
@@ -194,7 +194,8 @@ export const requestLogin = (): AppThunk => (dispatch, getState) => {
         dispatch(send({
             type: "login",
             token: token,
-            user_id: getState().userState.activeUser.id
+            user_id: getState().userState.activeUser.id,
+            video: getState().rtc.video
         }))
     ).catch(() => dispatch(destroySession()))
 }

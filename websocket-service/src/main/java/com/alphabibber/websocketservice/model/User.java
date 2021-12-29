@@ -7,10 +7,10 @@ import lombok.Setter;
 import javax.websocket.Session;
 
 public class User {
-    public User(Session session, String id){
+    public User(Session session, String id, boolean video){
         this.session = session;
         this.position = new Position(0, 0, 20);
-        this.video = true;
+        this.video = video;
         this.screen = false;
         this.id = id;
     }
