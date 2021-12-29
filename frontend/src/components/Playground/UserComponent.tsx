@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {PlaygroundOffset, User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
-import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";
+import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtc/rtcSlice";
 import {userProportion} from "../../store/userSlice";
 import {CircularProgress, Tooltip, Zoom} from "@material-ui/core";
 

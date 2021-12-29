@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
-import {getStream} from "../../store/rtcSlice";
+import {getStream} from "../../store/rtc/rtcSlice";
 import {RootState} from "../../store/store";
 import {Tooltip, Zoom} from "@material-ui/core";
 import {User} from "../../store/models";

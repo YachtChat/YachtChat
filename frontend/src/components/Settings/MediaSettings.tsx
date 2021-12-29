@@ -14,7 +14,7 @@ import {
     getSpeaker,
     handleInputChange,
     loadAllMediaDevices
-} from "../../store/rtcSlice";
+} from "../../store/rtc/rtcSlice";
 import {User} from "../../store/models";
 import VolumeIndicator from "./VolumeIndicator";
 import {applyVirtualBackground, stopAllVideoEffects} from "../../store/utils";

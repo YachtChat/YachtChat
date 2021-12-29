@@ -4,7 +4,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import './style.scss';
 import {getUsers, submitMovement} from "../../store/userSlice";
-import {toggleUserVideo, mute} from "../../store/rtcSlice";
+import {toggleUserVideo, mute} from "../../store/rtc/rtcSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
