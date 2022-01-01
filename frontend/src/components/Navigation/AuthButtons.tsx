@@ -7,10 +7,12 @@ import {User} from "../../store/models";
 import {RootState} from "../../store/store";
 import {logout} from "../../store/authSlice";
 import {connect} from "react-redux";
+import {sendLogout} from "../../store/webSocketSlice";
 
 interface Props {
     activeUser: User
     logout: () => void
+    logoutOfSpace: () => void
 }
 
 interface State {
@@ -63,6 +65,7 @@ export class AuthButtons extends Component<Props, State> {
                         role={undefined} placement={"bottom"}
                         onMouseOver={() => this.setState({profileOpen: true})}
                         onMouseLeave={() => this.setState({profileOpen: false})}
+                        onClick={this.props.logoutOfSpace}
                         transition disablePortal>
                     {({TransitionProps, placement}) => (
                         <Grow
@@ -100,6 +103,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     logout: () => dispatch(logout()),
+    logoutOfSpace: () => dispatch(sendLogout()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthButtons)
