@@ -75,7 +75,9 @@ export const initPlayground = (): AppThunk => (dispatch, getState) => {
         dispatch(movePlayground({
             ...getState().playground.offset,
             x: offset.x - d_d.x / 2,
+            //x: offset.x - ((window.innerWidth > window.innerHeight) ? d_d.x / 2 : d_ns.x/2),
             y: offset.y - d_d.y / 2
+            //y: offset.y - ((window.innerWidth < window.innerHeight) ? d_d.y / 2 : d_ns.y/2)
         }))
 
         prevHeight = window.innerHeight

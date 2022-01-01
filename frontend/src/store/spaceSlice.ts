@@ -140,6 +140,7 @@ export const promoteUser = (id: string, spaceID: string): AppThunk => (dispatch,
     getHeaders(getState()).then(headers => {
         axios.post(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, {}, headers).then(response => {
             dispatch(requestHosts(spaceID))
+            dispatch(handleSuccess("Successfully promoted user"))
         }).catch((e) => {
                 console.log(e.trace)
             })
@@ -152,6 +153,7 @@ export const downgradeUser = (id: string, spaceID: string): AppThunk => (dispatc
     getHeaders(getState()).then(headers => {
         axios.delete(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, headers).then(response => {
             dispatch(requestHosts(spaceID))
+            dispatch(handleSuccess("Successfully downgraded user"))
         }).catch((e) => {
                 console.log(e.trace)
             })
