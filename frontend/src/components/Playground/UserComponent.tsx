@@ -256,15 +256,19 @@ export class UserComponent extends Component<Props, State> {
                                                                 >{m.message}</a> :
                                                                 m.message}
                                                         </span></td>
-                                                        <td className={"clickable"}><IoCopyOutline
-                                                            className={"icon clickable"} onClick={(e) => {
-                                                            e.preventDefault()
-                                                            e.nativeEvent.preventDefault()
-                                                            e.stopPropagation()
-                                                            e.nativeEvent.stopPropagation()
-                                                            navigator.clipboard.writeText(this.props.user.message ?? "")
-                                                            this.props.success("copied message")
-                                                        }}/></td>
+                                                        <Tooltip title={"Copy message"} arrow placement={"right"}>
+                                                            <td className={"clickable"}>
+                                                                <IoCopyOutline
+                                                                    className={"icon clickable"} onClick={(e) => {
+                                                                    e.preventDefault()
+                                                                    e.nativeEvent.preventDefault()
+                                                                    e.stopPropagation()
+                                                                    e.nativeEvent.stopPropagation()
+                                                                    navigator.clipboard.writeText(this.props.user.message ?? "")
+                                                                    this.props.success("copied message")
+                                                                }}/>
+                                                            </td>
+                                                        </Tooltip>
                                                     </tr>
                                                 )}
                                             </table>}
