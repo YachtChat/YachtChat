@@ -5,12 +5,15 @@ import {connect} from "react-redux";
 import "./style.scss";
 import {User} from "../../store/models";
 import MediaSettings from "./MediaSettings";
-import {IoCloseOutline} from "react-icons/all";
+import {IoCloseOutline, IoCogOutline} from "react-icons/all";
+import {Link} from "react-router-dom";
+import {sendLogout} from "../../store/webSocketSlice";
 
 interface Props {
     user: User
     open: boolean
     onClose: (event: React.MouseEvent) => void
+    logout: () => void
 }
 
 export class SpaceSettings extends Component<Props> {
@@ -28,6 +31,11 @@ export class SpaceSettings extends Component<Props> {
                                 <IoCloseOutline/>
                             </button>
                         </div>
+                        <Link to={"settings"} onClick={() => this.props.logout()}>
+                            <button className={"outlined"}>
+                                <IoCogOutline /> Go to settings
+                            </button>
+                        </Link>
                         <h1>Settings</h1>
                     </div>
                     <div className={"settings"}>
@@ -46,4 +54,8 @@ const mapStateToProps = (state: RootState) => ({
     user: state.userState.activeUser,
 })
 
-export default connect(mapStateToProps)(SpaceSettings)
+const mapDispatchToProps = (dispatch: any) => ({
+    logout: () => dispatch(sendLogout()),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SpaceSettings)

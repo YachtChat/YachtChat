@@ -58,7 +58,7 @@ export class App extends Component<Props, State> {
                     <PrivateRoute path='/invite/:spaceID' exact={false} component={InviteSpace}/>
                     <PrivateRoute path='/join/:token' exact={false} component={JoinSpace}/>
                     <PrivateRoute exact path='/spaces' component={Spaces}/>
-                    <PrivateRoute exact path='/settings' component={Settings}/>
+                    <PrivateRoute path='/settings/' component={Settings}/>
                     <PrivateRoute exact path='/create-space' component={CreateSpace}/>
                     <Route path='/'>
                         {(this.props.authFlowReady) ?

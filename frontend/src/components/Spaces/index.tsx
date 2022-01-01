@@ -89,7 +89,7 @@ export class Spaces extends Component<Props, State> {
                                     <IoAddOutline/> add space
                                 </button>
                             </Link>
-                            <Link to={"/settings"}>
+                            <Link to={"/settings/"}>
                                 <button className={"outlined spaceRight"}>
                                     <IoCogOutline/> settings
                                 </button>

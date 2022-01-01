@@ -81,7 +81,7 @@ export class AuthButtons extends Component<Props, State> {
                                         {/*        <FaCog/> Account*/}
                                         {/*    </MenuItem>*/}
                                         {/*</Link>*/}
-                                        <Link to={"/settings"}>
+                                        <Link to={"/settings/"}>
                                             <MenuItem className={"menuItem"}
                                                       onClick={this.handleClose.bind(this)}><IoCogOutline/> Settings</MenuItem>
                                         </Link>

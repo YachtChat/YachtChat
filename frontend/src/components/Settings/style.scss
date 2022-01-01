@@ -39,6 +39,41 @@
 
 #settingsMenu {
   background: transparent;
+
+  .tabbar {
+    margin: 1rem 0 0 0;
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    align-content: stretch;
+    justify-items: stretch;
+    justify-content: stretch;
+
+    .button {
+      flex: 1;
+      text-align: center;
+    }
+
+    .active {
+      color: white;
+
+      @media (prefers-color-scheme: dark) {
+        color: white;
+      }
+    }
+
+    .first {
+      border-radius: 2rem 0 0 2rem;
+    }
+
+    .middle {
+      border-radius: 0;
+    }
+
+    .last {
+      border-radius: 0 2rem 2rem 0;
+    }
+  }
 }
 
 .settings {
@@ -132,9 +167,18 @@
     }
   }
 
+  .userImage {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+  }
 
   .settings-item {
     margin-bottom: 1rem;
+
+    .logout {
+      border-color: red;
+    }
 
     > .dialog-content-text {
       color: black;

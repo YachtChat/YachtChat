@@ -25,7 +25,7 @@ a:link, a:visited {
   }
 }
 
-button, input[type=submit] {
+button, input[type=submit], .button {
   position: relative;
   display: inline-block;
   padding: 0.75rem 1rem;
@@ -41,6 +41,7 @@ button, input[type=submit] {
   border-radius: 3rem;
   outline: none;
   background-color: $accent_dark;
+  cursor: pointer;
 
   &.spaceRight {
     margin-right: 0.5rem;

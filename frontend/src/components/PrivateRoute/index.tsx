@@ -9,7 +9,7 @@ interface Props {
     authed: boolean,
     authFlowReady: boolean,
     path: string,
-    exact: boolean,
+    exact?: boolean,
     render?: any,
     component: ConnectedComponent<any, any>
 }

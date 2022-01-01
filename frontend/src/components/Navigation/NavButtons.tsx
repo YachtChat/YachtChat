@@ -32,7 +32,7 @@ export function NavButtons(props: Props) {
                 <br />
                 Support
             </button>
-            <Link to={"/settings"}>
+            <Link to={"/settings/"}>
                 <button>
                     <IoCogOutline />
                     <br/>
