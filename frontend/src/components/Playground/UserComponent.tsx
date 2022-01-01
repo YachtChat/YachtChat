@@ -42,6 +42,7 @@ export class UserComponent extends Component<Props, State> {
     private videoObject: React.RefObject<HTMLVideoElement>;
     private messagesEnd: React.RefObject<HTMLDivElement>;
     private closeTimeout: number = -1;
+    private openTimeout?: number;
 
     constructor(props: Props) {
         super(props);
@@ -103,7 +104,7 @@ export class UserComponent extends Component<Props, State> {
             this.messagesEnd.current.scrollIntoView({behavior: "smooth"});
     }
 
-    removeTimeout(onMessages?: boolean) {
+    mouseOver(onMessages?: boolean) {
         if (this.messagesEnd.current && onMessages !== this.state.onMessages)
             setTimeout(() => {
                     if (this.messagesEnd.current)
@@ -114,14 +115,28 @@ export class UserComponent extends Component<Props, State> {
 
         clearTimeout(this.closeTimeout)
         this.setState({
-            hovered: true,
+            hovered: !!onMessages,
             onMessages: !!onMessages
         })
 
+        // Only open the messages panel after 0.5s
+        if (!this.openTimeout)
+            this.openTimeout = setTimeout(() => {
+                this.setState({
+                    hovered: true,
+                    onMessages: !!onMessages
+                })
+            }, 500)
     }
 
-    startTimeout() {
+    mouseOut() {
         clearTimeout(this.closeTimeout)
+
+        // If timeout still active close it
+        if (this.openTimeout) {
+            clearTimeout(this.openTimeout)
+            this.openTimeout = undefined
+        }
         this.closeTimeout = setTimeout(() =>
                 this.setState({
                     hovered: false,
@@ -207,10 +222,10 @@ export class UserComponent extends Component<Props, State> {
                             open={true}>
                         <Grow in={this.state.hovered && !this.props.selected && user.inProximity} unmountOnExit>
                             <div onMouseOver={() => {
-                                this.removeTimeout(true)
+                                this.mouseOver(true)
                             }}
                                  onMouseLeave={() => {
-                                     this.startTimeout()
+                                     this.mouseOut()
                                  }}
                                  onWheel={e => e.stopPropagation()}
                                  className={"messages clickable"}>
@@ -298,8 +313,8 @@ export class UserComponent extends Component<Props, State> {
                                        autoPlay muted={this.props.isActiveUser}
                                        playsInline
                                        ref={this.videoObject}
-                                       onMouseOver={() => this.removeTimeout()}
-                                       onMouseLeave={this.startTimeout.bind(this)}
+                                       onMouseOver={() => this.mouseOver()}
+                                       onMouseLeave={this.mouseOut.bind(this)}
                                        className={
                                            ((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
