@@ -23,6 +23,8 @@ const initialState: UserState = {
     messages: []
 };
 
+const messageTimeout: { [fromId: string]: number } = {}
+
 export const userProportion = 100
 export const maxRange = 300
 
@@ -244,8 +246,10 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
             playNotificationSound()
         // Set message in order to display it
         dispatch(setMessage({message, id: fromId}))
+
         // After timeout message will be deleted
-        setTimeout(() => dispatch(destroyMessage(fromId)), 12000)
+        if (messageTimeout[fromId]) clearTimeout(messageTimeout[fromId])
+        messageTimeout[fromId] = setTimeout(() => dispatch(destroyMessage(fromId)), 6000)
     }
 }
 
