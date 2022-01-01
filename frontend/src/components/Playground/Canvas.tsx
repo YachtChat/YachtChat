@@ -28,16 +28,16 @@ interface Props {
 }
 
 interface State {
-    userDragActive: boolean
-    mapDragActive: boolean
-    scrolling: boolean
-    previousOffset?: { x: number, y: number }
-    previousPosition?: { x: number, y: number }
-    dragStart?: { x: number, y: number }
-    userOffset?: { x: number, y: number }
-    pinchStart?: { x1: number, y1: number, x2: number, y2: number, scale: number }
-    focusUser?: string
-    possibleFocusUser?: string
+    userDragActive: boolean // If the user is actively dragged
+    mapDragActive: boolean // If the map is dragged
+    scrolling: boolean // When true animations will be paused - active while scrolling
+    previousOffset?: { x: number, y: number } // Previous offset of the map
+    previousPosition?: { x: number, y: number } // Previous position of the user
+    dragStart?: { x: number, y: number } // Start position of the drag
+    userOffset?: { x: number, y: number } // Offset on the user itself
+    pinchStart?: { x1: number, y1: number, x2: number, y2: number, scale: number } // Position of the pinch start
+    focusUser?: string // which user is beeing focused on
+    possibleFocusUser?: string // captured on the drag start – could become focus user when same user on dragend
 }
 
 export class Canvas extends Component<Props, State> {
@@ -90,10 +90,10 @@ export class Canvas extends Component<Props, State> {
     // if the mouse is clicked on the active user
     dragStart(event: React.MouseEvent | React.TouchEvent) {
         event.stopPropagation()
-        if ((event.target as HTMLElement).classList.contains("clickable")) {
-            console.log((event.target as HTMLElement))
+        if ((event.target as HTMLElement).classList.contains("clickable"))
             return
-        }
+
+        // Figure out which element was clicked
         const activeUser = ((event.target as HTMLVideoElement).dataset.id === "activeUser")
         const message = ((event.target as HTMLDivElement).dataset.id === "message")
 
@@ -101,8 +101,8 @@ export class Canvas extends Component<Props, State> {
 
         const canvas = !(activeUser || message)
 
+        // Capture mouse/touch position
         let x, y;
-
         if (event.type === "mousedown") {
             x = (event as React.MouseEvent).clientX
             y = (event as React.MouseEvent).clientY
@@ -110,17 +110,20 @@ export class Canvas extends Component<Props, State> {
             x = (event as React.TouchEvent).touches[0].clientX
             y = (event as React.TouchEvent).touches[0].clientY
         }
-        let userOffsetx, userOffsety;
-        userOffsetx = x / this.props.offset.scale + this.props.offset.x - this.props.activeUser.position!.x
-        userOffsety = y / this.props.offset.scale + this.props.offset.y - this.props.activeUser.position!.y
 
+        // offset on top of the user itself
+        const userOffsetX = x / this.props.offset.scale + this.props.offset.x - this.props.activeUser.position!.x
+        const userOffsetY = y / this.props.offset.scale + this.props.offset.y - this.props.activeUser.position!.y
+
+        // If user was clicked
         if (activeUser)
             this.setState({
                 possibleFocusUser: clickedUserId,
                 userDragActive: true,
                 dragStart: {x, y},
-                userOffset: {x: userOffsetx, y: userOffsety}
+                userOffset: {x: userOffsetX, y: userOffsetY}
             })
+        // If user clicked on the map
         else if (canvas)
             this.setState({
                 possibleFocusUser: clickedUserId,
@@ -156,7 +159,6 @@ export class Canvas extends Component<Props, State> {
             this.props.spaceUsers.forEach(user => {
                 if (user.id === clickedUserId && user.inProximity) {
                     this.focus(user.id)
-                    //    <FocusUser open={this.state.open["focus"]} onClose={() => this.handleClose("focus")}/>
                     focused = true
                 }
             })
@@ -193,21 +195,17 @@ export class Canvas extends Component<Props, State> {
 
     // function that moves the active user if the mouse
     moveMouse(e: React.MouseEvent) {
-        const x = e.currentTarget.getBoundingClientRect().x
-        const y = e.currentTarget.getBoundingClientRect().y
         const clientX = e.clientX
         const clientY = e.clientY
-        this.move(x, y, clientX, clientY)
+        this.move(clientX, clientY)
     }
 
     // function that moves the active user if user touches
     moveTouch(e: React.TouchEvent) {
         e.preventDefault()
-        const x = e.currentTarget.getBoundingClientRect().x
-        const y = e.currentTarget.getBoundingClientRect().y
         const clientX = e.touches[0].clientX
         const clientY = e.touches[0].clientY
-        this.move(x, y, clientX, clientY)
+        this.move(clientX, clientY)
 
         // If user is pinching
         if (e.touches.length === 2) {
@@ -223,7 +221,8 @@ export class Canvas extends Component<Props, State> {
         e.preventDefault()
     }
 
-    move(x: number, y: number, clientX: number, clientY: number) {
+    move(clientX: number, clientY: number) {
+        // move(x: number, y: number, clientX: number, clientY: number) {
         const scaling = this.props.offset.scale
         if (this.state.userDragActive) {
             this.props.move({
@@ -237,8 +236,8 @@ export class Canvas extends Component<Props, State> {
             const start = this.state.dragStart!
             this.props.movePlayground({
                 ...this.props.offset,
-                x: (prev.x + (start.x - clientX) / scaling) - x,
-                y: (prev.y + (start.y - clientY) / scaling) - y
+                x: (prev.x + (start.x - clientX) / scaling),
+                y: (prev.y + (start.y - clientY) / scaling)
             })
             // this.props.move({
             //     x: this.state.previousPosition!.x + (start.x - e.clientX) / scaling,
