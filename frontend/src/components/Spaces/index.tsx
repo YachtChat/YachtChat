@@ -3,7 +3,7 @@ import './style.scss';
 import {Space} from "../../store/models";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
-import {deleteSpaceForUser, requestSpaces} from "../../store/spaceSlice";
+import {deleteSpaceForUser, getInvitationToken, requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
 import {
     IoAddOutline, IoArrowForward, IoChatbubblesOutline,
@@ -15,11 +15,17 @@ import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import {Tooltip} from "@material-ui/core";
+import {FRONTEND_URL} from "../../store/config";
+import {handleError, handleSuccess} from "../../store/statusSlice";
 
 interface Props {
     spaces: Space[]
     logout: () => void
     requestSpaces: () => void
+    success: (s: string) => void
+    error: (s: string) => void
+    getToken: (spaceID: string) => Promise<string>
     deleteSpaceForUser: (id: string) => void
 }
 
@@ -61,6 +67,15 @@ export class Spaces extends Component<Props, State> {
             mouseY: undefined,
             space: undefined
         })
+    }
+
+    invite(e: React.MouseEvent, spaceID: string) {
+        e.preventDefault()
+        e.stopPropagation()
+        this.props.getToken(spaceID!).then(token => {
+            navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + token)
+            this.props.success("Invite link copied")
+        }).catch(() => this.props.error("Unable to request token"))
     }
 
     render() {
@@ -106,9 +121,13 @@ export class Spaces extends Component<Props, State> {
                                                 className={"nostyle outlined"}>
                                             <IoEllipsisHorizontal/>
                                         </button>
-                                        <button className={"outlined spaceRight"}>
-                                            Invite
-                                        </button>
+                                        <Tooltip title={"Copy invite link"} arrow placement={"top"}>
+                                            <button
+                                                onClick={e => this.invite(e, s.id)}
+                                                className={"outlined spaceRight"}>
+                                                Invite
+                                            </button>
+                                        </Tooltip>
                                         <button>
                                             Join
                                         </button>
@@ -162,11 +181,14 @@ export class Spaces extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     spaces: state.space.spaces,
+    getToken: (spaceID: string) => getInvitationToken(state, spaceID),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     requestSpaces: () => dispatch(requestSpaces()),
     logout: () => dispatch(logout()),
+    success: (s: string) => dispatch(handleSuccess(s)),
+    error: (s: string) => dispatch(handleError(s)),
     deleteSpaceForUser: (id: string) => dispatch(deleteSpaceForUser(id)),
 })
 
