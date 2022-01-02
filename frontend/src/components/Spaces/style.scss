@@ -8,6 +8,8 @@
   min-height: 500px;
   display: flex;
   flex-direction: column;
+  padding: 2rem;
+  box-sizing: border-box;
 
   .stepper {
     background: transparent;

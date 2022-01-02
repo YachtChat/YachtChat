@@ -8,7 +8,7 @@ import Wrapper from "../Wrapper";
 import {
     IoAddOutline, IoArrowForward, IoChatbubblesOutline,
     IoCogOutline, IoCreateOutline,
-    IoEllipsisHorizontal,
+    IoEllipsisHorizontal, IoPeopleOutline,
     IoTrashOutline
 } from "react-icons/all";
 import {Link} from "react-router-dom";
@@ -16,7 +16,7 @@ import {logout} from "../../store/authSlice";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import {Tooltip} from "@material-ui/core";
-import {FRONTEND_URL} from "../../store/config";
+import {FRONTEND_URL, SUPPORT_URL} from "../../store/config";
 import {handleError, handleSuccess} from "../../store/statusSlice";
 
 interface Props {
@@ -169,8 +169,18 @@ export class Spaces extends Component<Props, State> {
                 </div>
                 <footer>
                     <Link to={"/create-space"}>
-                        <button className={"outlined "}>
+                        <button className={"outlined spaceRight"}>
                             <IoAddOutline/> add space
+                        </button>
+                    </Link>
+                    <a href={SUPPORT_URL}>
+                        <button className={"outlined spaceRight"}>
+                            <IoPeopleOutline /> Support
+                        </button>
+                    </a>
+                    <Link to={"/settings"}>
+                        <button className={"outlined spaceRight"}>
+                            <IoCogOutline /> Settings
                         </button>
                     </Link>
                 </footer>
