@@ -10,7 +10,7 @@ import {Tooltip} from "@material-ui/core";
 import React from "react";
 
 interface Props {
-    title?: string
+    title?: string | Element
     spaceID?: string
     getToken: (sid: string) => Promise<string>
     success: (s: string) => void
@@ -78,7 +78,7 @@ export function Logo(props: Props) {
                             props.success("Invite link copied")
                         }).catch(() => props.error("Unable to request token"))
                     }
-                } className={""}>
+                } className={"invite"}>
                     <IoLink/> invite link
                 </button>
             </Tooltip>

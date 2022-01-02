@@ -10,6 +10,7 @@ import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
 
 interface Props {
+    minimal?: boolean
     activeUser: User
     logout: () => void
     logoutOfSpace: () => void
@@ -44,7 +45,7 @@ export class AuthButtons extends Component<Props, State> {
     }
 
     render() {
-        const open = this.state.profileOpen
+        const open = this.state.profileOpen && !this.props.minimal
 
         return (
             <div className={"authentification"}
@@ -59,7 +60,9 @@ export class AuthButtons extends Component<Props, State> {
                     className={"iconButton profilePic"}
                     style={{backgroundImage: `url(${this.props.activeUser.profile_image})`}}
                 />
+                {!this.props.minimal &&
                 <IoChevronDownOutline className={"icon"}/>
+                }
                 <Popper open={open}
                         anchorEl={this.anchorRef.current}
                         role={undefined} placement={"bottom"}
@@ -103,7 +106,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     logout: () => dispatch(logout()),
-    logoutOfSpace: () => dispatch(sendLogout()),
+    logoutOfSpace: () => dispatch(sendLogout(false)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthButtons)

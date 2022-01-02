@@ -674,7 +674,7 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
     delete rtpSender[id]
 }
 
-export const destroySession = (): AppThunk => (dispatch, getState) => {
+export const destroySession = (returnToRoot?: boolean): AppThunk => (dispatch, getState) => {
     localStream?.getTracks().forEach(t => t.stop())
     stopAllVideoEffects(camera_processor)
     screenStream?.getTracks().forEach(t => t.stop())
@@ -715,7 +715,8 @@ export const destroySession = (): AppThunk => (dispatch, getState) => {
     dispatch(resetPlayground())
     dispatch(requestSpaces())
 
-    dispatch(returnHome())
+    if (returnToRoot === undefined || returnToRoot)
+        dispatch(returnHome())
 }
 
 export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {

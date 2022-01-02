@@ -53,12 +53,13 @@ export class App extends Component<Props, State> {
                 {/*<Login/>*/}
                 {/*}*/}
                 <Switch>
-                    <PrivateRoute path='/spaces/:spaceID' exact={false} component={Playground}/>
-                    <PrivateRoute path='/spaces/:spaceID/:token' exact={false} component={Playground}/>
-                    <PrivateRoute path='/invite/:spaceID' exact={false} component={InviteSpace}/>
-                    <PrivateRoute path='/join/:token' exact={false} component={JoinSpace}/>
+                    <PrivateRoute path='/spaces/:spaceID' component={Playground}/>
+                    <PrivateRoute path='/spaces/:spaceID/:token' component={Playground}/>
+                    <PrivateRoute path='/invite/:spaceID' component={InviteSpace}/>
+                    <PrivateRoute path='/join/:token' component={JoinSpace}/>
                     <PrivateRoute exact path='/spaces' component={Spaces}/>
-                    <PrivateRoute path='/settings/' component={Settings}/>
+                    <PrivateRoute path='/settings/:site' component={Settings}/>
+                    <Route exact path='/settings/' children={<Redirect to={"/settings/general"}/>}/>
                     <PrivateRoute exact path='/create-space' component={CreateSpace}/>
                     <Route path='/'>
                         {(this.props.authFlowReady) ?

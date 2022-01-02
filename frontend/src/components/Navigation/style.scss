@@ -30,6 +30,7 @@
     display: flex;
     flex-direction: row;
     align-content: center;
+    align-items: center;
     justify-content: flex-start;
     float: left;
 
@@ -48,7 +49,15 @@
     h1 {
       font-size: 1rem;
       color: black;
-      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+
+    .invite {
+      font-size: 0.6rem;
+      background-color: $accent_light;
+      padding: 0.25rem 0.5rem;
+      height: auto;
+      margin: 0;
     }
 
   }
@@ -62,6 +71,10 @@
     align-items: center;
     align-content: center;
 
+    span, .icon, .iconButton {
+      transition: opacity 0.2s;
+    }
+
     padding-right: 2rem;
     flex-grow: 0;
 
@@ -69,7 +82,6 @@
       right: 0;
       margin-right: 0;
       float: right;
-
     }
 
     .icon {
@@ -82,6 +94,16 @@
       text-transform: uppercase;
       font-weight: bold;
       font-size: 0.7rem;
+    }
+
+    &:hover {
+      span, .icon, .iconButton {
+        opacity: 0.5;
+      }
+    }
+
+    .iconButton:hover {
+      opacity: 1;
     }
   }
 
@@ -96,31 +118,34 @@
     left: 0;
     right: 0;
     margin: auto;
+    height: 100%;
 
     .nav-items {
       flex-grow: 0;
       padding: 0;
-      height: auto;
       margin: auto;
       display: flex;
       flex-flow: row;
+      height: 100%;
 
       button {
         margin: 0 1rem;
-        padding: 0.5rem 0.5rem;
+        //padding: 0.5rem 0.5rem;
         font-size: 0.7rem;
         list-style: none;
         color: black;
         background: none;
         border-radius: 0;
+        border: none;
+        height: 100%;
+        border-top: 5px solid transparent;
 
         text-transform: uppercase;
-        border: none;
         width: unset;
 
         font-weight: bold;
 
-        transition: opacity 0.3s;
+        transition: opacity 0.3s, border-bottom-color 0.3s;
 
         &:hover {
           opacity: 0.5;
@@ -129,7 +154,7 @@
 
         &.active {
           color: $accent_light;
-          border-bottom: 5px solid $accent_dark;
+          border-top-color: $accent_dark;
 
           @media (prefers-color-scheme: dark) {
             & {
@@ -237,7 +262,7 @@
       right: 0;
       width: 100vw;
       height: 100vh;
-      transition: transform 1s 0.3s, background 1s 0.3s;
+      transition: transform 0.4s, background 0.4s;
 
       .closeButton {
         color: black;
@@ -329,7 +354,6 @@
 
       &.open {
         background: $foreground_light;
-        transition: transform 1s, background 1s;
 
         @media (prefers-color-scheme: dark) {
           background: $foreground_dark;

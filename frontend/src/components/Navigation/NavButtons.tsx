@@ -6,7 +6,7 @@ import {sendLogout} from "../../store/webSocketSlice";
 interface Props {
     closeButton?: boolean
     logout: () => void
-
+    active?: string
 }
 
 export function NavButtons(props: Props) {
@@ -14,14 +14,14 @@ export function NavButtons(props: Props) {
     return (
         <nav className={"nav-items"} onClick={props.logout}>
             <Link to={"/spaces"}>
-                <button>
+                <button className={(props.active === "spaces") ? "active" : ""}>
                     <IoChatbubblesOutline />
                     <br />
                     Spaces
                 </button>
             </Link>
             <Link to={"/create-space"}>
-            <button>
+            <button className={(props.active === "create-space") ? "active" : ""}>
                 <IoAddOutline />
                 <br />
                 New Space
@@ -33,7 +33,7 @@ export function NavButtons(props: Props) {
                 Support
             </button>
             <Link to={"/settings/"}>
-                <button>
+                <button className={(props.active === "settings") ? "active" : ""}>
                     <IoCogOutline />
                     <br/>
                     Settings
@@ -45,7 +45,7 @@ export function NavButtons(props: Props) {
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
-    logout: () => dispatch(sendLogout()),
+    logout: () => dispatch(sendLogout(false)),
 })
 
 export default connect(undefined, mapDispatchToProps)(NavButtons)

@@ -198,9 +198,9 @@ export const requestLogin = (): AppThunk => (dispatch, getState) => {
     ).catch(() => dispatch(destroySession()))
 }
 
-export const sendLogout = (): AppThunk => (dispatch) => {
+export const sendLogout = (returnHome?: boolean): AppThunk => (dispatch) => {
     dispatch(send({type: "leave"}))
-    dispatch(destroySession())
+    dispatch(destroySession(returnHome))
 }
 
 export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) => {

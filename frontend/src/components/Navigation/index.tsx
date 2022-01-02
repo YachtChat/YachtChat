@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import AuthButtons from "./AuthButtons";
 import NavButtons from "./NavButtons";
 import Logo from "./Logo";
+import {Link, useParams} from "react-router-dom";
 
 interface Props {
     title?: string
@@ -13,6 +14,7 @@ interface Props {
 export const Navigation = (props: Props) => {
 
     const [open, setOpen] = useState(false)
+    const {site} = useParams<{site: string}>()
 
     return (
         <header id={"navigation"}>
@@ -20,7 +22,7 @@ export const Navigation = (props: Props) => {
 
                 <div id={"nav-content-desktop"}>
                     <Logo title={props.title} spaceID={props.spaceID}/>
-                    <NavButtons/>
+                    <NavButtons active={site} />
                     <AuthButtons/>
                 </div>
 
@@ -46,7 +48,10 @@ export const Navigation = (props: Props) => {
                             <h1>Navigation</h1>
                         </div>
                         <NavButtons closeButton/>
-                        <AuthButtons/>
+                        <Link to={"/settings/profile"}>
+
+                        <AuthButtons minimal />
+                        </Link>
                     </div>
                 </div>
             </div>
