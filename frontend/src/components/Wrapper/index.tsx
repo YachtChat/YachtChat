@@ -3,6 +3,7 @@ import './style.scss';
 import {IoWifi} from "react-icons/all";
 import {CircularProgress} from "@material-ui/core";
 import Navigation from "../Navigation";
+import {Route} from "react-router-dom";
 
 interface Props {
     className?: string
@@ -19,7 +20,7 @@ export class Wrapper extends Component<Props> {
                 <div id={this.props.id} className={"contentBox " + this.props.className}>
                     {this.props.children}
                 </div>
-                <Navigation />
+                <Route path={"/:site/"} children={<Navigation />}/>
             </div>
         )
     }
