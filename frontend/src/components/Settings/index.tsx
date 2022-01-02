@@ -1,22 +1,18 @@
-import React, {Component, useState} from 'react';
-import {RootState} from "../../store/store";
+import React, {useState} from 'react';
 import {connect} from "react-redux";
 import "./style.scss";
-import {User} from "../../store/models";
 import MediaSettings from "./MediaSettings";
 import Wrapper from "../Wrapper";
 import {IoArrowBack} from "react-icons/all";
-import {Link, Redirect, Route, Switch} from "react-router-dom";
+import {Link, Route, Switch, useParams} from "react-router-dom";
 import {GeneralSettings} from "./GeneralSettings";
 import Profile from "./Profile";
 import {Grow} from "@material-ui/core";
+import {SUPPORT_URL} from "../../store/config";
 
-interface Props {
-    user: User
-}
-
-export function Settings(props: Props) {
-    const [active, setActive] = useState("general")
+export function Settings() {
+    let {site} = useParams<{ site: string }>();
+    const [active, setActive] = useState(site)
 
     return (
         <Wrapper id={"settingsMenu"} className={"settings"}>
@@ -50,7 +46,7 @@ export function Settings(props: Props) {
             </div>
             <div className={"content"}>
                 <Switch>
-                    <Route exact path={"/settings/media"}>
+                    <Route exact path={"/settings/media/"}>
                         {/*<p>Edit your preferences. Alter your camera, microphone and even your virtual*/}
                         {/*    background.</p>*/}
                         <Grow timeout={500} in={active === "media"} unmountOnExit>
@@ -59,31 +55,37 @@ export function Settings(props: Props) {
                             </div>
                         </Grow>
                     </Route>
-                    <Route exact path={"/settings/general"}>
+                    <Route exact path={"/settings/general/"}>
                         <Grow timeout={500} in={active === "general"} unmountOnExit>
                             <div>
                                 <GeneralSettings/>
                             </div>
                         </Grow>
                     </Route>
-                    <Route exact path={"/settings/profile"}>
+                    <Route exact path={"/settings/profile/"}>
                         <Grow timeout={500} in={active === "profile"} unmountOnExit>
                             <div>
                                 <Profile/>
                             </div>
                         </Grow>
                     </Route>
-                    <Route path={"/settings"}>
-                        <Redirect to={"general"}/>
-                    </Route>
                 </Switch>
+            </div>
+            <div className={"headlineBox"}>
+                <label style={{textAlign: "center"}}>
+                    To learn more about the options and available settings see our support documents.
+                </label>
+                <a href={SUPPORT_URL}>
+                    <button style={{
+                        display: "block",
+                        margin: "auto"
+                    }} className={"outlined"}>
+                        Support
+                    </button>
+                </a>
             </div>
         </Wrapper>
     );
 }
 
-const mapStateToProps = (state: RootState) => ({
-    user: state.userState.activeUser,
-})
-
-export default connect(mapStateToProps)(Settings)
+export default connect()(Settings)
