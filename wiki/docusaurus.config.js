@@ -73,6 +73,10 @@ const config = {
                 label: 'FAQs',
                 to: '/docs/intro',
               },
+              {
+                label: 'Getting Started',
+                to: '/docs/Getting-Started',
+              },
             ],
           },
           {
@@ -89,6 +93,10 @@ const config = {
               {
                 label: 'TU Highway',
                 href: 'https://www.highway.tu-darmstadt.de/institutions/single/320039/YachtChat83e8abce',
+              },
+              {
+                label: 'YouTube',
+                href: 'https://www.youtube.com/channel/UC905JslrRFgOymf1bTr2s1Q',
               },
             ],
           },
