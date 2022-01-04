@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Yacht.Chat Wiki',
+  title: 'Yacht.Chat Support',
   tagline: 'Experience a new and private way of spontaneous remote communication that follows your team’s workflow.',
   url: 'https://www.yacht.chat',
   baseUrl: '/',
@@ -43,7 +43,7 @@ const config = {
       },
 
       navbar: {
-        title: 'Yacht.Chat Wiki',
+        title: 'Welcome',
         logo: {
           alt: 'Yacht.Chat',
           src: 'https://app.yacht.chat/yacht512.png',
@@ -53,7 +53,7 @@ const config = {
             type: 'doc',
             docId: 'intro',
             position: 'left',
-            label: 'FAQs',
+            label: 'Support',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
@@ -106,6 +106,10 @@ const config = {
               {
                 label: 'Blog',
                 to: '/blog',
+              },
+              {
+                label: 'Imprint',
+                href: 'https://www.yacht.chat',
               },
 
             ],
