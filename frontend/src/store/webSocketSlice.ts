@@ -63,9 +63,10 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
     console.log("Try to connect to", spaceID)
 
     if (!SOCKET_PORT)
-        socket = new WebSocket("wss://" + SOCKET_URL + "/room/" + spaceID);
-    else
-        socket = new WebSocket("ws://" + SOCKET_URL + ":" + SOCKET_PORT + "/room/" + spaceID);
+        socket = new WebSocket("wss://" + SOCKET_URL + "/space/" + spaceID);
+    else {
+        socket = new WebSocket("ws://" + SOCKET_URL + ":" + SOCKET_PORT + "/space/" + spaceID);
+    }
 
 
     socket.onopen = () => {
@@ -77,8 +78,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
     }
 
     socket.onerror = (err) => {
-        console.error("Got error", err);
-        dispatch(handleError("Connection failed"))
+        dispatch(handleError("Connection failed", err))
         dispatch(destroySession())
     };
 
