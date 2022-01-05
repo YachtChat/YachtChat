@@ -3,7 +3,7 @@ import {Space} from "./models";
 import {AppThunk, RootState} from "./store";
 import axios from "axios";
 import {handleError, handleSuccess} from "./statusSlice";
-import {complete_spaces_url, SPACES_URL} from "./config";
+import {complete_spaces_url, SOCKET_PORT, SOCKET_URL, SPACES_URL} from "./config";
 import {getHeaders} from "./authSlice";
 import {push} from "connected-react-router";
 import {getUserID} from "./userSlice";
@@ -56,8 +56,16 @@ export const requestSpaces = (): AppThunk => (dispatch, getState) => {
         return;
     }
     getHeaders(getState()).then(header =>
-        axios.get(complete_spaces_url + "/api/v1/spaces/", header).then(response => {
-            dispatch(setSpaces(response.data))
+        axios.get(complete_spaces_url + "/api/v1/spaces/", header).then(spaceResponse => {
+            const ids = spaceResponse.data.map((d: {id: string}) => d.id)
+            let spaces = spaceResponse.data
+            axios.post("http://" + SOCKET_URL + ":" + SOCKET_PORT + "/api/v1/space/members", ids, header).then(onlineUserResponse => {
+                spaces = spaceResponse.data.map((d: Space) => ({...d,
+                        online: onlineUserResponse.data[d.id] ?? 0
+                    }))
+            }).finally(() => {
+                dispatch(setSpaces(spaces))
+            })
         }).catch(e => console.log(e.trace))
     )
 }

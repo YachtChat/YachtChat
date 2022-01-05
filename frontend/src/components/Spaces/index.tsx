@@ -102,7 +102,6 @@ export class Spaces extends Component<Props, State> {
                     <p>
                         To join a space, select a space on the right, or create a new one.<br/>
                         Invite your team to a space to collaborate.{" "}
-                        <a href={"/"}>Get help <IoArrowForward/></a>
                     </p>
                 </div>
                 <div className={"spacesWrapper"}>
@@ -116,6 +115,9 @@ export class Spaces extends Component<Props, State> {
                                     }
                                     className={"item " + ((idx > 0) ? "separator" : "")}>
                                     {s.name}
+                                    {(!!s.online && s.online !== 0) && (
+                                        <span className={"tag"}>{s.online} online</span>
+                                    )}
                                     <div className={"buttons"}>
                                         <button onClick={e => this.handleContext(e, s)}
                                                 className={"nostyle outlined"}>

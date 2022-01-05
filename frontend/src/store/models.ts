@@ -46,6 +46,7 @@ export interface Space {
     name: string
     id: string
     public: boolean
+    online?: number // number of users online
     hosts: string[]
 }
 

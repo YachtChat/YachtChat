@@ -125,6 +125,26 @@
       margin-bottom: 0;
       box-sizing: content-box;
 
+      .tag {
+        margin-left: 10px;
+        font-size: 0.6rem;
+        color: $online_color;
+        padding: 0.2rem 0.6rem;
+        background: $background_2_light;
+        border-radius: $border_radius;
+
+        &:hover {
+          background: $background_2_light;
+
+        }
+
+        @media (prefers-color-scheme: dark) {
+          &:hover {
+            background: $background_2_dark;
+          }
+        }
+      }
+
       .buttons {
         position: absolute;
         top: 0;
