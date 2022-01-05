@@ -72,7 +72,7 @@ public class WsServerEndpoint {
             // create new Map for room
             room = new ConcurrentHashMap(8);
             spaceUserService.put(spaceID, room);
-            log.info("Room {} newly opend", spaceID);
+            log.info("Room {} newly opened", spaceID);
         }
         log.info("User joined the room {}", spaceID);
 
