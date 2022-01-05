@@ -43,7 +43,6 @@ const config = {
       },
 
       navbar: {
-        title: 'Welcome',
         logo: {
           alt: 'Yacht.Chat',
           src: 'https://app.yacht.chat/yacht512.png',
