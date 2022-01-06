@@ -15,3 +15,4 @@ Get started by **[Register](https://auth.yacht.chat/auth/realms/Application/logi
 
 TODO invite link
 
+This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

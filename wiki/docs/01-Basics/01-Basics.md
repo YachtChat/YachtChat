@@ -8,7 +8,7 @@ It is important to set the permissions in your Browser to use the microphone, ca
 
 ## Audio & Video
 
-here you find how to use your audio, video and what features you have.
+**[Here](AudioVideo)** you find how to use your audio, video and what features you have.
 
 ## Interact with other users
 
