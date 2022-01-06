@@ -110,6 +110,10 @@ const config = {
                 label: 'Imprint',
                 href: 'https://www.yacht.chat',
               },
+              {
+                label: 'Contact',
+                href: 'mailto:contact@yacht.chat',
+              },
 
             ],
           },
