@@ -9,6 +9,7 @@ export interface User {
     profile_image?: string // The actual URL to the image if available
 
     video?: boolean // if a user sends video or not
+    audio?: boolean // if a user sends audio or not
     message?: string
     inProximity?: boolean
     userStream?: boolean
@@ -20,6 +21,7 @@ export interface UserPayload {
     id: string
     position?: UserCoordinates
     video?: boolean
+    audio?: boolean
 }
 
 export interface Message {
@@ -56,7 +58,7 @@ export interface Point {
 }
 
 export enum MediaType {
-    AUDIO = "AUDIO",
-    VIDEO = "VIDEO",
-    SCREEN = "SCREEN"
+    AUDIO = "audio",
+    VIDEO = "video",
+    SCREEN = "screen"
 }

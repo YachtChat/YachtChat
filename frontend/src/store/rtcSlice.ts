@@ -68,7 +68,7 @@ let screenStream: MediaStream | undefined = undefined // stream of the display v
 let streams: { [key: string]: MediaStream } = {}; // incoming streams of the other users
 let mediaDevices: { [key: string]: MediaDeviceInfo } = {}; // media devices
 let connectionTimer: { [key: string]: number } = {}; // Connection retry timer
-let bytesReceived: { [key: string]: number } = {}; // Stores bytes received per user
+let bytesReceived: Record<string, Record<MediaType, number>> = {}; // Stores bytes received per user
 
 const offerOptions = {
     offerToReceiveVideo: true,
@@ -577,18 +577,30 @@ export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThu
 
                     rtcConnections[userId].getStats().then(
                         (report: RTCStatsReport) => {
-                            const br = bytesReceived[userId]
+                            if (!bytesReceived[userId]) {
+                                bytesReceived[userId] = {audio: 0, screen: 0, video: 0}
+                            }
+                            const br = bytesReceived
                             const user = getUserById(getState(), userId)
                             report.forEach(k => {
                                 if (k.type === "inbound-rtp" && k.kind === "video") {
-                                    if (br === k.bytesReceived && user.video) {
-                                        console.log(`${user.firstName} does not send any data.`)
+                                    if (br['video'] === k.bytesReceived && user.video) {
+                                        console.log(`${user.firstName} does not send any video data.`)
                                         clearInterval(interval)
                                         // dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
                                         dispatch(triggerReconnection(userId));
                                     }
-                                    bytesReceived[userId] = k.bytesReceived
+                                    bytesReceived[userId][MediaType.VIDEO] = k.bytesReceived
+                                } else if (k.type === "inbound-rtp" && k.kind === "audio") {
+                                    if (br['audio'] === k.bytesReceived && user.audio) {
+                                        console.log(`${user.firstName} does not send any video data.`)
+                                        clearInterval(interval)
+                                        // dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
+                                        dispatch(triggerReconnection(userId));
+                                    }
+                                    bytesReceived[userId][MediaType.AUDIO] = k.bytesReceived
                                 }
+                                // Possibly check also outbound streams and recreate own audio/video streams if necessary
                             })
                         }
                     )

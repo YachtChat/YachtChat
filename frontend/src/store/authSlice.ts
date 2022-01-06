@@ -56,10 +56,7 @@ export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) =
                 if (existingToken && existingToken !== "") {
                     dispatch(setLogin(auth)) // TODO: to be set to keycloak.authenticated
 
-                    // @ts-ignore
-                    const tokenParsed: string = keycloak.tokenParsed!.sub
-
-                    dispatch(handleLoginUser({id: tokenParsed}))
+                    dispatch(handleLoginUser())
                 } else {
                     dispatch(authFlowReady())
                     keycloak.login()
@@ -76,7 +73,7 @@ export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) =
 
 }
 
-export const logout = (): AppThunk => (dispatch, getState) => {
+export const logout = (): AppThunk => (dispatch) => {
     dispatch(setToken(""))
     localStorage.clear()
     dispatch(setLogin(false))
@@ -87,9 +84,9 @@ export const getToken = (state: RootState): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
         keycloak.updateToken(30).then(() =>
             resolve(keycloak.token!)
-        ).catch(() =>
+        ).catch(() => {
             keycloak.login()
-        )
+        })
     })
 }
 
