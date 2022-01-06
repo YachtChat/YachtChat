@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
 import {IoCloseOutline, IoLink} from "react-icons/all";
-import UserList from "../../Friends/UserList";
+import UserList from "./UserList";
 import {RootState} from "../../../store/store";
 import {FRONTEND_URL} from "../../../store/config";
 import {handleError, handleSuccess} from "../../../store/statusSlice";

@@ -1,12 +1,12 @@
 import React, {Component} from "react";
 import './style.scss';
-import {User} from "../../store/models";
+import {User} from "../../../store/models";
 import {FaCrown, IoHandRight, IoTrashOutline} from "react-icons/all";
 import {Tooltip} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
-import {RootState} from "../../store/store";
-import {getUser, getUsers, kickUser} from "../../store/userSlice";
+import {RootState} from "../../../store/store";
+import {getUser, getUsers, kickUser} from "../../../store/userSlice";
 import {
     deleteSpaceForUser,
     downgradeUser,
@@ -14,9 +14,9 @@ import {
     isHost,
     promoteUser,
     requestHosts
-} from "../../store/spaceSlice";
-import {handleError, handleSuccess} from "../../store/statusSlice";
-import {sendLogout} from "../../store/webSocketSlice";
+} from "../../../store/spaceSlice";
+import {handleError, handleSuccess} from "../../../store/statusSlice";
+import {sendLogout} from "../../../store/webSocketSlice";
 
 interface OwnProps {
     type: "users" | "friends"
