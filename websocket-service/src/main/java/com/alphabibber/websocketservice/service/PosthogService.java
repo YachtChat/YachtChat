@@ -13,10 +13,11 @@ public class PosthogService {
     private static final PostHog posthog = new PostHog.Builder(POSTHOG_API_KEY).host(POSTHOG_HOST).build();
     private static PosthogService instance;
 
-    private String video = "video";
-    private String screen = "screen";
-    private String onString = "On";
-    private String offString = "Off";
+    private final String video = "video";
+    private final String audio = "audio";
+    private final String screen = "screen";
+    private final String onString = "On";
+    private final String offString = "Off";
 
     @Getter
     private static final String spaceJoinedString = "spaceJoined";
@@ -62,6 +63,7 @@ public class PosthogService {
         sendEvent(id, spaceJoinedString, new HashMap<String, Object>(){{put(spaceIdString, spaceId);}});
         // init camera to on
         startTracking(id, video, true);
+        startTracking(id, audio, true);
 
         // track room size
         if (room.size() == 1) {
@@ -75,6 +77,7 @@ public class PosthogService {
 
     public void handleLeave(User user, String spaceId){
         stopTracking(user.getId(), video, user.getVideo());
+        stopTracking(user.getId(), audio, user.getAudio());
         if(user.getScreen()){
             sendEvent(user.getId(), screen + offString, null);
         }
@@ -87,6 +90,13 @@ public class PosthogService {
         startTracking(id, video, on);
         // stop tracking what is turned off (ends with off)
         stopTracking(id, video, !on);
+    }
+
+    public void trackAudio(String id, boolean on){
+        // start tracking what is turned on (ends with on)
+        startTracking(id, audio, on);
+        // stop tracking what is turned off (ends with off)
+        stopTracking(id, audio, !on);
     }
 
     public void trackScreen(String id, boolean on, boolean videoOn, Boolean changeToVideo) {

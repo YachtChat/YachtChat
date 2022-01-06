@@ -11,6 +11,7 @@ public class User {
         this.session = session;
         this.position = new Position(0, 0, 20);
         this.video = true;
+        this.audio = true;
         this.screen = false;
         this.id = id;
     }
@@ -25,6 +26,10 @@ public class User {
     @Setter
     @Expose
     private Boolean video;
+    @Getter
+    @Setter
+    @Expose
+    private Boolean audio;
     @Getter
     @Setter
     @Expose
