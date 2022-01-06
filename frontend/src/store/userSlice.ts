@@ -109,12 +109,17 @@ export const userSlice = createSlice({
                 state.activeUser.message = undefined
         },
         setMedia: (state, action: PayloadAction<{ id: string, type: MediaType, state: boolean }>) => {
-            if (action.payload.id === state.activeUser.id) {
-                state.activeUser.video = action.payload.state
-                return
+            if (action.payload.type === MediaType.VIDEO) {
+                if (action.payload.id === state.activeUser.id) {
+                    state.activeUser.video = action.payload.state
+                } else if (state.spaceUsers[action.payload.id])
+                    state.spaceUsers[action.payload.id].video = action.payload.state
+            } else if (action.payload.type === MediaType.AUDIO) {
+                if (action.payload.id === state.activeUser.id) {
+                    state.activeUser.audio = action.payload.state
+                } else if (state.spaceUsers[action.payload.id])
+                    state.spaceUsers[action.payload.id].audio = action.payload.state
             }
-            if (state.spaceUsers[action.payload.id])
-                state.spaceUsers[action.payload.id].video = action.payload.state
         }
     },
 });
@@ -151,7 +156,7 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
                 const userObjects = response.data.map((user: any) => {
                     const userPayload = users.find(u => u.id === user.id)
                     // set all users online and position of users in "users" (maybe also image)
-                    return keycloakUserToUser(user, !!userPayload, userPayload?.position, userPayload?.video)
+                    return keycloakUserToUser(user, !!userPayload, userPayload?.position, userPayload?.video, userPayload?.audio)
                 })
                 console.log(userObjects)
                 // finally call set users with user list
@@ -163,10 +168,11 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
     // TODO Place call for API everytime after new user joint or after interval to filter user wich are not part of space anymore
 }
 
-export const handleLoginUser = (user: UserPayload): AppThunk => (dispatch, getState) => {
+export const handleLoginUser = (): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         axios.get("https://" + ACCOUNT_URL + "/account/", headers).then(response => {
             const user = keycloakUserToUser(response.data, true)
+            // Posthog identify
             identifyUser(user)
             console.log("ActiveUser", user)
             dispatch(initUser(user))
@@ -179,7 +185,7 @@ export const handleSpaceUser = (userId : string, position : UserCoordinates, isC
     getHeaders(getState()).then(headers =>
         // axios load user info
         axios.get("https://" + ACCOUNT_URL + "/account/" + userId + "/", headers).then(response => {
-            dispatch(setUser(keycloakUserToUser(response.data, true, position, true)))
+            dispatch(setUser(keycloakUserToUser(response.data, true, position, true, true)))
             // if the user.id is ourselves skip the next steps
             if (getUser(getState()).id !== userId) {
                 // isCaller is true if this is a reconncetion and the local user was the previous caller

@@ -219,7 +219,7 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
     const audio = !state.rtc.muted
 
     if (!getStream(state, userID)) {
-        //dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
+        dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
         return
     }
 
@@ -228,13 +228,15 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
         // Replace audio tracks
         dispatch(setMediaChangeOngoing(true))
         dispatch(handleInputChange('audio'))
-        //dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
+        dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: true}))
+        dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': true}))
     } else {
         // If disabled, stop all audio tracks
-        if (getStream(state, getUserID(state))?.getAudioTracks()[0])
+        if (getStream(state, getUserID(state))?.getAudioTracks()[0]) {
             getStream(state, getUserID(state))?.getAudioTracks()[0].stop()
-        //dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
-
+            dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: false}))
+            dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
+        }
         getOnlineUsers(state).forEach(u => {
             Object.keys(rtpSender[u.id]).forEach(k => {
                 const rtp = rtpSender[u.id][k]
@@ -551,7 +553,7 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
 }
 
 export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThunk => (dispatch: any, getState: any) => {
-// Reconnection functionality
+    // Reconnection functionality / stream health check
     if (isCaller) {
         connectionTimer[userId] = setTimeout(() => {
             // delete old reference to timer

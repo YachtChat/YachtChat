@@ -45,12 +45,12 @@ export class RangeComponent extends Component<Props> {
             <div className={((this.props.isActiveUser) ? "activeUser" : "")}>
                 <div className={"userRange " + this.props.className} style={rangeStyle}>
                     <VolumeIndicator
-                        className={"speakingIndicator"}
+                        className={"speakingIndicator " + (!user.audio ? "mute" : "")}
                         animateHeight
                         proximityWarning
                         audio={this.props.getStream(this.props.user.id)}
-                        minWidth={!user.inProximity ? userSize * 0.8 : userSize * 0.99}
-                        minHeight={!user.inProximity ? userSize * 0.8 : userSize * 0.99}
+                        minWidth={!user.inProximity && user.audio ? userSize * 0.8 : userSize * 0.99}
+                        minHeight={!user.inProximity && user.audio ? userSize * 0.8 : userSize * 0.99}
                         maxWidth={userSize * 2}
                         maxHeight={userSize * 2}
                         unit={"px"}

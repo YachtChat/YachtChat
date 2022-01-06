@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
-import {IoCopyOutline} from "react-icons/all";
+import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
 
 interface OwnProps {
@@ -330,7 +330,11 @@ export class UserComponent extends Component<Props, State> {
                     </Tooltip>
                 </div>
                 <span ref={this.myName} className={"userName " + this.props.className}
-                      style={userNameStyle}>{(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
+                      style={userNameStyle}>
+                    {(!user.audio) && <IoMicOffOutline />}
+                    {(!user.video) && <IoVideocamOffOutline />}
+                    {" "}
+                    {(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
             </div>
         )
     }

@@ -132,7 +132,14 @@
           right: 50%;
           border-radius: 50%;
           transform: rotateY(180deg) translate(-50%, -50%);
+        }
+      }
 
+      &.mute {
+        .volumeIndicator {
+          .volume {
+            background: rgba(126, 47, 47, 0.5);
+          }
         }
       }
     }
@@ -156,6 +163,10 @@
       0.2s transition,
       0.3s left,
       0.3s top;
+    }
+
+    svg {
+      color: red;
     }
 
     @media (prefers-color-scheme: dark) {
