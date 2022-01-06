@@ -3,7 +3,6 @@ import {connect} from "react-redux";
 import {sendMessage} from "../../../store/webSocketSlice";
 import {IoCloseOutline} from "react-icons/all";
 import {Popover} from "@material-ui/core";
-import messages from "../Messages";
 import {handleError} from "../../../store/statusSlice";
 
 interface Props {
