@@ -730,7 +730,7 @@ export const destroySession = (returnToRoot?: boolean): AppThunk => (dispatch, g
     dispatch(resetPlayground())
     dispatch(requestSpaces())
 
-    if (returnToRoot === undefined || returnToRoot)
+    if (returnToRoot)
         dispatch(returnHome())
 }
 

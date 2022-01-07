@@ -1,4 +1,4 @@
-import {IoChevronDownOutline, IoCogOutline, IoPowerOutline,} from "react-icons/all";
+import {IoCameraOutline, IoChevronDownOutline, IoCogOutline, IoPersonOutline, IoPowerOutline,} from "react-icons/all";
 import {ClickAwayListener, Grow, MenuList, Paper, Popper} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -86,9 +86,17 @@ export class AuthButtons extends Component<Props, State> {
                                         {/*</Link>*/}
                                         <Link to={"/settings/"}>
                                             <MenuItem className={"menuItem"}
-                                                      onClick={this.handleClose.bind(this)}><IoCogOutline/> Settings</MenuItem>
+                                                      onClick={this.handleClose.bind(this)}><span><IoCogOutline/> Settings</span></MenuItem>
                                         </Link>
-                                        <MenuItem onClick={this.props.logout}><IoPowerOutline/> Logout</MenuItem>
+                                        <Link to={"/settings/media"}>
+                                            <MenuItem className={"menuItem"}
+                                                      onClick={this.handleClose.bind(this)}><span><IoCameraOutline /> Media Settings</span></MenuItem>
+                                        </Link>
+                                        <Link to={"/settings/profile"}>
+                                            <MenuItem className={"menuItem"}
+                                                      onClick={this.handleClose.bind(this)}><span><IoPersonOutline /> Profile</span></MenuItem>
+                                        </Link>
+                                        <MenuItem onClick={this.props.logout}><span style={{color: "red"}}><IoPowerOutline/> Logout</span></MenuItem>
                                     </MenuList>
                                 </ClickAwayListener>
                             </Paper>

@@ -79,7 +79,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
 
     socket.onerror = (err) => {
         dispatch(handleError("Connection failed", err))
-        dispatch(destroySession())
+        dispatch(destroySession(true))
     };
 
     socket.onclose = () => {
@@ -128,7 +128,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
             case "kick":
                 if (!loggedIn) break;
                 if (getState().userState.activeUser.id === data.id) {
-                    dispatch(destroySession())
+                    dispatch(destroySession(true))
                     dispatch(requestSpaces())
                 } else {
                     const user = getUserById(getState(), data.id)

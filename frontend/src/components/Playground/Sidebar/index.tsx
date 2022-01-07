@@ -319,7 +319,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     toggleVideo: () => dispatch(toggleUserVideo()),
     toggleScreen: () => dispatch(toggleUserScreen()),
     toggleDoNotDisturb: () => dispatch(toggleDoNotDisturb()),
-    logout: () => dispatch(sendLogout()),
+    logout: () => dispatch(sendLogout(true)),
     center: () => dispatch(centerUser()),
 })
 
