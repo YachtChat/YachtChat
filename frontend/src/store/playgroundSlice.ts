@@ -182,9 +182,6 @@ export const isUserOutOfBounds = (state: RootState): boolean => {
     const top = y_screen * scale - userProportion/2 < 0
     const bottom = y_screen * scale + userProportion/2 > window.innerHeight
 
-    console.log(x_screen)
-    console.log(y_screen)
-
     return left || right || top || bottom
 }
 

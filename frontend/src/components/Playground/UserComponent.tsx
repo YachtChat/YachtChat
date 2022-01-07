@@ -7,6 +7,7 @@ import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
 import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
+import {convertRemToPixels} from "../../store/utils";
 
 interface OwnProps {
     user: User
@@ -321,10 +322,8 @@ export class UserComponent extends Component<Props, State> {
                                        onMouseOver={() => this.mouseOver()}
                                        onMouseLeave={this.mouseOut.bind(this)}
                                        className={
-                                           "video " +
-                                           ((!(this.props.isActiveUser && this.props.screen) && !user.video || (this.props.isActiveUser && this.props.showVideoInAvatar))) ? "profile-picture" : "" +
-                                               ((user.inProximity && !this.props.isActiveUser) ? " in-proximity " : " ")
-                                       }/>
+                                           ((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : "" +
+                                               ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
                             {!this.props.user.userStream &&
                                 <CircularProgress className={"loader"}/>
