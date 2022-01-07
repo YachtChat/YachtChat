@@ -107,7 +107,8 @@ export class NavigationBar extends Component<Props, State> {
                                                          } placement="right" arrow>
                                             <span className="icon-wrapper" onClick={() => {
                                                 this.sendToPosthog("center")
-                                                this.props.center()
+                                                if (!this.props.minimal)
+                                                    this.props.center()
                                             }}>
                                                 <span className="icon">
                                                     <VideoIcon/>
@@ -147,6 +148,7 @@ export class NavigationBar extends Component<Props, State> {
                                             </Tooltip>
                                         </div>
                                     </li>
+                                    {!this.props.minimal &&
                                     <li className="menu-item" onClick={() => {
                                         this.sendToPosthog("screen")
                                         this.props.toggleScreen()
@@ -163,6 +165,7 @@ export class NavigationBar extends Component<Props, State> {
                                             </Tooltip>
                                         </div>
                                     </li>
+                                    }
                                     <li onClick={() => {
                                         this.sendToPosthog("donotdisturb")
                                         this.props.toggleDoNotDisturb()
