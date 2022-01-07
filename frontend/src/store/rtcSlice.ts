@@ -204,7 +204,8 @@ export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch,
         dispatch(setUserMedia(true))
     }).then(() =>
         dispatch(connectToServer(spaceID))
-    ).catch(() => {
+    ).catch((e) => {
+        console.log(e)
         dispatch(handleError("Unable to get media."))
         dispatch(setUserMedia(false))
     })
@@ -788,10 +789,10 @@ export const getRtcConnection = (state: RootState, id: number) => rtcConnections
 export const getMediaConstrains = (state: RootState, type?: string) => {
     return {
         video: (type !== 'audio') ? {
-            width: 320,
-            height: 320,
+            width: {ideal: 320},
+            height: {ideal: 320},
             facingMode: "user",
-            frameRate: {max: 10},
+            frameRate: {ideal: 10},
             deviceId: getCamera(state)
         } : undefined,
         audio: (type !== 'video') ? {
