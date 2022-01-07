@@ -39,7 +39,7 @@ export class Loading extends Component<LoadingProps> {
             <Wrapper className={"Loading"}>
                 <div className={"headlineBox"}>
                     <Link to={"/"}>
-                        <button>
+                        <button className={"outlined"}>
                             <IoChevronBack /> back to spaces
                         </button>
                     </Link>

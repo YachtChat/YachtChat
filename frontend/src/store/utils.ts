@@ -133,3 +133,7 @@ export function playNotificationSound() {
     notification.volume = 0.5
     notification.play()
 }
+
+export function convertRemToPixels(rem: number): number {
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}

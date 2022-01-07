@@ -175,21 +175,24 @@ export class UserComponent extends Component<Props, State> {
         let userNamePosX = x - nameWidth / 2 - offsetX
         let userNamePosY = y + userSize / 2 - offsetY + 15
 
-        if (userNamePosX < 15) {
-            userNamePosX = 15
+        const arem = convertRemToPixels(1)
+        const sidebarWidth = 80
+
+        if (userNamePosX < 2 * arem + sidebarWidth) {
+            userNamePosX = 2 * arem + sidebarWidth
             nameOpacity = 0.45
         }
-        if (userNamePosX > window.innerWidth - (15 + nameWidth)) {
-            userNamePosX = window.innerWidth - (15 + nameWidth)
+        if (userNamePosX > window.innerWidth - (arem + nameWidth)) {
+            userNamePosX = window.innerWidth - (arem + nameWidth)
             nameOpacity = 0.45
         }
 
-        if (userNamePosY < 15) {
-            userNamePosY = 15
+        if (userNamePosY < arem) {
+            userNamePosY = arem
             nameOpacity = 0.45
         }
-        if (userNamePosY > window.innerHeight - (15 + nameHeight)) {
-            userNamePosY = window.innerHeight - (15 + nameHeight)
+        if (userNamePosY > window.innerHeight - (arem + nameHeight)) {
+            userNamePosY = window.innerHeight - (arem + nameHeight)
             nameOpacity = 0.45
         }
 
