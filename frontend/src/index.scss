@@ -47,6 +47,10 @@ button, input[type=submit], .button {
     margin-right: 0.5rem;
   }
 
+  &.spaceTop {
+    margin-top: 0.5rem;
+  }
+
   &.submit {
     width: 100%;
   }

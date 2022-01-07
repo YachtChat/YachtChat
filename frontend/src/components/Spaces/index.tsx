@@ -6,7 +6,7 @@ import {RootState} from "../../store/store";
 import {deleteSpaceForUser, getInvitationToken, requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
 import {
-    IoAddOutline, IoArrowForward, IoChatbubblesOutline,
+    IoAddOutline, IoChatbubblesOutline,
     IoCogOutline, IoCreateOutline,
     IoEllipsisHorizontal, IoPeopleOutline,
     IoTrashOutline
@@ -94,6 +94,11 @@ export class Spaces extends Component<Props, State> {
                                     <IoCogOutline/> settings
                                 </button>
                             </Link>
+                            <a href={SUPPORT_URL}>
+                                <button className={"outlined"}>
+                                    <IoPeopleOutline /> Support
+                                </button>
+                            </a>
                         </div>
                         <h1>
                             Spaces <IoChatbubblesOutline/>
@@ -138,6 +143,17 @@ export class Spaces extends Component<Props, State> {
                             </Link>
                         ))}
                     </div>
+                        <Link to={"/create-space"}>
+                            <button
+                                style={{
+                                    marginLeft: "3rem",
+                                    paddingTop: "0.5rem",
+                                    borderRadius: "0"
+                                }}
+                                className={"nostyle outlined spaceTop"}>
+                                <IoAddOutline/> add space
+                            </button>
+                        </Link>
                     <Menu
                         keepMounted
                         onContextMenu={e => {
@@ -169,23 +185,6 @@ export class Spaces extends Component<Props, State> {
                         }}><IoCreateOutline/> Rename</MenuItem>
                     </Menu>
                 </div>
-                <footer>
-                    <Link to={"/create-space"}>
-                        <button className={"outlined spaceRight"}>
-                            <IoAddOutline/> add space
-                        </button>
-                    </Link>
-                    <a href={SUPPORT_URL}>
-                        <button className={"outlined spaceRight"}>
-                            <IoPeopleOutline /> Support
-                        </button>
-                    </a>
-                    <Link to={"/settings"}>
-                        <button className={"outlined spaceRight"}>
-                            <IoCogOutline /> Settings
-                        </button>
-                    </Link>
-                </footer>
             </Wrapper>
         )
     }
