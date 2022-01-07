@@ -153,7 +153,7 @@ export function Privacy() {
                 Sentence 1 lit. a DSGVO using the Zoho Mail service from Zoho Corporation, 140
                 &amp; 151, GST Road, Vallancherry Village, Chengalpattu Taluk, Kanchipuram
                 District 603 202 India (“Zoho”). The email addresses of our email recipients
-                are stored on Zoho's servers in ?? on our behalf.
+                are stored on Zoho's servers in Europe on our behalf.
             </p>
 
             <p>
