@@ -14,6 +14,7 @@ interface Props {
     muted: boolean
     getStream: (id: string) => MediaStream | undefined,
     className?: string
+    showVolumeIndicators: boolean
 }
 
 export class RangeComponent extends Component<Props> {
@@ -44,6 +45,7 @@ export class RangeComponent extends Component<Props> {
         return (
             <div className={((this.props.isActiveUser) ? "activeUser" : "")}>
                 <div className={"userRange " + this.props.className} style={rangeStyle}>
+                    {this.props.showVolumeIndicators &&
                     <VolumeIndicator
                         className={"speakingIndicator " + (!user.audio ? "mute" : "")}
                         animateHeight
@@ -55,6 +57,7 @@ export class RangeComponent extends Component<Props> {
                         maxHeight={userSize * 2}
                         unit={"px"}
                     />
+                    }
                 </div>
             </div>
         )
@@ -63,6 +66,7 @@ export class RangeComponent extends Component<Props> {
 
 const mapStateToProps = (state: RootState) => ({
     playgroundOffset: state.playground.offset,
+    showVolumeIndicators: state.playground.showVolumeIndicators,
     muted: state.rtc.muted,
     getStream: (id: string): MediaStream | undefined => getStream(state, id),
 })

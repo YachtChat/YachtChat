@@ -62,3 +62,8 @@ export enum MediaType {
     VIDEO = "video",
     SCREEN = "screen"
 }
+
+export enum CameraMode {
+    Manual,
+    Automatically
+}

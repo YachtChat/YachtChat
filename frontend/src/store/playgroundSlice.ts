@@ -1,24 +1,33 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {PlaygroundOffset} from "./models";
-import {AppThunk} from "./store";
+import {CameraMode, PlaygroundOffset} from "./models";
+import {AppThunk, RootState} from "./store";
 import {requestSpaces} from "./spaceSlice";
+import {getUser, userProportion} from "./userSlice";
+import {setPrevious, toggleUserVideo, unshareScreen} from "./rtcSlice";
 
-interface SpaceState {
+interface PlaygroundState {
     offset: PlaygroundOffset
+    videoInAvatar: boolean
+    cameraMode: CameraMode,
+    showVolumeIndicators: boolean
 }
 
 const initScale = (1.0 / 1080) * ((window.innerWidth > window.innerHeight) ? window.innerWidth : window.innerHeight)
 let prevHeight = window.innerHeight;
 let prevWidth = window.innerWidth;
 
-const initialState: SpaceState = {
+const initialState: PlaygroundState = {
     offset: {
         x: -window.innerWidth / 2 * (1 / initScale),
         y: -window.innerHeight / 2 * (1 / initScale),
         // The scale is normed to 1080 pixels, but will increase when the screen is bigger
         scale: initScale,
-        trueScale: 1.0
-    }
+        trueScale: 1.0,
+    },
+    videoInAvatar: localStorage.getItem("videoInAvatar") === "true", // Video only shown in sidebar or in avatar
+    showVolumeIndicators: localStorage.getItem("showVolumeIndicators") === "true", // Video only shown in sidebar or in avatar
+    cameraMode: localStorage.getItem("cameraMode") === CameraMode.Manual.toString() ?
+        CameraMode.Manual : CameraMode.Automatically, // Video only shown in sidebar or in avatar
 }
 
 export const spaceSlice = createSlice({
@@ -39,14 +48,29 @@ export const spaceSlice = createSlice({
         },
         resetPlayground: (state) => {
             state.offset = initialState.offset
-        }
+        },
+        setVideoInAvatar: (state, action: PayloadAction<boolean>) => {
+            state.videoInAvatar = action.payload
+            localStorage.setItem("videoInAvatar", action.payload.toString())
+        },
+        setShowVolumeIndicators: (state, action: PayloadAction<boolean>) => {
+            state.showVolumeIndicators = action.payload
+            localStorage.setItem("showVolumeIndicators", action.payload.toString())
+        },
+        setCameraMode: (state, action: PayloadAction<CameraMode>) => {
+            state.cameraMode = action.payload
+            localStorage.setItem("cameraMode", action.payload.toString())
+        },
     }
 });
 
 export const {
     movePlayground,
     scalePlayground,
-    resetPlayground
+    resetPlayground,
+    setVideoInAvatar,
+    setCameraMode,
+    setShowVolumeIndicators
 } = spaceSlice.actions;
 
 export const initPlayground = (): AppThunk => (dispatch, getState) => {
@@ -84,6 +108,7 @@ export const initPlayground = (): AppThunk => (dispatch, getState) => {
         prevWidth = window.innerWidth
     })
     dispatch(requestSpaces())
+    dispatch(setupCameraMode(getState().playground.cameraMode))
 }
 
 export const centerUser = (): AppThunk => (dispatch, getState) => {
@@ -142,6 +167,59 @@ export const setScale = (z: number, cx?: number, cy?: number): AppThunk => (disp
         scale: scaledZoom,
         trueScale: z
     }))
+}
+
+export const isUserOutOfBounds = (state: RootState): boolean => {
+    if (!getUser(state).position)
+        return true
+    const x_screen = getUser(state).position!.x - state.playground.offset.x
+    const y_screen = getUser(state).position!.y - state.playground.offset.y
+    const scale = state.playground.offset.scale
+
+    // Overflows
+    const left = x_screen * scale - userProportion/2 < 0
+    const right = x_screen * scale + userProportion/2 > window.innerWidth
+    const top = y_screen * scale - userProportion/2 < 0
+    const bottom = y_screen * scale + userProportion/2 > window.innerHeight
+
+    console.log(x_screen)
+    console.log(y_screen)
+
+    return left || right || top || bottom
+}
+
+export const setupCameraMode = (mode: CameraMode): AppThunk => (dispatch, getState) => {
+
+    dispatch(setCameraMode(mode))
+
+    switch (mode) {
+        case CameraMode.Automatically:
+            window.onblur = () => {
+                if (getState().rtc.screen) {
+                    dispatch(unshareScreen())
+                }
+                if (getUser(getState()).video) {
+                    dispatch(toggleUserVideo())
+                    dispatch(setPrevious({kind: "video", state: true}))
+                } else {
+                    dispatch(setPrevious({kind: "video", state: false}))
+                }
+            }
+            window.onfocus = () => {
+                if (getState().rtc.previousVideo &&
+                    !getState().rtc.doNotDisturb &&
+                    !getState().rtc.screen &&
+                    !getState().rtc.video) {
+                    dispatch(toggleUserVideo())
+                    dispatch(setPrevious({kind: "video", state: false}))
+                }
+            }
+            break;
+        case CameraMode.Manual:
+            window.onblur = () => {}
+            window.onfocus = () => {}
+            break;
+    }
 }
 
 export default spaceSlice.reducer;

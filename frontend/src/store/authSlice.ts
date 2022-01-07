@@ -39,7 +39,7 @@ export const {
     authFlowReady
 } = authSlice.actions;
 
-export const initAuth = (error: string): AppThunk => (dispatch, getState) => {
+export const initAuth = (error: string): AppThunk => () => {
 
 }
 
@@ -86,6 +86,7 @@ export const getToken = (state: RootState): Promise<string> => {
             resolve(keycloak.token!)
         ).catch(() => {
             keycloak.login()
+            reject()
         })
     })
 }

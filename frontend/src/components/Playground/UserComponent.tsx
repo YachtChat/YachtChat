@@ -27,6 +27,7 @@ interface OtherProps {
     mediaChangeOngoing: boolean
     success: (s: string) => void
     messages: Message[]
+    showVideoInAvatar: boolean
 }
 
 type Props = OwnProps & OtherProps
@@ -311,7 +312,7 @@ export class UserComponent extends Component<Props, State> {
                                      </div>
                                      : ""} placement="top" arrow>
                         <div>
-                            {(!!this.props.user.userStream) &&
+                            {(!!this.props.user.userStream && !(this.props.isActiveUser && !this.props.showVideoInAvatar)) &&
                                 <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                                        key={this.props.camera}
                                        autoPlay muted={this.props.isActiveUser}
@@ -320,8 +321,10 @@ export class UserComponent extends Component<Props, State> {
                                        onMouseOver={() => this.mouseOver()}
                                        onMouseLeave={this.mouseOut.bind(this)}
                                        className={
-                                           ((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : "" +
-                                               ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
+                                           "video " +
+                                           ((!(this.props.isActiveUser && this.props.screen) && !user.video || (this.props.isActiveUser && this.props.showVideoInAvatar))) ? "profile-picture" : "" +
+                                               ((user.inProximity && !this.props.isActiveUser) ? " in-proximity " : " ")
+                                       }/>
                             }
                             {!this.props.user.userStream &&
                                 <CircularProgress className={"loader"}/>
@@ -350,7 +353,8 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     mediaChangeOngoing: state.rtc.mediaChangeOngoing,
     getStream: (id: string) => getStream(state, id),
     getScreenStream: (id: string) => getScreenStream(state, id),
-    messages: getUserMessages(state, ownProps.user.id)
+    messages: getUserMessages(state, ownProps.user.id),
+    showVideoInAvatar: state.playground.videoInAvatar
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
