@@ -4,18 +4,17 @@ import {User} from "../../../store/models";
 import {RootState} from "../../../store/store";
 import {connect} from "react-redux";
 import {FaCog, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash} from 'react-icons/fa';
-import {MdFilterCenterFocus} from 'react-icons/md';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../../store/webSocketSlice";
 import {toggleUserVideo, toggleUserAudio, toggleUserScreen, toggleDoNotDisturb} from "../../../store/rtcSlice";
 import Settings from "../../Settings/SpaceSettings";
-import {centerUser} from "../../../store/playgroundSlice";
+import {centerUser, isUserOutOfBounds} from "../../../store/playgroundSlice";
 import {IoChatbubble, IoChevronBackOutline, IoMoon, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
 import MessageComponent from "./Message";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
-import MembersComponent from "./Members";
-import {ClickAwayListener, Tooltip} from "@material-ui/core";
+import MembersComponent from "../Members";
+import {ClickAwayListener, Collapse, Tooltip} from "@material-ui/core";
 import posthog from "posthog-js";
 import VideoIcon from "./VideoIcon";
 
@@ -31,10 +30,12 @@ interface Props {
     toggleDoNotDisturb: () => void
     center: () => void
     video: boolean
+    videoInAvatar: boolean
     muted: boolean
     screen: boolean
     minimal?: boolean
     className?: string
+    userOutOfBounds: boolean
 }
 
 interface State {
@@ -88,29 +89,34 @@ export class NavigationBar extends Component<Props, State> {
     render() {
         const micIcon = (this.props.muted) ? this.icons.micOffIcon : this.icons.micOnIcon
         const videoIcon = (this.props.video) ? this.icons.videoOnIcon : this.icons.videoOffIcon
+        const videoShown = this.props.video && (!this.props.videoInAvatar || this.props.userOutOfBounds || this.props.minimal)
         return (
             <div className={"navwrapper"}>
-                <div id="sidebar" ref={this.anchorRef} className={"navbar " + (this.props.minimal ? "minimal " : "") + this.props.className}>
+                <div id="sidebar" ref={this.anchorRef}
+                     className={"navbar " + (this.props.minimal ? "minimal " : "") + this.props.className}>
                     <div className="navbar-inner">
                         <div className="navbar-layout">
                             <div className="menu">
                                 <ul>
-                                    <li className="menu-item" onClick={() => {
-                                        this.sendToPosthog("menu");
-                                    }}>
-                                        <div className="inner-item">
-                                            <Tooltip disableFocusListener
-                                                     title={
-                                                         <VideoIcon className={"videoPreview"} />
-                                                     } placement="right" arrow>
-                                            <span className="icon-wrapper">
+                                    <Collapse in={videoShown} unmountOnExit>
+                                        <li className="menu-item">
+                                            <div className="inner-item">
+                                                <Tooltip disableFocusListener
+                                                         title={
+                                                             <VideoIcon className={"videoPreview"}/>
+                                                         } placement="right" arrow>
+                                            <span className="icon-wrapper" onClick={() => {
+                                                this.sendToPosthog("center")
+                                                this.props.center()
+                                            }}>
                                                 <span className="icon">
-                                                    <VideoIcon />
+                                                    <VideoIcon/>
                                                 </span>
                                             </span>
-                                            </Tooltip>
-                                        </div>
-                                    </li>
+                                                </Tooltip>
+                                            </div>
+                                        </li>
+                                    </Collapse>
                                     <li className="menu-item" onClick={() => {
                                         this.sendToPosthog("video");
                                         this.props.toggleVideo()
@@ -167,7 +173,7 @@ export class NavigationBar extends Component<Props, State> {
                                                      placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
-                                                    <IoMoon />
+                                                    <IoMoon/>
                                                 </span>
                                             </span>
                                             </Tooltip>
@@ -210,23 +216,6 @@ export class NavigationBar extends Component<Props, State> {
                             </div>
                             <div className="menu bottom">
                                 <ul>
-                                    {!this.props.minimal &&
-                                        <li className="menu-item" onClick={() => {
-                                            this.sendToPosthog("center")
-                                            this.props.center()
-                                        }}>
-                                            <div className="inner-item">
-                                                <Tooltip disableFocusListener
-                                                         title={"Center user"} placement="right" arrow>
-                                            <span className="icon-wrapper">
-                                                <span className="icon">
-                                                    <MdFilterCenterFocus/>
-                                                </span>
-                                            </span>
-                                                </Tooltip>
-                                            </div>
-                                        </li>
-                                    }
                                     {!this.props.minimal &&
                                         <li className="menu-item">
                                             <div
@@ -315,8 +304,10 @@ const mapStateToProps = (state: RootState) => ({
     spaces: state.space.spaces,
     activeUser: state.userState.activeUser,
     video: state.rtc.video,
+    videoInAvatar: state.playground.videoInAvatar,
     muted: state.rtc.muted,
-    screen: state.rtc.screen
+    screen: state.rtc.screen,
+    userOutOfBounds: isUserOutOfBounds(state)
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
