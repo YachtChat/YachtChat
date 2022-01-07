@@ -1,5 +1,4 @@
 
-
 # Audio & Video
 
 - Audio and Video signal as well as screen sharing data are exchanged over end-to-end encrypted peer-to-peer connections.
@@ -8,6 +7,8 @@
 - You can choose a virtual background
 - Do not disturb mode. In this mode no one can talk to you so you don't get disturbed in another meeting. It is also possible to use other software with uses the camera on Windows.
 
+![Yacht.Chat playground](/img/docs/Playground.png)
 
+![Yacht.Chat playground settings](/img/docs/PlaygroundSettings.png)
 
 This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
