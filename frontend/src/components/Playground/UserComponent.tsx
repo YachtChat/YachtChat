@@ -8,6 +8,7 @@ import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material
 import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils";
+import {centerUser} from "../../store/playgroundSlice";
 
 interface OwnProps {
     user: User
@@ -29,6 +30,7 @@ interface OtherProps {
     success: (s: string) => void
     messages: Message[]
     showVideoInAvatar: boolean
+    center: () => void
 }
 
 type Props = OwnProps & OtherProps
@@ -334,10 +336,14 @@ export class UserComponent extends Component<Props, State> {
                         </div>
                     </Tooltip>
                 </div>
-                <span ref={this.myName} className={"userName " + this.props.className}
+                <span onClick={e => {
+                    e.stopPropagation()
+                    this.props.center()
+                }}
+                      ref={this.myName} className={"clickable userName " + this.props.className}
                       style={userNameStyle}>
-                    {(!user.audio) && <IoMicOffOutline />}
-                    {(!user.video) && <IoVideocamOffOutline />}
+                    {(!user.audio) && <IoMicOffOutline/>}
+                    {(!user.video) && <IoVideocamOffOutline/>}
                     {" "}
                     {(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
             </div>
@@ -359,7 +365,8 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     showVideoInAvatar: state.playground.videoInAvatar
 })
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
+    center: () => dispatch(centerUser(ownProps.user)),
     success: (s: string) => dispatch(handleSuccess(s))
 })
 

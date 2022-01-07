@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {CameraMode, PlaygroundOffset} from "./models";
+import {CameraMode, PlaygroundOffset, User} from "./models";
 import {AppThunk, RootState} from "./store";
 import {requestSpaces} from "./spaceSlice";
 import {getUser, userProportion} from "./userSlice";
@@ -111,8 +111,13 @@ export const initPlayground = (): AppThunk => (dispatch, getState) => {
     dispatch(setupCameraMode(getState().playground.cameraMode))
 }
 
-export const centerUser = (): AppThunk => (dispatch, getState) => {
-    const userPos = getState().userState.activeUser.position!
+export const centerUser = (user?: User): AppThunk => (dispatch, getState) => {
+    let userPos;
+    if (user)
+        userPos = user.position!
+    else
+        userPos = getUser(getState()).position!
+
     const offset = getState().playground.offset
     dispatch(movePlayground({
         ...offset,

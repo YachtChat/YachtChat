@@ -23,7 +23,7 @@ export function Profile(props: Props) {
                     <label>
                         User image
                     </label>
-                    <img className={"userImage"} src={props.user.profile_image} alt={'User image'}/>
+                    <img className={"userImage"} src={props.user.profile_image} alt={'Profile'}/>
                 </div>
                 <div className={"settings-item"}>
                     <label>
