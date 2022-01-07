@@ -2,9 +2,9 @@
 
 # Basics
 
-## Set Browser Permissions
+## Set Browser Permissions and System Preferences
 
-It is important to set the permissions in your Browser to use the microphone, camera and screen sharing function
+It is important to set the permissions in your Browser and in your system to use the microphone, camera and screen sharing function.
 
 ## Audio & Video
 

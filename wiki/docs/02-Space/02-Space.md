@@ -1,7 +1,7 @@
 
 # Spaces
 
-Spaces are like Rooms. There are not like Zoom or MS Teams calls. Spaces are persistent. So you only have to create one i
+Spaces are like Rooms in a Building. There are not like Zoom or MS Teams calls. Spaces are persistent. So you only have to create once 
 
 - persistent
 - remove space

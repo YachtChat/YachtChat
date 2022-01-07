@@ -8,4 +8,6 @@
 - You can choose a virtual background
 - Do not disturb mode. In this mode no one can talk to you so you don't get disturbed in another meeting. It is also possible to use other software with uses the camera on Windows.
 
+
+
 This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
