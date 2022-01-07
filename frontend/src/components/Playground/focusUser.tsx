@@ -163,7 +163,8 @@ export class FocusUser extends Component<Props, State> {
 
     render() {
         const style = {
-            display: (!!this.props.userID) ? "block" : "none"
+            display: (!!this.props.userID) ? "block" : "none",
+            zIndex: 10001
         }
 
         if (!!this.props.user && !this.props.user.inProximity)
