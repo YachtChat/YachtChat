@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Space} from "./models";
+import {Space} from "./model/model";
 import {AppThunk, RootState} from "./store";
 import axios from "axios";
 import {handleError, handleSuccess} from "./statusSlice";

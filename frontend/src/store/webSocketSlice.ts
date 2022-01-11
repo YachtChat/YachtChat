@@ -1,6 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
-import {UserCoordinates, UserPayload} from "./models";
+import {UserCoordinates, UserPayload} from "./model/model";
 import {
     getOnlineUsers,
     getUser,

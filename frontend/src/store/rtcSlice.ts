@@ -16,7 +16,7 @@ import {
 import {resetPlayground} from "./playgroundSlice";
 import {requestSpaces, returnHome} from "./spaceSlice";
 import {handleError} from "./statusSlice";
-import {MediaType} from "./models";
+import {MediaType} from "./model/model";
 import {applyVirtualBackground, stopAllVideoEffects} from "./utils";
 import CameraProcessor from "camera-processor";
 

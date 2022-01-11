@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {User} from "../../../store/models";
+import {User} from "../../../store/model/model";
 import {RootState} from "../../../store/store";
 import {connect} from "react-redux";
 import {submitRadius} from "../../../store/userSlice";

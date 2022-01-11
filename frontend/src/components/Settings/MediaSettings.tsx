@@ -15,7 +15,7 @@ import {
     handleInputChange,
     loadAllMediaDevices
 } from "../../store/rtcSlice";
-import {User} from "../../store/models";
+import {User} from "../../store/model/model";
 import VolumeIndicator from "./VolumeIndicator";
 import {applyVirtualBackground, stopAllVideoEffects} from "../../store/utils";
 import CameraProcessor from "camera-processor";

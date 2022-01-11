@@ -1,4 +1,4 @@
-import {Point} from "./models";
+import {Point} from "./model/model";
 import {userProportion} from "./userSlice";
 
 /**

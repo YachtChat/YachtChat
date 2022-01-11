@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Message, PlaygroundOffset, User} from "../../store/models";
+import {Message, PlaygroundOffset, User} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";

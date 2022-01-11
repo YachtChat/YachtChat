@@ -1,4 +1,4 @@
-import {User, UserCoordinates} from "./models";
+import {User, UserCoordinates} from "./model/model";
 import default_image from "../rsc/profile.png";
 import CameraProcessor from 'camera-processor';
 import {

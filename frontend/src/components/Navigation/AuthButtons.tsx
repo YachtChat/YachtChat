@@ -3,7 +3,7 @@ import {ClickAwayListener, Grow, MenuList, Paper, Popper} from "@material-ui/cor
 import {Link} from "react-router-dom";
 import MenuItem from "@material-ui/core/MenuItem";
 import React, {Component, createRef} from "react";
-import {User} from "../../store/models";
+import {User} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {logout} from "../../store/authSlice";
 import {connect} from "react-redux";

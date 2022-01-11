@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {CameraMode, PlaygroundOffset, User} from "./models";
+import {CameraMode, PlaygroundOffset, User} from "./model/model";
 import {AppThunk, RootState} from "./store";
 import {requestSpaces} from "./spaceSlice";
 import {getUser, userProportion} from "./userSlice";

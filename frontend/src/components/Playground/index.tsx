@@ -5,7 +5,7 @@ import Sidebar from "./Sidebar";
 import {handleZoom, initPlayground} from "../../store/playgroundSlice";
 import Canvas from "./Canvas";
 import Wrapper, {Loading} from "../Wrapper";
-import {Space, User} from "../../store/models";
+import {Space, User} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
 import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";

@@ -3,7 +3,7 @@ import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import "./style.scss";
 import {getOnlineUsers} from "../../store/userSlice";
-import {User} from "../../store/models";
+import {User} from "../../store/model/model";
 
 interface Props {
     audio?: MediaStream

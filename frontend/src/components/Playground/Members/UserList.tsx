@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import './style.scss';
-import {User} from "../../../store/models";
+import {User} from "../../../store/model/model";
 import {FaCrown, IoHandRight, IoTrashOutline} from "react-icons/all";
 import {Tooltip} from "@material-ui/core";
 import {Link} from "react-router-dom";

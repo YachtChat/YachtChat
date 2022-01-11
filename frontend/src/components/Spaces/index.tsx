@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import './style.scss';
-import {Space} from "../../store/models";
+import {Space} from "../../store/model/model";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
 import {deleteSpaceForUser, getInvitationToken, requestSpaces} from "../../store/spaceSlice";

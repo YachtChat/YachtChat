@@ -2,7 +2,7 @@ import React from "react";
 import {IoArrowForward} from "react-icons/all";
 import {Tooltip} from "@material-ui/core";
 import {applicationName, SUPPORT_URL} from "../../store/config";
-import {CameraMode} from "../../store/models";
+import {CameraMode} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {setShowVolumeIndicators, setupCameraMode, setVideoInAvatar} from "../../store/playgroundSlice";

@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {MediaType, Message, Point, User, UserCoordinates, UserPayload} from "./models";
+import {MediaType, Message, Point, User, UserCoordinates, UserPayload} from "./model/model";
 import {send, sendPosition, userSetupReady} from "./webSocketSlice";
 import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
 import {getHeaders, getToken} from "./authSlice";

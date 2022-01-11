@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import './style.scss';
-import {User} from "../../../store/models";
+import {User} from "../../../store/model/model";
 import {RootState} from "../../../store/store";
 import {connect} from "react-redux";
 import {FaCog, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash} from 'react-icons/fa';

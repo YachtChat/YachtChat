@@ -7,7 +7,7 @@ import React from "react";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {getUser} from "../../store/userSlice";
-import {User} from "../../store/models";
+import {User} from "../../store/model/model";
 import {logout} from "../../store/authSlice";
 
 interface Props {

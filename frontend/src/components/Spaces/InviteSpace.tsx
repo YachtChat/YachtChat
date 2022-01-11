@@ -9,7 +9,7 @@ import {RootState} from "../../store/store";
 import {CircularProgress, Tooltip} from "@material-ui/core";
 import {applicationName, FRONTEND_URL} from "../../store/config";
 import {push} from "connected-react-router";
-import {Space} from "../../store/models";
+import {Space} from "../../store/model/model";
 import {handleSuccess} from "../../store/statusSlice";
 import {Steps} from "./Steps";
 

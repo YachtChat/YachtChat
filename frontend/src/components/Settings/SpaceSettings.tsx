@@ -3,7 +3,7 @@ import Dialog from '@material-ui/core/Dialog';
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import "./style.scss";
-import {User} from "../../store/models";
+import {User} from "../../store/model/model";
 import MediaSettings from "./MediaSettings";
 import {IoCloseOutline, IoCogOutline} from "react-icons/all";
 import {Link} from "react-router-dom";

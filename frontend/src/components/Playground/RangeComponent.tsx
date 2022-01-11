@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {PlaygroundOffset, User} from "../../store/models";
+import {PlaygroundOffset, User} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import {maxRange, userProportion} from "../../store/userSlice";
