@@ -22,8 +22,6 @@ interface Props {
     setScale: (zoom: number, x?: number, y?: number) => void
     toggleAudio: () => void
     toggleVideo: () => void
-    video: boolean
-    muted: boolean
     spaceID: string
 }
 
@@ -371,8 +369,6 @@ const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
     spaceUsers: getUsers(state),
     offset: state.playground.offset,
-    video: state.rtc.video,
-    muted: state.rtc.muted
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

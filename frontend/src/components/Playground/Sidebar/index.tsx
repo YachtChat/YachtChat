@@ -31,7 +31,7 @@ interface Props {
     center: () => void
     video: boolean
     videoInAvatar: boolean
-    muted: boolean
+    audio: boolean
     screen: boolean
     minimal?: boolean
     className?: string
@@ -87,7 +87,7 @@ export class NavigationBar extends Component<Props, State> {
 
 
     render() {
-        const micIcon = (this.props.muted) ? this.icons.micOffIcon : this.icons.micOnIcon
+        const micIcon = (this.props.audio) ? this.icons.micOnIcon : this.icons.micOffIcon
         const videoIcon = (this.props.video) ? this.icons.videoOnIcon : this.icons.videoOffIcon
         const videoShown = this.props.video && (!this.props.videoInAvatar || this.props.userOutOfBounds || this.props.minimal)
         return (
@@ -308,7 +308,7 @@ const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
     video: state.rtc.video,
     videoInAvatar: state.playground.videoInAvatar,
-    muted: state.rtc.muted,
+    audio: state.rtc.audio,
     screen: state.rtc.screen,
     userOutOfBounds: isUserOutOfBounds(state)
 })

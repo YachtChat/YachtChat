@@ -11,7 +11,7 @@ interface Props {
     selected?: boolean
     isActiveUser?: boolean
     playgroundOffset: PlaygroundOffset
-    muted: boolean
+    audio: boolean
     getStream: (id: string) => MediaStream | undefined,
     className?: string
     showVolumeIndicators: boolean
@@ -38,7 +38,7 @@ export class RangeComponent extends Component<Props> {
             height: rangeInPx,
             left: x - rangeInPx / 2 - offsetX,
             top: y - rangeInPx / 2 - offsetY,
-            opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5,
+            opacity: (!!user.inProximity && this.props.audio) ? 1 : 0.5,
             borderColor: (this.props.isActiveUser) ? "red" : "green",
         }
 
@@ -67,7 +67,7 @@ export class RangeComponent extends Component<Props> {
 const mapStateToProps = (state: RootState) => ({
     playgroundOffset: state.playground.offset,
     showVolumeIndicators: state.playground.showVolumeIndicators,
-    muted: state.rtc.muted,
+    audio: state.rtc.audio,
     getStream: (id: string): MediaStream | undefined => getStream(state, id),
 })
 

@@ -19,7 +19,7 @@ interface OwnProps {
 
 interface OtherProps {
     playgroundOffset: PlaygroundOffset
-    muted: boolean
+    audio: boolean
     screen: boolean
     speaker: string
     camera: string
@@ -158,8 +158,8 @@ export class UserComponent extends Component<Props, State> {
         const y = user.position!.y * scale
         const offsetX = this.props.playgroundOffset.x * scale
         const offsetY = this.props.playgroundOffset.y * scale
-        let userOpacity = ((!!user.inProximity && !this.props.muted) || this.props.selected) ? 1 : 0.5
-        let userScale = (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)"
+        let userOpacity = ((!!user.inProximity && this.props.audio) || this.props.selected) ? 1 : 0.5
+        let userScale = (!!user.inProximity && this.props.audio) ? "scale(1)" : "scale(0.8)"
         if (this.props.selected) {
             userScale = "scale(1.2)"
         }
@@ -215,7 +215,7 @@ export class UserComponent extends Component<Props, State> {
         const userNameStyle = {
             left: userNamePosX,
             top: userNamePosY,
-            transform: (!!user.inProximity && !this.props.muted) ? "scale(1)" : "scale(0.8)",
+            transform: (!!user.inProximity && this.props.audio) ? "scale(1)" : "scale(0.8)",
             opacity: nameOpacity
         }
 
@@ -355,7 +355,7 @@ export class UserComponent extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     playgroundOffset: state.playground.offset,
-    muted: state.rtc.muted,
+    audio: state.rtc.audio,
     screen: state.rtc.screen,
     speaker: getSpeaker(state),
     camera: getCamera(state),

@@ -21,7 +21,7 @@ import {applyVirtualBackground, stopAllVideoEffects} from "./utils";
 import CameraProcessor from "camera-processor";
 
 interface RTCState {
-    muted: boolean
+    audio: boolean
     video: boolean
     doNotDisturb: boolean
     previousVideo: boolean
@@ -36,12 +36,11 @@ interface RTCState {
         virtualBackground?: string
     }
     screen: boolean
-    mediaChangeOngoing: boolean
-    userMedia: boolean
+    userMedia: boolean // marked obsolete?
 }
 
 const initialState: RTCState = {
-    muted: false,
+    audio: true,
     video: true,
     screen: false,
     previousVideo: true,
@@ -83,8 +82,8 @@ export const rtcSlice = createSlice({
             state.microphones = action.payload.microphones
             state.speakers = action.payload.speakers
         },
-        toggleMute: (state) => {
-            state.muted = !state.muted
+        toggleAudio: (state) => {
+            state.audio = !state.audio
         },
         toggleVideo: (state) => {
             state.video = !state.video
@@ -134,7 +133,7 @@ export const rtcSlice = createSlice({
             state.video = true
         },
         turnOnAudio: (state) => {
-            state.muted = false
+            state.audio = true
         },
         setScreen: (state, action: PayloadAction<boolean>) => {
             state.screen = action.payload
@@ -146,7 +145,7 @@ export const {
     initAllMediaDevices,
     toggleVideo,
     setPrevious,
-    toggleMute,
+    toggleAudio,
     setDoNotDisturb,
     toggleScreen,
     setCamera,
@@ -208,11 +207,11 @@ export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch,
 }
 
 export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
-    dispatch(toggleMute())
+    dispatch(toggleAudio())
 
     const state = getState()
     const userID = getUserID(state)
-    const audio = !state.rtc.muted
+    const audio = state.rtc.audio
 
     if (!getStream(state, userID)) {
         dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
@@ -393,7 +392,7 @@ export const toggleDoNotDisturb = (): AppThunk => (dispatch, getState) => {
     } else {
         // If it will be turned on --> Turn off all the media
         // Save all previous states
-        dispatch(setPrevious({kind: "audio", state: !state.rtc.muted}))
+        dispatch(setPrevious({kind: "audio", state: state.rtc.audio}))
         if (!state.rtc.screen) {
             // Only save video state if it is not influenced by screen state
             dispatch(setPrevious({kind: "video", state: state.rtc.video}))
@@ -403,7 +402,7 @@ export const toggleDoNotDisturb = (): AppThunk => (dispatch, getState) => {
         if (state.rtc.screen)
             dispatch(unshareScreen())
 
-        if (!state.rtc.muted)
+        if (state.rtc.audio)
             dispatch(toggleUserAudio())
 
         if (state.rtc.video)
@@ -417,7 +416,7 @@ export const toggleDoNotDisturb = (): AppThunk => (dispatch, getState) => {
 
 // Function that will enable spatial audio to a given user
 export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
-    if (getState().rtc.muted)
+    if (!getState().rtc.audio)
         return
     const rtp = rtpSender[id]["audio"]
     //console.log("Trying to enable audio to ", id)
@@ -752,7 +751,7 @@ export const handleInputChange = (type?: 'video' | 'audio'): AppThunk => (dispat
     const oldStream = getStream(state, localClient)
 
     // If true all tracks have to be replaced otherwise just of type
-    const replaceAllTracks = state.rtc.video && !state.rtc.muted
+    const replaceAllTracks = state.rtc.video && state.rtc.audio
 
     navigator.mediaDevices.getUserMedia(getMediaConstrains(state, (replaceAllTracks) ? undefined : type)).then((e) => {
         // If type is not set or no localStream available reset the whole stream object
@@ -768,7 +767,7 @@ export const handleInputChange = (type?: 'video' | 'audio'): AppThunk => (dispat
         getStream(state, localClient)!.getTracks().forEach(s => {
             // replace only stream of type and only if the video/audio aint muted
             if ((!type || type === s.kind) &&
-                ((s.kind === 'audio' && !state.rtc.muted) || (s.kind === 'video' && state.rtc.video))) {
+                ((s.kind === 'audio' && state.rtc.audio) || (s.kind === 'video' && state.rtc.video))) {
                 getOnlineUsers(state).forEach(u => {
                     Object.keys(rtpSender[u.id]).forEach(k => {
                         const rs = rtpSender[u.id][k]
