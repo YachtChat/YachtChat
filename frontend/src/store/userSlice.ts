@@ -18,7 +18,11 @@ interface UserState {
 }
 
 const initialState: UserState = {
-    activeUser: {id: "-1", online: true},
+    activeUser: {
+        id: "-1",
+        online: true,
+        userStream: { video: undefined, audio: undefined, screen: undefined }
+    },
     spaceUsers: {},
     messages: []
 };
@@ -44,12 +48,13 @@ export const userSlice = createSlice({
         changeRadius: (state, action: PayloadAction<number>) => {
             state.activeUser.position!.range = action.payload;
         },
-        gotRemoteStream: (state, action: PayloadAction<string>) => {
-            if (state.activeUser.id === action.payload) {
-                state.activeUser.userStream = true
+        setStreamID: (state, action: PayloadAction<{ user_id: string, type: MediaType, stream_id: string | undefined }>) => {
+            console.log(action.payload)
+            if (state.activeUser.id === action.payload.user_id) {
+                state.activeUser.userStream[action.payload.type] = action.payload.stream_id
                 state.activeUser.inProximity = true
             } else
-                state.spaceUsers[action.payload].userStream = true
+                state.spaceUsers[action.payload.user_id].userStream[action.payload.type] = action.payload.stream_id
         },
         setUserId: (state, action: PayloadAction<string>) => {
             state.activeUser.id = action.payload
@@ -78,7 +83,10 @@ export const userSlice = createSlice({
             action.payload.forEach(u => {
                 const id = u.id
                 if (id === state.activeUser.id) {
-                    state.activeUser = u
+                    state.activeUser = {...u,
+                        userStream: state.activeUser.userStream,
+                        inProximity: state.activeUser.inProximity
+                    }
                 } else if (u.position || !u.online) {
                     spaceUsers[id] = u
                 }
@@ -127,7 +135,7 @@ export const userSlice = createSlice({
 export const {
     move,
     changeRadius,
-    gotRemoteStream,
+    setStreamID,
     initUser,
     setUser,
     setUsers,

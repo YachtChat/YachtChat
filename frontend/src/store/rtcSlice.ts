@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {connectToServer, send, triggerReconnection} from "./webSocketSlice";
+import {connectToServer, handleLeave, send, triggerReconnection} from "./webSocketSlice";
 import {rtcConfiguration} from "./config";
 import {
     forgetUsers,
@@ -8,9 +8,9 @@ import {
     getUser,
     getUserById,
     getUserID,
-    gotRemoteStream,
     handlePositionUpdate,
     setMedia,
+    setStreamID,
     setUserOffline
 } from "./userSlice";
 import {resetPlayground} from "./playgroundSlice";
@@ -50,7 +50,6 @@ const initialState: RTCState = {
     cameras: [],
     microphones: [],
     speakers: [],
-    mediaChangeOngoing: false,
     userMedia: false,
     selected: {
         camera: (!!localStorage.getItem("camera")) ? localStorage.getItem("camera")! : undefined,
@@ -106,9 +105,6 @@ export const rtcSlice = createSlice({
         toggleScreen: (state) => {
             state.screen = !state.screen
         },
-        setMediaChangeOngoing: (state, action: PayloadAction<boolean>) => {
-            state.mediaChangeOngoing = action.payload
-        },
         setCamera: (state, action: PayloadAction<string>) => {
             state.selected.camera = action.payload
             localStorage.setItem("camera", action.payload)
@@ -157,7 +153,6 @@ export const {
     setMicrophone,
     setSpeaker,
     setVirtualBackground,
-    setMediaChangeOngoing,
     setUserMedia,
     turnOnVideo,
     turnOnAudio,
@@ -199,7 +194,8 @@ export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch,
         localStream = ls
         camera_processor = cp
 
-        dispatch(gotRemoteStream(localClient))
+        dispatch(setStreamID({user_id: localClient, type: MediaType.VIDEO, stream_id: ls.getVideoTracks()[0].id}))
+        dispatch(setStreamID({user_id: localClient, type: MediaType.AUDIO, stream_id: ls.getAudioTracks()[0].id}))
         dispatch(loadAllMediaDevices())
         dispatch(setUserMedia(true))
     }).then(() =>
@@ -226,13 +222,13 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
     // If audio re-enabled
     if (audio) {
         // Replace audio tracks
-        dispatch(setMediaChangeOngoing(true))
         dispatch(handleInputChange('audio'))
         dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: true}))
         dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': true}))
     } else {
         // If disabled, stop all audio tracks
         if (getStream(state, getUserID(state))?.getAudioTracks()[0]) {
+            setStreamID({ user_id: userID, type: MediaType.AUDIO, stream_id: undefined})
             getStream(state, getUserID(state))?.getAudioTracks()[0].stop()
             dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: false}))
             dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
@@ -262,7 +258,6 @@ export const toggleUserVideo = (): AppThunk => (dispatch, getState) => {
 
         // handle video changes
         if (getState().rtc.video) {
-            dispatch(setMediaChangeOngoing(true))
             dispatch(handleInputChange('video'))
         } else {
             dispatch(stopVideo())
@@ -282,6 +277,7 @@ export const stopVideo = (): AppThunk => (dispatch, getState) => {
 
     // disable streams if video disabled
     getStream(state, userID)?.getVideoTracks()[0].stop()
+    setStreamID({user_id: userID, type: MediaType.VIDEO, stream_id: undefined})
 
     // only kill remote streams if no screen is beeing shared
     if (!state.rtc.screen) {
@@ -298,7 +294,6 @@ export const stopVideo = (): AppThunk => (dispatch, getState) => {
 }
 
 export const toggleUserScreen = (): AppThunk => (dispatch, getState) => {
-    dispatch(setMediaChangeOngoing(true))
     if (!getState().rtc.screen) {
         // If not enabled yet try to enable the screen sharing
         dispatch(shareScreen())
@@ -324,6 +319,7 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 
         // set stream to class wide variable
         screenStream = stream
+        dispatch(setStreamID({user_id: getUserID(getState()), type: MediaType.SCREEN, stream_id: stream.getVideoTracks()[0].id}))
 
         // If screen stream ends stop screen sharing
         stream.getTracks().forEach(t => t.onended = () => {
@@ -341,10 +337,7 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 
     }).catch((e) => {
         dispatch(handleError("Unable to share the screen", e))
-    }).finally(() => {
-            dispatch(setMediaChangeOngoing(false))
-        }
-    )
+    })
 }
 
 
@@ -357,12 +350,12 @@ export const unshareScreen = (isFromCamera?: boolean): AppThunk => (dispatch, ge
     // change the class wide variable of the stream
     screenStream?.getTracks().forEach(t => t.stop())
     screenStream = undefined
+    dispatch(setStreamID({ user_id: getUserID(getState()), type: MediaType.SCREEN, stream_id: undefined}))
 
     // depending on the previousVideo and whether the call came from the camera button start the video or not
     if (getState().rtc.previousVideo || isFromCamera) {
         dispatch(toggleVideo())
         dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
-        dispatch(setMediaChangeOngoing(true))
         dispatch(handleInputChange('video'))
         dispatch(send({
             'type': 'media',
@@ -391,8 +384,6 @@ export const toggleDoNotDisturb = (): AppThunk => (dispatch, getState) => {
 
     if (doNotDisturb) {
         // If it is getting turned off --> turn on all previous media
-
-        dispatch(setMediaChangeOngoing(true))
 
         if (state.rtc.previousVideo)
             dispatch(toggleUserVideo())
@@ -494,7 +485,11 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                 rtcConnections[userId].ontrack = (event: RTCTrackEvent) => {
                     if (!isUserInSpace(getState(), userId)) return
                     streams[userId] = event.streams[0]
-                    dispatch(gotRemoteStream(userId));
+                    dispatch(setStreamID({
+                        user_id: userId,
+                        type: (event.track.kind === "audio") ? MediaType.AUDIO : (event.track.kind === "video") ? MediaType.VIDEO : MediaType.SCREEN,
+                        stream_id: event.track.id
+                    }));
                 }
 
                 rtcConnections[userId].onicegatheringstatechange = () => {
@@ -559,7 +554,7 @@ export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThu
             // delete old reference to timer
             delete connectionTimer[userId];
             // if the connection was not established in time, try to reconnect
-            if (!getUserById(getState(), userId).userStream) {
+            if (!getUserById(getState(), userId).userStream.audio || !getUserById(getState(), userId).userStream.video) {
                 // This if statement only yields true if the peer is still in the space and I am still in the Space.
                 // if this is true we want to try a reconnection.
                 if (getUserById(getState(), userId) !== undefined) {
@@ -729,26 +724,24 @@ export const destroySession = (returnToRoot?: boolean): AppThunk => (dispatch, g
     dispatch(forgetUsers())
     dispatch(resetPlayground())
     dispatch(requestSpaces())
+    dispatch(handleLeave())
 
     if (returnToRoot)
         dispatch(returnHome())
 }
 
 export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {
-    dispatch(setMediaChangeOngoing(true))
     dispatch(setCamera(camera))
     dispatch(handleInputChange("video"))
 }
 
 export const changeAudioInput = (microphone: string): AppThunk => (dispatch, getState) => {
-    dispatch(setMediaChangeOngoing(true))
     dispatch(setMicrophone(microphone))
     dispatch(handleInputChange("audio"))
 
 }
 
 export const changeVirtualBackground = (background: string): AppThunk => (dispatch, getState) => {
-    dispatch(setMediaChangeOngoing(true))
     dispatch(setVirtualBackground(background))
     dispatch(handleInputChange("video"))
 }
@@ -767,7 +760,11 @@ export const handleInputChange = (type?: 'video' | 'audio'): AppThunk => (dispat
         localStream = ls
         camera_processor = cp
 
-        dispatch(setMediaChangeOngoing(false))
+        if (replaceAllTracks || type === "video")
+            dispatch(setStreamID({user_id: localClient, type: MediaType.VIDEO, stream_id: ls.getVideoTracks()[0].id}))
+        if (replaceAllTracks || type === "audio")
+            dispatch(setStreamID({user_id: localClient, type: MediaType.AUDIO, stream_id: ls.getAudioTracks()[0].id}))
+
         getStream(state, localClient)!.getTracks().forEach(s => {
             // replace only stream of type and only if the video/audio aint muted
             if ((!type || type === s.kind) &&

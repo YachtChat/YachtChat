@@ -50,6 +50,7 @@ export function keycloakUserToUser(data: any, online: boolean, position?: UserCo
         username: data.username,
         email: data.email,
         profile_image: (!!image && data.image !== "") ? image : default_image, // The actual URL to the image if available
+        userStream: { video: undefined, audio: undefined, screen: undefined },
 
         position
     }

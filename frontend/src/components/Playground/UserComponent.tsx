@@ -26,7 +26,6 @@ interface OtherProps {
     microphone: string
     getStream: (id: string) => MediaStream | undefined
     getScreenStream: (id: string) => MediaStream | undefined
-    mediaChangeOngoing: boolean
     success: (s: string) => void
     messages: Message[]
     showVideoInAvatar: boolean
@@ -43,7 +42,7 @@ interface State {
 export class UserComponent extends Component<Props, State> {
 
     private myName: React.RefObject<HTMLMediaElement>;
-    private videoObject: React.RefObject<HTMLVideoElement>;
+    private mediaElement: React.RefObject<HTMLVideoElement>;
     private messagesEnd: React.RefObject<HTMLDivElement>;
     private closeTimeout: number = -1;
     private openTimeout?: number;
@@ -51,7 +50,7 @@ export class UserComponent extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.videoObject = React.createRef();
+        this.mediaElement = React.createRef();
         this.messagesEnd = React.createRef();
         this.myName = React.createRef();
         this.state = {
@@ -61,21 +60,21 @@ export class UserComponent extends Component<Props, State> {
     }
 
     componentDidMount() {
-        if (this.props.user.userStream && this.videoObject.current && !this.props.mediaChangeOngoing) {
+        if (this.mediaElement.current) {
 
-            if (!this.videoObject.current.srcObject) {
+            if (!this.mediaElement.current.srcObject) {
                 if (this.props.screen && this.props.isActiveUser) {
-                    this.videoObject.current.srcObject = this.props.getScreenStream(this.props.user.id)!
+                    this.mediaElement.current.srcObject = this.props.getScreenStream(this.props.user.id)!
                 } else {
-                    this.videoObject.current.srcObject = this.props.getStream(this.props.user.id)!
+                    this.mediaElement.current.srcObject = this.props.getStream(this.props.user.id)!
                 }
                 //console.log(this.props.getStream(this.props.user.id)!)
             }
 
             //@ts-ignore
-            if (this.videoObject.current.setSinkId)
+            if (this.mediaElement.current.setSinkId)
                 //@ts-ignore
-                this.videoObject.current.setSinkId(this.props.speaker)
+                this.mediaElement.current.setSinkId(this.props.speaker)
         }
 
         if (this.messagesEnd.current)
@@ -83,22 +82,22 @@ export class UserComponent extends Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
-        if (this.props.user.userStream && this.videoObject.current && !this.props.mediaChangeOngoing) {
+        if (this.mediaElement.current) {
 
-            if (!this.videoObject.current.srcObject ||
-                this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing) {
+            if (!this.mediaElement.current.srcObject ||
+                this.props.user.userStream !== prevProps.user.userStream) {
                 if (this.props.screen && this.props.isActiveUser) {
-                    this.videoObject.current.srcObject = this.props.getScreenStream(this.props.user.id)!
+                    this.mediaElement.current.srcObject = this.props.getScreenStream(this.props.user.id)!
                 } else {
-                    this.videoObject.current.srcObject = this.props.getStream(this.props.user.id)!
+                    this.mediaElement.current.srcObject = this.props.getStream(this.props.user.id)!
                 }
                 //console.log(this.props.getStream(this.props.user.id)!)
             }
 
             //@ts-ignore
-            if (this.videoObject.current.setSinkId)
+            if (this.mediaElement.current.setSinkId)
                 //@ts-ignore
-                this.videoObject.current.setSinkId(this.props.speaker)
+                this.mediaElement.current.setSinkId(this.props.speaker)
 
 
         }
@@ -207,7 +206,10 @@ export class UserComponent extends Component<Props, State> {
             transform: userScale,
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
             // If no screen is beeing shared or video is shown or no stream is available show profile pic
-            backgroundImage: ((!(this.props.isActiveUser && this.props.screen) && !user.video) || !this.videoObject.current?.srcObject) ? `url(${user.profile_image})` : "none",
+            backgroundImage: (
+                (!(this.props.isActiveUser && this.props.screen) && !user.video)
+                || (!this.props.user.userStream.video && !this.props.user.userStream.screen)
+                || !this.mediaElement.current?.srcObject) ? `url(${user.profile_image})` : "none",
         }
 
         const userNameStyle = {
@@ -225,7 +227,7 @@ export class UserComponent extends Component<Props, State> {
                     <Popper placement={"bottom"}
                             data-class={"clickable"}
                             onClick={() => this.setState({hovered: false})}
-                            anchorEl={this.videoObject.current}
+                            anchorEl={this.mediaElement.current}
                             open={true}>
                         <Grow in={this.state.hovered && !this.props.selected && user.inProximity} unmountOnExit>
                             <div onMouseOver={() => {
@@ -318,12 +320,12 @@ export class UserComponent extends Component<Props, State> {
                                      </div>
                                      : ""} placement="top" arrow>
                         <div>
-                            {(!!this.props.user.userStream && !(this.props.isActiveUser && !this.props.showVideoInAvatar)) &&
+                            {((!!this.props.user.userStream.screen || !!this.props.user.userStream.audio || !!this.props.user.userStream.video) && !(this.props.isActiveUser && !this.props.showVideoInAvatar)) &&
                                 <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                                        key={this.props.camera}
                                        autoPlay muted={this.props.isActiveUser}
                                        playsInline
-                                       ref={this.videoObject}
+                                       ref={this.mediaElement}
                                        onMouseOver={() => this.mouseOver()}
                                        onMouseLeave={this.mouseOut.bind(this)}
                                        className={
@@ -358,7 +360,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     speaker: getSpeaker(state),
     camera: getCamera(state),
     microphone: getMicrophone(state),
-    mediaChangeOngoing: state.rtc.mediaChangeOngoing,
     getStream: (id: string) => getStream(state, id),
     getScreenStream: (id: string) => getScreenStream(state, id),
     messages: getUserMessages(state, ownProps.user.id),

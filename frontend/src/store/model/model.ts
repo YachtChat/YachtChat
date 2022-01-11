@@ -12,7 +12,7 @@ export interface User {
     audio?: boolean // if a user sends audio or not
     message?: string
     inProximity?: boolean
-    userStream?: boolean
+    userStream: Record<MediaType, string | undefined>
     position?: UserCoordinates
 }
 

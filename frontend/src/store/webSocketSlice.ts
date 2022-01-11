@@ -6,7 +6,6 @@ import {
     getUser,
     getUserById,
     getUserID,
-    gotRemoteStream,
     handleMessage,
     handlePositionUpdate,
     handleSpaceUser,
@@ -84,7 +83,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
 
     socket.onclose = () => {
         dispatch(destroySession())
-        if (heartBeat){
+        if (heartBeat) {
             clearInterval(heartBeat);
         }
     }
@@ -105,7 +104,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 }
                 break;
             case "reconnection":
-                if (loggedIn){
+                if (loggedIn) {
                     dispatch(handleSpaceUser(data.id, data.position, data.isCaller))
                 }
                 break;
@@ -222,16 +221,18 @@ export const handleLogin = (success: boolean, spaceid: string, users: UserPayloa
 
 export const userSetupReady = (): AppThunk => (dispatch, getState) => {
     const user = getUser(getState())
-    dispatch(gotRemoteStream(getUserID(getState())));
     dispatch(handleRTCEvents(getUserID(getState())));
     dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
     dispatch(joined())
 }
 
 export const handleLeave = (): AppThunk => (dispatch, getState) => {
-    socket?.close()
-    dispatch(disconnect())
-    dispatch(leftRoom())
+    if (socket) {
+        socket?.close()
+        dispatch(disconnect())
+        dispatch(leftRoom())
+        socket = null
+    }
 }
 
 export const triggerReconnection = (id: string): AppThunk => (dispatch => {

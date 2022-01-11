@@ -30,7 +30,6 @@ interface Props {
     camera: string
     speaker: string
     virtualBackground: string | undefined
-    mediaChangeOngoing: boolean
     changeVideoInput: (camera: string) => void
     changeAudioOutput: (speaker: string) => void
     changeAudioInput: (microphone: string) => void
@@ -60,8 +59,7 @@ export class MediaSettings extends Component<Props> {
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        if (this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing &&
-            (prevProps.camera !== this.props.camera || prevProps.virtualBackground !== this.props.virtualBackground)) {
+        if ((prevProps.camera !== this.props.camera || prevProps.virtualBackground !== this.props.virtualBackground)) {
             this.props.getStream().then(stream => {
                 if (this.stream)
                     this.stream.getTracks().forEach(t => t.stop())
@@ -101,7 +99,7 @@ export class MediaSettings extends Component<Props> {
                 <div className={"preview"}>
                     <div className={"videoPreview"}>
                         <video key={this.props.camera} autoPlay muted ref={ref => {
-                            if (ref && !this.props.mediaChangeOngoing && this.stream)
+                            if (ref && this.stream)
                                 ref.srcObject = this.stream
                         }}/>
                     </div>
@@ -196,7 +194,6 @@ const mapStateToProps = (state: RootState) => ({
     user: state.userState.activeUser,
     microphones: state.rtc.microphones,
     cameras: state.rtc.cameras,
-    mediaChangeOngoing: state.rtc.mediaChangeOngoing,
     speakers: state.rtc.speakers,
     microphone: getMicrophone(state),
     camera: getCamera(state),

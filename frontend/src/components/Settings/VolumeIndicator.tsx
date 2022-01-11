@@ -7,7 +7,6 @@ import {User} from "../../store/model/model";
 
 interface Props {
     audio?: MediaStream
-    mediaChangeOngoing: boolean
     className?: string
     animateHeight?: boolean
     animateWidth?: boolean // default true
@@ -49,7 +48,7 @@ export class MediaSettings extends Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
-        if (prevProps !== this.props && !this.props.mediaChangeOngoing) {
+        if (prevProps !== this.props) {
             this.unmountStream()
             this.mountStream()
         }
@@ -142,7 +141,6 @@ export class MediaSettings extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    mediaChangeOngoing: state.rtc.mediaChangeOngoing,
     users: getOnlineUsers(state),
 })
 

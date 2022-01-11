@@ -1,8 +1,9 @@
 import {RootState} from "../../../store/store";
 import {getScreenStream, getStream} from "../../../store/rtcSlice";
-import {getUserID} from "../../../store/userSlice";
+import {getUser, getUserID} from "../../../store/userSlice";
 import React, {Component, createRef} from "react";
 import {connect} from "react-redux";
+import {User} from "../../../store/model/model";
 
 interface Props {
     className?: string
@@ -10,8 +11,8 @@ interface Props {
     video: boolean
     profile_image: string | undefined
     getStream: () => MediaStream | undefined
+    user: User
     getScreenStream: () => MediaStream | undefined
-    mediaChangeOngoing: boolean
 }
 
 interface State {
@@ -29,7 +30,7 @@ class VideoIcon extends Component<Props, State> {
     }
 
     componentDidMount() {
-        if (!this.props.mediaChangeOngoing && this.video.current) {
+        if (this.video.current) {
             if (!this.video.current?.srcObject) {
                 let stream: MediaStream | undefined
                 if (this.props.screen) {
@@ -45,9 +46,9 @@ class VideoIcon extends Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<Props>) {
-        if (!this.props.mediaChangeOngoing && this.video.current) {
+        if (this.video.current) {
             if (!this.video.current?.srcObject ||
-                this.props.mediaChangeOngoing !== prevProps.mediaChangeOngoing) {
+                this.props.user.userStream !== prevProps.user.userStream) {
                 let stream: MediaStream | undefined
                 if (this.props.screen) {
                     stream = this.props.getScreenStream()!
@@ -78,11 +79,11 @@ class VideoIcon extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     screen: state.rtc.screen,
+    user: getUser(state),
     video: state.rtc.video,
     profile_image: state.userState.activeUser.profile_image,
     getStream: () => getStream(state, getUserID(state)),
     getScreenStream: () => getScreenStream(state, getUserID(state)),
-    mediaChangeOngoing: state.rtc.mediaChangeOngoing
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
