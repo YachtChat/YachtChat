@@ -8,8 +8,8 @@ Get started by **[Register](https://auth.yacht.chat/auth/realms/Application/logi
 
 You need to have an account to use Yacht.Chat, for a better management of the room members and your own rooms.
 
-![Login](/img/docs/LoginScreen.png)
+<img alt="Login" src="/img/docs/LoginScreen.png" width="750"/>
 
-![Register](/img/docs/RegisterScreen.png)
+<img alt="Register" src="/img/docs/RegisterScreen.png" width="750"/>
 
 This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

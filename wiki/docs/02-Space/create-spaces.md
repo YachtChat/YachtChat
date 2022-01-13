@@ -6,8 +6,8 @@ sidebar_position: 1
 
 To create a space you have to be logged in. Just hit the "plus" symbol to create a new space and name it.
 
-![Create Space 1](/img/docs/CreateSpace1.png)
-![Create Space 2](/img/docs/CreateSpace2.png)
-![Create Space 3](/img/docs/CreateSpace3.png)
+<img alt="Create Space 1" src="/img/docs/CreateSpace1.png" width="750"/>
+<img alt="Create Space 2" src="/img/docs/CreateSpace2.png" width="750"/>
+<img alt="Create Space 3" src="/img/docs/CreateSpace3.png" width="750"/>
 
 This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

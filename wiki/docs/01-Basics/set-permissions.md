@@ -12,21 +12,21 @@ Make sure that you allow the website www.app.yacht.chat the access to your camer
 
 Click on Privacy and security in your settings
 
-![Browser Settings](/img/docs/ChromeBrowserSettings.png)
+<img alt="Browser Settings" src="/img/docs/ChromeBrowserSettings.png" width="750"/>
 
 Then go to the application app.yacht.chat
 
-![Application Settings](/img/docs/ChromeSiteSettings.png)
+<img alt="Application Settings" src="/img/docs/ChromeSiteSettings.png" width="750"/>
 
 Here you can manage the Permissions of the Camera and Microphone. To use the application please select Allow
 
-![Site Settings](/img/docs/ChromeApplication.png)
+<img alt="Site Settings" src="/img/docs/ChromeApplication.png" width="750"/>
 
 ### Safari
 
 Open the Safari settings, go to Websites. On the left you see Camera and Microphone. If you click on Camera you can find on the right the websites. Select allow next to yacht.chat. Repeat this for the Microphone.
 
-![Safari Settings](/img/docs/SafariSystemPreferences.png)
+<img alt="Safari Settings" src="/img/docs/SafariSystemPreferences.png" width="750"/>
 
 ### FireFox
 
@@ -34,14 +34,14 @@ TODO
 
 ### Opera
 
-Open the Opera settings, and scroll down to the section Privacy and security. 
-![Opera Settings](/img/docs/OperaOpenSettings.png)
+Open the Opera settings, and scroll down to the section Privacy and security.
+<img alt="Opera Settings" src="/img/docs/OperaOpenSettings.png" width="750"/>
 
-Click on Site Settings and go to View permissions and data stored across sites, if app.yacht.chat is not shown in Recent activity. 
-![Opera Site Settings](/img/docs/OperaPrivacyandSecurity.png)
+Click on Site Settings and go to View permissions and data stored across sites, if app.yacht.chat is not shown in Recent activity.
+<img alt="Opera Site Settings" src="/img/docs/OperaPrivacyandSecurity.png" width="750"/>
 
 If you clicked on app.yacht.chat you can set the permissions of your Camera and Microphone.
-![Opera Permissions](/img/docs/OperaPermissions.png)
+<img alt="Opera Permissions" src="/img/docs/OperaPermissions.png" width="750"/>
 
 
 
@@ -57,8 +57,8 @@ No permissions in the system preferences required.
 ### Mac
 If you are using macintosh and you want to share your screen for the first time, you have to give your browser the right to do so in your macintosh settings. Go to System Preferences, Security & Privacy, Screen Recording and tick to the box next to your browser.
 
-![Mac Settings](/img/docs/MacSettings.png)
-![Mac Settings screen recording](/img/docs/MacSettingsScreen.png)
+<img alt="Mac Settings" src="/img/docs/MacSettings.png" width="750"/>
+<img alt="Mac Settings screen recording" src="/img/docs/MacSettingsScreen.png" width="750"/>
 
 
 This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
