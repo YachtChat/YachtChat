@@ -10,9 +10,11 @@ You can send the link via e-mail or any other service to your colleges.
 
 An advantage is that you only have to send it once and use the space for an infinite time
 
-It is possible to invite Users in a later state is well. Just click on INVITE LINK in the top left corner in a space or invite users at the spaces overview.
-![Invite from Playground](/img/docs/Playground.png)
+It is possible to invite Users in a later state is well. Just click on INVITE LINK in the top left corner in a space or click on INVITE next to the space name at the overview of the spaces.
 
+<img alt="Invite from Playground" src="/img/docs/Playground.png" width="750"/>
+
+<img alt="Invite from Spaces View" src="/img/docs/SpacesView.png" width="750"/>
 
 
 This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
