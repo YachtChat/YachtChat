@@ -1,7 +1,7 @@
 import {Action, configureStore, ThunkAction} from '@reduxjs/toolkit';
 import userReducer from './userSlice';
 import webSocketSlice from "./webSocketSlice";
-import rtcSlice from "./rtcSlice";
+import mediaSlice from "./mediaSlice";
 import spaceSlice from "./spaceSlice";
 import statusSlice from "./statusSlice";
 import authSlice from "./authSlice";
@@ -16,7 +16,7 @@ export const store = configureStore({
     router: connectRouter<unknown>(history),
     userState: userReducer,
     webSocket: webSocketSlice,
-    rtc: rtcSlice,
+    media: mediaSlice,
     space: spaceSlice,
     status: statusSlice,
     playground: playgroundSlice,

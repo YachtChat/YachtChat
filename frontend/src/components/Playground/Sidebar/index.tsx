@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import {FaCog, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash} from 'react-icons/fa';
 import RangeSlider from "./RangeSlider"
 import {sendLogout} from "../../../store/webSocketSlice";
-import {toggleUserVideo, toggleUserAudio, toggleUserScreen, toggleDoNotDisturb} from "../../../store/rtcSlice";
+import {toggleUserVideo, toggleUserAudio, toggleUserScreen, toggleDoNotDisturb} from "../../../store/mediaSlice";
 import Settings from "../../Settings/SpaceSettings";
 import {centerUser, isUserOutOfBounds} from "../../../store/playgroundSlice";
 import {IoChatbubble, IoChevronBackOutline, IoMoon, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
@@ -17,6 +17,7 @@ import MembersComponent from "../Members";
 import {ClickAwayListener, Collapse, Tooltip} from "@material-ui/core";
 import posthog from "posthog-js";
 import VideoIcon from "./VideoIcon";
+import {getUserWrapped} from "../../../store/userSlice";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -306,10 +307,10 @@ const mapStateToProps = (state: RootState) => ({
     getToken: (spaceID: string) => getInvitationToken(state, spaceID),
     spaces: state.space.spaces,
     activeUser: state.userState.activeUser,
-    video: state.rtc.video,
     videoInAvatar: state.playground.videoInAvatar,
-    audio: state.rtc.audio,
-    screen: state.rtc.screen,
+    video: getUserWrapped(state).video,
+    audio: getUserWrapped(state).audio,
+    screen: getUserWrapped(state).screen,
     userOutOfBounds: isUserOutOfBounds(state)
 })
 

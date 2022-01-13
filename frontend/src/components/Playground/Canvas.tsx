@@ -1,19 +1,20 @@
 import React, {Component} from "react";
-import {PlaygroundOffset, User, UserCoordinates} from "../../store/model/model";
+import {PlaygroundOffset, UserCoordinates} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
 import './style.scss';
-import {getUsers, submitMovement} from "../../store/userSlice";
-import {toggleUserVideo, toggleUserAudio} from "../../store/rtcSlice";
+import {getOnlineUsersWrapped, getUser, submitMovement} from "../../store/userSlice";
+import {toggleUserVideo, toggleUserAudio} from "../../store/mediaSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
 import FocusUser from "./focusUser";
 import {Fade} from "@material-ui/core";
+import {UserWrapper} from "../../store/model/UserWrapper";
 
 interface Props {
-    activeUser: User
-    spaceUsers: User[]
+    activeUser: UserWrapper
+    spaceUsers: UserWrapper[]
     move: (userCoordinates: UserCoordinates, isDragActivated: boolean) => void
     offset: PlaygroundOffset
     changeSizeMultiplier: (size: number) => void
@@ -366,8 +367,8 @@ export class Canvas extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    activeUser: state.userState.activeUser,
-    spaceUsers: getUsers(state),
+    activeUser: new UserWrapper(getUser(state)),
+    spaceUsers: getOnlineUsersWrapped(state),
     offset: state.playground.offset,
 })
 

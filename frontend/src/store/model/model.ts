@@ -8,8 +8,6 @@ export interface User {
     email?: string
     profile_image?: string // The actual URL to the image if available
 
-    video?: boolean // if a user sends video or not
-    audio?: boolean // if a user sends audio or not
     message?: string
     inProximity?: boolean
     userStream: Record<MediaType, string | undefined>

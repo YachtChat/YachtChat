@@ -7,9 +7,10 @@ import {
     getOnlineUsers,
     getUser,
     getUserById,
+    getUserByIdWrapped,
     getUserID,
+    getUserWrapped,
     handlePositionUpdate,
-    setMedia,
     setStreamID,
     setUserOffline
 } from "./userSlice";
@@ -19,10 +20,12 @@ import {handleError} from "./statusSlice";
 import {MediaType} from "./model/model";
 import {applyVirtualBackground, stopAllVideoEffects} from "./utils";
 import CameraProcessor from "camera-processor";
+import {UserWrapper} from "./model/UserWrapper";
 
-interface RTCState {
-    audio: boolean
-    video: boolean
+interface MediaState {
+    audio: { [user: string]: boolean }
+    video: { [user: string]: boolean }
+    screen: { [user: string]: boolean }
     doNotDisturb: boolean
     previousVideo: boolean
     previousAudio: boolean
@@ -35,14 +38,13 @@ interface RTCState {
         microphone?: string,
         virtualBackground?: string
     }
-    screen: boolean
     userMedia: boolean // marked obsolete?
 }
 
-const initialState: RTCState = {
-    audio: true,
-    video: true,
-    screen: false,
+const initialState: MediaState = {
+    audio: {},
+    video: {},
+    screen: {},
     previousVideo: true,
     previousAudio: true,
     doNotDisturb: false,
@@ -73,7 +75,7 @@ const offerOptions = {
     offerToReceiveAudio: true
 };
 
-export const rtcSlice = createSlice({
+export const mediaSlice = createSlice({
     name: 'rtc',
     initialState,
     reducers: {
@@ -82,27 +84,27 @@ export const rtcSlice = createSlice({
             state.microphones = action.payload.microphones
             state.speakers = action.payload.speakers
         },
-        toggleAudio: (state) => {
-            state.audio = !state.audio
+        toggleAudio: (state, action: PayloadAction<string>) => {
+            state.audio[action.payload] = !state.audio[action.payload]
         },
-        toggleVideo: (state) => {
-            state.video = !state.video
+        toggleVideo: (state, action: PayloadAction<string>) => {
+            state.video[action.payload] = !state.video[action.payload]
         },
-        setPrevious: (state, action: PayloadAction<{ kind: string, state: boolean }>) => {
+        toggleScreen: (state, action: PayloadAction<string>) => {
+            state.screen[action.payload] = !state.screen[action.payload]
+        },
+        setPrevious: (state, action: PayloadAction<{ kind: MediaType, state: boolean }>) => {
             switch (action.payload.kind) {
-                case "video":
+                case MediaType.VIDEO:
                     state.previousVideo = action.payload.state
                     break;
-                case "audio":
+                case MediaType.AUDIO:
                     state.previousAudio = action.payload.state
                     break;
             }
         },
         setDoNotDisturb: (state, action: PayloadAction<boolean>) => {
             state.doNotDisturb = action.payload
-        },
-        toggleScreen: (state) => {
-            state.screen = !state.screen
         },
         setCamera: (state, action: PayloadAction<string>) => {
             state.selected.camera = action.payload
@@ -129,15 +131,24 @@ export const rtcSlice = createSlice({
         setUserMedia: (state, action: PayloadAction<boolean>) => {
             state.userMedia = action.payload
         },
-        turnOnVideo: (state) => {
-            state.video = true
+        turnOnVideo: (state, action: PayloadAction<string>) => {
+            state.video[action.payload] = true
         },
-        turnOnAudio: (state) => {
-            state.audio = true
+        turnOnAudio: (state, action: PayloadAction<string>) => {
+            state.audio[action.payload] = true
         },
-        setScreen: (state, action: PayloadAction<boolean>) => {
-            state.screen = action.payload
+        setScreen: (state, action: PayloadAction<{user_id: string, state: boolean}>) => {
+            state.screen[action.payload.user_id] = action.payload.state
         },
+        setMedia: (state, action: PayloadAction<{ id: string, type: MediaType, state: boolean }>) => {
+            if (action.payload.type === MediaType.VIDEO) {
+                state.video[action.payload.id] = action.payload.state
+            } else if (action.payload.type === MediaType.AUDIO) {
+                state.audio[action.payload.id] = action.payload.state
+            } else if (action.payload.type === MediaType.SCREEN) {
+                state.screen[action.payload.id] = action.payload.state
+            }
+        }
     },
 });
 
@@ -155,8 +166,9 @@ export const {
     setUserMedia,
     turnOnVideo,
     turnOnAudio,
-    setScreen
-} = rtcSlice.actions;
+    setScreen,
+    setMedia
+} = mediaSlice.actions;
 
 export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatch) => {
 
@@ -189,7 +201,7 @@ export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatc
 export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch, getState) => {
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
         const localClient = getUserID(getState())
-        const [ls, cp] = applyVirtualBackground(e, getState().rtc.selected.virtualBackground, camera_processor)
+        const [ls, cp] = applyVirtualBackground(e, getState().media.selected.virtualBackground, camera_processor)
         localStream = ls
         camera_processor = cp
 
@@ -212,11 +224,11 @@ export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch,
 }
 
 export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
-    dispatch(toggleAudio())
+    dispatch(toggleAudio(getUserID(getState())))
 
     const state = getState()
     const userID = getUserID(state)
-    const audio = state.rtc.audio
+    const audio = getUserWrapped(state).audio
 
     if (!getStream(state, userID)) {
         dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
@@ -250,24 +262,25 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
 
 export const toggleUserVideo = (): AppThunk => (dispatch, getState) => {
     // get state screen state
-    const screen: boolean = getState().rtc.screen
+    const user: UserWrapper = getUserWrapped(getState())
+    const screen: boolean = user.screen
 
     if (screen) {
         // if the screen was on till now let unshareScreen handle it
         dispatch(unshareScreen(true))
     } else {
-        dispatch(toggleVideo())
+        dispatch(toggleVideo(getUserID(getState())))
         // TODO this call should later be deleted because video state is redundant
-        dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: getState().rtc.video}))
+        dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: getUserWrapped(getState()).video}))
 
         // handle video changes
-        if (getState().rtc.video) {
+        if (user.video) {
             dispatch(handleInputChange('video'))
         } else {
             dispatch(stopVideo())
         }
         // tell websocket about video changes
-        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': getState().rtc.video}))
+        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': user.video}))
     }
 }
 
@@ -284,7 +297,7 @@ export const stopVideo = (): AppThunk => (dispatch, getState) => {
     setStreamID({user_id: userID, type: MediaType.VIDEO, stream_id: undefined})
 
     // only kill remote streams if no screen is beeing shared
-    if (!state.rtc.screen) {
+    if (!getUserWrapped(state).screen) {
         // Disable streams for every one (if nothing is shared)
         getOnlineUsers(state).forEach(u => {
             Object.keys(rtpSender[u.id]).forEach(k => {
@@ -298,7 +311,7 @@ export const stopVideo = (): AppThunk => (dispatch, getState) => {
 }
 
 export const toggleUserScreen = (): AppThunk => (dispatch, getState) => {
-    if (!getState().rtc.screen) {
+    if (!getUserWrapped(getState()).screen) {
         // If not enabled yet try to enable the screen sharing
         dispatch(shareScreen())
     } else {
@@ -307,19 +320,21 @@ export const toggleUserScreen = (): AppThunk => (dispatch, getState) => {
     }
 }
 export const shareScreen = (): AppThunk => (dispatch, getState) => {
-    // remember the current video state to know wheter to turn on camer or not when sreensharing is turned off
-    dispatch(setPrevious({kind: "video", state: getState().rtc.video}))
+    const user = getUserWrapped(getState())
+
+    // remember the current video state to know whether to turn on camera or not when sreensharing is turned off
+    dispatch(setPrevious({kind: MediaType.VIDEO, state: user.video}))
     navigator.mediaDevices.getDisplayMedia(getScreenSharingConstraints()).then((stream) => {
 
         // if the video was turned on until now turn it off
-        if (getState().rtc.video) {
-            dispatch(toggleVideo())
+        if (user.video) {
+            dispatch(toggleVideo(getUserID(getState())))
             dispatch(stopVideo())
             // TODO this call should later be deleted because video state is redundant
             dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: false}))
         }
         // change the screen state
-        dispatch(setScreen(true))
+        dispatch(setScreen({user_id: user.id, state: true}))
 
         // set stream to class wide variable
         screenStream = stream
@@ -349,7 +364,7 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 // the camera button
 export const unshareScreen = (isFromCamera?: boolean): AppThunk => (dispatch, getState) => {
     // change the screen state
-    dispatch(setScreen(false))
+    dispatch(setScreen({ user_id: getUserID(getState()), state: false }))
 
     // change the class wide variable of the stream
     screenStream?.getTracks().forEach(t => t.stop())
@@ -357,8 +372,8 @@ export const unshareScreen = (isFromCamera?: boolean): AppThunk => (dispatch, ge
     dispatch(setStreamID({ user_id: getUserID(getState()), type: MediaType.SCREEN, stream_id: undefined}))
 
     // depending on the previousVideo and whether the call came from the camera button start the video or not
-    if (getState().rtc.previousVideo || isFromCamera) {
-        dispatch(toggleVideo())
+    if (getState().media.previousVideo || isFromCamera) {
+        dispatch(toggleVideo(getUserID(getState())))
         dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
         dispatch(handleInputChange('video'))
         dispatch(send({
@@ -384,33 +399,34 @@ export const unshareScreen = (isFromCamera?: boolean): AppThunk => (dispatch, ge
 // Handles the logic for the do not disturb function
 export const toggleDoNotDisturb = (): AppThunk => (dispatch, getState) => {
     const state = getState()
-    const doNotDisturb = state.rtc.doNotDisturb
+    const user = getUserWrapped(state)
+    const doNotDisturb = state.media.doNotDisturb
 
     if (doNotDisturb) {
         // If it is getting turned off --> turn on all previous media
 
-        if (state.rtc.previousVideo)
+        if (state.media.previousVideo)
             dispatch(toggleUserVideo())
-        if (state.rtc.previousAudio)
+        if (state.media.previousAudio)
             dispatch(toggleUserAudio())
 
     } else {
         // If it will be turned on --> Turn off all the media
         // Save all previous states
-        dispatch(setPrevious({kind: "audio", state: state.rtc.audio}))
-        if (!state.rtc.screen) {
+        dispatch(setPrevious({kind: MediaType.AUDIO, state: user.audio}))
+        if (!user.screen) {
             // Only save video state if it is not influenced by screen state
-            dispatch(setPrevious({kind: "video", state: state.rtc.video}))
+            dispatch(setPrevious({kind: MediaType.VIDEO, state: user.video}))
         }
 
         // Turn off all streams
-        if (state.rtc.screen)
+        if (user.screen)
             dispatch(unshareScreen())
 
-        if (state.rtc.audio)
+        if (user.audio)
             dispatch(toggleUserAudio())
 
-        if (state.rtc.video)
+        if (user.video)
             dispatch(toggleUserVideo())
 
 
@@ -421,7 +437,7 @@ export const toggleDoNotDisturb = (): AppThunk => (dispatch, getState) => {
 
 // Function that will enable spatial audio to a given user
 export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
-    if (!getState().rtc.audio)
+    if (!getUserWrapped(getState()).audio)
         return
     const rtp = rtpSender[id]["audio"]
     //console.log("Trying to enable audio to ", id)
@@ -433,7 +449,7 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
 }
 
 // Function that will disnable spatial audio to a given user
-export const unsendAudio = (id: string): AppThunk => (dispatch, getState) => {
+export const unsendAudio = (id: string): AppThunk => dispatch => {
     const rtp = rtpSender[id]["audio"]
     console.log("Trying not to enable audio to ", id)
     if (rtp.track && rtp.track.kind === 'audio') {
@@ -456,6 +472,7 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
     // get client ids
     const clients = getOnlineUsers(getState()).map(k => k.id)
     const localClient: string = getUserID(getState())
+    const user = getUserWrapped(getState())
     clients.push(localClient)
 
     if (Array.isArray(clients) && clients.length > 0) {
@@ -532,7 +549,7 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                 let mediaStream = getStream(getState(), localClient)!
 
                 // if screen is beeing shared
-                if (getState().rtc.screen && screenStream) {
+                if (user.screen && screenStream) {
                     mediaStream = new MediaStream([
                         localStream!.getAudioTracks()[0],
                         screenStream!.getVideoTracks()[0]
@@ -580,7 +597,7 @@ export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThu
                                 bytesReceived[userId] = {audio: 0, screen: 0, video: 0}
                             }
                             const br = bytesReceived
-                            const user = getUserById(getState(), userId)
+                            const user = getUserByIdWrapped(getState(), userId)
                             report.forEach(k => {
                                 if (k.type === "inbound-rtp" && k.kind === "video") {
                                     if (br['video'] === k.bytesReceived && user.video) {
@@ -697,7 +714,7 @@ export const destroySession = (returnToRoot?: boolean): AppThunk => (dispatch, g
     camera_processor = undefined
     screenStream = undefined
 
-    dispatch(setScreen(false))
+    dispatch(setScreen({ user_id: getUserID(getState()), state: false }))
     // dispatch(setUser({...getUser(getState()), online: false}))
 
     // clear all timer when we are leaving the space
@@ -723,8 +740,8 @@ export const destroySession = (returnToRoot?: boolean): AppThunk => (dispatch, g
     rtcConnections = {}
     rtpSender = {}
 
-    dispatch(turnOnVideo())
-    dispatch(turnOnAudio())
+    dispatch(turnOnVideo(getUserID(getState())))
+    dispatch(turnOnAudio(getUserID(getState())))
     dispatch(forgetUsers())
     dispatch(resetPlayground())
     dispatch(requestSpaces())
@@ -734,33 +751,34 @@ export const destroySession = (returnToRoot?: boolean): AppThunk => (dispatch, g
         dispatch(returnHome())
 }
 
-export const changeVideoInput = (camera: string): AppThunk => (dispatch, getState) => {
+export const changeVideoInput = (camera: string): AppThunk => dispatch => {
     dispatch(setCamera(camera))
     dispatch(handleInputChange("video"))
 }
 
-export const changeAudioInput = (microphone: string): AppThunk => (dispatch, getState) => {
+export const changeAudioInput = (microphone: string): AppThunk => dispatch => {
     dispatch(setMicrophone(microphone))
     dispatch(handleInputChange("audio"))
 
 }
 
-export const changeVirtualBackground = (background: string): AppThunk => (dispatch, getState) => {
+export const changeVirtualBackground = (background: string): AppThunk => dispatch => {
     dispatch(setVirtualBackground(background))
     dispatch(handleInputChange("video"))
 }
 
 export const handleInputChange = (type?: 'video' | 'audio'): AppThunk => (dispatch, getState) => {
     const state = getState()
+    const user = getUserWrapped(state)
     const localClient = getUserID(state)
     const oldStream = getStream(state, localClient)
 
     // If true all tracks have to be replaced otherwise just of type
-    const replaceAllTracks = state.rtc.video && state.rtc.audio
+    const replaceAllTracks = user.video && user.audio
 
     navigator.mediaDevices.getUserMedia(getMediaConstrains(state, (replaceAllTracks) ? undefined : type)).then((e) => {
         // If type is not set or no localStream available reset the whole stream object
-        const [ls, cp] = applyVirtualBackground(e, getState().rtc.selected.virtualBackground, camera_processor)
+        const [ls, cp] = applyVirtualBackground(e, getState().media.selected.virtualBackground, camera_processor)
         localStream = ls
         camera_processor = cp
 
@@ -772,7 +790,7 @@ export const handleInputChange = (type?: 'video' | 'audio'): AppThunk => (dispat
         getStream(state, localClient)!.getTracks().forEach(s => {
             // replace only stream of type and only if the video/audio aint muted
             if ((!type || type === s.kind) &&
-                ((s.kind === 'audio' && state.rtc.audio) || (s.kind === 'video' && state.rtc.video))) {
+                ((s.kind === 'audio' && user.audio) || (s.kind === 'video' && user.video))) {
                 getOnlineUsers(state).forEach(u => {
                     Object.keys(rtpSender[u.id]).forEach(k => {
                         const rs = rtpSender[u.id][k]
@@ -796,7 +814,7 @@ export const handleInputChange = (type?: 'video' | 'audio'): AppThunk => (dispat
 
 }
 
-export const changeAudioOutput = (speaker: string): AppThunk => (dispatch, getState) => {
+export const changeAudioOutput = (speaker: string): AppThunk => dispatch => {
     dispatch(setSpeaker(speaker))
 }
 
@@ -829,25 +847,25 @@ export const getScreenSharingConstraints = () => {
 }
 
 export const getMicrophone = (state: RootState): string => {
-    const sel = state.rtc.selected.microphone
-    if (sel && state.rtc.microphones.find(c => c === sel))
+    const sel = state.media.selected.microphone
+    if (sel && state.media.microphones.find(c => c === sel))
         return sel
-    if (state.rtc.cameras[0])
-        return state.rtc.microphones[0]
+    if (state.media.cameras[0])
+        return state.media.microphones[0]
     return ""
 }
 export const getCamera = (state: RootState): string => {
-    const sel = state.rtc.selected.camera
-    if (sel && state.rtc.cameras.find(c => c === sel))
+    const sel = state.media.selected.camera
+    if (sel && state.media.cameras.find(c => c === sel))
         return sel
-    if (state.rtc.cameras[0])
-        return state.rtc.cameras[0]
+    if (state.media.cameras[0])
+        return state.media.cameras[0]
     return ""
 }
 export const getSpeaker = (state: RootState): string => {
     // get selected speaker if available
     // otherwise get first available
-    return (state.rtc.speakers[0]) ? state.rtc.speakers[0] : ""
+    return (state.media.speakers[0]) ? state.media.speakers[0] : ""
 }
 export const getStream = (state: RootState, id: string) => {
     if (streams[id])
@@ -863,7 +881,18 @@ export const getScreenStream = (state: RootState, id: string) => {
         return screenStream
 }
 
+export const getMedia = (state: RootState, type: MediaType, id: string) => {
+    if (type === MediaType.VIDEO) {
+        return state.media.video[id]
+    } else if (type === MediaType.AUDIO) {
+        return state.media.audio[id]
+    } else if (type === MediaType.SCREEN) {
+        return state.media.screen[id]
+    }
+    return false
+}
+
 export const getFreshMediaStream = (state: RootState): Promise<MediaStream> =>
     navigator.mediaDevices.getUserMedia(getMediaConstrains(state))
 export const getMediaDevices = () => mediaDevices
-export default rtcSlice.reducer;
+export default mediaSlice.reducer;

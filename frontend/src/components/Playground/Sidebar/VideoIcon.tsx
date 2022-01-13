@@ -1,17 +1,15 @@
 import {RootState} from "../../../store/store";
-import {getScreenStream, getStream} from "../../../store/rtcSlice";
-import {getUser, getUserID} from "../../../store/userSlice";
+import {getScreenStream, getStream} from "../../../store/mediaSlice";
+import {getUserID, getUserWrapped} from "../../../store/userSlice";
 import React, {Component, createRef} from "react";
 import {connect} from "react-redux";
-import {User} from "../../../store/model/model";
+import {UserWrapper} from "../../../store/model/UserWrapper";
 
 interface Props {
     className?: string
-    screen: boolean
-    video: boolean
     profile_image: string | undefined
     getStream: () => MediaStream | undefined
-    user: User
+    user: UserWrapper
     getScreenStream: () => MediaStream | undefined
 }
 
@@ -33,7 +31,7 @@ class VideoIcon extends Component<Props, State> {
         if (this.video.current) {
             if (!this.video.current?.srcObject) {
                 let stream: MediaStream | undefined
-                if (this.props.screen) {
+                if (this.props.user.screen) {
                     stream = this.props.getScreenStream()!
                 } else {
                     stream = this.props.getStream()!
@@ -50,7 +48,7 @@ class VideoIcon extends Component<Props, State> {
             if (!this.video.current?.srcObject ||
                 this.props.user.userStream !== prevProps.user.userStream) {
                 let stream: MediaStream | undefined
-                if (this.props.screen) {
+                if (this.props.user.screen) {
                     stream = this.props.getScreenStream()!
                 } else {
                     stream = this.props.getStream()!
@@ -69,7 +67,7 @@ class VideoIcon extends Component<Props, State> {
                 style={{
                     backgroundSize: "contain",
                     backgroundImage:
-                        ((!this.props.screen && !this.props.video) || !this.video.current?.srcObject) ?
+                        ((!this.props.user.screen && !this.props.user.video) || !this.video.current?.srcObject) ?
                             `url(${this.props.profile_image})` : "none",
                 }}
                 autoPlay muted ref={this.video}/>
@@ -78,9 +76,7 @@ class VideoIcon extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    screen: state.rtc.screen,
-    user: getUser(state),
-    video: state.rtc.video,
+    user: getUserWrapped(state),
     profile_image: state.userState.activeUser.profile_image,
     getStream: () => getStream(state, getUserID(state)),
     getScreenStream: () => getScreenStream(state, getUserID(state)),

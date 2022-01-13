@@ -1,9 +1,9 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {CameraMode, PlaygroundOffset, User} from "./model/model";
+import {CameraMode, MediaType, PlaygroundOffset, User} from "./model/model";
 import {AppThunk, RootState} from "./store";
 import {requestSpaces} from "./spaceSlice";
-import {getUser, userProportion} from "./userSlice";
-import {setPrevious, toggleUserVideo, unshareScreen} from "./rtcSlice";
+import {getUser, getUserWrapped, userProportion} from "./userSlice";
+import {setPrevious, toggleUserVideo, unshareScreen} from "./mediaSlice";
 
 interface PlaygroundState {
     offset: PlaygroundOffset
@@ -194,26 +194,27 @@ export const setupCameraMode = (mode: CameraMode): AppThunk => (dispatch, getSta
 
     dispatch(setCameraMode(mode))
 
+    const user = getUserWrapped(getState())
+
     switch (mode) {
         case CameraMode.Automatically:
             window.onblur = () => {
-                if (getState().rtc.screen) {
+                if (user.screen) {
                     dispatch(unshareScreen())
                 }
-                if (getUser(getState()).video) {
+                if (user.video) {
                     dispatch(toggleUserVideo())
-                    dispatch(setPrevious({kind: "video", state: true}))
+                    dispatch(setPrevious({kind: MediaType.VIDEO, state: true}))
                 } else {
-                    dispatch(setPrevious({kind: "video", state: false}))
+                    dispatch(setPrevious({kind: MediaType.VIDEO, state: false}))
                 }
             }
             window.onfocus = () => {
-                if (getState().rtc.previousVideo &&
-                    !getState().rtc.doNotDisturb &&
-                    !getState().rtc.screen &&
-                    !getState().rtc.video) {
+                if (getState().media.previousVideo &&
+                    !getState().media.doNotDisturb &&
+                    !user.screen &&
+                    !user.video) {
                     dispatch(toggleUserVideo())
-                    dispatch(setPrevious({kind: "video", state: false}))
                 }
             }
             break;

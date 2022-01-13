@@ -5,16 +5,15 @@ import {
     getOnlineUsers,
     getUser,
     getUserById,
-    getUserID,
+    getUserID, getUserWrapped,
     handleMessage,
     handlePositionUpdate,
     handleSpaceUser,
     handleSpaceUsers,
     removeUser,
-    setMedia
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
-import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtcSlice";
+import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp, setMedia} from "./mediaSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./config";
 import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
@@ -188,13 +187,14 @@ export const send = (message: { [key: string]: any }): AppThunk => (dispatch, ge
 }
 
 export const requestLogin = (): AppThunk => (dispatch, getState) => {
+    const user = getUserWrapped(getState())
     getToken(getState()).then(token =>
         dispatch(send({
             type: "login",
             token: token,
             user_id: getState().userState.activeUser.id,
-            video: getState().userState.activeUser.video,
-            microphone: getState().userState.activeUser.audio
+            video: user.video,
+            microphone: user.audio
         }))
     ).catch(() => dispatch(destroySession()))
 }
@@ -212,7 +212,7 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
 }
 
 
-export const handleLogin = (success: boolean, spaceid: string, users: Set<UserPayload>): AppThunk => (dispatch, getState) => {
+export const handleLogin = (success: boolean, spaceid: string, users: Set<UserPayload>): AppThunk => dispatch => {
     if (!success) {
         dispatch(handleError("Join failed. Try again later."))
     } else {
@@ -228,7 +228,7 @@ export const userSetupReady = (): AppThunk => (dispatch, getState) => {
     dispatch(joined())
 }
 
-export const handleLeave = (): AppThunk => (dispatch, getState) => {
+export const handleLeave = (): AppThunk => dispatch => {
     if (socket) {
         socket?.close()
         dispatch(disconnect())

@@ -14,7 +14,7 @@ import {
     getSpeaker,
     handleInputChange,
     loadAllMediaDevices
-} from "../../store/rtcSlice";
+} from "../../store/mediaSlice";
 import {User} from "../../store/model/model";
 import VolumeIndicator from "./VolumeIndicator";
 import {applyVirtualBackground, stopAllVideoEffects} from "../../store/utils";
@@ -192,13 +192,13 @@ export class MediaSettings extends Component<Props> {
 
 const mapStateToProps = (state: RootState) => ({
     user: state.userState.activeUser,
-    microphones: state.rtc.microphones,
-    cameras: state.rtc.cameras,
-    speakers: state.rtc.speakers,
+    microphones: state.media.microphones,
+    cameras: state.media.cameras,
+    speakers: state.media.speakers,
     microphone: getMicrophone(state),
     camera: getCamera(state),
     speaker: getSpeaker(state),
-    virtualBackground: state.rtc.selected.virtualBackground,
+    virtualBackground: state.media.selected.virtualBackground,
     getStream: () => getFreshMediaStream(state),
 })
 

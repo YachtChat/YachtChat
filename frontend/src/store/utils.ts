@@ -37,13 +37,11 @@ export function resetCookie(cname: string) {
     document.cookie = cname + "=;" + expires + ";path=/";
 }
 
-export function keycloakUserToUser(data: any, online: boolean, position?: UserCoordinates, video?: boolean, audio?: boolean): User {
+export function keycloakUserToUser(data: any, online: boolean, position?: UserCoordinates): User {
     const image = data.attributes?.profile_image
     return {
         id: data["id"],
         online: online,
-        video: (online) ? !!video : false, // bug change to actual state
-        audio: (online) ? !!audio : false, // bug change to actual state
 
         firstName: data.firstName,
         lastName: data.lastName,
@@ -137,4 +135,25 @@ export function playNotificationSound() {
 
 export function convertRemToPixels(rem: number): number {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
+function isElectron() {
+    // Renderer process
+    // @ts-ignore
+    if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type === 'renderer') {
+        return true;
+    }
+
+    // Main process
+    // @ts-ignore
+    if (typeof process !== 'undefined' && typeof process.versions === 'object' && !!process.versions["electron"]) {
+        return true;
+    }
+
+    // Detect the user agent when the `nodeIntegration` option is set to true
+    if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
+        return true;
+    }
+
+    return false;
 }

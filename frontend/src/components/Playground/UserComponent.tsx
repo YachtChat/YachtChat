@@ -1,17 +1,18 @@
 import React, {Component} from "react";
-import {Message, PlaygroundOffset, User} from "../../store/model/model";
+import {MediaType, Message, PlaygroundOffset} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
-import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/rtcSlice";
+import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/mediaSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
 import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils";
 import {centerUser} from "../../store/playgroundSlice";
+import {UserWrapper} from "../../store/model/UserWrapper";
 
 interface OwnProps {
-    user: User
+    user: UserWrapper
     selected?: boolean
     isActiveUser?: boolean
     className?: string
@@ -19,8 +20,7 @@ interface OwnProps {
 
 interface OtherProps {
     playgroundOffset: PlaygroundOffset
-    audio: boolean
-    screen: boolean
+    userStream: Record<MediaType, string | undefined>
     speaker: string
     camera: string
     microphone: string
@@ -60,10 +60,11 @@ export class UserComponent extends Component<Props, State> {
     }
 
     componentDidMount() {
+        const screen = this.props.user.screen
         if (this.mediaElement.current) {
 
             if (!this.mediaElement.current.srcObject) {
-                if (this.props.screen && this.props.isActiveUser) {
+                if (screen && this.props.isActiveUser) {
                     this.mediaElement.current.srcObject = this.props.getScreenStream(this.props.user.id)!
                 } else {
                     this.mediaElement.current.srcObject = this.props.getStream(this.props.user.id)!
@@ -83,13 +84,12 @@ export class UserComponent extends Component<Props, State> {
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
         if (this.mediaElement.current) {
-
             if (!this.mediaElement.current.srcObject ||
-                this.props.user.userStream !== prevProps.user.userStream) {
-                if (this.props.screen && this.props.isActiveUser) {
-                    this.mediaElement.current.srcObject = this.props.getScreenStream(this.props.user.id)!
+                this.props.userStream !== prevProps.userStream) {
+                if (this.props.user.screen && this.props.isActiveUser) {
+                    this.mediaElement.current.srcObject = this.props.user.getScreenStream()!
                 } else {
-                    this.mediaElement.current.srcObject = this.props.getStream(this.props.user.id)!
+                    this.mediaElement.current.srcObject = this.props.user.stream!
                 }
                 //console.log(this.props.getStream(this.props.user.id)!)
             }
@@ -149,6 +149,9 @@ export class UserComponent extends Component<Props, State> {
     }
 
     render() {
+        const audio = this.props.user.audio
+        const video = this.props.user.video
+        const screen = this.props.user.screen
         const scale = this.props.playgroundOffset.scale
         if (this.props.user.firstName === null)
             return (<div/>);
@@ -158,8 +161,8 @@ export class UserComponent extends Component<Props, State> {
         const y = user.position!.y * scale
         const offsetX = this.props.playgroundOffset.x * scale
         const offsetY = this.props.playgroundOffset.y * scale
-        let userOpacity = ((!!user.inProximity && this.props.audio) || this.props.selected) ? 1 : 0.5
-        let userScale = (!!user.inProximity && this.props.audio) ? "scale(1)" : "scale(0.8)"
+        let userOpacity = ((user.inProximity && audio) || this.props.selected) ? 1 : 0.5
+        let userScale = (user.inProximity && audio) ? "scale(1)" : "scale(0.8)"
         if (this.props.selected) {
             userScale = "scale(1.2)"
         }
@@ -192,8 +195,8 @@ export class UserComponent extends Component<Props, State> {
             userNamePosY = arem
             nameOpacity = 0.45
         }
-        if (userNamePosY > window.innerHeight - (arem + nameHeight)) {
-            userNamePosY = window.innerHeight - (arem + nameHeight)
+        if (userNamePosY > (document.getElementById("Playground")?.getBoundingClientRect().height ?? 0) - (arem + nameHeight)) {
+            userNamePosY = (document.getElementById("Playground")?.getBoundingClientRect().height ?? 0) - (arem + nameHeight)
             nameOpacity = 0.45
         }
 
@@ -207,7 +210,7 @@ export class UserComponent extends Component<Props, State> {
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
             // If no screen is beeing shared or video is shown or no stream is available show profile pic
             backgroundImage: (
-                (!(this.props.isActiveUser && this.props.screen) && !user.video)
+                (!(this.props.isActiveUser && screen) && !user.video)
                 || (!this.props.user.userStream.video && !this.props.user.userStream.screen)
                 || !this.mediaElement.current?.srcObject) ? `url(${user.profile_image})` : "none",
         }
@@ -215,7 +218,7 @@ export class UserComponent extends Component<Props, State> {
         const userNameStyle = {
             left: userNamePosX,
             top: userNamePosY,
-            transform: (!!user.inProximity && this.props.audio) ? "scale(1)" : "scale(0.8)",
+            transform: (user.inProximity && audio) ? "scale(1)" : "scale(0.8)",
             opacity: nameOpacity
         }
 
@@ -320,7 +323,7 @@ export class UserComponent extends Component<Props, State> {
                                      </div>
                                      : ""} placement="top" arrow>
                         <div>
-                            {((!!this.props.user.userStream.screen || !!this.props.user.userStream.audio || !!this.props.user.userStream.video) && !(this.props.isActiveUser && !this.props.showVideoInAvatar)) &&
+                            {(this.props.user.anyStreamAvailable && !(this.props.isActiveUser && !this.props.showVideoInAvatar)) &&
                                 <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                                        key={this.props.camera}
                                        autoPlay muted={this.props.isActiveUser}
@@ -329,7 +332,7 @@ export class UserComponent extends Component<Props, State> {
                                        onMouseOver={() => this.mouseOver()}
                                        onMouseLeave={this.mouseOut.bind(this)}
                                        className={
-                                           ((!(this.props.isActiveUser && this.props.screen) && !user.video)) ? "profile-picture" : "" +
+                                           ((!(this.props.isActiveUser && screen) && !video)) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
                             {!this.props.user.userStream &&
@@ -355,8 +358,7 @@ export class UserComponent extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     playgroundOffset: state.playground.offset,
-    audio: state.rtc.audio,
-    screen: state.rtc.screen,
+    userStream: ownProps.user.userStream,
     speaker: getSpeaker(state),
     camera: getCamera(state),
     microphone: getMicrophone(state),
@@ -367,7 +369,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
 })
 
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
-    center: () => dispatch(centerUser(ownProps.user)),
+    center: () => dispatch(centerUser(ownProps.user.user)),
     success: (s: string) => dispatch(handleSuccess(s))
 })
 

@@ -5,19 +5,21 @@ import Sidebar from "./Sidebar";
 import {handleZoom, initPlayground} from "../../store/playgroundSlice";
 import Canvas from "./Canvas";
 import Wrapper, {Loading} from "../Wrapper";
-import {Space, User} from "../../store/model/model";
+import {Space} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {requestSpaces} from "../../store/spaceSlice";
-import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";
+import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/mediaSlice";
 import {Link} from "react-router-dom";
 import {IoCamera, IoChevronBack, IoMic} from "react-icons/all";
 import {applicationName} from "../../store/config";
 import {sendLogout} from "../../store/webSocketSlice";
 import Navigation from "../Navigation";
 import DoNotDisturb from "./DoNotDisturb";
+import {UserWrapper} from "../../store/model/UserWrapper";
+import {getUser} from "../../store/userSlice";
 
 interface Props {
-    activeUser: User
+    activeUser: UserWrapper
     handleZoom: (zoom: number) => void
     match?: {
         params: {
@@ -147,13 +149,13 @@ export class Playground extends Component<Props, State> {
 
 
 const mapStateToProps = (state: RootState) => ({
-    activeUser: state.userState.activeUser,
+    activeUser: new UserWrapper(getUser(state)),
     spaces: state.space.spaces,
-    microphones: state.rtc.microphones,
-    cameras: state.rtc.cameras,
-    userMedia: state.rtc.userMedia,
+    microphones: state.media.microphones,
+    cameras: state.media.cameras,
+    userMedia: state.media.userMedia,
     joinedSpace: state.webSocket.joinedRoom,
-    dnd: state.rtc.doNotDisturb,
+    dnd: state.media.doNotDisturb,
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -1,17 +1,17 @@
 import React, {Component} from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
-import {getStream} from "../../store/rtcSlice";
+import {getStream} from "../../store/mediaSlice";
 import {RootState} from "../../store/store";
 import {Tooltip, Zoom} from "@material-ui/core";
-import {User} from "../../store/model/model";
-import {getUserById} from "../../store/userSlice";
+import {getUserByIdWrapped} from "../../store/userSlice";
 import {IoCloseOutline} from "react-icons/all";
 import Sidebar from "./Sidebar";
+import {UserWrapper} from "../../store/model/UserWrapper";
 
 interface StateProps {
     getStream: (uid: string) => MediaStream | undefined
-    user?: User
+    user?: UserWrapper
     spaceID: string
 }
 
@@ -216,7 +216,7 @@ export class FocusUser extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     getStream: (uid: string) => getStream(state, uid),
-    user: (!!ownProps.userID) ? getUserById(state, ownProps.userID) : undefined
+    user: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID) : undefined
     //stream: (ownProps.userID) ? getStream(state, ownProps.userID) : undefined,
 })
 

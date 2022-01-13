@@ -1,13 +1,14 @@
 import React, {Component} from "react";
-import {PlaygroundOffset, User} from "../../store/model/model";
+import {PlaygroundOffset} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
-import {maxRange, userProportion} from "../../store/userSlice";
-import {getStream} from "../../store/rtcSlice";
+import {getUserWrapped, maxRange, userProportion} from "../../store/userSlice";
+import {getStream} from "../../store/mediaSlice";
 import VolumeIndicator from "../Settings/VolumeIndicator";
+import {UserWrapper} from "../../store/model/UserWrapper";
 
 interface Props {
-    user: User
+    user: UserWrapper
     selected?: boolean
     isActiveUser?: boolean
     playgroundOffset: PlaygroundOffset
@@ -38,7 +39,7 @@ export class RangeComponent extends Component<Props> {
             height: rangeInPx,
             left: x - rangeInPx / 2 - offsetX,
             top: y - rangeInPx / 2 - offsetY,
-            opacity: (!!user.inProximity && this.props.audio) ? 1 : 0.5,
+            opacity: (user.inProximity && this.props.audio) ? 1 : 0.5,
             borderColor: (this.props.isActiveUser) ? "red" : "green",
         }
 
@@ -67,7 +68,7 @@ export class RangeComponent extends Component<Props> {
 const mapStateToProps = (state: RootState) => ({
     playgroundOffset: state.playground.offset,
     showVolumeIndicators: state.playground.showVolumeIndicators,
-    audio: state.rtc.audio,
+    audio: getUserWrapped(state).audio,
     getStream: (id: string): MediaStream | undefined => getStream(state, id),
 })
 

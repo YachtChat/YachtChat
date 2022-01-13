@@ -3,6 +3,7 @@ import {AppThunk, RootState} from './store';
 import {handleLoginUser} from './userSlice';
 import keycloak from "./keycloak";
 import {AxiosRequestConfig} from "axios";
+import {UserWrapper} from "./model/UserWrapper";
 
 interface AuthState {
     loggedIn: boolean
@@ -44,6 +45,8 @@ export const initAuth = (error: string): AppThunk => () => {
 }
 
 export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) => {
+    UserWrapper.dispatch = dispatch
+    UserWrapper.getState = getState
 
     keycloak.init({
         onLoad: 'login-required',

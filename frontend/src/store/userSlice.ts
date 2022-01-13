@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, Message, Point, User, UserCoordinates, UserPayload} from "./model/model";
 import {send, sendPosition, userSetupReady} from "./webSocketSlice";
-import {handleRTCEvents, sendAudio, unsendAudio} from "./rtcSlice";
+import {getMedia, handleRTCEvents, sendAudio, setMedia, unsendAudio} from "./mediaSlice";
 import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
 import {ACCOUNT_URL, complete_spaces_url} from "./config";
@@ -10,6 +10,7 @@ import {keycloakUserToUser, playNotificationSound} from "./utils";
 import {handleError, handleSuccess} from "./statusSlice";
 import {identifyUser} from "./posthog";
 import {getNextValidPostion, isPostionValid} from "./positionUtils";
+import {UserWrapper} from "./model/UserWrapper";
 
 interface UserState {
     activeUser: User
@@ -21,8 +22,6 @@ const initialState: UserState = {
     activeUser: {
         id: "-1",
         online: true,
-        video: true,
-        audio: true,
         userStream: { video: undefined, audio: undefined, screen: undefined }
     },
     spaceUsers: {},
@@ -117,19 +116,6 @@ export const userSlice = createSlice({
                 state.spaceUsers[action.payload].message = undefined
             if (state.activeUser.id === action.payload)
                 state.activeUser.message = undefined
-        },
-        setMedia: (state, action: PayloadAction<{ id: string, type: MediaType, state: boolean }>) => {
-            if (action.payload.type === MediaType.VIDEO) {
-                if (action.payload.id === state.activeUser.id) {
-                    state.activeUser.video = action.payload.state
-                } else if (state.spaceUsers[action.payload.id])
-                    state.spaceUsers[action.payload.id].video = action.payload.state
-            } else if (action.payload.type === MediaType.AUDIO) {
-                if (action.payload.id === state.activeUser.id) {
-                    state.activeUser.audio = action.payload.state
-                } else if (state.spaceUsers[action.payload.id])
-                    state.spaceUsers[action.payload.id].audio = action.payload.state
-            }
         }
     },
 });
@@ -147,7 +133,6 @@ export const {
     setMessage,
     destroyMessage,
     forgetUsers,
-    setMedia
 } = userSlice.actions;
 
 // Called on initial login to retrieve the user information for all users
@@ -168,9 +153,15 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                 // transform into users with util-function
                 const userObjects = response.data.map((user: any) => {
                     let userPayload: UserPayload | undefined
-                    users.forEach(u =>{ if (u.id == user.id) userPayload = u})
+                    users.forEach(u => { 
+                        if (u.id == user.id) userPayload = u
+                    })
                     // if the user is in the Space userPayload will be set otherwise it will not
-                    return keycloakUserToUser(user, !!userPayload, userPayload?.position, userPayload?.video, userPayload?.audio)
+                    if (userPayload) {
+                        dispatch(setMedia({ id: userPayload.id, state: !!userPayload.audio, type: MediaType.AUDIO }))
+                        dispatch(setMedia({ id: userPayload.id, state: !!userPayload.video, type: MediaType.VIDEO }))
+                    }
+                    return keycloakUserToUser(user, !!userPayload, userPayload?.position)
                 })
                 console.log(userObjects)
                 // finally call set users with user list
@@ -186,11 +177,12 @@ export const handleLoginUser = (): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         axios.get("https://" + ACCOUNT_URL + "/account/", headers).then(response => {
             const pre_user = getUser(getState())
-            const user = keycloakUserToUser(response.data, true, pre_user.position, pre_user.video, pre_user.audio)//, undefined, true, true)
+            const user = keycloakUserToUser(response.data, true, pre_user.position)
             // Posthog identify
             identifyUser(user)
-            console.log("ActiveUser", user)
             dispatch(initUser(user))
+            dispatch(setMedia({ id: response.data.id, type: MediaType.AUDIO, state: getMedia(getState(), MediaType.AUDIO, pre_user.id) }))
+            dispatch(setMedia({ id: response.data.id, type: MediaType.VIDEO, state: getMedia(getState(), MediaType.VIDEO, pre_user.id) }))
         })
     )
 }
@@ -200,7 +192,9 @@ export const handleSpaceUser = (userId : string, position : UserCoordinates, isC
     getHeaders(getState()).then(headers =>
         // axios load user info
         axios.get("https://" + ACCOUNT_URL + "/account/" + userId + "/", headers).then(response => {
-            dispatch(setUser(keycloakUserToUser(response.data, true, position, true, true)))
+            dispatch(setUser(keycloakUserToUser(response.data, true, position)))
+            dispatch(setMedia({ id: userId, type: MediaType.VIDEO, state: true}))
+            dispatch(setMedia({ id: userId, type: MediaType.AUDIO, state: true}))
             // if the user.id is ourselves skip the next steps
             if (getUser(getState()).id !== userId) {
                 // isCaller is true if this is a reconncetion and the local user was the previous caller
@@ -331,15 +325,17 @@ export const submitRadius = (radius: number): AppThunk => (dispatch, getState) =
 };
 
 export const getUserMessages = (state: RootState, id: string) => state.userState.messages.filter(m => m.user === id);
-export const getUser = (state: RootState) => state.userState.activeUser;
+export const getUser = (state: RootState) : User => state.userState.activeUser
+export const getUserWrapped = (state: RootState) : UserWrapper => new UserWrapper(getUser(state))
 export const getUserID = (state: RootState) => state.userState.activeUser.id;
-export const getUserById = (state: RootState, id: string) => {
-    if (state.userState.activeUser.id === id)
-        return state.userState.activeUser
-    return state.userState.spaceUsers[id];
+export const getUserById = (state: RootState, id: string) : User => {
+    if (getUserID(state) === id)
+        return getUser(state)
+    return state.userState.spaceUsers[id]
 }
+export const getUserByIdWrapped = (state: RootState, id: string) => new UserWrapper(getUserById(state, id))
 export const getUsers = (state: RootState) => Object.keys(state.userState.spaceUsers).map(
-    id => state.userState.spaceUsers[id]
+    id => getUserById(state, id)
 ).sort((a, b) => {
     // Order by last name
     const nameA = a.lastName + ", " + a.firstName
@@ -352,5 +348,7 @@ export const getUsers = (state: RootState) => Object.keys(state.userState.spaceU
     }
     return 0;
 });
+
 export const getOnlineUsers = (state: RootState) => getUsers(state).filter(u => u.online);
+export const getOnlineUsersWrapped = (state: RootState) => getOnlineUsers(state).map(u => new UserWrapper(u));
 export default userSlice.reducer;
