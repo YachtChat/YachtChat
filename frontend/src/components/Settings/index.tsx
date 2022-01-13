@@ -75,7 +75,7 @@ export function Settings() {
                 <label style={{textAlign: "center"}}>
                     To learn more about the options and available settings see our support documents.
                 </label>
-                <a href={SUPPORT_URL}>
+                <a href={SUPPORT_URL+"/docs/Basics/set-permissions"}>
                     <button style={{
                         display: "block",
                         margin: "auto"

@@ -2,6 +2,7 @@ import {IoAddOutline, IoChatbubblesOutline, IoCogOutline, IoPeopleOutline} from 
 import {Link} from "react-router-dom"
 import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
+import {SUPPORT_URL} from "../../store/config";
 
 interface Props {
     closeButton?: boolean
@@ -27,11 +28,14 @@ export function NavButtons(props: Props) {
                 New Space
             </button>
             </Link>
-            <button>
+            <a href={SUPPORT_URL}>
+                <button>
+
                 <IoPeopleOutline />
                 <br />
                 Support
-            </button>
+                </button>
+            </a>
             <Link to={"/settings/"}>
                 <button className={(props.active === "settings") ? "active" : ""}>
                     <IoCogOutline />
