@@ -13,11 +13,12 @@ import {
     removeUser,
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
-import {disconnectUser, handleCandidate, handleRTCEvents, handleSdp, setMedia} from "./mediaSlice";
+import {setMedia} from "./mediaSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./config";
 import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
 import {destroySession} from "./destroySession";
+import {disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtc";
 
 interface WebSocketState {
     connected: boolean
@@ -211,7 +212,6 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
         position,
     }));
 }
-
 
 export const handleLogin = (success: boolean, spaceid: string, users: Set<UserPayload>): AppThunk => dispatch => {
     if (!success) {

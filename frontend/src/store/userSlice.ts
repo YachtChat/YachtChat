@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
 import {MediaType, Message, Point, User, UserCoordinates, UserPayload} from "./model/model";
 import {send, sendPosition, userSetupReady} from "./webSocketSlice";
-import {getMedia, handleRTCEvents, sendAudio, setMedia, unsendAudio} from "./mediaSlice";
+import {getMedia, setMedia} from "./mediaSlice";
 import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
 import {ACCOUNT_URL, complete_spaces_url} from "./config";
@@ -11,6 +11,7 @@ import {handleError, handleSuccess} from "./statusSlice";
 import {identifyUser} from "./posthog";
 import {getNextValidPostion, isPostionValid} from "./positionUtils";
 import {UserWrapper} from "./model/UserWrapper";
+import {handleRTCEvents, sendAudio, unsendAudio} from "./rtc";
 
 interface UserState {
     activeUser: User
@@ -50,7 +51,6 @@ export const userSlice = createSlice({
             state.activeUser.position!.range = action.payload;
         },
         setStreamID: (state, action: PayloadAction<{ user_id: string, type: MediaType, stream_id: string | undefined }>) => {
-            console.log(action.payload)
             if (state.activeUser.id === action.payload.user_id) {
                 state.activeUser.userStream[action.payload.type] = action.payload.stream_id
                 state.activeUser.inProximity = true
@@ -153,7 +153,7 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                 // transform into users with util-function
                 const userObjects = response.data.map((user: any) => {
                     let userPayload: UserPayload | undefined
-                    users.forEach(u => { 
+                    users.forEach(u => {
                         if (u.id == user.id) userPayload = u
                     })
                     // if the user is in the Space userPayload will be set otherwise it will not
