@@ -111,7 +111,7 @@ export class Canvas extends Component<Props, State> {
         }
 
         // offset on top of the user itself
-        const userOffsetX = x / this.props.offset.scale + this.props.offset.x - this.props.activeUser.position!.x
+        const userOffsetX = x / this.props.offset.scale + this.props.offset.x  - this.props.activeUser.position!.x
         const userOffsetY = y / this.props.offset.scale + this.props.offset.y - this.props.activeUser.position!.y
 
         // If user was clicked
@@ -163,13 +163,13 @@ export class Canvas extends Component<Props, State> {
             })
 
             // If not opened fullscreen jump to that spot
-            if (!focused) {
+            if (!focused && clickedUserId !== "activeUser") {
                 const scaling = this.props.offset.scale
                 const x = e.currentTarget.getBoundingClientRect().x
                 const y = e.currentTarget.getBoundingClientRect().y
                 this.props.move({
                     x: e.clientX / scaling - x + this.props.offset.x,
-                    y: e.clientY / scaling - y + this.props.offset.y,
+                    y: e.clientY / scaling - y + this.props.offset.y + 10,
                     range: this.props.activeUser.position!.range
                 }, this.state.userDragActive)
             }

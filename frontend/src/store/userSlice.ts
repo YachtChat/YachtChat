@@ -211,7 +211,7 @@ export const submitMovement = (coordinates: UserCoordinates, dragActivated: bool
     const user = getUser(getState())
 
     // if the user drag is not activated we should check whether the move is valid and if not we change it
-    if(!dragActivated){
+    if(!dragActivated) {
         // get user position as Point and other users position as Point array
         let userPositions: Point[] = []
         getUsers(getState()).forEach(u => {if (u.position) userPositions.push({x: u.position.x, y: u.position.y})});
