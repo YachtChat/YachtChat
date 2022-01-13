@@ -94,7 +94,7 @@ export const userSlice = createSlice({
             })
             state.spaceUsers = spaceUsers
         },
-        forgetUsers: (state) => {
+        resetUsers: (state) => {
             state.spaceUsers = {}
             state.messages = []
         },
@@ -132,7 +132,7 @@ export const {
     setUserId,
     setMessage,
     destroyMessage,
-    forgetUsers,
+    resetUsers,
 } = userSlice.actions;
 
 // Called on initial login to retrieve the user information for all users

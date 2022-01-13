@@ -1,9 +1,8 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {connectToServer, handleLeave, send, triggerReconnection} from "./webSocketSlice";
+import {connectToServer, send, triggerReconnection} from "./webSocketSlice";
 import {rtcConfiguration} from "./config";
 import {
-    forgetUsers,
     getOnlineUsers,
     getUser,
     getUserById,
@@ -14,8 +13,6 @@ import {
     setStreamID,
     setUserOffline
 } from "./userSlice";
-import {resetPlayground} from "./playgroundSlice";
-import {requestSpaces, returnHome} from "./spaceSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./model/model";
 import {applyVirtualBackground, stopAllVideoEffects} from "./utils";
@@ -137,7 +134,7 @@ export const mediaSlice = createSlice({
         turnOnAudio: (state, action: PayloadAction<string>) => {
             state.audio[action.payload] = true
         },
-        setScreen: (state, action: PayloadAction<{user_id: string, state: boolean}>) => {
+        setScreen: (state, action: PayloadAction<{ user_id: string, state: boolean }>) => {
             state.screen[action.payload.user_id] = action.payload.state
         },
         setMedia: (state, action: PayloadAction<{ id: string, type: MediaType, state: boolean }>) => {
@@ -148,6 +145,18 @@ export const mediaSlice = createSlice({
             } else if (action.payload.type === MediaType.SCREEN) {
                 state.screen[action.payload.id] = action.payload.state
             }
+        },
+        resetMedia: (state, action: PayloadAction<string | undefined>) => {
+            if (action.payload) {
+                delete state.video[action.payload]
+                delete state.audio[action.payload]
+                delete state.screen[action.payload]
+                return
+            }
+
+            state.video = {}
+            state.audio = {}
+            state.screen = {}
         }
     },
 });
@@ -167,7 +176,8 @@ export const {
     turnOnVideo,
     turnOnAudio,
     setScreen,
-    setMedia
+    setMedia,
+    resetMedia
 } = mediaSlice.actions;
 
 export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatch) => {
@@ -244,7 +254,7 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
     } else {
         // If disabled, stop all audio tracks
         if (getStream(state, getUserID(state))?.getAudioTracks()[0]) {
-            setStreamID({ user_id: userID, type: MediaType.AUDIO, stream_id: undefined})
+            setStreamID({user_id: userID, type: MediaType.AUDIO, stream_id: undefined})
             getStream(state, getUserID(state))?.getAudioTracks()[0].stop()
             dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: false}))
             dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
@@ -338,7 +348,11 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 
         // set stream to class wide variable
         screenStream = stream
-        dispatch(setStreamID({user_id: getUserID(getState()), type: MediaType.SCREEN, stream_id: stream.getVideoTracks()[0].id}))
+        dispatch(setStreamID({
+            user_id: getUserID(getState()),
+            type: MediaType.SCREEN,
+            stream_id: stream.getVideoTracks()[0].id
+        }))
 
         // If screen stream ends stop screen sharing
         stream.getTracks().forEach(t => t.onended = () => {
@@ -364,12 +378,12 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
 // the camera button
 export const unshareScreen = (isFromCamera?: boolean): AppThunk => (dispatch, getState) => {
     // change the screen state
-    dispatch(setScreen({ user_id: getUserID(getState()), state: false }))
+    dispatch(setScreen({user_id: getUserID(getState()), state: false}))
 
     // change the class wide variable of the stream
     screenStream?.getTracks().forEach(t => t.stop())
     screenStream = undefined
-    dispatch(setStreamID({ user_id: getUserID(getState()), type: MediaType.SCREEN, stream_id: undefined}))
+    dispatch(setStreamID({user_id: getUserID(getState()), type: MediaType.SCREEN, stream_id: undefined}))
 
     // depending on the previousVideo and whether the call came from the camera button start the video or not
     if (getState().media.previousVideo || isFromCamera) {
@@ -695,6 +709,7 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
     rtcConnections[id].close()
     delete rtcConnections[id]
     dispatch(setUserOffline(id))
+    dispatch(resetMedia(id))
     // clear potential timer which was set up for the user that just left
     if (connectionTimer[id]) {
         clearTimeout(connectionTimer[id]);
@@ -705,7 +720,7 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
     delete rtpSender[id]
 }
 
-export const destroySession = (returnToRoot?: boolean): AppThunk => (dispatch, getState) => {
+export const resetMediaSlice = (): AppThunk => (dispatch, getState) => {
     localStream?.getTracks().forEach(t => t.stop())
     stopAllVideoEffects(camera_processor)
     screenStream?.getTracks().forEach(t => t.stop())
@@ -714,7 +729,7 @@ export const destroySession = (returnToRoot?: boolean): AppThunk => (dispatch, g
     camera_processor = undefined
     screenStream = undefined
 
-    dispatch(setScreen({ user_id: getUserID(getState()), state: false }))
+    dispatch(setScreen({user_id: getUserID(getState()), state: false}))
     // dispatch(setUser({...getUser(getState()), online: false}))
 
     // clear all timer when we are leaving the space
@@ -740,15 +755,9 @@ export const destroySession = (returnToRoot?: boolean): AppThunk => (dispatch, g
     rtcConnections = {}
     rtpSender = {}
 
+    dispatch(resetMedia())
     dispatch(turnOnVideo(getUserID(getState())))
     dispatch(turnOnAudio(getUserID(getState())))
-    dispatch(forgetUsers())
-    dispatch(resetPlayground())
-    dispatch(requestSpaces())
-    dispatch(handleLeave())
-
-    if (returnToRoot)
-        dispatch(returnHome())
 }
 
 export const changeVideoInput = (camera: string): AppThunk => dispatch => {

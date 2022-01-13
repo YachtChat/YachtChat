@@ -13,10 +13,11 @@ import {
     removeUser,
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
-import {destroySession, disconnectUser, handleCandidate, handleRTCEvents, handleSdp, setMedia} from "./mediaSlice";
+import {disconnectUser, handleCandidate, handleRTCEvents, handleSdp, setMedia} from "./mediaSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./config";
 import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
+import {destroySession} from "./destroySession";
 
 interface WebSocketState {
     connected: boolean
@@ -228,7 +229,7 @@ export const userSetupReady = (): AppThunk => (dispatch, getState) => {
     dispatch(joined())
 }
 
-export const handleLeave = (): AppThunk => dispatch => {
+export const resetWebsocket = (): AppThunk => dispatch => {
     if (socket) {
         socket?.close()
         dispatch(disconnect())
