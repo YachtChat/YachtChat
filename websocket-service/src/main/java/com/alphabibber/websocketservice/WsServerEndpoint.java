@@ -101,7 +101,9 @@ public class WsServerEndpoint {
             }
             String token = jsonObject.get("token").getAsString();
             String userId = jsonObject.get("id").getAsString();
-            loginHandler.handleLogin(room, spaceID, token, userId, session);
+            boolean video = jsonObject.get("video").getAsBoolean();
+            boolean microphone = jsonObject.get("microphone").getAsBoolean();
+            loginHandler.handleLogin(room, spaceID, token, userId, session, video, microphone);
         }
 
         if (type.equals("ping")) {

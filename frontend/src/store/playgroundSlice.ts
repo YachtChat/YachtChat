@@ -24,9 +24,9 @@ const initialState: PlaygroundState = {
         scale: initScale,
         trueScale: 1.0,
     },
-    videoInAvatar: localStorage.getItem("videoInAvatar") === "true", // Video only shown in sidebar or in avatar
+    videoInAvatar: localStorage.getItem("videoInAvatar") !== "false", // Video only shown in sidebar or in avatar
     showVolumeIndicators: localStorage.getItem("showVolumeIndicators") === "true", // Video only shown in sidebar or in avatar
-    cameraMode: localStorage.getItem("cameraMode") === CameraMode.Manual.toString() ?
+    cameraMode: localStorage.getItem("cameraMode") !== CameraMode.Automatically.toString() ?
         CameraMode.Manual : CameraMode.Automatically, // Video only shown in sidebar or in avatar
 }
 

@@ -35,8 +35,15 @@ public class MediaHandler {
                     posthogService.trackScreen(sender.getId(), event, sender.getVideo(), changeToVideo);
                 }
                 sender.setScreen(event);
-                // set video to true if its an off event and the change back is to video else set to false
-                sender.setVideo(!event && changeToVideo);
+                //
+                if (!event){
+                    if (changeToVideo == null) throw new IllegalArgumentException("If the screen sharing is turned off, " +
+                            "the websocket need to know whether camera will be turned on or not");
+                    sender.setVideo(changeToVideo);
+                }else{
+                    sender.setVideo(true);
+                }
+
                 break;
 
             default:

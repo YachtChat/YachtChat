@@ -14,9 +14,7 @@ import javax.websocket.EncodeException;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.net.http.HttpClient;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class LoginHandler {
     private final SpacesService spacesService = new SpacesService();
@@ -28,11 +26,15 @@ public class LoginHandler {
     private final LeaveHandler leaveHandler = new LeaveHandler();
     private final PosthogService posthogService = PosthogService.getInstance();
 
-    public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session) {
+    public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session, boolean video, boolean microphone) {
+        if (userId.equals("-1")){
+            throw new IllegalArgumentException("Id should not be -1");
+        }
+
         if (!spacesService.isUserAllowedToJoin(roomId, token)) {
             // if the user is not allowed to enter the room the websocket connection will be closed
             try {
-                LoginAnswer deniedAnswer = new LoginAnswer(false, new ArrayList<>(), userId);
+                LoginAnswer deniedAnswer = new LoginAnswer(false, new HashSet<User>(), userId);
                 session.getBasicRemote().sendObject(deniedAnswer);
                 session.close();
             } catch (IOException | EncodeException e) {
@@ -54,11 +56,11 @@ public class LoginHandler {
         }
 
         // user is allowed to log in
-        User user = new User(session, userId);
+        User user = new User(session, userId, video, microphone);
         room.put(session.getId(), user);
 
         // tell the user that he was added to the room
-        LoginAnswer loginAnswer = new LoginAnswer(true, new ArrayList<>(room.values()), userId);
+        LoginAnswer loginAnswer = new LoginAnswer(true, new HashSet<>(room.values()), userId);
 
         // handle all the posthog tracking
        posthogService.handleLogin(userId, roomId, room);

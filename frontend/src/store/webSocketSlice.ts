@@ -1,6 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
-import {UserCoordinates, UserPayload} from "./model/model";
+import {MediaType, UserCoordinates, UserPayload} from "./model/model";
 import {
     getOnlineUsers,
     getUser,
@@ -192,7 +192,9 @@ export const requestLogin = (): AppThunk => (dispatch, getState) => {
         dispatch(send({
             type: "login",
             token: token,
-            user_id: getState().userState.activeUser.id
+            user_id: getState().userState.activeUser.id,
+            video: getState().userState.activeUser.video,
+            microphone: getState().userState.activeUser.audio
         }))
     ).catch(() => dispatch(destroySession()))
 }
@@ -210,7 +212,7 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
 }
 
 
-export const handleLogin = (success: boolean, spaceid: string, users: UserPayload[]): AppThunk => (dispatch, getState) => {
+export const handleLogin = (success: boolean, spaceid: string, users: Set<UserPayload>): AppThunk => (dispatch, getState) => {
     if (!success) {
         dispatch(handleError("Join failed. Try again later."))
     } else {

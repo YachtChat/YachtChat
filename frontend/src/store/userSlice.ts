@@ -21,6 +21,8 @@ const initialState: UserState = {
     activeUser: {
         id: "-1",
         online: true,
+        video: true,
+        audio: true,
         userStream: { video: undefined, audio: undefined, screen: undefined }
     },
     spaceUsers: {},
@@ -149,21 +151,25 @@ export const {
 } = userSlice.actions;
 
 // Called on initial login to retrieve the user information for all users
-export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThunk => (dispatch, getState) => {
-    const userIDs: string[] = users.map(u => u.id)
+export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppThunk => (dispatch, getState) => {
+    // const userIDs: string[] = users.map(u => u.id)
+    const userIds: Set<string> = new Set<string>()
+    users.forEach(user => userIds.add(user.id))
+
     getHeaders(getState()).then(headers =>
         // load user ids from all users in space
         axios.get(complete_spaces_url + "/api/v1/spaces/" + spaceId + "/allUsers/", headers).then((response) =>
             response.data.forEach((u: { id: string }) => {
-                userIDs.push(u.id)
+                userIds.add(u.id)
             })
         ).finally(() => {
             // axios load user info from all users in userids
-            axios.post("https://" + ACCOUNT_URL + "/account/userslist/", userIDs, headers).then(response => {
+            axios.post("https://" + ACCOUNT_URL + "/account/userslist/", Array.from(userIds), headers).then(response => {
                 // transform into users with util-function
                 const userObjects = response.data.map((user: any) => {
-                    const userPayload = users.find(u => u.id === user.id)
-                    // set all users online and position of users in "users" (maybe also image)
+                    let userPayload: UserPayload | undefined
+                    users.forEach(u =>{ if (u.id == user.id) userPayload = u})
+                    // if the user is in the Space userPayload will be set otherwise it will not
                     return keycloakUserToUser(user, !!userPayload, userPayload?.position, userPayload?.video, userPayload?.audio)
                 })
                 console.log(userObjects)
@@ -179,7 +185,8 @@ export const handleSpaceUsers = (spaceId: string, users: UserPayload[]): AppThun
 export const handleLoginUser = (): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         axios.get("https://" + ACCOUNT_URL + "/account/", headers).then(response => {
-            const user = keycloakUserToUser(response.data, true)
+            const pre_user = getUser(getState())
+            const user = keycloakUserToUser(response.data, true, pre_user.position, pre_user.video, pre_user.audio)//, undefined, true, true)
             // Posthog identify
             identifyUser(user)
             console.log("ActiveUser", user)

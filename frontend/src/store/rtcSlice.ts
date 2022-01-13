@@ -197,8 +197,13 @@ export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch,
         dispatch(setStreamID({user_id: localClient, type: MediaType.AUDIO, stream_id: ls.getAudioTracks()[0].id}))
         dispatch(loadAllMediaDevices())
         dispatch(setUserMedia(true))
-    }).then(() =>
-        dispatch(connectToServer(spaceID))
+    }).then(() =>{
+            // init the video and audio state
+            dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: true}))
+            dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
+
+           dispatch(connectToServer(spaceID))
+    }
     ).catch((e) => {
         console.log(e)
         dispatch(handleError("Unable to get media."))
