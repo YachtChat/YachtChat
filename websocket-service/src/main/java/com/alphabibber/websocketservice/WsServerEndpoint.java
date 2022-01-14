@@ -33,7 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
         MediaAnswerEncoder.class,
         MessageEncoder.class,
         KickAnswerEncoder.class,
-        ReconnectionEncoder.class
+        ReconnectionEncoder.class,
+        RangeAnswerEncoder.class
 })
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -46,6 +47,7 @@ public class WsServerEndpoint {
     private final MessageHandler messageHandler = new MessageHandler();
     private final KickHandler kickHandler = new KickHandler();
     private final ReconnectionHandler reconnectionHandler = new ReconnectionHandler();
+    private final RangeHandler rangeHandler = new RangeHandler();
 
     private final PingHandler pingHandler = PingHandler.getInstance();
 
@@ -121,7 +123,13 @@ public class WsServerEndpoint {
             JsonObject content;
             String targetId;
             String userMessage;
+            boolean event;
             switch (type) {
+                case "range":
+                    event = jsonObject.get("event").getAsBoolean();
+                    String target_id = jsonObject.get("target_id").getAsString();
+                    rangeHandler.handleRange(spaceUserService.get(spaceID), session.getId(), event, target_id);
+                    break;
                 case "position":
                     JsonObject positionStr = jsonObject.get("position").getAsJsonObject();
                     Position position = gson.fromJson(positionStr, Position.class);
@@ -145,7 +153,7 @@ public class WsServerEndpoint {
                     break;
                 case "media":
                     String media = jsonObject.get("media").getAsString();
-                    Boolean event = jsonObject.get("event").getAsBoolean();
+                    event = jsonObject.get("event").getAsBoolean();
                     Boolean changeToVideo = null;
                     if (jsonObject.get("changeToVideo") != null) {
                         changeToVideo = jsonObject.get("changeToVideo").getAsBoolean();
