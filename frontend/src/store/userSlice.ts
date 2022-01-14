@@ -161,7 +161,7 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                 const userObjects = response.data.map((user: any) => {
                     let userPayload: UserPayload | undefined
                     users.forEach(u => {
-                        if (u.id == user.id) userPayload = u
+                        if (u.id === user.id) userPayload = u
                     })
                     // if the user is in the Space userPayload will be set otherwise it will not
                     if (userPayload) {
