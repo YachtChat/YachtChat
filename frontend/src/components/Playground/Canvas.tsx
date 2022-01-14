@@ -313,9 +313,10 @@ export class Canvas extends Component<Props, State> {
             backgroundPosition: `${-this.props.offset.x * scaling}px ${-this.props.offset.y * scaling}px`,
             backgroundSize: `${3 * scaling}rem ${3 * scaling}rem`
         }
+        const animate = this.state.userDragActive || this.state.mapDragActive || this.state.scrolling
         return (
             <div id="PlaygroundCanvas" style={style} className={"PlaygroundCanvas " +
-                ((this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate")
+                ((animate) ? "" : "animate")
             }
                  onMouseMove={this.moveMouse.bind(this)}
                  onMouseLeave={this.dragEnd.bind(this)}
@@ -331,26 +332,26 @@ export class Canvas extends Component<Props, State> {
                     <Fade in={user.online} unmountOnExit>
                         <div>
                             <RangeComponent key={user.id}
-                                            className={(this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate"}
+                                            className={(animate) ? "" : "animate"}
                                             user={user}/>
                         </div>
                     </Fade>
                 ))}
                 <RangeComponent user={this.props.activeUser}
-                                className={(this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate"}
+                                className={(animate) ? "" : "animate"}
                                 selected={this.state.mapDragActive || this.state.userDragActive}
                                 isActiveUser/>
                 {this.props.spaceUsers.map(user =>
                     <Fade in={user.online} unmountOnExit>
                         <div>
                             <UserComponent key={user.id}
-                                           className={(this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate"}
+                                           className={(animate) ? "" : "animate"}
                                            user={user}/>
                         </div>
                     </Fade>
                 )}
                 <UserComponent
-                    className={(this.state.userDragActive || this.state.mapDragActive || this.state.scrolling) ? "" : "animate"}
+                    className={(animate) ? "" : "animate"}
                     user={this.props.activeUser}
                     selected={
                         //this.state.mapDragActive ||
