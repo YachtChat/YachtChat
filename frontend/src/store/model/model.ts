@@ -9,7 +9,8 @@ export interface User {
     profile_image?: string // The actual URL to the image if available
 
     message?: string
-    inProximity?: boolean
+    inProximity?: boolean // if in my proximity
+    inRange?: boolean // if in their proximity
     userStream: Record<MediaType, string | undefined>
     position?: UserCoordinates
 }

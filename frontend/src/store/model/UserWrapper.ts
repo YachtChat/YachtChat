@@ -96,6 +96,10 @@ export class UserWrapper implements User {
         return !!this.user.inProximity
     }
 
+    public get inRange(): boolean {
+        return !!this.user.inRange
+    }
+
     public get userStream(): Record<MediaType, string | undefined> {
         return this.user.userStream
     }

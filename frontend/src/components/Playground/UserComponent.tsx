@@ -345,7 +345,9 @@ export class UserComponent extends Component<Props, State> {
                     e.stopPropagation()
                     this.props.center()
                 }}
-                      ref={this.myName} className={"clickable userName " + this.props.className}
+                      ref={this.myName} className={"clickable userName " +
+                    (user.inRange ? "inRange " : "")
+                    + this.props.className}
                       style={userNameStyle}>
                     {(!user.audio) && <IoMicOffOutline/>}
                     {(!user.video) && <IoVideocamOffOutline/>}
