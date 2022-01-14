@@ -129,6 +129,7 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
         //console.log("Enabled audio")
         rtp.track.enabled = true
         dispatch(send({
+            type: "range",
             target_id: id,
             event: true
         }))
@@ -144,6 +145,7 @@ export const unsendAudio = (id: string): AppThunk => dispatch => {
         console.log("Disabled audio")
         rtp.track.enabled = false
         dispatch(send({
+            type: "range",
             target_id: id,
             event: false
         }))
