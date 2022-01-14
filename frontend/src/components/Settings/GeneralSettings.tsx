@@ -1,19 +1,15 @@
 import React from "react";
-import {IoArrowForward} from "react-icons/all";
 import {Tooltip} from "@material-ui/core";
-import {applicationName, SUPPORT_URL} from "../../store/config";
-import {CameraMode} from "../../store/model/model";
 import {RootState} from "../../store/store";
 import {connect} from "react-redux";
-import {setShowVolumeIndicators, setupCameraMode, setVideoInAvatar} from "../../store/playgroundSlice";
+import {setShowVolumeIndicators, setVideoInAvatar} from "../../store/playgroundSlice";
+import TurnOffCamera from "./TurnOffCamera";
 
 interface Props {
     emailNotifications: boolean
     videoInAvatar: boolean,
-    cameraMode: CameraMode,
     showVolumeIndicators: boolean
 
-    setupCameraMode: (mode: CameraMode) => void
     setShowVolumeIndicators: (s: boolean) => void
     setVideoInAvatar: (s: boolean) => void
 }
@@ -73,53 +69,7 @@ export function GeneralSettings(props: Props) {
                         </div>
                     </div>
                 </Tooltip>
-                <Tooltip title={
-                    <div>
-                        <h2>Problem</h2>
-                        Sometimes using {applicationName} in the background can lead to interference with other video
-                        chatting services – especially on Microsoft Windows.
-
-                        <h2>Solution</h2>
-                        To avoid this we recommend to install a virtual camera software. <br/>
-                        Alternatively, you could also automatically disable your camera as a workaround ,
-                        when {applicationName} enters the background.
-                        <br/>
-                        <br/>
-                        To learn more about this topic click below:
-                        <br/>
-                        <br/>
-                        <a className={"button"} href={SUPPORT_URL}>Learn more <IoArrowForward/></a>
-                        <br/>
-                    </div>
-                } arrow interactive placement={"top"}>
-
-                    <div className={"settings-item"}>
-                        <label>
-                            Turn off camera
-                        </label>
-                        <div className="dropdown">
-                            <select value={props.cameraMode}
-                                    onChange={({target: {value}}) => {
-                                        switch (value) {
-                                            case CameraMode.Manual.toString():
-                                                props.setupCameraMode(CameraMode.Manual)
-                                                break
-                                            case CameraMode.Automatically.toString():
-                                                props.setupCameraMode(CameraMode.Automatically)
-                                                break;
-                                        }
-
-                                    }} name="cameramode">
-                                <option value={CameraMode.Manual}>
-                                    Manual
-                                </option>
-                                <option value={CameraMode.Automatically}>
-                                    Automatically – when leaving the window in the background
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                </Tooltip>
+                <TurnOffCamera />
                 <Tooltip title={
                     <div>
                         To not get distracted from your conversations you can disable the video in your own avatar.
@@ -166,12 +116,10 @@ export function GeneralSettings(props: Props) {
 const mapStateToProps = (state: RootState) => ({
     emailNotifications: false,
     videoInAvatar: state.playground.videoInAvatar,
-    cameraMode: state.playground.cameraMode,
     showVolumeIndicators: state.playground.showVolumeIndicators
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    setupCameraMode: (mode: CameraMode) => dispatch(setupCameraMode(mode)),
     setShowVolumeIndicators: (s: boolean) => dispatch(setShowVolumeIndicators(s)),
     setVideoInAvatar: (s: boolean) => dispatch(setVideoInAvatar(s))
 })

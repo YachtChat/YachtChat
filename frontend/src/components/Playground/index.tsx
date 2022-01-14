@@ -17,6 +17,8 @@ import Navigation from "../Navigation";
 import DoNotDisturb from "./DoNotDisturb";
 import {UserWrapper} from "../../store/model/UserWrapper";
 import {getUser} from "../../store/userSlice";
+import TurnOffCamera from "../Settings/TurnOffCamera";
+import {isWindows} from "../../store/utils";
 
 interface Props {
     activeUser: UserWrapper
@@ -107,6 +109,10 @@ export class Playground extends Component<Props, State> {
                             this.props.requestUserMedia(this.props.match!.params.spaceID)
                         }}>Request camera & microphone
                         </button>
+                        {isWindows() &&
+
+                        <TurnOffCamera />
+                        }
                     </div>
                     <div className={"headlineBox"}>
                         <label>

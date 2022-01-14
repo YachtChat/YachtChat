@@ -162,6 +162,10 @@ function isElectron() {
     return false;
 }
 
+export function isWindows() {
+    return navigator.platform.indexOf('Win') > -1
+}
+
 export const copyToClipboard = (message: string): AppThunk => dispatch => {
     navigator.clipboard.writeText(message)
     dispatch(handleSuccess("Invite link copied"))
