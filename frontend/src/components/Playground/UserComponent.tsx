@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/mediaSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
-import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline, IoVolumeMuteOutline} from "react-icons/all";
+import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils";
 import {centerUser} from "../../store/playgroundSlice";
@@ -347,12 +347,11 @@ export class UserComponent extends Component<Props, State> {
                     this.props.center()
                 }}
                       ref={this.myName} className={"clickable userName " +
-                    (this.props.inRange || this.props.isActiveUser ? "inRange " : "")
+                    ((this.props.inRange || this.props.isActiveUser) ? "inRange " : "")
                     + this.props.className}
                       style={userNameStyle}>
                     {(!user.audio) && <IoMicOffOutline/>}
                     {(!user.video) && <IoVideocamOffOutline/>}
-                    {(!this.props.inRange && !this.props.isActiveUser) && <IoVolumeMuteOutline />}
                     {" "}
                     {(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
             </div>

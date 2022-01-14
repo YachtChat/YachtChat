@@ -147,17 +147,22 @@
 
   .userName {
     position: absolute;
-    background: $background_light;
     opacity: 0.7;
     border-radius: $border_radius;
     padding: 0.3rem 0.5rem;
     font-size: 0.8rem;
     transition: 0.2s width,
     0.2s height,
+    0.2s background,
+    0.2s color,
     0.2s transition;
-    color: $button_font_light;
+    background: $background_light;
+    border: 1px solid red;
+      color: red;
 
     &.inRange {
+      color: $button_font_light;
+      border-color: $background_light;
     }
 
     &.animate {
