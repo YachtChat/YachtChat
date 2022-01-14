@@ -11,13 +11,13 @@ sidebar_position: 1
 <p>By accessing this Website, accessible from https://www.yacht.chat, you are agreeing to be bound by these
                 Website Terms and Conditions of Use and agree that you are responsible for the agreement with any
                 applicable local laws. If you disagree with any of these terms, you are prohibited from accessing this
-                site. The materials contained in this Website are protected by copyright and trade mark law.</p>
+                site. The materials contained in this Website are protected by copyright and trademark law.</p>
 
 <h2>2. Use License</h2>
 
 <p>Permission is granted to temporarily download one copy of the materials on Yacht.Chat's Website for
                 personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of
-                title, and under this license you may not:</p>
+                title, and under this license, you may not:</p>
 
 <ul>
                 <li>modify or copy the materials;</li>
@@ -29,20 +29,20 @@ sidebar_position: 1
 
 <p>This will let Yacht.Chat to terminate upon violations of any of these restrictions. Upon termination,
                 your viewing right will also be terminated and you should destroy any downloaded materials in your
-                possession whether it is printed or electronic format. These Terms of Service has been created with the
+                possession whether it is printed or electronic format. These Terms of Service have been created with the
                 help of the <a href="https://www.termsofservicegenerator.net">Terms Of Service Generator</a>.</p>
 
 <h2>3. Disclaimer</h2>
 
-<p>All the materials on Yacht.Chat’s Website are provided "as is". Yacht.Chat makes no warranties, may it be
+<p>All the materials on Yacht.Chat’s Websites are provided "as is". Yacht.Chat makes no warranties, may it be
                 expressed or implied, therefore negates all other warranties. Furthermore, Yacht.Chat does not make any
                 representations concerning the accuracy or reliability of the use of the materials on its Website or
                 otherwise relating to such materials or any sites linked to this Website.</p>
 
 <h2>4. Limitations</h2>
 
-<p>Yacht.Chat or its suppliers will not be hold accountable for any damages that will arise with the use or
-                inability to use the materials on Yacht.Chat’s Website, even if Yacht.Chat or an authorize
+<p>Yacht.Chat or its suppliers will not be held accountable for any damages that will arise with the use or
+                inability to use the materials on Yacht.Chat’s Website, even if Yacht.Chat or an authorized
                 representative of this Website has been notified, orally or written, of the possibility of such damage.
                 Some jurisdiction does not allow limitations on implied warranties or limitations of liability for
                 incidental damages, these limitations may not apply to you.</p>
@@ -50,7 +50,7 @@ sidebar_position: 1
 <h2>5. Revisions and Errata</h2>
 
 <p>The materials appearing on Yacht.Chat’s Website may include technical, typographical, or photographic
-                errors. Yacht.Chat will not promise that any of the materials in this Website are accurate, complete, or
+                errors. Yacht.Chat will not promise that any of the materials on this Website are accurate, complete, or
                 current. Yacht.Chat may change the materials contained on its Website at any time without notice.
                 Yacht.Chat does not make any commitment to update the materials.</p>
 
@@ -71,7 +71,7 @@ sidebar_position: 1
 
 <h2>9. Governing Law</h2>
 
-<p>Any claim related to Yacht.Chat's Website shall be governed by the laws of de without regards to its
+<p>Any claim related to Yacht.Chat's Website shall be governed by the laws of de without regard to its
                 conflict of law provisions.</p>
 
 This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

@@ -5,10 +5,10 @@ sidebar_position: 3
 # Privacy Policy for Yacht.Chat
 
 At Yacht.Chat, accessible from https://www.yacht.chat, one of our main priorities is the privacy of our
-                visitors. Within the use of the website yacht.chat and/or the use of its videochat-platform
+                visitors. Within the use of the website yacht.chat and/or the use of its video chat-platform
                 “app.yacht.chat”
                 (hereinafter also referred to as “services”), we, as the data controller, collect and store the data you
-                provided as long and so far this is necessary to fulfil the specified purposes and legal obligations.
+                provided as long and so far this is necessary to fulfill the specified purposes and legal obligations.
             
             
 In the following, we will inform you what data is involved, how the data is processed and what rights
@@ -27,7 +27,7 @@ Yacht.Chat legal basis for collecting and using the personal information describ
             
 
 <p>
-                According to Article 4 no. 1 General Data Protection Regulation (GDPR) personal data means any
+                According to Article 4 no. 1 General Data Protection Regulation (GDPR), personal data means any
                 information relating to an identified or identifiable natural person (in the following „person concerned
                 or user“).
             </p>
@@ -62,21 +62,21 @@ Yacht.Chat legal basis for collecting and using the personal information describ
 
 <p>
                 If you choose to use our Service, then you agree to the collection and use
-                of information in relation with this policy. The Personal Information that we
-                collect are used for providing and improving the Service. We will not use or
+                of information in relation to this policy. The Personal Information that we
+                collect is used for providing and improving the Service. We will not use or
                 share your information with anyone except as described in this Privacy Policy.
             </p>
 
 <p>
                 The terms used in this Privacy Policy have the same meanings as in our
-                Terms and Conditions, which is accessible at <a href="https://www.yacht.chat">www.yacht.chat</a> and
+                Terms and Conditions, which are accessible at <a href="https://www.yacht.chat">www.yacht.chat</a> and 
                 <a href={"https://app.yacht.chat"}>app.yacht.chat</a>, unless otherwise defined in this Privacy Policy.
             </p>
 
 <h3>Information Collection and Use</h3>
 
 <p>
-                For a better experience while using our Service, we may require you to
+                For a better experience, while using our Service, we may require you to
                 provide us with certain personally identifiable information, including but not
                 limited to your name and email address. We process your data (especially the
                 information you provide to us or your user data) exclusively on the specified
@@ -86,19 +86,19 @@ Yacht.Chat legal basis for collecting and using the personal information describ
 <h3>Webhosting</h3>
 
 <p>
-                The offer of the website requires the commissioning of a webhosting service.
+                The offer of the website requires the commissioning of a web hosting service.
             </p>
 
 <p>
                 For the provision of this website and its service, we use the web hosting
                 service Google Cloud Service 1600 Amphitheatre Parkway Mountain View, CA 94043,
-                europe-west 3. The Google server location is Frankfurt am Main, Europe. Thus, Google
-                ensures that the data is not transmitted to the USA. In addition, Googlr Cloud Service
+                Europe-west 3. The Google server location is Frankfurt am Main, Europe. Thus, Google
+                ensures that the data is not transmitted to the USA. In addition, Google Cloud Service
                 is certified by reliable security standards, including ISO 27001, SOC 1/2/2 and
                 PCI DSS Level 1.
             </p>
 
-<h3>Using our Serivces</h3>
+<h3>Using our Services</h3>
 
 <p>
                 When using our services we will collect and store your data to the
@@ -125,12 +125,12 @@ Yacht.Chat legal basis for collecting and using the personal information describ
 
 <p>
                 In addition, to open a user account you have to enter a password of your
-                choice. Together with your email address this provides access to your user
+                choice. Together with your email address, this provides access to your user
                 account.
             </p>
 
 <p>
-                Furthermore we ask you to provide us with a picture of you to be displayed
+                Furthermore, we ask you to provide us with a picture of you to be displayed
                 to other users within the digital space of yacht.chat.
             </p>
 
@@ -149,17 +149,17 @@ Yacht.Chat legal basis for collecting and using the personal information describ
                 Sentence 1 lit. a DSGVO using the Zoho Mail service from Zoho Corporation, 140
                 &amp; 151, GST Road, Vallancherry Village, Chengalpattu Taluk, Kanchipuram
                 District 603 202 India (“Zoho”). The email addresses of our email recipients
-                are stored on Zoho's servers in ?? on our behalf.
+                are stored on Zoho's servers in Europe on our behalf.
             </p>
 
 <p>
                 Zoho uses this
-                information to send and evaluate the automated emails on our behalf. We have
+                information to send and evaluate automated emails on our behalf. We have
                 concluded a Data Protection Agreement with MailChimp for this purpose. Through
                 this contract, MailChimp assures that they process the data in accordance with
                 the General Data Protection Regulation and ensure the protection of the rights
                 of the data subject. Zoho assures that personal data is comprehensively
-                protected against unauthorised access. Zoho itself does not use the data of our
+                protected against unauthorized access. Zoho itself does not use the data of our
                 email recipients to write to them itself or pass the data on to third parties.
             </p>
 
@@ -175,14 +175,14 @@ Yacht.Chat legal basis for collecting and using the personal information describ
                 for executing contractual
                 relationships with you your personal data may be communicated to third parties.
                 This covers the transfer to provide IT services. The transferred data may be
-                used by the third party exclusively for the stated purposes.
+                used by the third-party exclusively for the stated purposes.
             </p>
 
 <h3>Log Data</h3>
 
 <p>
                 We want to inform you that whenever you visit our Service, we collect
-                information that your browser sends to us that is called Log Data. This Log
+                information that your browser sends to us which is called Log Data. This Log
                 Data may include information such as your computer's Internet Protocol (“IP”)
                 address, browser version, pages of our Service that you visit, the time and
                 date of your visit, the time spent on those pages, and other statistics.
@@ -191,14 +191,14 @@ Yacht.Chat legal basis for collecting and using the personal information describ
 <h3>Cookies</h3>
 
 <p>
-                Cookies are files with small amount of data that is commonly used as an
+                Cookies are files with a small amount of data that is commonly used as an
                 anonymous unique identifier. These are sent to your browser from the website
                 that you visit and are stored on your computer's hard drive.
             </p>
 
 <p>
-                Our website uses these “cookies” to collection information and to improve
-                our Service. You have the option to either accept or refuse these cookies, and
+                Our website uses these “cookies” to collect information and to improve
+                our Service. You have the option to either accept or refuse these cookies and
                 know when a cookie is being sent to your computer. If you choose to refuse our
                 cookies, you may not be able to use some portions of our Service.
             </p>
@@ -208,13 +208,13 @@ Yacht.Chat legal basis for collecting and using the personal information describ
 <p>
                 We use the consent management
                 service Posthog of PostHog Inc, 2261 Market Street Unit 4008 San Francisco, CA
-                94114 United Stateson our website. In this context, the date and time of the
+                94114 United States on our website. In this context, the date and time of the
                 visit, browser information, consent information, device information and the IP
                 address of the requesting device are processed. Obtaining and managing legally
                 required consents is to be considered a legitimate interest in the sense of the
                 aforementioned provision, as the interference with the rights of users as a
-                result of the use of anonymised IP addresses and the involvement of a self
-                hosted service is very low. PostHog does not store any data, innstead consents
+                result of the use of anonymized IP addresses and the involvement of a self-hosted
+                service is very low. PostHog does not store any data, instead, consents
                 and revocations are stored by Yacht.chat. The legal basis is our legitimate
                 interest according to Art. 6 para. 1 p. 1. lit. f DSGVO. Being able to comply
                 with the accountability obligation pursuant to Art. 5 (2) DSGVO is a legitimate
@@ -228,9 +228,9 @@ Yacht.Chat legal basis for collecting and using the personal information describ
 
 <p>
                 With the deployed tracking
-                measures we want to ensure an appropriate design and continuous optimisation of
+                measures we want to ensure an appropriate design and continuous optimization of
                 our website. On the other hand, we use tracking measures to compile statistics
-                on the use of our website and to evaluate the optimisation of our offerings for
+                on the use of our website and to evaluate the optimization of our offerings for
                 you.
             </p>
 
@@ -254,7 +254,7 @@ Yacht.Chat legal basis for collecting and using the personal information describ
 <h3>Security</h3>
 
 <p>
-                We value your trust in providing us your Personal Information, thus we are
+                We value your trust in providing us with your Personal Information, thus we are
                 striving to use commercially acceptable means of protecting it. But remember
                 that no method of transmission over the internet, or method of electronic
                 storage is 100% secure and reliable, and we cannot guarantee its absolute
@@ -267,7 +267,7 @@ Yacht.Chat legal basis for collecting and using the personal information describ
                 Our Service may contain links to other sites. If you click on a third-party
                 link, you will be directed to that site. Note that these external sites are not
                 operated by us. Therefore, we strongly advise you to review the Privacy Policy
-                of these websites. We have no control over, and assume no responsibility for
+                of these websites. We have no control over and assume no responsibility for
                 the content, privacy policies, or practices of any third-party sites or
                 services.
             </p>
@@ -276,11 +276,11 @@ Yacht.Chat legal basis for collecting and using the personal information describ
 
 <p>
                 Our Services do not address anyone under the age of 13. We do not knowingly
-                collect personal identifiable information from children under 13. In the case
+                collect personally identifiable information from children under 13. In the case
                 we discover that a child under 13 has provided us with personal information, we
                 immediately delete this from our servers. If you are a parent or guardian and
                 you are aware that your child has provided us with personal information, please
-                contact us so that we will be able to do necessary actions.
+                contact us so that we will be able to do the necessary actions.
             </p>
 
 <h3>Data subject rights</h3>
@@ -312,7 +312,7 @@ Yacht.Chat legal basis for collecting and using the personal information describ
                 </li>
 
 <li>
-                    pursuant to Art. 17 GDPR to demand deletion of your personal data saved
+                    pursuant to Art. 17 GDPR to demand the deletion of your personal data saved
                     with us, in so far as the processing is not required for exercising the right
                     of freedom of expression and information, to comply with a legal obligation,
                     for reasons of public interest or to establish, exercise or defend legal
@@ -358,12 +358,12 @@ Yacht.Chat legal basis for collecting and using the personal information describ
                 If you submit an objection we shall no longer process your personal data
                 unless we can demonstrate compelling legitimate grounds for the processing
                 which override your interests, rights and freedoms or the processing is
-                necessary for the establishment, exercise or defence of legal claims.
+                necessary for the establishment, exercise, or defense of legal claims.
             </p>
 
 <p>
                 If your objection is to the processing of data for direct marketing
-                purposes, we shall cease processing immediately. In this case it is not
+                purposes, we shall cease processing immediately. In this case, it is not
                 necessary for you to assert a particular situation. This also applies to
                 profiling to the extent that it is related to such direct marketing.</p>
 
@@ -378,7 +378,7 @@ Yacht.Chat legal basis for collecting and using the personal information describ
                 We may update our Privacy Policy from time to time. Thus, we advise you to review
                 this page periodically for any changes. We will notify you of any changes by
                 posting the new Privacy Policy on this page. These changes are effective
-                immediately, after they are posted on this page.
+                immediately after they are posted on this page.
             </p>
 
 <h2>Contact Us</h2>

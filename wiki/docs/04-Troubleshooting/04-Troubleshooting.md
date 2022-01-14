@@ -2,7 +2,7 @@
 
 # Troubleshooting
 
-- **[I can't see every one in the space](see-erveryone-in-space)**
+- **[I can't see everyone in the space](see-erveryone-in-space)**
 - **[I can't share my screen](unable-to-share-screen)**
 - **[I can't join a space](join-a-space)**
 - **[I always get the error "Unable to request media"](/docs/Basics/set-permissions)**
