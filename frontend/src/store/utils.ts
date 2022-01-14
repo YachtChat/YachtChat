@@ -52,7 +52,7 @@ export function keycloakUserToUser(data: any, online: boolean, position?: UserCo
         username: data.username,
         email: data.email,
         profile_image: (!!image && data.image !== "") ? image : default_image, // The actual URL to the image if available
-        userStream: { video: undefined, audio: undefined, screen: undefined },
+        userStream: {video: undefined, audio: undefined, screen: undefined},
 
         position
     }
@@ -166,14 +166,53 @@ export function isWindows() {
     return navigator.platform.indexOf('Win') > -1
 }
 
-export const copyToClipboard = (message: string): AppThunk => dispatch => {
-    navigator.clipboard.writeText(message)
-    dispatch(handleSuccess("Invite link copied"))
+function isOS() {
+    return navigator.userAgent.match(/ipad|iphone/i);
+}
+
+export const copyToClipboard = (message: string): Promise<void> => {
+    return new Promise<void>((resolve, fail) => {
+        const textArea = document.createElement('input') as HTMLInputElement;
+        textArea.value = message
+        document.body.appendChild(textArea);
+
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(message).then(resolve).catch(fail)
+            return
+        }
+
+        if (!isOS()) {
+            const range = document.createRange();
+            range.selectNodeContents(textArea);
+            const selection = window.getSelection();
+            selection!.removeAllRanges();
+            selection!.addRange(range);
+            textArea.setSelectionRange(0, 999999);
+        } else {
+            textArea.select();
+        }
+
+        try {
+            const success = document.execCommand('copy', true, "message")
+            if (!success) {
+                fail()
+                return
+            }
+            document.body.removeChild(textArea);
+            resolve()
+        } catch (e) {
+            fail()
+        }
+    })
 }
 
 
 export const copyInviteLink = (spaceID: string): AppThunk => (dispatch, getState) => {
     getInvitationToken(getState(), spaceID).then(token => {
-        dispatch(copyToClipboard("https://" + FRONTEND_URL + "/join/" + token))
+        copyToClipboard("https://" + FRONTEND_URL + "/join/" + token).then(() => {
+            dispatch(handleSuccess("Successfully copied invite link."))
+        }).catch(() => {
+            dispatch(handleError("Could not copy invite link"))
+        })
     }).catch(() => dispatch(handleError("Unable to request token")))
 }
