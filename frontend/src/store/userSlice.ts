@@ -116,7 +116,13 @@ export const userSlice = createSlice({
                 state.spaceUsers[action.payload].message = undefined
             if (state.activeUser.id === action.payload)
                 state.activeUser.message = undefined
-        }
+        },
+        setInRange: (state, action: PayloadAction<{id: string, event: boolean}>) => {
+            if (state.spaceUsers[action.payload.id])
+                state.spaceUsers[action.payload.id].inRange = action.payload.event
+            if (state.activeUser.id === action.payload.id)
+                state.activeUser.inRange = action.payload.event
+        },
     },
 });
 
@@ -133,6 +139,7 @@ export const {
     setMessage,
     destroyMessage,
     resetUsers,
+    setInRange
 } = userSlice.actions;
 
 // Called on initial login to retrieve the user information for all users

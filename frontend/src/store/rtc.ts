@@ -128,6 +128,10 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
     if (rtp.track && rtp.track.kind === 'audio') {
         //console.log("Enabled audio")
         rtp.track.enabled = true
+        dispatch(send({
+            target_id: id,
+            event: true
+        }))
     }
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }
@@ -139,6 +143,10 @@ export const unsendAudio = (id: string): AppThunk => dispatch => {
     if (rtp.track && rtp.track.kind === 'audio') {
         console.log("Disabled audio")
         rtp.track.enabled = false
+        dispatch(send({
+            target_id: id,
+            event: false
+        }))
     }
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
 }

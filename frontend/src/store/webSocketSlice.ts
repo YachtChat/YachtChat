@@ -1,6 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './store';
-import {MediaType, UserCoordinates, UserPayload} from "./model/model";
+import {UserCoordinates, UserPayload} from "./model/model";
 import {
     getOnlineUsers,
     getUser,
@@ -10,7 +10,7 @@ import {
     handlePositionUpdate,
     handleSpaceUser,
     handleSpaceUsers,
-    removeUser,
+    removeUser, setInRange,
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
 import {setMedia} from "./mediaSlice";
@@ -124,6 +124,10 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
             case "message":
                 if (!loggedIn) break;
                 dispatch(handleMessage(data.content, data.sender_id))
+                break;
+            case "range":
+                if (!loggedIn) break;
+                dispatch(setInRange(data))
                 break;
             case "kick":
                 if (!loggedIn) break;

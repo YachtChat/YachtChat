@@ -155,7 +155,11 @@
     transition: 0.2s width,
     0.2s height,
     0.2s transition;
-    color: $button_font_light;
+    color: red;
+
+    &.inRange {
+      color: $button_font_light;
+    }
 
     &.animate {
       transition: 0.2s width,
