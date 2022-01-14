@@ -29,7 +29,7 @@ export class RangeSlider extends Component<Props> {
                     color={"primary"}
                     value={(this.props.activeUser.position) ? this.props.activeUser.position.range : 30}
                     max={100}
-                    min={10}
+                    min={15}
                     step={5}
                     track={false}
                     onChange={(e, n) => this.props.changeRadius(n as number)}
