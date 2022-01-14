@@ -4,26 +4,30 @@ import {Link} from "react-router-dom";
 import {FaChevronLeft} from "react-icons/fa";
 import {IoArrowForward, IoCopyOutline} from "react-icons/all";
 import {connect} from "react-redux";
-import {getInvitationToken} from "../../store/spaceSlice";
 import {RootState} from "../../store/store";
 import {CircularProgress, Tooltip} from "@material-ui/core";
 import {applicationName, FRONTEND_URL} from "../../store/config";
-import {push} from "connected-react-router";
 import {Space} from "../../store/model/model";
-import {handleSuccess} from "../../store/statusSlice";
 import {Steps} from "./Steps";
+import {copyInviteLink} from "../../store/utils";
+import {getInvitationToken} from "../../store/spaceSlice";
 
-interface Props {
-    getToken: (spaceID: string) => Promise<string>
+interface OwnProps {
     match?: {
         params: {
             spaceID: string
         }
     }
-    goBack: () => void
+}
+
+interface OtherProps {
+    copy: () => Promise<string>
+    getToken: (spaceID: string) => Promise<string>
     spaces: Space[]
     success: (s: string) => void
 }
+
+type Props = OwnProps & OtherProps
 
 interface State {
     token?: string
@@ -43,13 +47,14 @@ export class CreateSpace extends Component<Props, State> {
     componentDidMount() {
         if (!this.props.match)
             return
+        
         this.props.getToken(this.props.match.params.spaceID).then(token => {
                 console.log(token)
                 this.setState({
                     token
                 })
             }
-        ).catch(() => this.props.goBack())
+        )
     }
 
     render() {
@@ -80,14 +85,7 @@ export class CreateSpace extends Component<Props, State> {
                         e.preventDefault()
                         this.setState({invite: true})
 
-                        if (this.copyText.current) {
-                            this.copyText.current.select();
-                            this.copyText.current.setSelectionRange(0, 99999); /* For mobile devices */
-
-                            /* Copy the text inside the text field */
-                            document.execCommand("copy");
-                            this.props.success("Invite link copied")
-                        }
+                        this.props.copy()
                     }}>
                         <IoCopyOutline/> Copy invite Link
                     </button>
@@ -113,9 +111,8 @@ const mapStateToProps = (state: RootState) => ({
     spaces: state.space.spaces
 })
 
-const mapDispatchToProps = (dispatch: any) => ({
-    goBack: () => dispatch(push("/spaces")),
-    success: (s: string) => dispatch(handleSuccess(s))
+const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
+    copy: () => ownProps.match ? dispatch(copyInviteLink(ownProps.match.params.spaceID)) : {},
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateSpace)

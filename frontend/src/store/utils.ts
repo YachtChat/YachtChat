@@ -8,6 +8,10 @@ import {
     VIRTUAL_BACKGROUND_TYPE,
     VirtualBackgroundRenderer
 } from '@camera-processor/virtual-background';
+import {AppThunk} from "./store";
+import {FRONTEND_URL} from "./config";
+import {handleError, handleSuccess} from "./statusSlice";
+import {getInvitationToken} from "./spaceSlice";
 
 export function getCookie(cname: string) {
     const name = cname + "=";
@@ -156,4 +160,16 @@ function isElectron() {
     }
 
     return false;
+}
+
+export const copyToClipboard = (message: string): AppThunk => dispatch => {
+    navigator.clipboard.writeText(message)
+    dispatch(handleSuccess("Invite link copied"))
+}
+
+
+export const copyInviteLink = (spaceID: string): AppThunk => (dispatch, getState) => {
+    getInvitationToken(getState(), spaceID).then(token => {
+        dispatch(copyToClipboard("https://" + FRONTEND_URL + "/join/" + token))
+    }).catch(() => dispatch(handleError("Unable to request token")))
 }

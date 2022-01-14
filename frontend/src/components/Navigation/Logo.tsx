@@ -1,21 +1,20 @@
 import {RootState} from "../../store/store";
-import {
-    getInvitationToken,
-} from "../../store/spaceSlice";
-import {handleError, handleSuccess} from "../../store/statusSlice";
 import {connect} from "react-redux";
-import {FRONTEND_URL} from "../../store/config";
 import {IoLink} from "react-icons/all";
 import {Tooltip} from "@material-ui/core";
 import React from "react";
+import {copyInviteLink} from "../../store/utils";
 
-interface Props {
+interface OwnProps {
     title?: string | Element
     spaceID?: string
-    getToken: (sid: string) => Promise<string>
-    success: (s: string) => void
-    error: (s: string) => void
 }
+
+interface OtherProps {
+    invite: () => void
+}
+
+type Props = OwnProps & OtherProps
 
 export function Logo(props: Props) {
 
@@ -72,11 +71,8 @@ export function Logo(props: Props) {
             {!!props.spaceID &&
             <Tooltip title={"Get invitation link"} placement={"top"} arrow>
                 <button onClick={e => {
-                        props.getToken(props.spaceID!).then(token => {
-                            e.preventDefault()
-                            navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + token)
-                            props.success("Invite link copied")
-                        }).catch(() => props.error("Unable to request token"))
+                        e.preventDefault()
+                        props.invite()
                     }
                 } className={"invite"}>
                     <IoLink/> invite link
@@ -88,12 +84,10 @@ export function Logo(props: Props) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    getToken: (sid: string) => getInvitationToken(state, sid),
 })
 
-const mapDispatchToProps = (dispatch: any) => ({
-    success: (s: string) => dispatch(handleSuccess(s)),
-    error: (s: string) => dispatch(handleError(s))
+const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
+    invite: () => dispatch(copyInviteLink(ownProps.spaceID!)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Logo)

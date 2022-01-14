@@ -4,11 +4,17 @@ import {sendLogout} from "../../store/webSocketSlice";
 import {SUPPORT_URL} from "../../store/config";
 import {push} from "connected-react-router";
 
-interface Props {
+interface OwnProps {
+    spaceID?: string
     closeButton?: boolean
-    logout: (s: string) => void
     active?: string
 }
+
+interface OtherProps {
+    logout: (s: string) => void
+}
+
+type Props = OwnProps & OtherProps
 
 export function NavButtons(props: Props) {
 
@@ -47,9 +53,9 @@ export function NavButtons(props: Props) {
     )
 }
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     logout: (s: string) => {
-        if (window.confirm("Are you sure to leave this space").valueOf()) {
+        if (!ownProps.spaceID || window.confirm("Are you sure to leave this space").valueOf()) {
             dispatch(sendLogout(false))
             dispatch(push(s))
         }

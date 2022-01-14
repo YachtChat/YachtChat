@@ -3,7 +3,7 @@ import './style.scss';
 import {Space} from "../../store/model/model";
 import {connect} from "react-redux";
 import {RootState} from "../../store/store";
-import {deleteSpaceForUser, getInvitationToken, requestSpaces} from "../../store/spaceSlice";
+import {deleteSpaceForUser, requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
 import {
     IoAddOutline, IoChatbubblesOutline,
@@ -16,16 +16,14 @@ import {logout} from "../../store/authSlice";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import {Tooltip} from "@material-ui/core";
-import {FRONTEND_URL, SUPPORT_URL} from "../../store/config";
-import {handleError, handleSuccess} from "../../store/statusSlice";
+import {SUPPORT_URL} from "../../store/config";
+import {copyInviteLink} from "../../store/utils";
 
 interface Props {
     spaces: Space[]
     logout: () => void
     requestSpaces: () => void
-    success: (s: string) => void
-    error: (s: string) => void
-    getToken: (spaceID: string) => Promise<string>
+    invite: (s: string) => void
     deleteSpaceForUser: (id: string) => void
 }
 
@@ -72,10 +70,7 @@ export class Spaces extends Component<Props, State> {
     invite(e: React.MouseEvent, spaceID: string) {
         e.preventDefault()
         e.stopPropagation()
-        this.props.getToken(spaceID!).then(token => {
-            navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + token)
-            this.props.success("Invite link copied")
-        }).catch(() => this.props.error("Unable to request token"))
+        this.props.invite(spaceID)
     }
 
     render() {
@@ -192,15 +187,13 @@ export class Spaces extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     spaces: state.space.spaces,
-    getToken: (spaceID: string) => getInvitationToken(state, spaceID),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     requestSpaces: () => dispatch(requestSpaces()),
     logout: () => dispatch(logout()),
-    success: (s: string) => dispatch(handleSuccess(s)),
-    error: (s: string) => dispatch(handleError(s)),
     deleteSpaceForUser: (id: string) => dispatch(deleteSpaceForUser(id)),
+    invite: (s: string) => dispatch(copyInviteLink(s)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Spaces)

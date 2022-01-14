@@ -5,16 +5,15 @@ import {IoCloseOutline, IoLink} from "react-icons/all";
 import UserList from "./UserList";
 import {RootState} from "../../../store/store";
 import {FRONTEND_URL} from "../../../store/config";
-import {handleError, handleSuccess} from "../../../store/statusSlice";
-import {getInvitationToken} from "../../../store/spaceSlice";
 import {Tooltip} from "@material-ui/core";
+import {getInvitationToken} from "../../../store/spaceSlice";
+import {copyInviteLink} from "../../../store/utils";
 
 interface Props {
     open: boolean
     onClose: () => void
     spaceID: string
-    success: (s: string) => void
-    error: (s: string) => void
+    invite: (sid: string) => void
     getToken: (sid: string) => Promise<string>
     getSpaceName: (sid: string) => string
 }
@@ -37,7 +36,7 @@ export class MembersComponent extends Component<Props, State> {
             this.setState({
                 token: token
             })
-        }).catch(() => this.props.error("Unable to request token"))
+        })
     }
 
     render() {
@@ -62,9 +61,7 @@ export class MembersComponent extends Component<Props, State> {
                                      arrow>
                                 <button onClick={e => {
                                     e.preventDefault()
-                                    navigator.clipboard.writeText("https://" + FRONTEND_URL + "/join/" + this.state.token)
-                                    this.props.success("Invite link copied")
-                                    console.log(this.state)
+                                    this.props.invite(this.props.spaceID)
                                 }} className={"outlined"}>
                                     <IoLink/> copy invite link
                                 </button>
@@ -90,8 +87,7 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    success: (s: string) => dispatch(handleSuccess(s)),
-    error: (s: string) => dispatch(handleError(s)),
+    invite: (sid: string) => dispatch(copyInviteLink(sid))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MembersComponent)

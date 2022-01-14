@@ -281,7 +281,7 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
 
     // Get range of user
     const user = getUser(getState())
-    const currentRange = maxRange * user.position!.range / 100
+    const currentRange = maxRange * (user.position?.range ?? 30) / 100
 
     let users: User[] = []
 

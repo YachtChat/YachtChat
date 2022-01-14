@@ -6,8 +6,8 @@ import "./style.scss";
 import {User} from "../../store/model/model";
 import MediaSettings from "./MediaSettings";
 import {IoCloseOutline, IoCogOutline} from "react-icons/all";
-import {Link} from "react-router-dom";
 import {sendLogout} from "../../store/webSocketSlice";
+import {push} from "connected-react-router";
 
 interface Props {
     user: User
@@ -24,18 +24,16 @@ export class SpaceSettings extends Component<Props> {
                 <Dialog className={"settingsPanel"}
                         open={this.props.open}
                         onClose={this.props.onClose}
-                        aria-labelledby="form-dialog-title" >
+                        aria-labelledby="form-dialog-title">
                     <div className={"headlineBox"}>
                         <div className={"buttons"}>
                             <button onClick={this.props.onClose} className={"iconButton nostyle"}>
                                 <IoCloseOutline/>
                             </button>
                         </div>
-                        <Link to={"settings"} onClick={() => this.props.logout()}>
-                            <button className={"outlined"}>
-                                <IoCogOutline /> Go to settings
-                            </button>
-                        </Link>
+                        <button className={"outlined"} onClick={() => this.props.logout()}>
+                            <IoCogOutline/> Go to settings
+                        </button>
                         <h1>Settings</h1>
                     </div>
                     <div className={"settings"}>
@@ -55,7 +53,12 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    logout: () => dispatch(sendLogout()),
+    logout: () => {
+        if (window.confirm("Are you sure you want to leave the space?")) {
+            dispatch(sendLogout(false))
+            dispatch(push("/settings/"))
+        }
+    },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpaceSettings)

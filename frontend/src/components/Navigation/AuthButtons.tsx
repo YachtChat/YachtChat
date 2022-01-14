@@ -9,12 +9,18 @@ import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
 import {push} from "connected-react-router";
 
-interface Props {
+interface OwnProps {
     minimal?: boolean
+    spaceID?: string
+}
+
+interface OtherProps {
     activeUser: User
     logout: () => void
     logoutOfSpace: (s: string) => void
 }
+
+type Props = OwnProps & OtherProps
 
 interface State {
     profileOpen: boolean
@@ -113,10 +119,10 @@ const mapStateToProps = (state: RootState) => ({
     activeUser: state.userState.activeUser,
 })
 
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     logout: () => dispatch(logout()),
     logoutOfSpace: (s: string) => {
-        if (window.confirm("Are you sure to leave this space").valueOf()) {
+        if (!ownProps.spaceID || window.confirm("Are you sure to leave this space").valueOf()) {
             dispatch(sendLogout(false))
             dispatch(push(s))
         }

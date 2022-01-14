@@ -22,8 +22,8 @@ export const Navigation = (props: Props) => {
 
                 <div id={"nav-content-desktop"}>
                     <Logo title={props.title} spaceID={props.spaceID}/>
-                    <NavButtons active={site} />
-                    <AuthButtons/>
+                    <NavButtons spaceID={props.spaceID} active={site} />
+                    <AuthButtons spaceID={props.spaceID}/>
                 </div>
 
                 <div id={"nav-content-mobile"}>
