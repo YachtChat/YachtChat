@@ -311,7 +311,7 @@ export class UserComponent extends Component<Props, State> {
                                              this.props.user.message.toLocaleLowerCase().startsWith("www.")
                                          ) ?
                                              <a href={this.props.user.message}
-                                                className={"clickable"}
+                                                className={"clickable ph-no-capture"}
                                                 target="_blank" rel="noopener noreferrer"
                                              >{this.props.user.message}</a> :
                                              this.props.user.message}
