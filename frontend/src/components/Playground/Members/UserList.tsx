@@ -5,7 +5,7 @@ import {FaCrown, IoHandRight, IoTrashOutline} from "react-icons/all";
 import {Tooltip} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
-import {RootState} from "../../../store/store";
+import {RootState} from "../../../store/utils/store";
 import {getUser, getUsers, kickUser} from "../../../store/userSlice";
 import {
     deleteSpaceForUser,

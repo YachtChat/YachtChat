@@ -2,7 +2,7 @@ import Wrapper from "../../Wrapper";
 import {IoMoon, IoMoonOutline} from "react-icons/all";
 import React from "react";
 import {connect} from "react-redux";
-import {RootState} from "../../../store/store";
+import {RootState} from "../../../store/utils/store";
 import {toggleDoNotDisturb} from "../../../store/mediaSlice";
 
 interface Props {

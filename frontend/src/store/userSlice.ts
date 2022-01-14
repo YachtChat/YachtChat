@@ -1,15 +1,15 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppThunk, RootState} from './store';
+import {AppThunk, RootState} from './utils/store';
 import {MediaType, Message, Point, User, UserCoordinates, UserPayload} from "./model/model";
 import {send, sendPosition, userSetupReady} from "./webSocketSlice";
 import {getMedia, setMedia} from "./mediaSlice";
 import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
-import {ACCOUNT_URL, complete_spaces_url} from "./config";
-import {keycloakUserToUser, playNotificationSound} from "./utils";
+import {ACCOUNT_URL, complete_spaces_url} from "./utils/config";
+import {keycloakUserToUser, playNotificationSound} from "./utils/utils";
 import {handleError, handleSuccess} from "./statusSlice";
-import {identifyUser} from "./posthog";
-import {getNextValidPostion, isPostionValid} from "./positionUtils";
+import {identifyUser} from "./utils/posthog";
+import {getNextValidPostion, isPostionValid} from "./utils/positionUtils";
 import {UserWrapper} from "./model/UserWrapper";
 import {handleRTCEvents, sendAudio, unsendAudio} from "./rtc";
 

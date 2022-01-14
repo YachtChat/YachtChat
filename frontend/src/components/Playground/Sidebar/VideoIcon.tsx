@@ -1,4 +1,4 @@
-import {RootState} from "../../../store/store";
+import {RootState} from "../../../store/utils/store";
 import {getScreenStream, getStream} from "../../../store/mediaSlice";
 import {getUserID, getUserWrapped} from "../../../store/userSlice";
 import React, {Component, createRef} from "react";

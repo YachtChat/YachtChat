@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {PlaygroundOffset} from "../../store/model/model";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {getUserWrapped, maxRange, userProportion} from "../../store/userSlice";
 import {getStream} from "../../store/mediaSlice";

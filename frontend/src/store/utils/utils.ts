@@ -1,5 +1,5 @@
-import {User, UserCoordinates} from "./model/model";
-import default_image from "../rsc/profile.png";
+import {User, UserCoordinates} from "../model/model";
+import default_image from "../../rsc/profile.png";
 import CameraProcessor from 'camera-processor';
 import {
     RENDER_PIPELINE,
@@ -10,8 +10,8 @@ import {
 } from '@camera-processor/virtual-background';
 import {AppThunk} from "./store";
 import {FRONTEND_URL} from "./config";
-import {handleError, handleSuccess} from "./statusSlice";
-import {getInvitationToken} from "./spaceSlice";
+import {handleError, handleSuccess} from "../statusSlice";
+import {getInvitationToken} from "../spaceSlice";
 
 export function getCookie(cname: string) {
     const name = cname + "=";

@@ -1,5 +1,5 @@
-import {Point} from "./model/model";
-import {userProportion} from "./userSlice";
+import {Point} from "../model/model";
+import {userProportion} from "../userSlice";
 
 /**
  * For a given circle and a given array of circles, check if the circle is non overlapping

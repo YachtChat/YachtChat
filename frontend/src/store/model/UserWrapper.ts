@@ -1,4 +1,4 @@
-import {RootState} from "../store";
+import {RootState} from "../utils/store";
 import {getMedia, getScreenStream, getStream, setMedia} from "../mediaSlice";
 import {MediaType, User, UserCoordinates} from "./model";
 import {getUserID, move, setMessage} from "../userSlice";

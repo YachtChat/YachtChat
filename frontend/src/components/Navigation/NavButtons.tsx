@@ -1,7 +1,7 @@
 import {IoAddOutline, IoChatbubblesOutline, IoCogOutline, IoPeopleOutline} from "react-icons/all";
 import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
-import {SUPPORT_URL} from "../../store/config";
+import {SUPPORT_URL} from "../../store/utils/config";
 import {push} from "connected-react-router";
 
 interface OwnProps {

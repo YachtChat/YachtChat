@@ -1,4 +1,4 @@
-import {AppThunk, RootState} from "./store";
+import {AppThunk, RootState} from "./utils/store";
 import {
     getOnlineUsers,
     getUser,
@@ -8,7 +8,7 @@ import {
     handlePositionUpdate,
     setUserOffline
 } from "./userSlice";
-import {rtcConfiguration} from "./config";
+import {rtcConfiguration} from "./utils/config";
 import {send, triggerReconnection} from "./webSocketSlice";
 import {MediaType} from "./model/model";
 import {handleError} from "./statusSlice";

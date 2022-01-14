@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import './style.scss';
 import {Space} from "../../store/model/model";
 import {connect} from "react-redux";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {deleteSpaceForUser, requestSpaces} from "../../store/spaceSlice";
 import Wrapper from "../Wrapper";
 import {
@@ -16,8 +16,8 @@ import {logout} from "../../store/authSlice";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import {Tooltip} from "@material-ui/core";
-import {SUPPORT_URL} from "../../store/config";
-import {copyInviteLink} from "../../store/utils";
+import {SUPPORT_URL} from "../../store/utils/config";
+import {copyInviteLink} from "../../store/utils/utils";
 
 interface Props {
     spaces: Space[]

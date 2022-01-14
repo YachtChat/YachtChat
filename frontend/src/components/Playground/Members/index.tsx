@@ -3,11 +3,11 @@ import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
 import {IoCloseOutline, IoLink} from "react-icons/all";
 import UserList from "./UserList";
-import {RootState} from "../../../store/store";
-import {FRONTEND_URL} from "../../../store/config";
+import {RootState} from "../../../store/utils/store";
+import {FRONTEND_URL} from "../../../store/utils/config";
 import {Tooltip} from "@material-ui/core";
 import {getInvitationToken} from "../../../store/spaceSlice";
-import {copyInviteLink} from "../../../store/utils";
+import {copyInviteLink} from "../../../store/utils/utils";
 
 interface Props {
     open: boolean

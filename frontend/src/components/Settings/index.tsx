@@ -8,7 +8,7 @@ import {Link, Route, Switch, useParams} from "react-router-dom";
 import GeneralSettings from "./GeneralSettings";
 import Profile from "./Profile";
 import {Grow} from "@material-ui/core";
-import {SUPPORT_URL} from "../../store/config";
+import {SUPPORT_URL} from "../../store/utils/config";
 
 export function Settings() {
     let {site} = useParams<{ site: string }>();

@@ -1,9 +1,9 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Space} from "./model/model";
-import {AppThunk, RootState} from "./store";
+import {AppThunk, RootState} from "./utils/store";
 import axios from "axios";
 import {handleError, handleSuccess} from "./statusSlice";
-import {complete_spaces_url, SOCKET_PORT, SOCKET_URL, SPACES_URL} from "./config";
+import {complete_spaces_url, SOCKET_PORT, SOCKET_URL, SPACES_URL} from "./utils/config";
 import {getHeaders} from "./authSlice";
 import {push} from "connected-react-router";
 import {getUserID} from "./userSlice";
@@ -104,7 +104,7 @@ export const returnHome = (): AppThunk => (dispatch) => {
 
 export const deleteSpaceForUser = (spaceId: string): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
-        axios.delete(complete_spaces_url + "/api/v1/spaces/" + spaceId + "/members/?memberId=" + getUserID(getState()), header).then(response => {
+        axios.delete(complete_spaces_url + "/api/v1/spaces/" + spaceId + "/members/?memberId=" + getUserID(getState()), header).then(() => {
             dispatch(handleSuccess("Space successfully deleted"))
             dispatch(requestSpaces())
         }).catch(e => {
@@ -146,7 +146,7 @@ export const requestHosts = (spaceID: string): AppThunk => (dispatch, getState) 
 export const promoteUser = (id: string, spaceID: string): AppThunk => (dispatch, getState) => {
     // send request to backend to promote this user
     getHeaders(getState()).then(headers => {
-        axios.post(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, {}, headers).then(response => {
+        axios.post(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, {}, headers).then(() => {
             dispatch(requestHosts(spaceID))
             dispatch(handleSuccess("Successfully promoted user"))
         }).catch((e) => {
@@ -159,7 +159,7 @@ export const promoteUser = (id: string, spaceID: string): AppThunk => (dispatch,
 export const downgradeUser = (id: string, spaceID: string): AppThunk => (dispatch, getState) => {
     // send request to backend to promote this user
     getHeaders(getState()).then(headers => {
-        axios.delete(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, headers).then(response => {
+        axios.delete(complete_spaces_url + "/api/v1/spaces/" + spaceID + "/hosts/?hostId=" + id, headers).then(() => {
             dispatch(requestHosts(spaceID))
             dispatch(handleSuccess("Successfully downgraded user"))
         }).catch((e) => {

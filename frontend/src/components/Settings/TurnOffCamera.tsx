@@ -1,9 +1,9 @@
 import React from "react";
 import {IoArrowForward} from "react-icons/all";
 import {Tooltip} from "@material-ui/core";
-import {applicationName, SUPPORT_URL} from "../../store/config";
+import {applicationName, SUPPORT_URL} from "../../store/utils/config";
 import {CameraMode} from "../../store/model/model";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {setupCameraMode} from "../../store/playgroundSlice";
 

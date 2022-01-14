@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppThunk, RootState} from './store';
+import {AppThunk, RootState} from './utils/store';
 import {handleLoginUser} from './userSlice';
-import keycloak from "./keycloak";
+import keycloak from "./utils/keycloak";
 import {AxiosRequestConfig} from "axios";
 import {UserWrapper} from "./model/UserWrapper";
 

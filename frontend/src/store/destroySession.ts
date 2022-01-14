@@ -1,4 +1,4 @@
-import {AppThunk} from "./store";
+import {AppThunk} from "./utils/store";
 import {resetMediaSlice} from "./mediaSlice";
 import {resetUsers} from "./userSlice";
 import {resetPlayground} from "./playgroundSlice";

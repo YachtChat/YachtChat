@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {connect, ConnectedComponent} from "react-redux";
 import {Route} from "react-router-dom";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {IoCogOutline} from "react-icons/all";
 import {Loading} from "../Wrapper";
 

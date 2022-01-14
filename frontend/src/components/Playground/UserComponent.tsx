@@ -1,13 +1,13 @@
 import React, {Component} from "react";
 import {MediaType, Message, PlaygroundOffset} from "../../store/model/model";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/mediaSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
 import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
-import {convertRemToPixels} from "../../store/utils";
+import {convertRemToPixels} from "../../store/utils/utils";
 import {centerUser} from "../../store/playgroundSlice";
 import {UserWrapper} from "../../store/model/UserWrapper";
 

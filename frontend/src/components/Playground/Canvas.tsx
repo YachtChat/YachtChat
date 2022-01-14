@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {PlaygroundOffset, UserCoordinates} from "../../store/model/model";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import './style.scss';
 import {getOnlineUsersWrapped, getUser, submitMovement} from "../../store/userSlice";

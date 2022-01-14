@@ -1,6 +1,6 @@
 import React from "react";
 import {Tooltip} from "@material-ui/core";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {setShowVolumeIndicators, setVideoInAvatar} from "../../store/playgroundSlice";
 import TurnOffCamera from "./TurnOffCamera";

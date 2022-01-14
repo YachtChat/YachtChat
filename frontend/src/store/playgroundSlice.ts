@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {CameraMode, MediaType, PlaygroundOffset, User} from "./model/model";
-import {AppThunk, RootState} from "./store";
+import {AppThunk, RootState} from "./utils/store";
 import {requestSpaces} from "./spaceSlice";
 import {getUser, getUserWrapped, userProportion} from "./userSlice";
 import {setPrevious, toggleUserVideo, unshareScreen} from "./mediaSlice";

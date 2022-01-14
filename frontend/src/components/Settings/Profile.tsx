@@ -4,7 +4,7 @@ import {
     IoPowerOutline
 } from "react-icons/all";
 import React from "react";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {getUser} from "../../store/userSlice";
 import {User} from "../../store/model/model";

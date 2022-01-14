@@ -4,12 +4,12 @@ import {Link} from "react-router-dom";
 import {FaChevronLeft} from "react-icons/fa";
 import {IoArrowForward, IoCopyOutline} from "react-icons/all";
 import {connect} from "react-redux";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {CircularProgress, Tooltip} from "@material-ui/core";
-import {applicationName, FRONTEND_URL} from "../../store/config";
+import {applicationName, FRONTEND_URL} from "../../store/utils/config";
 import {Space} from "../../store/model/model";
 import {Steps} from "./Steps";
-import {copyInviteLink} from "../../store/utils";
+import {copyInviteLink} from "../../store/utils/utils";
 import {getInvitationToken} from "../../store/spaceSlice";
 
 interface OwnProps {

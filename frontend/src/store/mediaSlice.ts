@@ -1,10 +1,10 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppThunk, RootState} from './store';
+import {AppThunk, RootState} from './utils/store';
 import {connectToServer, send} from "./webSocketSlice";
 import {getOnlineUsers, getUser, getUserID, getUserWrapped, setStreamID} from "./userSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./model/model";
-import {applyVirtualBackground, stopAllVideoEffects} from "./utils";
+import {applyVirtualBackground, stopAllVideoEffects} from "./utils/utils";
 import CameraProcessor from "camera-processor";
 import {UserWrapper} from "./model/UserWrapper";
 import {exchangeTracks, getRtpSender, resetRTC, stopTracks} from "./rtc";

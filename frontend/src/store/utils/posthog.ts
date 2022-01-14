@@ -1,5 +1,5 @@
 import posthog from "posthog-js";
-import {User} from "./model/model";
+import {User} from "../model/model";
 
 export function identifyUser(user: User) {
     posthog.identify(

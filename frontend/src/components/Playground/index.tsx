@@ -6,19 +6,19 @@ import {handleZoom, initPlayground} from "../../store/playgroundSlice";
 import Canvas from "./Canvas";
 import Wrapper, {Loading} from "../Wrapper";
 import {Space} from "../../store/model/model";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {requestSpaces} from "../../store/spaceSlice";
 import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/mediaSlice";
 import {Link} from "react-router-dom";
 import {IoCamera, IoChevronBack, IoMic} from "react-icons/all";
-import {applicationName} from "../../store/config";
+import {applicationName} from "../../store/utils/config";
 import {sendLogout} from "../../store/webSocketSlice";
 import Navigation from "../Navigation";
 import DoNotDisturb from "./DoNotDisturb";
 import {UserWrapper} from "../../store/model/UserWrapper";
 import {getUser} from "../../store/userSlice";
 import TurnOffCamera from "../Settings/TurnOffCamera";
-import {isWindows} from "../../store/utils";
+import {isWindows} from "../../store/utils/utils";
 
 interface Props {
     activeUser: UserWrapper

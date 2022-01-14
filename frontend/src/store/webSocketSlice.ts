@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {AppThunk} from './store';
+import {AppThunk} from './utils/store';
 import {UserCoordinates, UserPayload} from "./model/model";
 import {
     getOnlineUsers,
@@ -14,7 +14,7 @@ import {
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
 import {setMedia} from "./mediaSlice";
-import {SOCKET_PORT, SOCKET_URL} from "./config";
+import {SOCKET_PORT, SOCKET_URL} from "./utils/config";
 import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
 import {destroySession} from "./destroySession";

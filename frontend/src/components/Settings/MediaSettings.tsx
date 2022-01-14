@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import "./style.scss";
 import {
@@ -17,7 +17,7 @@ import {
 } from "../../store/mediaSlice";
 import {User} from "../../store/model/model";
 import VolumeIndicator from "./VolumeIndicator";
-import {applyVirtualBackground, stopAllVideoEffects} from "../../store/utils";
+import {applyVirtualBackground, stopAllVideoEffects} from "../../store/utils/utils";
 import CameraProcessor from "camera-processor";
 
 interface Props {

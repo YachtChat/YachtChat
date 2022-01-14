@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppThunk} from './store';
+import {AppThunk} from './utils/store';
 import posthog from "posthog-js";
 
 interface StatusState {
