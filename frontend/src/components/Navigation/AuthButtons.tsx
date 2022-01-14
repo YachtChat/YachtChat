@@ -1,6 +1,5 @@
 import {IoCameraOutline, IoChevronDownOutline, IoCogOutline, IoPersonOutline, IoPowerOutline,} from "react-icons/all";
 import {ClickAwayListener, Grow, MenuList, Paper, Popper} from "@material-ui/core";
-import {Link} from "react-router-dom";
 import MenuItem from "@material-ui/core/MenuItem";
 import React, {Component, createRef} from "react";
 import {User} from "../../store/model/model";
@@ -8,12 +7,13 @@ import {RootState} from "../../store/store";
 import {logout} from "../../store/authSlice";
 import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
+import {push} from "connected-react-router";
 
 interface Props {
     minimal?: boolean
     activeUser: User
     logout: () => void
-    logoutOfSpace: () => void
+    logoutOfSpace: (s: string) => void
 }
 
 interface State {
@@ -61,14 +61,14 @@ export class AuthButtons extends Component<Props, State> {
                     style={{backgroundImage: `url(${this.props.activeUser.profile_image})`}}
                 />
                 {!this.props.minimal &&
-                <IoChevronDownOutline className={"icon"}/>
+                    <IoChevronDownOutline className={"icon"}/>
                 }
                 <Popper open={open}
                         anchorEl={this.anchorRef.current}
                         role={undefined} placement={"bottom"}
                         onMouseOver={() => this.setState({profileOpen: true})}
                         onMouseLeave={() => this.setState({profileOpen: false})}
-                        onClick={this.props.logoutOfSpace}
+                        onClick={this.handleClose.bind(this)}
                         transition disablePortal>
                     {({TransitionProps, placement}) => (
                         <Grow
@@ -84,19 +84,20 @@ export class AuthButtons extends Component<Props, State> {
                                         {/*        <FaCog/> Account*/}
                                         {/*    </MenuItem>*/}
                                         {/*</Link>*/}
-                                        <Link to={"/settings/"}>
-                                            <MenuItem className={"menuItem"}
-                                                      onClick={this.handleClose.bind(this)}><span><IoCogOutline/> Settings</span></MenuItem>
-                                        </Link>
-                                        <Link to={"/settings/media"}>
-                                            <MenuItem className={"menuItem"}
-                                                      onClick={this.handleClose.bind(this)}><span><IoCameraOutline /> Media Settings</span></MenuItem>
-                                        </Link>
-                                        <Link to={"/settings/profile"}>
-                                            <MenuItem className={"menuItem"}
-                                                      onClick={this.handleClose.bind(this)}><span><IoPersonOutline /> Profile</span></MenuItem>
-                                        </Link>
-                                        <MenuItem onClick={this.props.logout}><span style={{color: "red"}}><IoPowerOutline/> Logout</span></MenuItem>
+                                        <MenuItem className={"menuItem"}
+                                                  onClick={() => this.props.logoutOfSpace("/settings/")}>
+                                            <span><IoCogOutline/> Settings</span>
+                                        </MenuItem>
+                                        <MenuItem className={"menuItem"}
+                                                  onClick={() => this.props.logoutOfSpace("/settings/media")}>
+                                            <span><IoCameraOutline/> Media Settings</span>
+                                        </MenuItem>
+                                        <MenuItem className={"menuItem"}
+                                                  onClick={() => this.props.logoutOfSpace("/settings/profile")}>
+                                            <span><IoPersonOutline/> Profile</span>
+                                        </MenuItem>
+                                        <MenuItem onClick={this.props.logout}><span
+                                            style={{color: "red"}}><IoPowerOutline/> Logout</span></MenuItem>
                                     </MenuList>
                                 </ClickAwayListener>
                             </Paper>
@@ -114,7 +115,12 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     logout: () => dispatch(logout()),
-    logoutOfSpace: () => dispatch(sendLogout(false)),
+    logoutOfSpace: (s: string) => {
+        if (window.confirm("Are you sure to leave this space").valueOf()) {
+            dispatch(sendLogout(false))
+            dispatch(push(s))
+        }
+    },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthButtons)

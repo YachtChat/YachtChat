@@ -61,6 +61,7 @@ export class Playground extends Component<Props, State> {
             if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
                 this.props.requestUserMedia(this.props.match!.params.spaceID)
         })
+
         window.onpopstate = () => {
             this.props.sendLogout();
         };

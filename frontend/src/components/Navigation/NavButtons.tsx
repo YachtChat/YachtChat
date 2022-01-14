@@ -1,55 +1,59 @@
 import {IoAddOutline, IoChatbubblesOutline, IoCogOutline, IoPeopleOutline} from "react-icons/all";
-import {Link} from "react-router-dom"
 import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
 import {SUPPORT_URL} from "../../store/config";
+import {push} from "connected-react-router";
 
 interface Props {
     closeButton?: boolean
-    logout: () => void
+    logout: (s: string) => void
     active?: string
 }
 
 export function NavButtons(props: Props) {
 
     return (
-        <nav className={"nav-items"} onClick={props.logout}>
-            <Link to={"/spaces"}>
-                <button className={(props.active === "spaces") ? "active" : ""}>
-                    <IoChatbubblesOutline />
-                    <br />
-                    Spaces
-                </button>
-            </Link>
-            <Link to={"/create-space"}>
-            <button className={(props.active === "create-space") ? "active" : ""}>
-                <IoAddOutline />
-                <br />
+        <nav className={"nav-items"}>
+            <button onClick={() => props.logout("/spaces/")}
+                    className={(props.active === "spaces") ? "active" : ""}>
+                <IoChatbubblesOutline/>
+                <br/>
+                Spaces
+            </button>
+            <button onClick={() => props.logout("/create-space")}
+                    className={(props.active === "create-space") ? "active" : ""}>
+                <IoAddOutline/>
+                <br/>
                 New Space
             </button>
-            </Link>
-            <a href={SUPPORT_URL}>
+            <a href={SUPPORT_URL}
+               target="_blank" rel="noopener noreferrer"
+            >
                 <button>
 
-                <IoPeopleOutline />
-                <br />
-                Support
+                    <IoPeopleOutline/>
+                    <br/>
+                    Support
                 </button>
             </a>
-            <Link to={"/settings/"}>
-                <button className={(props.active === "settings") ? "active" : ""}>
-                    <IoCogOutline />
-                    <br/>
-                    Settings
-                </button>
-            </Link>
+            <button onClick={() => props.logout("/settings")}
+                    className={(props.active === "settings") ? "active" : ""}>
+                <IoCogOutline/>
+                <br/>
+                Settings
+            </button>
 
         </nav>
     )
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
-    logout: () => dispatch(sendLogout(false)),
+    logout: (s: string) => {
+        if (window.confirm("Are you sure to leave this space").valueOf()) {
+            dispatch(sendLogout(false))
+            dispatch(push(s))
+        }
+    },
 })
 
 export default connect(undefined, mapDispatchToProps)(NavButtons)
