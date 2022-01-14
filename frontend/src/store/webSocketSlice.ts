@@ -10,7 +10,7 @@ import {
     handlePositionUpdate,
     handleSpaceUser,
     handleSpaceUsers,
-    removeUser, setInRange,
+    removeUser, setInRange, submitMovement,
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
 import {setMedia} from "./mediaSlice";
@@ -229,7 +229,7 @@ export const handleLogin = (success: boolean, spaceid: string, users: Set<UserPa
 export const userSetupReady = (): AppThunk => (dispatch, getState) => {
     const user = getUser(getState())
     dispatch(handleRTCEvents(getUserID(getState())));
-    dispatch(handlePositionUpdate({id: user.id, position: user.position!}))
+    dispatch(submitMovement(user.position!, false))
     dispatch(joined())
 }
 

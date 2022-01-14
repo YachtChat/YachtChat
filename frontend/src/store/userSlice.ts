@@ -170,7 +170,6 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                     }
                     return keycloakUserToUser(user, !!userPayload, userPayload?.position)
                 })
-                console.log(userObjects)
                 // finally call set users with user list
                 dispatch(setUsers(userObjects))
                 dispatch(userSetupReady())
