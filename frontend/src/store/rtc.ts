@@ -13,6 +13,7 @@ import {send, triggerReconnection} from "./webSocketSlice";
 import {MediaType} from "./model/model";
 import {handleError} from "./statusSlice";
 import {getStream, resetMedia, setStream} from "./mediaSlice";
+import {sendNotification} from "./utils/notifications";
 
 let rtcConnections: { [key: string]: RTCPeerConnection } = {}; // the connection to handle the connection to the other peer
 let rtpSender: { [key: string]: { [key: string]: RTCRtpSender } } = {}; // rtc object that handles stream transmission
@@ -133,6 +134,9 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
             target_id: id,
             event: true
         }))
+        const user = getUserById(getState(), id)
+        if (getState().playground.inBackground)
+            sendNotification(`${user.firstName} can now hear you`, user.profile_image)
     }
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }

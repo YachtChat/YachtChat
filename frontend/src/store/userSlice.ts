@@ -12,6 +12,7 @@ import {identifyUser} from "./utils/posthog";
 import {getNextValidPostion, isPostionValid} from "./utils/positionUtils";
 import {UserWrapper} from "./model/UserWrapper";
 import {handleRTCEvents, sendAudio, unsendAudio} from "./rtc";
+import {sendNotification} from "./utils/notifications";
 
 interface UserState {
     activeUser: User
@@ -267,6 +268,9 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
             playNotificationSound()
         // Set message in order to display it
         dispatch(setMessage({message, id: fromId}))
+
+        if (getState().playground.inBackground)
+            sendNotification(message, user.profile_image)
 
         // After timeout message will be deleted
         if (messageTimeout[fromId]) clearTimeout(messageTimeout[fromId])

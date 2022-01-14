@@ -4,6 +4,7 @@ import {AppThunk, RootState} from "./utils/store";
 import {requestSpaces} from "./spaceSlice";
 import {getUser, getUserWrapped, userProportion} from "./userSlice";
 import {setPrevious, toggleUserVideo, unshareScreen} from "./mediaSlice";
+import {clearAllNotifications} from "./utils/notifications";
 
 interface PlaygroundState {
     offset: PlaygroundOffset
@@ -117,6 +118,7 @@ export const initPlayground = (): AppThunk => (dispatch, getState) => {
     dispatch(setupCameraMode(getState().playground.cameraMode))
     window.addEventListener("focus", () => {
         dispatch(setInBackground(false))
+        clearAllNotifications()
     })
     window.addEventListener("blur", () => {
         dispatch(setInBackground(true))

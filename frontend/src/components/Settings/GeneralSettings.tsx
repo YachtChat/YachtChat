@@ -4,6 +4,7 @@ import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {setShowVolumeIndicators, setVideoInAvatar} from "../../store/playgroundSlice";
 import TurnOffCamera from "./TurnOffCamera";
+import {requestNotifications} from "../../store/utils/notifications";
 
 interface Props {
     emailNotifications: boolean
@@ -12,6 +13,7 @@ interface Props {
 
     setShowVolumeIndicators: (s: boolean) => void
     setVideoInAvatar: (s: boolean) => void
+    enableNotifications: () => void
 }
 
 export function GeneralSettings(props: Props) {
@@ -69,7 +71,7 @@ export function GeneralSettings(props: Props) {
                         </div>
                     </div>
                 </Tooltip>
-                <TurnOffCamera />
+                <TurnOffCamera/>
                 <Tooltip title={
                     <div>
                         To not get distracted from your conversations you can disable the video in your own avatar.
@@ -108,6 +110,26 @@ export function GeneralSettings(props: Props) {
                         Select
                     </button>
                 </div>
+                <div className={"settings-item"}>
+                    <label>
+                        Notifications
+                    </label>
+                    <Tooltip
+                        title={"Get notified about messages as well as when users can hear you while the tab is in background"}
+                        arrow placement={"top"}>
+                        <div>
+
+                            {(Notification.permission === 'denied' || Notification.permission === 'default') &&
+                                <button className={"submit outlined"}
+                                        onClick={() => props.enableNotifications()}>
+                                    Enable
+                                </button>
+                            }
+                            {(Notification.permission !== 'denied' && Notification.permission !== 'default') &&
+                                <input value={"Notifications are enabled"} disabled/>}
+                        </div>
+                    </Tooltip>
+                </div>
             </div>
         </div>
     )
@@ -121,7 +143,8 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     setShowVolumeIndicators: (s: boolean) => dispatch(setShowVolumeIndicators(s)),
-    setVideoInAvatar: (s: boolean) => dispatch(setVideoInAvatar(s))
+    setVideoInAvatar: (s: boolean) => dispatch(setVideoInAvatar(s)),
+    enableNotifications: () => dispatch(requestNotifications())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(GeneralSettings)

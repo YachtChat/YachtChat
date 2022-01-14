@@ -9,7 +9,14 @@ import {sendLogout} from "../../../store/webSocketSlice";
 import {toggleUserVideo, toggleUserAudio, toggleUserScreen, toggleDoNotDisturb} from "../../../store/mediaSlice";
 import Settings from "../../Settings/SpaceSettings";
 import {centerUser, isUserOutOfBounds} from "../../../store/playgroundSlice";
-import {IoChatbubble, IoChevronBackOutline, IoMoon, IoPeople, IoTv, IoTvOutline} from "react-icons/all";
+import {
+    IoChatbubble,
+    IoChevronBackOutline,
+    IoMoon, IoNotifications,
+    IoPeople,
+    IoTv,
+    IoTvOutline
+} from "react-icons/all";
 import MessageComponent from "./Message";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
@@ -18,6 +25,8 @@ import {ClickAwayListener, Collapse, Tooltip} from "@material-ui/core";
 import posthog from "posthog-js";
 import VideoIcon from "./VideoIcon";
 import {getUserWrapped} from "../../../store/userSlice";
+import {requestNotifications} from "../../../store/utils/notifications";
+import {applicationName} from "../../../store/utils/config";
 
 interface Props {
     getToken: (spaceID: string) => Promise<string>
@@ -37,6 +46,7 @@ interface Props {
     minimal?: boolean
     className?: string
     userOutOfBounds: boolean
+    requestNotifications: () => void
 }
 
 interface State {
@@ -220,6 +230,26 @@ export class NavigationBar extends Component<Props, State> {
                             </div>
                             <div className="menu bottom">
                                 <ul>
+                                    {!this.props.minimal && window.Notification && (Notification.permission === 'denied' || Notification.permission === 'default') &&
+                                        <li className="menu-item">
+                                            <div
+                                                onClick={() => {
+                                                    this.sendToPosthog("notifications")
+                                                    // request notifications
+                                                    this.props.requestNotifications()
+                                                }}
+                                                className="inner-item">
+                                                <Tooltip disableFocusListener
+                                                         title={"Enable notifications"} placement="right" arrow>
+                                            <span className="icon-wrapper">
+                                                <span className="icon">
+                                                    <IoNotifications />
+                                                </span>
+                                            </span>
+                                                </Tooltip>
+                                            </div>
+                                        </li>
+                                    }
                                     {!this.props.minimal &&
                                         <li className="menu-item">
                                             <div
@@ -320,6 +350,10 @@ const mapDispatchToProps = (dispatch: any) => ({
     toggleVideo: () => dispatch(toggleUserVideo()),
     toggleScreen: () => dispatch(toggleUserScreen()),
     toggleDoNotDisturb: () => dispatch(toggleDoNotDisturb()),
+    requestNotifications: () => {
+        if (window.confirm(`Notifications will be shown if ${applicationName} is in background and you receive a message or a user suddenly can hear you.`))
+            dispatch(requestNotifications())
+    },
     logout: () => dispatch(sendLogout(true)),
     center: () => dispatch(centerUser()),
 })
