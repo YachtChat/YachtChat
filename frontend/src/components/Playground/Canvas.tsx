@@ -24,6 +24,7 @@ interface Props {
     toggleAudio: () => void
     toggleVideo: () => void
     spaceID: string
+    inBackground: boolean
 }
 
 interface State {
@@ -89,7 +90,7 @@ export class Canvas extends Component<Props, State> {
     // if the mouse is clicked on the active user
     dragStart(event: React.MouseEvent | React.TouchEvent) {
         event.stopPropagation()
-        if ((event.target as HTMLElement).classList.contains("clickable"))
+        if ((event.target as HTMLElement).classList.contains("clickable") || this.props.inBackground)
             return
 
         // Figure out which element was clicked
@@ -370,6 +371,7 @@ const mapStateToProps = (state: RootState) => ({
     activeUser: new UserWrapper(getUser(state)),
     spaceUsers: getOnlineUsersWrapped(state),
     offset: state.playground.offset,
+    inBackground: state.playground.inBackground,
 })
 
 const mapDispatchToProps = (dispatch: any) => ({

@@ -10,6 +10,7 @@ interface PlaygroundState {
     videoInAvatar: boolean
     cameraMode: CameraMode,
     showVolumeIndicators: boolean
+    inBackground: boolean // if the application is in background
 }
 
 const initScale = (1.0 / 1080) * ((window.innerWidth > window.innerHeight) ? window.innerWidth : window.innerHeight)
@@ -28,6 +29,7 @@ const initialState: PlaygroundState = {
     showVolumeIndicators: localStorage.getItem("showVolumeIndicators") === "true", // Video only shown in sidebar or in avatar
     cameraMode: localStorage.getItem("cameraMode") !== CameraMode.Automatically.toString() ?
         CameraMode.Manual : CameraMode.Automatically, // Video only shown in sidebar or in avatar
+    inBackground: false
 }
 
 export const spaceSlice = createSlice({
@@ -61,6 +63,9 @@ export const spaceSlice = createSlice({
             state.cameraMode = action.payload
             localStorage.setItem("cameraMode", action.payload.toString())
         },
+        setInBackground: (state, action: PayloadAction<boolean>) => {
+            state.inBackground = action.payload
+        },
     }
 });
 
@@ -70,7 +75,8 @@ export const {
     resetPlayground,
     setVideoInAvatar,
     setCameraMode,
-    setShowVolumeIndicators
+    setShowVolumeIndicators,
+    setInBackground
 } = spaceSlice.actions;
 
 export const initPlayground = (): AppThunk => (dispatch, getState) => {
@@ -109,6 +115,12 @@ export const initPlayground = (): AppThunk => (dispatch, getState) => {
     })
     dispatch(requestSpaces())
     dispatch(setupCameraMode(getState().playground.cameraMode))
+    window.addEventListener("focus", () => {
+        dispatch(setInBackground(false))
+    })
+    window.addEventListener("blur", () => {
+        dispatch(setInBackground(true))
+    })
 }
 
 export const centerUser = (user?: User): AppThunk => (dispatch, getState) => {
