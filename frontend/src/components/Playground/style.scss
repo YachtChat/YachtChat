@@ -151,14 +151,13 @@
     opacity: 0.7;
     border-radius: $border_radius;
     padding: 0.3rem 0.5rem;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     transition: 0.2s width,
     0.2s height,
     0.2s transition;
-    color: red;
+    color: $button_font_light;
 
     &.inRange {
-      color: $button_font_light;
     }
 
     &.animate {

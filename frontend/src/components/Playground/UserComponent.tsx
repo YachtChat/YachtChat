@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/mediaSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
-import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline} from "react-icons/all";
+import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline, IoVolumeMuteOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils";
 import {centerUser} from "../../store/playgroundSlice";
@@ -14,13 +14,14 @@ import {UserWrapper} from "../../store/model/UserWrapper";
 interface OwnProps {
     user: UserWrapper
     selected?: boolean
-    isActiveUser?: boolean
     className?: string
 }
 
 interface OtherProps {
     playgroundOffset: PlaygroundOffset
     userStream: Record<MediaType, string | undefined>
+    isActiveUser: boolean
+    inRange: boolean
     speaker: string
     camera: string
     microphone: string
@@ -346,11 +347,12 @@ export class UserComponent extends Component<Props, State> {
                     this.props.center()
                 }}
                       ref={this.myName} className={"clickable userName " +
-                    (user.inRange ? "inRange " : "")
+                    (this.props.inRange || this.props.isActiveUser ? "inRange " : "")
                     + this.props.className}
                       style={userNameStyle}>
                     {(!user.audio) && <IoMicOffOutline/>}
                     {(!user.video) && <IoVideocamOffOutline/>}
+                    {(!this.props.inRange && !this.props.isActiveUser) && <IoVolumeMuteOutline />}
                     {" "}
                     {(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
             </div>
@@ -364,6 +366,8 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     speaker: getSpeaker(state),
     camera: getCamera(state),
     microphone: getMicrophone(state),
+    isActiveUser: ownProps.user.isActiveUser(),
+    inRange: ownProps.user.inRange,
     getStream: (id: string) => getStream(state, id),
     getScreenStream: (id: string) => getScreenStream(state, id),
     messages: getUserMessages(state, ownProps.user.id),
