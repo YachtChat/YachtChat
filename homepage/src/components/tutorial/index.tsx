@@ -1,9 +1,10 @@
-import {BiMouse, IoVolumeHigh} from "react-icons/all";
+import {BiMouse, IoArrowForward, IoHelpBuoyOutline, IoVolumeHigh} from "react-icons/all";
 import React from "react";
 import "./style.scss"
-import {applicationName} from "../../util/config";
+import {applicationName, FRONTEND_URL} from "../../util/config";
 import {JoinButton} from "../joinButton";
 import {Separator} from "../separator";
+import {SUPPORT} from "../../util/config";
 
 export function Tutorial() {
     return (
@@ -51,6 +52,10 @@ export function Tutorial() {
                     </div>
                 </div>
                 <JoinButton className={"join"}/>
+                <a className={"join joinButton outlined"}
+                     href={SUPPORT}>
+                    <IoHelpBuoyOutline/> Get help
+                </a>
             </div>
         </div>
     )

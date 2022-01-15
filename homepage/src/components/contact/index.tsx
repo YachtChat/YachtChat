@@ -1,9 +1,9 @@
-import {IoLogoInstagram, IoLogoLinkedin, IoMail} from "react-icons/all";
+import {IoHelpBuoyOutline, IoLogoInstagram, IoLogoLinkedin, IoMail} from "react-icons/all";
 import React, {useState} from "react";
 import "./style.scss"
 import classNames from "classnames";
 import {Card} from "../card";
-import {EMAIL, INSTA, LINKEDIN} from "../../util/config";
+import {EMAIL, INSTA, LINKEDIN, SUPPORT} from "../../util/config";
 import {Imprint} from "../imprint";
 
 export function Contact() {
@@ -42,10 +42,16 @@ export function Contact() {
                             <label>Mail</label>
                         </a>
                     </Card>
+                    <Card>
+                        <a href={SUPPORT}>
+                            <IoHelpBuoyOutline className={"insta"}/>
+                            <label>Support</label>
+                        </a>
+                    </Card>
                 </div>
             </div>
             <div id={"legal"}>
-                <label>copyright 2021 by yacht.chat</label>
+                <label>copyright 2021-2022 by yacht.chat</label>
                 <br/>
                 <button onClick={() => setLegal("terms")}>Terms & Conditions</button>
                 <button onClick={() => setLegal("privacy")}>Privacy Policy</button>

@@ -152,9 +152,15 @@
     text-align: center;
     width: 30%;
     box-shadow: $shadow;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
     background: $background_light;
-    color: $accent_dark
+    color: $accent_dark;
+    &.outlined {
+      background: transparent;
+      margin-bottom: 3rem;
+      border: 2px solid white;
+      color: white;
+    }
   }
 
   @keyframes mouse_move {

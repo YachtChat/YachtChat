@@ -1,5 +1,6 @@
 import {IoClose} from "react-icons/all";
 import {useEffect, useState} from "react";
+import {SUPPORT} from "../../util/config";
 
 interface Props {
     closeButton?: boolean
@@ -11,8 +12,8 @@ export function NavButtons(props: Props) {
 
     const [curEl, setCurEl] = useState<string>("")
 
-    const elids = ["landing", "about", "usp", "tutorial", "scenarios", "contact"]
-    const names = ["Home", "About", "Features", "How To", "Use cases", "Contact"]
+    const elids = ["landing", "about", "usp", "tutorial", "contact"]
+    const names = ["Home", "About", "Features", "How To", "Contact"]
 
     const updateActiveElement = () => {
         const els = elids.map(el => Math.abs(getPosition(document.getElementById(el)).y))
@@ -34,6 +35,7 @@ export function NavButtons(props: Props) {
                                    onClick={() => scrollTo(el)}>{names[i]}</button>
                 }
             )}
+            <a className={""} href={SUPPORT}>Help</a>
 
         </nav>
     )
