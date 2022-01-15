@@ -108,7 +108,7 @@ const config = {
               },
               {
                 label: 'Imprint',
-                href: 'https://www.yacht.chat',
+                to: '/docs/Contact',
               },
               {
                 label: 'Contact',
@@ -118,7 +118,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Yacht.Chat, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © 2021-${new Date().getFullYear()} Yacht.Chat, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,
