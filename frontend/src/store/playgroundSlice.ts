@@ -12,6 +12,7 @@ interface PlaygroundState {
     cameraMode: CameraMode,
     showVolumeIndicators: boolean
     inBackground: boolean // if the application is in background
+    notifications: boolean // if the application is in background
 }
 
 const initScale = (1.0 / 1080) * ((window.innerWidth > window.innerHeight) ? window.innerWidth : window.innerHeight)
@@ -26,6 +27,7 @@ const initialState: PlaygroundState = {
         scale: initScale,
         trueScale: 1.0,
     },
+    notifications: localStorage.getItem("notifications") !== "false",
     videoInAvatar: localStorage.getItem("videoInAvatar") !== "false", // Video only shown in sidebar or in avatar
     showVolumeIndicators: localStorage.getItem("showVolumeIndicators") === "true", // Video only shown in sidebar or in avatar
     cameraMode: localStorage.getItem("cameraMode") !== CameraMode.Automatically.toString() ?
@@ -60,6 +62,10 @@ export const spaceSlice = createSlice({
             state.showVolumeIndicators = action.payload
             localStorage.setItem("showVolumeIndicators", action.payload.toString())
         },
+        setNotifications: (state, action: PayloadAction<boolean>) => {
+            state.notifications = action.payload
+            localStorage.setItem("notifications", action.payload.toString())
+        },
         setCameraMode: (state, action: PayloadAction<CameraMode>) => {
             state.cameraMode = action.payload
             localStorage.setItem("cameraMode", action.payload.toString())
@@ -77,7 +83,8 @@ export const {
     setVideoInAvatar,
     setCameraMode,
     setShowVolumeIndicators,
-    setInBackground
+    setInBackground,
+    setNotifications
 } = spaceSlice.actions;
 
 export const initPlayground = (): AppThunk => (dispatch, getState) => {
@@ -97,9 +104,9 @@ export const initPlayground = (): AppThunk => (dispatch, getState) => {
         }
 
         // old scale
-        const d_os = {x: d.x / offset.scale, y: d.y / offset.scale }
+        const d_os = {x: d.x / offset.scale, y: d.y / offset.scale}
         // new scale
-        const d_ns = {x: d.x / offset.scale, y: d.y / offset.scale }
+        const d_ns = {x: d.x / offset.scale, y: d.y / offset.scale}
         // d delta (change in position --> delta on old scale substracted by delta of new scale = total change)
         const d_d = {x: d_os.x - d_ns.x, y: d_os.y - d_ns.y}
 
@@ -196,10 +203,10 @@ export const isUserOutOfBounds = (state: RootState): boolean => {
     const scale = state.playground.offset.scale
 
     // Overflows
-    const left = x_screen * scale - userProportion/2 < 0
-    const right = x_screen * scale + userProportion/2 > window.innerWidth
-    const top = y_screen * scale - userProportion/2 < 0
-    const bottom = y_screen * scale + userProportion/2 > window.innerHeight
+    const left = x_screen * scale - userProportion / 2 < 0
+    const right = x_screen * scale + userProportion / 2 > window.innerWidth
+    const top = y_screen * scale - userProportion / 2 < 0
+    const bottom = y_screen * scale + userProportion / 2 > window.innerHeight
 
     return left || right || top || bottom
 }
@@ -233,8 +240,10 @@ export const setupCameraMode = (mode: CameraMode): AppThunk => (dispatch, getSta
             }
             break;
         case CameraMode.Manual:
-            window.onblur = () => {}
-            window.onfocus = () => {}
+            window.onblur = () => {
+            }
+            window.onfocus = () => {
+            }
             break;
     }
 }

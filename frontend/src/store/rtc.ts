@@ -136,7 +136,7 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
         }))
         const user = getUserById(getState(), id)
         if (getState().playground.inBackground)
-            sendNotification(`${user.firstName} can now hear you`, user.profile_image)
+            sendNotification(getState(), `${user.firstName} can now hear you`, user.profile_image)
     }
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }

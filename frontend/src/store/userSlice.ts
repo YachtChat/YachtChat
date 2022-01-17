@@ -269,8 +269,8 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
         // Set message in order to display it
         dispatch(setMessage({message, id: fromId}))
 
-        if (getState().playground.inBackground)
-            sendNotification(message, user.profile_image)
+        if (state.playground.inBackground)
+            sendNotification(state, message, user.profile_image)
 
         // After timeout message will be deleted
         if (messageTimeout[fromId]) clearTimeout(messageTimeout[fromId])

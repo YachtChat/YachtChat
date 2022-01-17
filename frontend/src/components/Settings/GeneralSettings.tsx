@@ -2,18 +2,21 @@ import React from "react";
 import {Tooltip} from "@material-ui/core";
 import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
-import {setShowVolumeIndicators, setVideoInAvatar} from "../../store/playgroundSlice";
+import {setNotifications, setShowVolumeIndicators, setVideoInAvatar} from "../../store/playgroundSlice";
 import TurnOffCamera from "./TurnOffCamera";
 import {requestNotifications} from "../../store/utils/notifications";
+import {handleSuccess} from "../../store/statusSlice";
 
 interface Props {
     emailNotifications: boolean
     videoInAvatar: boolean,
     showVolumeIndicators: boolean
+    notifications: boolean
 
     setShowVolumeIndicators: (s: boolean) => void
     setVideoInAvatar: (s: boolean) => void
     enableNotifications: () => void
+    disableNotifications: () => void
 }
 
 export function GeneralSettings(props: Props) {
@@ -114,21 +117,30 @@ export function GeneralSettings(props: Props) {
                     <label>
                         Notifications
                     </label>
-                    <Tooltip
-                        title={"Get notified about messages as well as when users can hear you while the tab is in background"}
-                        arrow placement={"top"}>
-                        <div>
+                    {"Notification" in window &&
+                        <Tooltip
+                            title={"Get notified about messages as well as when users can hear you while the tab is in background"}
+                            arrow placement={"top"}>
+                            <div>
 
-                            {(Notification.permission === 'denied' || Notification.permission === 'default') &&
-                                <button className={"submit outlined"}
-                                        onClick={() => props.enableNotifications()}>
-                                    Enable
-                                </button>
-                            }
-                            {(Notification.permission !== 'denied' && Notification.permission !== 'default') &&
-                                <input value={"Notifications are enabled"} disabled/>}
-                        </div>
-                    </Tooltip>
+                                {(!props.notifications || Notification.permission === 'denied' || Notification.permission === 'default') &&
+                                    <button className={"submit outlined"}
+                                            onClick={() => props.enableNotifications()}>
+                                        Enable
+                                    </button>
+                                }
+                                {(Notification.permission === 'granted' && props.notifications) &&
+                                    <button className={"submit outlined"}
+                                            onClick={() => props.disableNotifications()}>
+                                        Disable
+                                    </button>
+                                }
+                            </div>
+                        </Tooltip>
+                    }
+                    {!("Notification" in window) &&
+                        <input disabled value={"Not available in your browser"} />
+                    }
                 </div>
             </div>
         </div>
@@ -138,13 +150,18 @@ export function GeneralSettings(props: Props) {
 const mapStateToProps = (state: RootState) => ({
     emailNotifications: false,
     videoInAvatar: state.playground.videoInAvatar,
-    showVolumeIndicators: state.playground.showVolumeIndicators
+    showVolumeIndicators: state.playground.showVolumeIndicators,
+    notifications: state.playground.notifications
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     setShowVolumeIndicators: (s: boolean) => dispatch(setShowVolumeIndicators(s)),
     setVideoInAvatar: (s: boolean) => dispatch(setVideoInAvatar(s)),
-    enableNotifications: () => dispatch(requestNotifications())
+    enableNotifications: () => dispatch(requestNotifications()),
+    disableNotifications: () => {
+        handleSuccess("Disabled notifications")
+        dispatch(setNotifications(false))
+    }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(GeneralSettings)
