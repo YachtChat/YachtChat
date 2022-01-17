@@ -26,4 +26,12 @@ public class SpaceUserService {
         } else
             return 0;
     }
+
+    public Integer sessions() {
+        int sessions = 0;
+        for (Map<String, User> s : spaceMap.values()) {
+            sessions += s.size();
+        }
+        return sessions;
+    }
 }

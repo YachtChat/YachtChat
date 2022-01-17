@@ -11,17 +11,17 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(path="/api/v1/space")
+@RequestMapping(path="/api/v1")
 public class SpaceController extends SpringBootServletInitializer {
 
     private final SpaceUserService spaceUserService = new SpaceUserService();
 
-    @GetMapping("/{spaceID}/members")
+    @GetMapping("/space/{spaceID}/members")
     public Integer getAllSpaces(@PathVariable String spaceID) {
         return this.spaceUserService.size(spaceID);
     }
 
-    @PostMapping(path = "/members")
+    @PostMapping(path = "/space/members")
     public Map<String, Integer> joinWithInviteToken(@RequestBody String[] spaces) {
         Map<String, Integer> member = new HashMap<String, Integer>(spaces.length);
 
@@ -30,6 +30,12 @@ public class SpaceController extends SpringBootServletInitializer {
         }
 
         return member;
+    }
+
+    @GetMapping(path = "/sessions")
+    public Integer getActiveSessions() {
+        // Get the active sessions
+        return spaceUserService.sessions();
     }
 
 }
