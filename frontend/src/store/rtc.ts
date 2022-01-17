@@ -136,7 +136,16 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
         }))
         const user = getUserById(getState(), id)
         if (getState().playground.inBackground)
-            sendNotification(getState(), `${user.firstName} can now hear you`, user.profile_image)
+            sendNotification(getState(), `${user.firstName} can now hear you`, user.profile_image,
+                // Actions currently not supported
+                // [{
+                //     action: "mute",
+                //     title: "Mute yourself",
+                //     onClick: () => {
+                //         window.alert("ALERT")
+                //     }
+                // }]
+            )
     }
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }

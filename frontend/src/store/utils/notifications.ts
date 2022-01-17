@@ -39,11 +39,24 @@ function checkNotificationPromise() {
     return true;
 }
 
-export function sendNotification(state: RootState, m: string, pic?: string, onClick?: (this: Notification, ev: Event) => void) {
+export function sendNotification(state: RootState, m: string, pic?: string,
+                                 // Actions are currently not supported
+                                 // actions?: NotificationClickAction[]
+) {
+    const actions: NotificationClickAction[] | undefined = undefined
+    function actionClick(this: Notification, ev: Event) {
+
+        actions!.forEach(a => {
+            // @ts-ignore
+            if (ev.action === a.action) a.onClick()
+        })
+    }
+
     if (state.playground.notifications && window.Notification && Notification.permission === "granted") {
-        const n = new Notification("Yacht.Chat", {body: m, icon: pic})
+        const n = new Notification("Yacht.Chat", {body: m, icon: pic, actions: actions})
         notifications.push(n)
-        n.onclick = onClick ?? null
+
+        n.onclick = !!actions ? actionClick : null
     }
 }
 
@@ -51,4 +64,8 @@ export function clearAllNotifications() {
     notifications.forEach(n => {
         n.close()
     })
+}
+
+interface NotificationClickAction extends NotificationAction {
+    onClick: () => void
 }
