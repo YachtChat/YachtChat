@@ -53,7 +53,11 @@ body {
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;
 }
-
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #0a0a0a;
+    }
+}
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
@@ -196,6 +200,7 @@ label, .required {
     font-size: 4rem;
     text-transform: uppercase;
     font-weight: bolder;
+    text-align: center;
 }
 .headlineBox .buttons {
     padding: 0 0 0.5rem 0;
@@ -619,7 +624,6 @@ label, .required {
 }
 @media (prefers-color-scheme: dark) {
     .login-box {
-        background: #171717;
         color: #ccc;
     }
 }
@@ -692,7 +696,7 @@ label, .required {
     border-radius: 2px;
     margin: 0 1rem;
     overflow: hidden;
-    background: black;
+    background: white;
     transition: 0.2s opacity;
 }
 .signin .login-buttons .logoImage i, .signin .login-buttons .social-button i {
