@@ -212,7 +212,7 @@ export class UserComponent extends Component<Props, State> {
             boxShadow: (this.props.selected) ? "0 0 20px rgba(0,0,0,0.5)" : "none",
             // If no screen is beeing shared or video is shown or no stream is available show profile pic
             backgroundImage: (
-                (!(this.props.isActiveUser && screen) && !user.video)
+                ((!screen) && (!user.video))
                 || (!this.props.user.userStream.video && !this.props.user.userStream.screen)
                 || (screen && !inRange)
                 || !this.mediaElement.current?.srcObject) ? `url(${user.profile_image})` : "none",

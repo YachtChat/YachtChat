@@ -167,8 +167,8 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                     })
                     // if the user is in the Space userPayload will be set otherwise it will not
                     if (userPayload) {
-                        dispatch(setMedia({id: userPayload.id, state: !!userPayload.audio, type: MediaType.AUDIO}))
-                        dispatch(setMedia({id: userPayload.id, state: !!userPayload.video, type: MediaType.VIDEO}))
+                        dispatch(setMedia({id: userPayload.id, state: userPayload.media.audio, type: MediaType.AUDIO}))
+                        dispatch(setMedia({id: userPayload.id, state: userPayload.media.video, type: MediaType.VIDEO}))
                     }
                     return keycloakUserToUser(user, !!userPayload, userPayload?.position)
                 })

@@ -37,7 +37,7 @@ public class User {
     }
 
     public Boolean getMedia(String type){
-        return this.media.get(media);
+        return this.media.get(type);
     }
     public void setMedia(String type, Boolean on){
         this.media.put(type, on);
