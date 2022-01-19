@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/mediaSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
-import {IoCopyOutline, IoMicOffOutline, IoVideocamOffOutline} from "react-icons/all";
+import {IoCopyOutline, IoMicOffOutline, IoTvOutline, IoVideocamOffOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils/utils";
 import {centerUser} from "../../store/playgroundSlice";
@@ -153,6 +153,7 @@ export class UserComponent extends Component<Props, State> {
         const audio = this.props.user.audio
         const video = this.props.user.video
         const screen = this.props.user.screen
+        const inRange = this.props.user.inRange || this.props.isActiveUser
         const scale = this.props.playgroundOffset.scale
         if (this.props.user.firstName === null)
             return (<div/>);
@@ -213,6 +214,7 @@ export class UserComponent extends Component<Props, State> {
             backgroundImage: (
                 (!(this.props.isActiveUser && screen) && !user.video)
                 || (!this.props.user.userStream.video && !this.props.user.userStream.screen)
+                || (screen && !inRange)
                 || !this.mediaElement.current?.srcObject) ? `url(${user.profile_image})` : "none",
         }
 
@@ -332,7 +334,7 @@ export class UserComponent extends Component<Props, State> {
                                        onMouseOver={() => this.mouseOver()}
                                        onMouseLeave={this.mouseOut.bind(this)}
                                        className={
-                                           ((!(this.props.isActiveUser && screen) && !video)) ? "profile-picture" : "" +
+                                           ((!screen && !video || (!inRange && screen))) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
                             {!this.props.user.userStream &&
@@ -351,6 +353,7 @@ export class UserComponent extends Component<Props, State> {
                       style={userNameStyle}>
                     {(!user.audio) && <IoMicOffOutline/>}
                     {(!user.video) && <IoVideocamOffOutline/>}
+                    {(user.screen && !inRange) && <IoTvOutline />}
                     {" "}
                     {(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
             </div>

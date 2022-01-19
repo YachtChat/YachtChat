@@ -198,13 +198,13 @@ export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch,
 
         dispatch(loadAllMediaDevices())
         dispatch(setUserMedia(true))
-    }).then(() =>{
+    }).then(() => {
             // init the video and audio state
             dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: true}))
             dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
 
-           dispatch(connectToServer(spaceID))
-    }
+            dispatch(connectToServer(spaceID))
+        }
     ).catch((e) => {
         dispatch(handleError("Unable to get media.", e))
         dispatch(setUserMedia(false))
@@ -219,7 +219,12 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
     const audio = getUserWrapped(state).audio
 
     if (!getStream(state, userID)) {
-        dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
+        dispatch(send({
+            type: 'media',
+            id: getUserID(getState()),
+            media: MediaType.AUDIO,
+            event: false
+        }));
         return
     }
 
@@ -228,14 +233,24 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
         // Replace audio tracks
         dispatch(handleInputChange('audio'))
         dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: true}))
-        dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': true}))
+        dispatch(send({
+            type: 'media',
+            id: getUserID(getState()),
+            media: MediaType.AUDIO,
+            event: true
+        }));
     } else {
         // If disabled, stop all audio tracks
         if (getStream(state, getUserID(state))?.getAudioTracks()[0]) {
             setStreamID({user_id: userID, type: MediaType.AUDIO, stream_id: undefined})
             getStream(state, getUserID(state))?.getAudioTracks()[0].stop()
             dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: false}))
-            dispatch(send({'type': 'media', 'id': userID, 'media': 'audio', 'event': false}))
+            dispatch(send({
+                type: 'media',
+                id: getUserID(getState()),
+                media: MediaType.AUDIO,
+                event: false
+            }));
         }
         getOnlineUsers(state).forEach(u => {
             Object.keys(getRtpSender(u.id)).forEach(k => {
@@ -257,19 +272,26 @@ export const toggleUserVideo = (): AppThunk => (dispatch, getState) => {
         // if the screen was on till now let unshareScreen handle it
         dispatch(unshareScreen(true))
     } else {
-        dispatch(toggleVideo(getUserID(getState())))
-        // TODO this call should later be deleted because video state is redundant
-        dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: getUserWrapped(getState()).video}))
-
         // handle video changes
-        if (user.video) {
-            dispatch(handleInputChange('video'))
+        if (!user.video) {
+            dispatch(shareVideo())
         } else {
             dispatch(stopVideo())
         }
-        // tell websocket about video changes
-        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'video', 'event': user.video}))
     }
+}
+
+// share video
+export const shareVideo = (): AppThunk => (dispatch, getState) => {
+    dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
+    dispatch(handleInputChange('video'))
+    // tell websocket about video changes
+    dispatch(send({
+        type: 'media',
+        id: getUserID(getState()),
+        media: MediaType.VIDEO,
+        event: true
+    }));
 }
 
 // stop but do not set state
@@ -277,12 +299,20 @@ export const stopVideo = (): AppThunk => (dispatch, getState) => {
     const state = getState()
     const userID = getUserID(state)
 
+    dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: false}))
+    setStreamID({user_id: userID, type: MediaType.VIDEO, stream_id: undefined})
+    dispatch(send({
+        type: 'media',
+        id: getUserID(getState()),
+        media: MediaType.VIDEO,
+        event: false
+    }));
+
     // Stop all video effects (otherwise camera will remain active)
     stopAllVideoEffects(camera_processor)
 
     // disable streams if video disabled
     getStream(state, userID)?.getVideoTracks()[0].stop()
-    setStreamID({user_id: userID, type: MediaType.VIDEO, stream_id: undefined})
 
     // only kill remote streams if no screen is beeing shared
     if (!getUserWrapped(state).screen) {
@@ -312,8 +342,6 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
         if (user.video) {
             dispatch(toggleVideo(getUserID(getState())))
             dispatch(stopVideo())
-            // TODO this call should later be deleted because video state is redundant
-            dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: false}))
         }
         // change the screen state
         dispatch(setScreen({user_id: user.id, state: true}))
@@ -337,9 +365,13 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
             getRtpSender(u.id)["video"].replaceTrack(stream!.getVideoTracks()[0].clone());
         })
 
-        // tell the weboscket that the screen is now shared
-        dispatch(send({'type': 'media', 'id': getUserID(getState()), 'media': 'screen', 'event': true}));
-
+        // tell the websocket that the screen is now shared
+        dispatch(send({
+            type: 'media',
+            id: getUserID(getState()),
+            media: MediaType.SCREEN,
+            event: true
+        }));
     }).catch((e) => {
         dispatch(handleError("Unable to share the screen", e))
     })
@@ -356,29 +388,16 @@ export const unshareScreen = (isFromCamera?: boolean): AppThunk => (dispatch, ge
     screenStream?.getTracks().forEach(t => t.stop())
     screenStream = undefined
     dispatch(setStreamID({user_id: getUserID(getState()), type: MediaType.SCREEN, stream_id: undefined}))
+    dispatch(send({
+        type: 'media',
+        id: getUserID(getState()),
+        media: MediaType.SCREEN,
+        event: false
+    }));
 
     // depending on the previousVideo and whether the call came from the camera button start the video or not
     if (getState().media.previousVideo || isFromCamera) {
-        dispatch(toggleVideo(getUserID(getState())))
-        dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
-        dispatch(handleInputChange('video'))
-        dispatch(send({
-            'type': 'media',
-            'id': getUserID(getState()),
-            'media': 'screen',
-            'event': false,
-            'changeToVideo': true
-        }));
-    } else {
-        // tell the websocket that the screen is stopped
-        dispatch(send({
-            'type': 'media',
-            'id': getUserID(getState()),
-            'media': 'screen',
-            'event': false,
-            'changeToVideo': false
-        }));
-        dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: false}))
+        dispatch(shareVideo())
     }
 }
 
