@@ -129,11 +129,6 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
     if (rtp.track && rtp.track.kind === 'audio') {
         //console.log("Enabled audio")
         rtp.track.enabled = true
-        dispatch(send({
-            type: "range",
-            target_id: id,
-            event: true
-        }))
         const user = getUserById(getState(), id)
         if (getState().playground.inBackground)
             sendNotification(getState(), `${user.firstName} can now hear you`, user.profile_image,
@@ -150,6 +145,32 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }
 
+// Function that will enable spatial video to a given user
+export const sendVideo = (id: string): AppThunk => (dispatch, getState) => {
+    if (!getUserWrapped(getState()).screen || !getUserWrapped(getState()).video)
+        return
+    const rtp = rtpSender[id]["video"]
+    //console.log("Trying to enable audio to ", id)
+    if (rtp.track && rtp.track.kind === 'video') {
+        //console.log("Enabled audio")
+        rtp.track.enabled = true
+        const user = getUserById(getState(), id)
+        if (getState().playground.inBackground)
+            sendNotification(getState(), `${user.firstName} can now see ${getUserWrapped(getState()).screen ? "your screen" : "you"}`, user.profile_image,
+                // Actions currently not supported
+                // [{
+                //     action: "mute",
+                //     title: "Mute yourself",
+                //     onClick: () => {
+                //         window.alert("ALERT")
+                //     }
+                // }]
+            )
+    }
+    //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
+}
+
+
 // Function that will disnable spatial audio to a given user
 export const unsendAudio = (id: string): AppThunk => dispatch => {
     const rtp = rtpSender[id]["audio"]
@@ -157,13 +178,18 @@ export const unsendAudio = (id: string): AppThunk => dispatch => {
     if (rtp.track && rtp.track.kind === 'audio') {
         console.log("Disabled audio")
         rtp.track.enabled = false
-        dispatch(send({
-            type: "range",
-            target_id: id,
-            event: false
-        }))
     }
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
+}
+
+// Function that will disnable spatial audio to a given user
+export const unsendVideo = (id: string): AppThunk => dispatch => {
+    const rtp = rtpSender[id]["video"]
+    console.log("Trying not disable video to ", id)
+    if (rtp.track && rtp.track.kind === 'video') {
+        console.log("Disabled disable")
+        rtp.track.enabled = false
+    }
 }
 
 // User is still in space when his rtcConnection element exist and if he is still online
