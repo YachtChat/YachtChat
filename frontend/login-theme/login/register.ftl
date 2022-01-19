@@ -1,9 +1,9 @@
 <#import "template.ftl" as layout>
 <@layout.registrationLayout displayMessage=!messagesPerField.existsError('firstName','lastName','email','username','password','password-confirm'); section>
     <#if section = "header">
-        <div id="kc-form-options" class="${properties.kcFormOptionsClass!} buttons">
+        <div id="kc-form-options" class="${properties.kcFormOptionsClass!}">
             <a href="${url.loginUrl}">
-                <button class="${properties.kcFormOptionsWrapperClass!} iconButton"><i class="fa fa-chevron-left"></i>
+                <button class="${properties.kcFormOptionsWrapperClass!} outlined"><i class="fa fa-chevron-left"></i> back to login
                 </button>
             </a>
         </div>
