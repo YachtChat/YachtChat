@@ -219,7 +219,7 @@ export class UserComponent extends Component<Props, State> {
         const userNameStyle = {
             left: userNamePosX,
             top: userNamePosY,
-            transform: (user.inProximity && audio) ? "scale(1)" : "scale(0.8)",
+            transform: (user.inProximity) ? "scale(1)" : "scale(0.8)",
             opacity: nameOpacity
         }
 
@@ -347,7 +347,7 @@ export class UserComponent extends Component<Props, State> {
                     this.props.center()
                 }}
                       ref={this.myName} className={"clickable userName " +
-                    ((this.props.inRange || this.props.isActiveUser) ? "inRange " : "")
+                    ((this.props.inRange && audio) ? "inRange " : "")
                     + this.props.className}
                       style={userNameStyle}>
                     {(!user.audio) && <IoMicOffOutline/>}

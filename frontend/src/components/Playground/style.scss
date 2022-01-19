@@ -157,12 +157,11 @@
     0.2s color,
     0.2s transition;
     background: $background_light;
-    border: 1px solid red;
-      color: red;
-
-    &.inRange {
       color: $button_font_light;
       border-color: $background_light;
+
+    &.inRange {
+      color: $online_color;
     }
 
     &.animate {

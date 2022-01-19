@@ -89,7 +89,7 @@ class UserList extends Component<Props> {
                              style={{backgroundImage: `url(${u.profile_image})`}}/>
                         {u.firstName} {u.lastName}
                         {u.online &&
-                        <span className={"tag"}>online</span>
+                        <span className={"tag online"}>online</span>
                         }
                         {this.props.isHost(u.id) &&
                         <span className={"tag"}>admin</span>

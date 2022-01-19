@@ -35,6 +35,7 @@
     .menuIcon {
       margin-right: 10px;
       padding: 0;
+      font-size: 1rem;
       border: none;
       width: auto;
       height: auto;
@@ -46,15 +47,25 @@
         opacity: 0.5;
         background: transparent;
       }
+
+
+      @media (prefers-color-scheme: dark) {
+        color: $accent_light;
+      }
     }
 
     .tag {
       margin-left: 10px;
       font-size: 0.6rem;
-      color: $accent_light;
+      color: $accent_dark;
       padding: 0.2rem 0.6rem;
       background: $background_2_light;
       border-radius: $border_radius;
+      font-weight: bold;
+
+      &.online {
+        color: $online_color;
+      }
     }
 
     &:hover {
