@@ -15,62 +15,31 @@ public class MediaHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final PosthogService posthogService = PosthogService.getInstance();
 
-    public void handleMedia(Map<String, User> room, User sender, String media, Boolean event, Boolean changeToVideo) {
-        boolean prevVideoShared = (sender.getVideo() || sender.getScreen());
-        boolean prevAudioShared = (sender.getAudio());
-        switch (media) {
-            case "video":
-                // track the event if something has changed
-                if (!(event == sender.getVideo())) posthogService.trackVideo(sender.getId(), event);
-                sender.setVideo(event);
-                break;
-            case "audio":
-                // track the event if something has changed
-                if (!(event == sender.getAudio())) posthogService.trackAudio(sender.getId(), event);
-                sender.setAudio(event);
-                break;
-            case "screen":
-                // track the event if something has changed
-                if (!(event == sender.getScreen())) {
-                    posthogService.trackScreen(sender.getId(), event, sender.getVideo(), changeToVideo);
-                }
-                sender.setScreen(event);
-                //
-                if (!event){
-                    if (changeToVideo == null) throw new IllegalArgumentException("If the screen sharing is turned off, " +
-                            "the websocket need to know whether camera will be turned on or not");
-                    sender.setVideo(changeToVideo);
-                }else{
-                    sender.setVideo(true);
-                }
+    public static final String VIDEO = "video";
+    public static final String AUDIO = "audio";
+    public static final String SCREEN = "screen";
 
-                break;
+    public void handleMedia(Map<String, User> room, User sender, String media, Boolean event) {
+        // the state did not really change
+        if (sender.getMedia(media) == event) return;
 
-            default:
-                log.error("The media " + media + " is not known.");
+        sender.setMedia(media, event);
+        posthogService.trackMedia(sender.getId(), media, event);
+
+        ArrayList<User> users = new ArrayList<>(room.values());
+        MediaAnswer answer = new MediaAnswer(sender.getId(), media, sender.getMedia(media));
+
+        users.forEach(user -> {
+            if (user.getId().equals(sender.getId())) {
                 return;
-        }
-        if (prevVideoShared != (sender.getVideo() || sender.getScreen()) || prevAudioShared != sender.getAudio()) {
-            MediaAnswer answer;
-            if (media.equals("audio"))
-                answer = new MediaAnswer(sender.getId(), media, sender.getAudio());
-            else
-                answer = new MediaAnswer(sender.getId(), media, (sender.getScreen() || sender.getVideo()));
-
-            ArrayList<User> users = new ArrayList<>(room.values());
-            MediaAnswer finalAnswer = answer;
-            users.forEach(user -> {
-                if (user.getId().equals(sender.getId())) {
-                    return;
+            }
+            synchronized (user) {
+                try {
+                    user.getSession().getBasicRemote().sendObject(answer);
+                } catch (EncodeException | IOException e) {
+                    log.error("Could not send media {} with event {} to user {}.", media, event, user.getId());
                 }
-                synchronized (user) {
-                    try {
-                        user.getSession().getBasicRemote().sendObject(finalAnswer);
-                    } catch (EncodeException | IOException e) {
-                        log.error("Could not send media {} with event {} to user {}.", media, event, user.getId());
-                    }
-                }
-            });
-        }
+            }
+        });
     }
 }

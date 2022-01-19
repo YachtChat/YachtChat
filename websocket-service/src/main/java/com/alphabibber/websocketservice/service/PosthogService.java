@@ -1,6 +1,8 @@
 package com.alphabibber.websocketservice.service;
 
+import com.alphabibber.websocketservice.handler.MediaHandler;
 import com.alphabibber.websocketservice.model.User;
+import com.alphabibber.websocketservice.model.answer.MediaAnswer;
 import com.posthog.java.PostHog;
 import lombok.Getter;
 
@@ -13,9 +15,6 @@ public class PosthogService {
     private static final PostHog posthog = new PostHog.Builder(POSTHOG_API_KEY).host(POSTHOG_HOST).build();
     private static PosthogService instance;
 
-    private final String video = "video";
-    private final String audio = "audio";
-    private final String screen = "screen";
     private final String onString = "On";
     private final String offString = "Off";
 
@@ -54,16 +53,17 @@ public class PosthogService {
 
     /**
      * Send all necessay events to posthog when user loggs into space
-     * @param id: user id
+     * @param user: user object
      * @param spaceId: space id
      * @param room: room that represents space
      */
-    public void handleLogin(String id, String spaceId, Map<String, User> room) {
+    public void handleLogin(User user, String spaceId, Map<String, User> room) {
         // tell posthog that the user logged into that space
-        sendEvent(id, spaceJoinedString, new HashMap<String, Object>(){{put(spaceIdString, spaceId);}});
+        sendEvent(user.getId(), spaceJoinedString, new HashMap<String, Object>(){{put(spaceIdString, spaceId);}});
         // init camera to on
-        startTracking(id, video, true);
-        startTracking(id, audio, true);
+        for (Map.Entry<String, Boolean> set: user.getMedia().entrySet()){
+            startTracking(user.getId(), set.getKey(), set.getValue());
+        }
 
         // track room size
         if (room.size() > 1) {
@@ -76,37 +76,15 @@ public class PosthogService {
     }
 
     public void handleLeave(User user, String spaceId){
-        stopTracking(user.getId(), video, user.getVideo());
-        stopTracking(user.getId(), audio, user.getAudio());
-        if(user.getScreen()){
-            sendEvent(user.getId(), screen + offString, null);
+        for (Map.Entry<String, Boolean> set: user.getMedia().entrySet()){
+            stopTracking(user.getId(), set.getKey(), set.getValue());
         }
         // tell posthog that the user logged out of that space
         sendEvent(user.getId(), spaceLeftString, new HashMap<String, Object>(){{put(spaceIdString, spaceId);}});
     }
 
-    public void trackVideo(String id, boolean on){
-        // start tracking what is turned on (ends with on)
-        startTracking(id, video, on);
-        // stop tracking what is turned off (ends with off)
-        stopTracking(id, video, !on);
-    }
-
-    public void trackAudio(String id, boolean on){
-        // start tracking what is turned on (ends with on)
-        startTracking(id, audio, on);
-        // stop tracking what is turned off (ends with off)
-        stopTracking(id, audio, !on);
-    }
-
-    public void trackScreen(String id, boolean on, boolean videoOn, Boolean changeToVideo) {
-        if(on){
-            // if screen was activated if is now off
-            if(videoOn) trackVideo(id, false);
-            sendEvent(id, screen + onString, null);
-        } else{
-            if(changeToVideo) trackVideo(id, true);
-            sendEvent(id, screen + offString, null);
-        }
+    public void trackMedia(String id, String media, boolean on){
+        startTracking(id, media, on);
+        stopTracking(id, media, !on);
     }
 }
