@@ -1,6 +1,7 @@
 <#import "template.ftl" as layout>
 <@layout.registrationLayout displayMessage=!messagesPerField.existsError('username','password') displayInfo=realm.password && realm.registrationAllowed && !registrationDisabled??; section>
     <#if section = "header">
+        <a href="${client.baseUrl}" class="button outlined"><i class="fa fa-chevron-left"></i>back to homepage</a>
         <h1 id="loginHeadline">Login</h1>
 
         <#if realm.password && social.providers??>
