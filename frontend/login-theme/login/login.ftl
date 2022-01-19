@@ -1,7 +1,7 @@
 <#import "template.ftl" as layout>
 <@layout.registrationLayout displayMessage=!messagesPerField.existsError('username','password') displayInfo=realm.password && realm.registrationAllowed && !registrationDisabled??; section>
     <#if section = "header">
-        <h1 id="loginHeadline">${kcSanitize(msg("loginTitleHtml",(realm.displayNameHtml!'')))?no_esc}</h1>
+        <h1 id="loginHeadline">Login</h1>
 
         <#if realm.password && social.providers??>
             <h2>${msg("doLogIn")}</h2>

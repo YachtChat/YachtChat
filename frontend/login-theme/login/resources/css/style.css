@@ -581,11 +581,7 @@ label, .required {
     font-size: 1vh;
     color: white;
 }
-@media only screen and (max-width: 1000px) {
-    #navigation #nav-content {
-        display: none;
-    }
-}
+
 @media only screen and (min-width: 1000px) {
     #navigation #nav-content-mobile {
         display: none;
@@ -670,14 +666,12 @@ label, .required {
     font-size: 0.8rem;
     padding: 15px 2rem;
     box-sizing: border-box;
-    background-color: #f6f6f6;
     bottom: 0;
     text-align: right;
     color: gray;
 }
 @media (prefers-color-scheme: dark) {
     .login-box .info {
-        background-color: #141414;
         color: white;
     }
 }

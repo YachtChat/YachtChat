@@ -1,23 +1,13 @@
 @import "../../variables.module.scss";
 @import "../../index.scss";
 @import "../Wrapper/style.scss";
+@import "../Navigation/style.scss";
 
 .login-box {
-  width: 400px;
+  width: 600px;
 
   form {
     padding: 2rem;
-  }
-
-  h1#loginHeadline {
-    color: $headline_light;
-    text-align: center;
-
-    @media (prefers-color-scheme: dark) {
-      & {
-        color: $headline_dark;
-      }
-    }
   }
 
   .checkbox input {
@@ -56,8 +46,21 @@
   }
 
   .user-box {
+    background-color: $background_light;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+    display: flex;
+    overflow: auto;
+    flex-direction: column;
+    margin-bottom: 2rem;
     position: relative;
     text-align: left;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        background: $foreground_dark;
+      }
+    }
 
     .inputPair {
       margin-top: 0.5rem;
@@ -67,12 +70,8 @@
       text-align: center;
     }
 
-    p {
-      padding: 2rem;
-    }
-
     button {
-      margin-top: 2rem;
+      margin-top: 0.5rem;
     }
 
     #input-error, .alert-error {
@@ -97,7 +96,6 @@
     font-size: 0.8rem;
     padding: 15px 2rem;
     box-sizing: border-box;
-    background-color: $background_2_light;
     bottom: 0;
     text-align: right;
     color: $headline_2_light;
@@ -112,17 +110,9 @@
 }
 
 
-.signin {
-  margin: 0;
-  width: 100%;
-  padding: 4rem 2rem 4rem 2rem;
-  background: $accent_light;
-  box-sizing: border-box;
-
-  @media (prefers-color-scheme: dark) {
-    & {
-      background: $accent_dark;
-    }
+.headlineBox {
+  h1 {
+    text-align: center;
   }
 
   .login-buttons {
@@ -174,4 +164,17 @@
 
     }
   }
+
+  .fa-google {
+    background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) 73% 55%/150% 150% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .fa-linkedin {
+    background: #2867B2;
+    color: white;
+  }
+
 }
