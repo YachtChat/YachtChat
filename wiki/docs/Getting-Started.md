@@ -12,7 +12,7 @@ Get started by **[Register](https://auth.yacht.chat/auth/realms/Application/logi
 
 For a detailed description click **[here](/docs/Space/createAccount)**
 
-## **[Create a space](/docs/Space/create-space)**
+## **[Create a space](/docs/Space/create-spaces)**
 
 If you are logged in you can hit the "plus" symbol to create a new space. You just have to name it.
 
