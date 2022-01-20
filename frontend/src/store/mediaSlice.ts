@@ -1,7 +1,13 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './utils/store';
 import {connectToServer, send} from "./webSocketSlice";
-import {getOnlineUsers, getUser, getUserID, getUserWrapped, setStreamID} from "./userSlice";
+import {
+    getOnlineUsers,
+    getUser,
+    getUserID,
+    getUserWrapped,
+    setStreamID
+} from "./userSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./model/model";
 import {applyVirtualBackground, stopAllVideoEffects} from "./utils/utils";
@@ -360,10 +366,7 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
         })
 
         // iterate over all user and replace my video stream with the stream of my screen
-        getOnlineUsers(getState()).forEach(u => {
-            if (u.id === getUserID(getState())) return
-            getRtpSender(u.id)["video"].replaceTrack(stream!.getVideoTracks()[0].clone());
-        })
+        dispatch(exchangeTracks(getScreenStream(getState(), user.id), "video"))
 
         // tell the websocket that the screen is now shared
         dispatch(send({
@@ -523,7 +526,7 @@ export const handleInputChange = (type?: 'video' | 'audio'): AppThunk => (dispat
         dispatch(setStream(state, localClient, ls))
         camera_processor = cp
 
-        dispatch(exchangeTracks(type))
+        dispatch(exchangeTracks(getStream(state, localClient), (replaceAllTracks) ? undefined : type))
 
         oldStream!.getTracks().forEach(t => t.stop())
         dispatch(setUserMedia(true))
@@ -562,7 +565,7 @@ export const getSpeaker = (state: RootState): string => {
     return (state.media.speakers[0]) ? state.media.speakers[0] : ""
 }
 
-export const getStream = (state: RootState, id: string) => {
+export const getStream = (state: RootState, id: string): MediaStream | undefined => {
     if (streams[id])
         return streams[id]
     if (state.userState.activeUser.id === id)
