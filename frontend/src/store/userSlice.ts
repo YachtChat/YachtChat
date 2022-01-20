@@ -205,13 +205,14 @@ export const handleLoginUser = (): AppThunk => (dispatch, getState) => {
 }
 
 // called when new user joins / including the activeUser in order to get user information for the user
-export const handleSpaceUser = (userId: string, position: UserCoordinates, isCaller?: boolean): AppThunk => (dispatch, getState) => {
+export const handleSpaceUser = (userId: string, position: UserCoordinates, video: boolean, audio: boolean,
+                                isCaller?: boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         // axios load user info
         axios.get("https://" + ACCOUNT_URL + "/account/" + userId + "/", headers).then(response => {
             dispatch(setUser(keycloakUserToUser(response.data, true, position)))
-            dispatch(setMedia({id: userId, type: MediaType.VIDEO, state: true}))
-            dispatch(setMedia({id: userId, type: MediaType.AUDIO, state: true}))
+            dispatch(setMedia({id: userId, type: MediaType.VIDEO, state: video}))
+            dispatch(setMedia({id: userId, type: MediaType.AUDIO, state: audio}))
             // if the user.id is ourselves skip the next steps
             if (getUser(getState()).id !== userId) {
                 // isCaller is true if this is a reconncetion and the local user was the previous caller

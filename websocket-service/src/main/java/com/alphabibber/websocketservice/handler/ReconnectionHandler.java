@@ -29,6 +29,7 @@ public class ReconnectionHandler {
 
         LeaveAnswer answerToSender = new LeaveAnswer(target.getId());
         LeaveAnswer answerToTarget = new LeaveAnswer(sender.getId());
+
         synchronized (sender){
             try{
                 sender.getSession().getBasicRemote().sendObject(answerToSender);
@@ -53,8 +54,11 @@ public class ReconnectionHandler {
             Thread.currentThread().interrupt();
         }
 
-        ReconnectionAnswer reconnectionAnswerToSender = new ReconnectionAnswer(target.getId(), target.getPosition(), true);
-        ReconnectionAnswer reconnectionAnswerToTarget = new ReconnectionAnswer(sender.getId(), sender.getPosition(), false);
+        ReconnectionAnswer reconnectionAnswerToSender =
+                new ReconnectionAnswer(target.getId(), target.getPosition(), sender.getMedia(MediaHandler.VIDEO),
+                        sender.getMedia(MediaHandler.AUDIO),true);
+        ReconnectionAnswer reconnectionAnswerToTarget = new ReconnectionAnswer(sender.getId(), sender.getPosition(),
+                target.getMedia(MediaHandler.VIDEO), target.getMedia(MediaHandler.AUDIO), false);
 
         synchronized (sender){
             try{

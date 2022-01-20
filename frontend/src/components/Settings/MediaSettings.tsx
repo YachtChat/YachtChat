@@ -208,7 +208,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     changeAudioOutput: (speaker: string) => dispatch(changeAudioOutput(speaker)),
     changeAudioInput: (microphone: string) => dispatch(changeAudioInput(microphone)),
     changeVirtualBackground: (background: string) => dispatch(changeVirtualBackground(background)),
-    requestUserMedia: () => dispatch(handleInputChange()),
+    requestUserMedia: () => dispatch(handleInputChange(true, true)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MediaSettings)

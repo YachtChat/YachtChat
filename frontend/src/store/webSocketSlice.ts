@@ -101,12 +101,12 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 break;
             case "new_user":
                 if (loggedIn) {
-                    dispatch(handleSpaceUser(data.id, data.position));
+                    dispatch(handleSpaceUser(data.id, data.position, data.video, data.audio));
                 }
                 break;
             case "reconnection":
                 if (loggedIn) {
-                    dispatch(handleSpaceUser(data.id, data.position, data.isCaller))
+                    dispatch(handleSpaceUser(data.id, data.position, data.video, data.audio, data.isCaller))
                 }
                 break;
             case "leave":

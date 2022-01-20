@@ -28,7 +28,7 @@ interface Props {
             spaceID: string
         }
     }
-    requestUserMedia: (spaceID: string) => void
+    requestUserMedia: (spaceID: string, video: boolean, audio: boolean) => void
     initPlayground: () => void
     loadMediaDevices: (callback?: () => void) => void
     requestSpaces: () => void
@@ -61,7 +61,7 @@ export class Playground extends Component<Props, State> {
         this.props.loadMediaDevices(() => {
             console.log(this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
             if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
-                this.props.requestUserMedia(this.props.match!.params.spaceID)
+                this.props.requestUserMedia(this.props.match!.params.spaceID, true, true)
         })
 
         window.onpopstate = () => {
@@ -106,8 +106,12 @@ export class Playground extends Component<Props, State> {
                     </div>
                     <div className={"content"}>
                         <button className={"submit"} onClick={() => {
-                            this.props.requestUserMedia(this.props.match!.params.spaceID)
+                            this.props.requestUserMedia(this.props.match!.params.spaceID, true, true)
                         }}>Request camera & microphone
+                        </button>
+                        <button className={"submit"} onClick={() => {
+                            this.props.requestUserMedia(this.props.match!.params.spaceID, false, true)
+                        }}>Request only Microphone
                         </button>
                         {isWindows() &&
 
@@ -170,7 +174,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     handleZoom: (z: number) => dispatch(handleZoom(z)),
     requestSpaces: () => dispatch(requestSpaces()),
     initPlayground: () => dispatch(initPlayground()),
-    requestUserMedia: (spaceID: string) => dispatch(requestUserMediaAndJoin(spaceID)),
+    requestUserMedia: (spaceID: string, video: boolean, audio: boolean) => dispatch(requestUserMediaAndJoin(spaceID, video, audio)),
     loadMediaDevices: (callback?: () => void) => dispatch(loadAllMediaDevices(callback)),
 })
 

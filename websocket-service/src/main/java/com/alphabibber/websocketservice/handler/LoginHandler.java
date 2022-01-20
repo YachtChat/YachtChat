@@ -74,7 +74,7 @@ public class LoginHandler {
         log.info("User {} is now part of room {}", userId, roomId);
 
         // tell all other users that a new User joined
-        NewUserAnswer newUserAnswer = new NewUserAnswer(user.getId(), user.getPosition());
+        NewUserAnswer newUserAnswer = new NewUserAnswer(user.getId(), user.getPosition(), video, microphone);
         ArrayList<User> users = new ArrayList<>(room.values());
         // this should only skip this iteration
         users.stream().filter(target -> !target.getId().equals(user.getId())).forEach(target -> {

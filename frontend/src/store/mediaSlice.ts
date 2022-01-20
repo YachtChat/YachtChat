@@ -195,8 +195,8 @@ export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatc
 
 }
 
-export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch, getState) => {
-    navigator.mediaDevices.getUserMedia(getMediaConstrains(getState())).then((e) => {
+export const requestUserMediaAndJoin = (spaceID: string, video: boolean, audio: boolean): AppThunk => (dispatch, getState) => {
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(getState(), video, audio)).then((e) => {
         const localClient = getUserID(getState())
         const [ls, cp] = applyVirtualBackground(e, getState().media.selected.virtualBackground, camera_processor)
         dispatch(setStream(getState(), localClient, ls))
@@ -206,8 +206,8 @@ export const requestUserMediaAndJoin = (spaceID: string): AppThunk => (dispatch,
         dispatch(setUserMedia(true))
     }).then(() => {
             // init the video and audio state
-            dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: true}))
-            dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
+            dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: audio}))
+            dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: video}))
 
             dispatch(connectToServer(spaceID))
         }
@@ -237,7 +237,7 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
     // If audio re-enabled
     if (audio) {
         // Replace audio tracks
-        dispatch(handleInputChange('audio'))
+        dispatch(handleInputChange(false, true))
         dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: true}))
         dispatch(send({
             type: 'media',
@@ -290,7 +290,7 @@ export const toggleUserVideo = (): AppThunk => (dispatch, getState) => {
 // share video
 export const shareVideo = (): AppThunk => (dispatch, getState) => {
     dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: true}))
-    dispatch(handleInputChange('video'))
+    dispatch(handleInputChange(true, false))
     // tell websocket about video changes
     dispatch(send({
         type: 'media',
@@ -366,7 +366,7 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
         })
 
         // iterate over all user and replace my video stream with the stream of my screen
-        dispatch(exchangeTracks(getScreenStream(getState(), user.id), "video"))
+        dispatch(exchangeTracks(getScreenStream(getState(), user.id), true, false))
 
         // tell the websocket that the screen is now shared
         dispatch(send({
@@ -497,21 +497,21 @@ export const setStream = (state: RootState, id: string, stream: MediaStream): Ap
 
 export const changeVideoInput = (camera: string): AppThunk => dispatch => {
     dispatch(setCamera(camera))
-    dispatch(handleInputChange("video"))
+    dispatch(handleInputChange(true, false))
 }
 
 export const changeAudioInput = (microphone: string): AppThunk => dispatch => {
     dispatch(setMicrophone(microphone))
-    dispatch(handleInputChange("audio"))
+    dispatch(handleInputChange(false, true))
 
 }
 
 export const changeVirtualBackground = (background: string): AppThunk => dispatch => {
     dispatch(setVirtualBackground(background))
-    dispatch(handleInputChange("video"))
+    dispatch(handleInputChange(true, false))
 }
 
-export const handleInputChange = (type?: 'video' | 'audio'): AppThunk => (dispatch, getState) => {
+export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (dispatch, getState) => {
     const state = getState()
     const user = getUserWrapped(state)
     const localClient = getUserID(state)
@@ -520,13 +520,13 @@ export const handleInputChange = (type?: 'video' | 'audio'): AppThunk => (dispat
     // If true all tracks have to be replaced otherwise just of type
     const replaceAllTracks = user.video && user.audio
 
-    navigator.mediaDevices.getUserMedia(getMediaConstrains(state, (replaceAllTracks) ? undefined : type)).then((e) => {
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(state, video, audio)).then((e) => {
         // If type is not set or no localStream available reset the whole stream object
         const [ls, cp] = applyVirtualBackground(e, getState().media.selected.virtualBackground, camera_processor)
         dispatch(setStream(state, localClient, ls))
         camera_processor = cp
 
-        dispatch(exchangeTracks(getStream(state, localClient), (replaceAllTracks) ? undefined : type))
+        dispatch(exchangeTracks(getStream(state, localClient), video, audio))
 
         oldStream!.getTracks().forEach(t => t.stop())
         dispatch(setUserMedia(true))
@@ -590,16 +590,16 @@ export const getMedia = (state: RootState, type: MediaType, id: string) => {
     return false
 }
 
-export const getMediaConstrains = (state: RootState, type?: string) => {
+export const getMediaConstrains = (state: RootState, video: boolean, audio: boolean) => {
     return {
-        video: (type !== 'audio') ? {
+        video: video ? {
             width: {ideal: 320},
             height: {ideal: 320},
             facingMode: "user",
             frameRate: {ideal: 10},
             deviceId: getCamera(state)
         } : undefined,
-        audio: (type !== 'video') ? {
+        audio: audio ? {
             deviceId: getMicrophone(state),
             echoCancellation: true
         } : undefined
@@ -619,6 +619,6 @@ export const getScreenSharingConstraints = () => {
 }
 
 export const getFreshMediaStream = (state: RootState): Promise<MediaStream> =>
-    navigator.mediaDevices.getUserMedia(getMediaConstrains(state))
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(state, true, true))
 export const getMediaDevices = () => mediaDevices
 export default mediaSlice.reducer;

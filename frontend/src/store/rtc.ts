@@ -334,14 +334,15 @@ export const handleCandidate = (candidate: any, fromId: string): AppThunk => (di
     }
 }
 
-export const exchangeTracks = (stream: MediaStream | undefined, type?: 'video' | 'audio'): AppThunk => (dispatch, getState) => {
+export const exchangeTracks = (stream: MediaStream | undefined, video: boolean, audio: boolean): AppThunk => (dispatch, getState) => {
     const state = getState()
     const user = getUserWrapped(state)
 
     stream?.getTracks().forEach(s => {
         // replace only stream of type and only if the video/audio aint muted
-        if ((!type || type === s.kind) &&
-            ((s.kind === 'audio' && user.audio) || (s.kind === 'video' && (user.video || user.screen)))) {
+        if ((s.kind == "video" && video) && (user.video || user.screen) ||
+            (s.kind == "audio" && audio) && (user.audio)){
+
             getOnlineUsers(state).forEach(u => {
                 Object.keys(rtpSender[u.id]).forEach(k => {
                     const rs = rtpSender[u.id][k]
