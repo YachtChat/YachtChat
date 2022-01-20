@@ -63,7 +63,7 @@ public class LoginHandler {
         LoginAnswer loginAnswer = new LoginAnswer(true, new HashSet<>(room.values()), userId);
 
         // handle all the posthog tracking
-       posthogService.handleLogin(userId, roomId, room);
+       posthogService.handleLogin(user, roomId, room);
 
         try {
             session.getBasicRemote().sendObject(loginAnswer);

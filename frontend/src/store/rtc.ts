@@ -12,8 +12,9 @@ import {rtcConfiguration} from "./utils/config";
 import {send, triggerReconnection} from "./webSocketSlice";
 import {MediaType} from "./model/model";
 import {handleError} from "./statusSlice";
-import {getStream, resetMedia, setStream} from "./mediaSlice";
+import {getScreenStream, getStream, resetMedia, setStream} from "./mediaSlice";
 import {sendNotification} from "./utils/notifications";
+import {UserWrapper} from "./model/UserWrapper";
 
 let rtcConnections: { [key: string]: RTCPeerConnection } = {}; // the connection to handle the connection to the other peer
 let rtpSender: { [key: string]: { [key: string]: RTCRtpSender } } = {}; // rtc object that handles stream transmission
@@ -129,11 +130,6 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
     if (rtp.track && rtp.track.kind === 'audio') {
         //console.log("Enabled audio")
         rtp.track.enabled = true
-        dispatch(send({
-            type: "range",
-            target_id: id,
-            event: true
-        }))
         const user = getUserById(getState(), id)
         if (getState().playground.inBackground)
             sendNotification(getState(), `${user.firstName} can now hear you`, user.profile_image,
@@ -150,6 +146,41 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }
 
+// Function that will enable spatial video to a given user
+export const sendVideo = (id: string): AppThunk => (dispatch, getState) => {
+    const user: UserWrapper = getUserWrapped(getState());
+
+    if (!user.screen && !user.video)
+        return
+
+    const rtp = rtpSender[id]["video"]
+
+    if (rtp.track && rtp.track.kind === 'video') {
+        rtp.track.stop()
+
+        if (user.video)
+            rtp.replaceTrack(getStream(getState(), user.id)?.getVideoTracks()[0]?.clone() ?? null)
+        if (user.screen) {
+            rtp.replaceTrack(getScreenStream(getState(), user.id)?.getVideoTracks()[0]?.clone() ?? null)
+        }
+
+        const target_user = getUserById(getState(), id)
+        if (getState().playground.inBackground)
+            sendNotification(getState(), `${target_user.firstName} can now see ${getUserWrapped(getState()).screen ? "your screen" : "you"}`, target_user.profile_image,
+                // Actions currently not supported
+                // [{
+                //     action: "mute",
+                //     title: "Mute yourself",
+                //     onClick: () => {
+                //         window.alert("ALERT")
+                //     }
+                // }]
+            )
+    }
+    //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
+}
+
+
 // Function that will disnable spatial audio to a given user
 export const unsendAudio = (id: string): AppThunk => dispatch => {
     const rtp = rtpSender[id]["audio"]
@@ -157,13 +188,19 @@ export const unsendAudio = (id: string): AppThunk => dispatch => {
     if (rtp.track && rtp.track.kind === 'audio') {
         console.log("Disabled audio")
         rtp.track.enabled = false
-        dispatch(send({
-            type: "range",
-            target_id: id,
-            event: false
-        }))
     }
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled)
+}
+
+// Function that will disnable spatial audio to a given user
+export const unsendVideo = (id: string): AppThunk => dispatch => {
+    const rtp = rtpSender[id]["video"]
+    console.log("Trying not disable video to ", id)
+    if (rtp.track && rtp.track.kind === 'video') {
+        rtp.track.onended = null
+        rtp.track.stop()
+        // rtp.replaceTrack(new MediaStreamTrack())
+    }
 }
 
 // User is still in space when his rtcConnection element exist and if he is still online
@@ -297,15 +334,14 @@ export const handleCandidate = (candidate: any, fromId: string): AppThunk => (di
     }
 }
 
-export const exchangeTracks = (type?: 'video' | 'audio'): AppThunk => (dispatch, getState) => {
+export const exchangeTracks = (stream: MediaStream | undefined, type?: 'video' | 'audio'): AppThunk => (dispatch, getState) => {
     const state = getState()
     const user = getUserWrapped(state)
-    const localClient = getUserID(state)
 
-    getStream(state, localClient)!.getTracks().forEach(s => {
+    stream?.getTracks().forEach(s => {
         // replace only stream of type and only if the video/audio aint muted
         if ((!type || type === s.kind) &&
-            ((s.kind === 'audio' && user.audio) || (s.kind === 'video' && user.video))) {
+            ((s.kind === 'audio' && user.audio) || (s.kind === 'video' && (user.video || user.screen)))) {
             getOnlineUsers(state).forEach(u => {
                 Object.keys(rtpSender[u.id]).forEach(k => {
                     const rs = rtpSender[u.id][k]
@@ -314,6 +350,12 @@ export const exchangeTracks = (type?: 'video' | 'audio'): AppThunk => (dispatch,
                         if (clone.kind === 'audio')
                             clone.enabled = !!u.inProximity
                         rs.track.stop()
+
+                        // do not exchange if the user shares screen but other user is not in proximity
+                        if (user.screen && !getUserByIdWrapped(state, u.id).inProximity) {
+                            return
+                        }
+
                         rs.replaceTrack(clone)
                     }
                 })

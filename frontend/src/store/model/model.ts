@@ -18,9 +18,12 @@ export interface User {
 // What the websocket sends to the Frontend
 export interface UserPayload {
     id: string
-    position?: UserCoordinates
-    video?: boolean
-    audio?: boolean
+    position?: UserCoordinates,
+    media: {
+        video: boolean,
+        audio: boolean,
+        screen: boolean
+    }
 }
 
 export interface Message {

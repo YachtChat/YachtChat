@@ -11,7 +11,7 @@ import {handleError, handleSuccess} from "./statusSlice";
 import {identifyUser} from "./utils/posthog";
 import {getNextValidPostion, isPostionValid} from "./utils/positionUtils";
 import {UserWrapper} from "./model/UserWrapper";
-import {handleRTCEvents, sendAudio, unsendAudio} from "./rtc";
+import {handleRTCEvents, sendAudio, sendVideo, unsendAudio, unsendVideo} from "./rtc";
 import {sendNotification} from "./utils/notifications";
 
 interface UserState {
@@ -167,8 +167,9 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                     })
                     // if the user is in the Space userPayload will be set otherwise it will not
                     if (userPayload) {
-                        dispatch(setMedia({id: userPayload.id, state: !!userPayload.audio, type: MediaType.AUDIO}))
-                        dispatch(setMedia({id: userPayload.id, state: !!userPayload.video, type: MediaType.VIDEO}))
+                        dispatch(setMedia({id: userPayload.id, state: userPayload.media.audio, type: MediaType.AUDIO}))
+                        dispatch(setMedia({id: userPayload.id, state: userPayload.media.video, type: MediaType.VIDEO}))
+                        dispatch(setMedia({id: userPayload.id, state: userPayload.media.screen, type: MediaType.SCREEN}))
                     }
                     return keycloakUserToUser(user, !!userPayload, userPayload?.position)
                 })
@@ -321,13 +322,30 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
         if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
             // console.log(user.id, "in Range - sending audio to", u.id)
             dispatch(setUser({...u, inProximity: true}))
-            if (user.id !== u.id)
+            if (user.id !== u.id) {
+                if (getUserWrapped(getState()).screen) {
+                    dispatch(sendVideo(u.id))
+                }
                 dispatch(sendAudio(u.id))
+                dispatch(send({
+                    type: "range",
+                    target_id: u.id,
+                    event: true
+                }))
+            }
         } else if (dist > (currentRange + userProportion / 2) && (!!u.inProximity || u.inProximity === undefined)) {
             // console.log(user.id, "not in Range - dont send audio", u.id)
             dispatch(setUser({...u, inProximity: false}))
-            if (user.id !== u.id)
+            if (user.id !== u.id) {
+                dispatch(send({
+                    type: "range",
+                    target_id: u.id,
+                    event: false
+                }))
                 dispatch(unsendAudio(u.id))
+                if (new UserWrapper(user).screen)
+                    dispatch(unsendVideo(u.id))
+            }
         }
     })
 }
