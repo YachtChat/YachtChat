@@ -36,10 +36,12 @@ interface State {
 export class Spaces extends Component<Props, State> {
 
     anchorRef: React.RefObject<HTMLButtonElement>
+    requestInterval: number
 
     constructor(props: Props) {
         super(props);
 
+        this.requestInterval = -1
         this.anchorRef = React.createRef()
 
         this.state = {}
@@ -47,6 +49,12 @@ export class Spaces extends Component<Props, State> {
 
     componentDidMount() {
         this.props.requestSpaces()
+        this.requestInterval = setInterval(() => this.props.requestSpaces(), 2000)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.requestInterval)
+        this.requestInterval = -1
     }
 
     handleContext(e: React.MouseEvent, space: Space) {

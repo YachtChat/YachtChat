@@ -41,8 +41,17 @@ type Props = MoreProps & OwnProps
 
 class UserList extends Component<Props> {
 
+    hostInterval: number = -1
+
     componentDidMount() {
         this.props.getHosts()
+
+        setInterval(() => this.props.getHosts(), 2000)
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.hostInterval)
+        this.hostInterval = -1
     }
 
     render() {

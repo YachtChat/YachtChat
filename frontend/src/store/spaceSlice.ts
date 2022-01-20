@@ -32,7 +32,7 @@ export const spaceSlice = createSlice({
                 }
                 return 0;
             }).map(s => {
-                return {...s, hosts: []}
+                return s.hosts ? s : {...s, hosts: []}
             })
         },
         addSpace: (state, action: PayloadAction<Space>) => {
