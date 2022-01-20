@@ -352,7 +352,7 @@ export class UserComponent extends Component<Props, State> {
                     + this.props.className}
                       style={userNameStyle}>
                     {(!user.audio) && <IoMicOffOutline/>}
-                    {(!user.video) && <IoVideocamOffOutline/>}
+                    {(!user.video && !user.screen) && <IoVideocamOffOutline/>}
                     {(user.screen && !inRange) && <IoTvOutline />}
                     {" "}
                     {(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
