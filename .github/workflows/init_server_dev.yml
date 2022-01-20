@@ -1,0 +1,61 @@
+# This is a basic workflow to help you get started with Actions
+
+name: init_server
+
+# Controls when the action will run.
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    env:
+      HOMEPAGE_URL=www.alpahbibber.com
+      FRONTEND_URL=app.alpahbibber.com
+      SIGNAL_URL=signal.alpahbibber.com
+      SPACES_URL=spaces.alpahbibber.com
+      PRESENTATION_URL=presentation.alpahbibber.com
+      WEBSOCKET_URL=websocket.alpahbibber.com
+      ACCOUNT_URL=account.alpahbibber.com
+      KEYCLOAK_URL=auth.alpahbibber.com
+      WIKI_URL=support.alpahbibber.com
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: pull from git
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo git pull
+          host: ${{ secrets.HOST_DEV}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+
+      - name: start all init docker container
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            sudo docker network create -d bridge application
+            sudo docker volume create certs
+            sudo docker volume create vhost
+            sudo docker volume create html
+            sudo docker volume create keycloak_postgres_data
+            sudo docker volume create spaces_postgres_data
+            sudo docker volume create prometheus
+
+            cd /home/git_environment/NotZoom/
+            sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose -f docker-compose-init.yml -f docker-compose-statistics.yml up -d
+            sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests
+            sudo mvn clean -f ./websocket-service/pom.xml package -DskipTests
+            sudo mvn clean -f ./account-service/pom.xml package -DskipTests
+            sudo KEYCLOAK_ACCOUNTSERVICE_PASSWORD=${{ secrets.KEYCLOAK_ACCOUNTSERVICE_PASSWORD}} KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE=${{ secrets.KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE=${{ secrets.KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE}} SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} JWT_SECRET=${{ secrets.SPACES_JWT_SECRET}} docker-compose build
+            sudo KEYCLOAK_ACCOUNTSERVICE_PASSWORD=${{ secrets.KEYCLOAK_ACCOUNTSERVICE_PASSWORD}} KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE=${{ secrets.KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE=${{ secrets.KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE}} SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} JWT_SECRET=${{ secrets.SPACES_JWT_SECRET}} docker-compose up -d
+          host: ${{ secrets.HOST_DEV}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
