@@ -23,6 +23,9 @@ jobs:
       WEBSOCKET_URL: websocket.alpahbibber.com
       ACCOUNT_URL: account.alpahbibber.com
       KEYCLOAK_URL: auth.alpahbibber.com
+      GRAFANA_URL: statistics.alphabibber.com
+      PROMETHEUS_URL: prometheus.alphabibber.com
+      POSTHOG_URL: posthog.alphabibber.com
       WIKI_URL: support.alpahbibber.com
 
     # Steps represent a sequence of tasks that will be executed as part of the job
