@@ -31,6 +31,17 @@ jobs:
             echo PROMETHEUS_URL=prometheus.alphabibber.com >> .env
             echo POSTHOG_URL=posthog.alphabibber.com >> .env
             echo WIKI_URL=support.alpahbibber.com >> .env
+            echo KEYCLOAK_REALM=Application >> .env
+            echo KEYCLOAK_FRONTEND_CLIENT=frontend >> .env
+            echo FRONTEND_PORT=80 >> .env
+            echo SIGNAL_PORT=6503 >> .env
+            echo SPACES_PORT=8081 >> .env
+            echo WEBSOCKET_PORT=8085 >> .env
+            echo KEYCLOAK_PORT=8080 >> .env
+            echo ACCOUNT_PORT=8082 >> .env
+            echo GRAFANA_PORT=3000 >> .env
+            echo PROMETHEUS_PORT=9090 >> .env
+            echo POSTHOG_PORT=8000 >> .env
             cat .env
             
       - name: pull from git
