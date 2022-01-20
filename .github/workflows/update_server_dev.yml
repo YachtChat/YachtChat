@@ -27,7 +27,7 @@ jobs:
       - run: |
           echo "Get changes: done"
           
-          sudo sed -i 's/yacht.chat/alphabibber.com/g' .env
+          sudo sed -i 's/yacht.chat/alphabibber.com/g' /home/git_environment/NotZoom/.env
 
       - name: pull from git
         uses: tarunjangra/ssh-remote-cmd@v1
