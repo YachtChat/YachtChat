@@ -32,7 +32,7 @@ jobs:
         with:
           command: |
           
-            sed 's/yacht.chat/alphabibber.com/g' .env
+            sudo sed -i 's/yacht.chat/alphabibber.com/g' .env
             
             sudo docker network create -d bridge application
             sudo docker volume create certs
