@@ -219,7 +219,6 @@ export class UserComponent extends Component<Props, State> {
         const userNameStyle = {
             left: userNamePosX,
             top: userNamePosY,
-            transform: (user.inProximity) ? "scale(1)" : "scale(0.8)",
             opacity: nameOpacity
         }
 
