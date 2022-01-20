@@ -334,7 +334,7 @@ export class UserComponent extends Component<Props, State> {
                                        onMouseOver={() => this.mouseOver()}
                                        onMouseLeave={this.mouseOut.bind(this)}
                                        className={
-                                           ((!screen && !video || (!inRange && screen))) ? "profile-picture" : "" +
+                                           (((!screen && !video) || (!inRange && screen))) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
                             {!this.props.user.userStream &&

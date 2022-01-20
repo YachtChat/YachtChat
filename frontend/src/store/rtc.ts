@@ -352,7 +352,9 @@ export const exchangeTracks = (stream: MediaStream | undefined, type?: 'video' |
                         rs.track.stop()
 
                         // do not exchange if the user shares screen but other user is not in proximity
-                        if (user.screen && !getUserByIdWrapped(state, u.id).inProximity) return
+                        if (user.screen && !getUserByIdWrapped(state, u.id).inProximity) {
+                            return
+                        }
 
                         rs.replaceTrack(clone)
                     }
