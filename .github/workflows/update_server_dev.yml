@@ -44,7 +44,7 @@ jobs:
         with:
           command: |
             cd /home/git_environment/NotZoom/
-            sudo git checkout --track origin/Yacht.Chat_2.0
+            sudo git checkout origin/Yacht.Chat_2.0
             sudo git pull
           host: ${{ secrets.HOST_DEV}}
           user: ${{ secrets.USERNAME}}
