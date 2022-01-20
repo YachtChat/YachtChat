@@ -15,15 +15,15 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      HOMEPAGE_URL=www.alpahbibber.com
-      FRONTEND_URL=app.alpahbibber.com
-      SIGNAL_URL=signal.alpahbibber.com
-      SPACES_URL=spaces.alpahbibber.com
-      PRESENTATION_URL=presentation.alpahbibber.com
-      WEBSOCKET_URL=websocket.alpahbibber.com
-      ACCOUNT_URL=account.alpahbibber.com
-      KEYCLOAK_URL=auth.alpahbibber.com
-      WIKI_URL=support.alpahbibber.com
+      HOMEPAGE_URL: www.alpahbibber.com
+      FRONTEND_URL: app.alpahbibber.com
+      SIGNAL_URL: signal.alpahbibber.com
+      SPACES_URL: spaces.alpahbibber.com
+      PRESENTATION_URL: presentation.alpahbibber.com
+      WEBSOCKET_URL: websocket.alpahbibber.com
+      ACCOUNT_URL: account.alpahbibber.com
+      KEYCLOAK_URL: auth.alpahbibber.com
+      WIKI_URL: support.alpahbibber.com
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
