@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: init_server
+name: init_server_dev
 
 # Controls when the action will run.
 on:
