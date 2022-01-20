@@ -24,7 +24,7 @@ const initialState: UserState = {
     activeUser: {
         id: "-1",
         online: true,
-        userStream: { video: undefined, audio: undefined, screen: undefined }
+        userStream: {video: undefined, audio: undefined, screen: undefined}
     },
     spaceUsers: {},
     messages: []
@@ -85,7 +85,8 @@ export const userSlice = createSlice({
             action.payload.forEach(u => {
                 const id = u.id
                 if (id === state.activeUser.id) {
-                    state.activeUser = {...u,
+                    state.activeUser = {
+                        ...u,
                         userStream: state.activeUser.userStream,
                         inProximity: state.activeUser.inProximity
                     }
@@ -118,7 +119,7 @@ export const userSlice = createSlice({
             if (state.activeUser.id === action.payload)
                 state.activeUser.message = undefined
         },
-        setInRange: (state, action: PayloadAction<{id: string, event: boolean}>) => {
+        setInRange: (state, action: PayloadAction<{ id: string, event: boolean }>) => {
             if (state.spaceUsers[action.payload.id])
                 state.spaceUsers[action.payload.id].inRange = action.payload.event
             if (state.activeUser.id === action.payload.id)
@@ -166,8 +167,8 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                     })
                     // if the user is in the Space userPayload will be set otherwise it will not
                     if (userPayload) {
-                        dispatch(setMedia({ id: userPayload.id, state: !!userPayload.audio, type: MediaType.AUDIO }))
-                        dispatch(setMedia({ id: userPayload.id, state: !!userPayload.video, type: MediaType.VIDEO }))
+                        dispatch(setMedia({id: userPayload.id, state: !!userPayload.audio, type: MediaType.AUDIO}))
+                        dispatch(setMedia({id: userPayload.id, state: !!userPayload.video, type: MediaType.VIDEO}))
                     }
                     return keycloakUserToUser(user, !!userPayload, userPayload?.position)
                 })
@@ -188,20 +189,28 @@ export const handleLoginUser = (): AppThunk => (dispatch, getState) => {
             // Posthog identify
             identifyUser(user)
             dispatch(initUser(user))
-            dispatch(setMedia({ id: response.data.id, type: MediaType.AUDIO, state: getMedia(getState(), MediaType.AUDIO, pre_user.id) }))
-            dispatch(setMedia({ id: response.data.id, type: MediaType.VIDEO, state: getMedia(getState(), MediaType.VIDEO, pre_user.id) }))
+            dispatch(setMedia({
+                id: response.data.id,
+                type: MediaType.AUDIO,
+                state: getMedia(getState(), MediaType.AUDIO, pre_user.id)
+            }))
+            dispatch(setMedia({
+                id: response.data.id,
+                type: MediaType.VIDEO,
+                state: getMedia(getState(), MediaType.VIDEO, pre_user.id)
+            }))
         })
     )
 }
 
 // called when new user joins / including the activeUser in order to get user information for the user
-export const handleSpaceUser = (userId : string, position : UserCoordinates, isCaller? : boolean): AppThunk => (dispatch, getState) => {
+export const handleSpaceUser = (userId: string, position: UserCoordinates, isCaller?: boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(headers =>
         // axios load user info
         axios.get("https://" + ACCOUNT_URL + "/account/" + userId + "/", headers).then(response => {
             dispatch(setUser(keycloakUserToUser(response.data, true, position)))
-            dispatch(setMedia({ id: userId, type: MediaType.VIDEO, state: true}))
-            dispatch(setMedia({ id: userId, type: MediaType.AUDIO, state: true}))
+            dispatch(setMedia({id: userId, type: MediaType.VIDEO, state: true}))
+            dispatch(setMedia({id: userId, type: MediaType.AUDIO, state: true}))
             // if the user.id is ourselves skip the next steps
             if (getUser(getState()).id !== userId) {
                 // isCaller is true if this is a reconncetion and the local user was the previous caller
@@ -218,10 +227,12 @@ export const submitMovement = (coordinates: UserCoordinates, dragActivated: bool
     const user = getUser(getState())
 
     // if the user drag is not activated we should check whether the move is valid and if not we change it
-    if(!dragActivated) {
+    if (!dragActivated) {
         // get user position as Point and other users position as Point array
         let userPositions: Point[] = []
-        getOnlineUsers(getState()).forEach(u => {if (u.position) userPositions.push({x: u.position.x, y: u.position.y})});
+        getOnlineUsers(getState()).forEach(u => {
+            if (u.position) userPositions.push({x: u.position.x, y: u.position.y})
+        });
         let point: Point = {x: coordinates.x, y: coordinates.y}
 
         // check if the position is valid and if not change it
@@ -270,7 +281,7 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
         dispatch(setMessage({message, id: fromId}))
 
         if (state.playground.inBackground)
-            sendNotification(state, message, user.profile_image)
+            sendNotification(state, user.firstName + ": " + message, user.profile_image)
 
         // After timeout message will be deleted
         if (messageTimeout[fromId]) clearTimeout(messageTimeout[fromId])
@@ -335,10 +346,10 @@ export const submitRadius = (radius: number): AppThunk => (dispatch, getState) =
 };
 
 export const getUserMessages = (state: RootState, id: string) => state.userState.messages.filter(m => m.user === id);
-export const getUser = (state: RootState) : User => state.userState.activeUser
-export const getUserWrapped = (state: RootState) : UserWrapper => new UserWrapper(getUser(state))
+export const getUser = (state: RootState): User => state.userState.activeUser
+export const getUserWrapped = (state: RootState): UserWrapper => new UserWrapper(getUser(state))
 export const getUserID = (state: RootState) => state.userState.activeUser.id;
-export const getUserById = (state: RootState, id: string) : User => {
+export const getUserById = (state: RootState, id: string): User => {
     if (getUserID(state) === id)
         return getUser(state)
     return state.userState.spaceUsers[id]
