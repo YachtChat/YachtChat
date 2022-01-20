@@ -26,13 +26,13 @@ After sending the link to your colleges you can join a space by clicking on the 
 
 ## What is the future of communication?
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CN1HuE_Yalo" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CN1HuE_Yalo" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
 
 ## Motivation behind Yacht.Chat
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/XbsEGhxtfh8" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XbsEGhxtfh8" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
 
 
 ## Yacht.Chat walkthrough
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/awFxmewPixU" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/awFxmewPixU" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
