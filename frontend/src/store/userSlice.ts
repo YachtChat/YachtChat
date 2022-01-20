@@ -169,6 +169,7 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                     if (userPayload) {
                         dispatch(setMedia({id: userPayload.id, state: userPayload.media.audio, type: MediaType.AUDIO}))
                         dispatch(setMedia({id: userPayload.id, state: userPayload.media.video, type: MediaType.VIDEO}))
+                        dispatch(setMedia({id: userPayload.id, state: userPayload.media.screen, type: MediaType.SCREEN}))
                     }
                     return keycloakUserToUser(user, !!userPayload, userPayload?.position)
                 })
@@ -322,8 +323,9 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
             // console.log(user.id, "in Range - sending audio to", u.id)
             dispatch(setUser({...u, inProximity: true}))
             if (user.id !== u.id) {
-                if (getUserWrapped(getState()).screen)
+                if (getUserWrapped(getState()).screen) {
                     dispatch(sendVideo(u.id))
+                }
                 dispatch(sendAudio(u.id))
                 dispatch(send({
                     type: "range",
