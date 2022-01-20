@@ -54,6 +54,7 @@ export class Spaces extends Component<Props, State> {
 
     componentWillUnmount() {
         clearInterval(this.requestInterval)
+        this.requestInterval = -1
     }
 
     handleContext(e: React.MouseEvent, space: Space) {
