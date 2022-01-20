@@ -13,6 +13,8 @@ interface StateProps {
     getStream: (uid: string) => MediaStream | undefined
     user?: UserWrapper
     spaceID: string
+    online?: boolean
+    inRange?: boolean
 }
 
 interface OwnProps {
@@ -132,7 +134,7 @@ export class FocusUser extends Component<Props, State> {
 
             if (document.fullscreenElement) {
                 // Exit fullscreen if on fullscreen
-                document.exitFullscreen()
+                this.handleClose()
             }
         }
     }
@@ -167,7 +169,7 @@ export class FocusUser extends Component<Props, State> {
             zIndex: 10001
         }
 
-        if (!!this.props.user && !this.props.user.inProximity)
+        if (!this.props.user || !this.props.inRange || !this.props.online)
             this.handleClose()
 
         return (
@@ -182,21 +184,22 @@ export class FocusUser extends Component<Props, State> {
                         fullWidth={true}
                         style={style}>
                     <div className={"focus-video " +
-                    ((this.state.fullscreen) ? "fullscreen" : "")}
+                        ((this.state.fullscreen) ? "fullscreen" : "")}
                          onClick={e => e.stopPropagation()}>
                         <div ref={this.videoDiv} className={"panel-content"}
                              onClick={this.toggleFullScreen.bind(this)}>
                             <div className={"closeButton " + ((this.state.idle) ? "idle" : "")}
                                  onClick={this.handleClose.bind(this)}>
-                                <IoCloseOutline/>
+                                <IoCloseOutline />
                             </div>
                             <div onClick={e => {
                                 e.stopPropagation()
                                 e.nativeEvent.stopPropagation()
                             }}>
-                            {this.state.fullscreen &&
-                                <Sidebar minimal spaceID={this.props.spaceID} className={(this.state.idle) ? "idle" : ""} />
-                            }
+                                {this.state.fullscreen &&
+                                    <Sidebar minimal spaceID={this.props.spaceID}
+                                             className={(this.state.idle) ? "idle" : ""}/>
+                                }
                             </div>
                             <Tooltip TransitionComponent={Zoom} disableFocusListener
                                      title={"Click for fullscreen"} placement="top" arrow>
@@ -205,7 +208,7 @@ export class FocusUser extends Component<Props, State> {
                                        className={"video"}
                                        ref={this.videoObject}/>
                             </Tooltip>
-
+                            <button>Fullscreen</button>
                         </div>
                     </div>
                 </Dialog>
@@ -216,7 +219,9 @@ export class FocusUser extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     getStream: (uid: string) => getStream(state, uid),
-    user: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID) : undefined
+    user: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID) : undefined,
+    online: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID).online : undefined,
+    inRange: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID).inRange : undefined
     //stream: (ownProps.userID) ? getStream(state, ownProps.userID) : undefined,
 })
 
