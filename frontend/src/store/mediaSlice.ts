@@ -248,8 +248,11 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
     } else {
         // If disabled, stop all audio tracks
         if (getStream(state, getUserID(state))?.getAudioTracks()[0]) {
+            let stream = getStream(state, getUserID(state))
+            let oldAudioTrack = stream?.getAudioTracks()[0]
+            oldAudioTrack?.stop()
+
             setStreamID({user_id: userID, type: MediaType.AUDIO, stream_id: undefined})
-            getStream(state, getUserID(state))?.getAudioTracks()[0].stop()
             dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: false}))
             dispatch(send({
                 type: 'media',
@@ -548,13 +551,14 @@ export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (
 
             }// or replace it
             else {
-                let oldVideoTrack = oldMediaStreamTracks![0]
-                stream?.removeTrack(oldVideoTrack)
+                let oldMediaStreamTrack = oldMediaStreamTracks![0]
+                stream?.removeTrack(oldMediaStreamTrack)
                 stream?.addTrack(newUserMediaTrack)
-                oldVideoTrack.stop()
+                oldMediaStreamTrack.stop()
             }
         })
-
+        // update the local stream variable
+        dispatch(setStream(state, localClient, stream))
         // Also tell the other users in the space about the changes
         dispatch(exchangeTracks(stream, video, audio))
 
