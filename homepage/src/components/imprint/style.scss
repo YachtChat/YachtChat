@@ -1,57 +1,61 @@
-#imprint, .imprintComponent {
+@import "../frontend/src/variables.module";
 
-  .overlay {
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    width: 100%;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    position: fixed;
-    overflow: hidden;
-    z-index: 1000;
-  }
+#imprint, #privacy, #terms, .imprintComponent {
+  background: $background_light;
 
-  .imprintWrapper {
-
-    width: 90vw;
-    height: 90vh;
-    margin-top: 5vh;
+  .contentWrapper {
+    padding: 5rem 2rem;
     position: relative;
-    margin-left: 5vw;
-    box-sizing: border-box;
-    background: white;
-    overflow-y: auto;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    z-index: 1000;
+    color: black;
+    margin: auto auto;
+    text-align: left;
 
-    .closeButton {
-      position: absolute;
-      font-size: 1.2rem;
-      top: 5%;
-      right: 5%;
-      color: black;
-      transition: color 0.2s;
-
-      &:hover {
-        color: rgba(0, 0, 0, 0.5);
-        cursor: pointer;
-      }
+    h1, h2, h3 {
+      color: $accent_dark;
     }
 
-    .contentWrapper {
-      padding: 5vw;
-      position: relative;
-      color: black;
-      max-width: 500px;
-      margin: auto auto;
+    h1, h2, a, li, p {
       text-align: left;
+    }
 
-      h1, h2, a, li, p {
-        text-align: left;
-        color: black;
+    @media (prefers-color-scheme: dark) {
+
+      background: $background_dark;
+      a, li, p {
+        color: $font_light
+      }
+
+      h1, h2, h3 {
+        color: $accent_light;
       }
     }
   }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    justify-items: left;
+    align-items: start;
+    align-content: start;
+
+    .button {
+      display: block;
+      position: relative;
+      text-align: center;
+      margin: 0 0.5rem 0 0;
+      background: $accent_dark;
+      color: white;
+      padding: 0.7rem 1.4rem;
+      border: 2px solid $accent_dark;
+      border-radius: 2rem;
+
+      &.outlined {
+        background: transparent;
+        border: 2px solid $accent_dark;
+        color: $accent_dark;
+      }
+    }
+  }
+
 }
