@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [use cases, christmas countdown]
 ---
 
+![Use cases](Day05.png)
+
 🎅Day 5/24 of our Christmas countdown 🎄
 
 Today we will present the Use Cases of Yacht.Chat🎉

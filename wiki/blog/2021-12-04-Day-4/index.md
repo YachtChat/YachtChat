@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [Business Development Team, christmas countdown]
 ---
 
+![Business Team](Day04bunnerV2.png)
+
 🎅Day 4/24 of our Christmas countdown 🎄
 
 Today we will introduce you to the business development team of Yacht.Chat 🎉

@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [Thank you !, christmas countdown]
 ---
 
+![Thank you](Day21.png)
+
 🎅Day 21/24 of our Christmas countdown 🎄
 
 Feedback and help from others is crucial in founding your own company so today we want to say Thank You! 💕
