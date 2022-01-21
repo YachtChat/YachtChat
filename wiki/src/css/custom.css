@@ -28,7 +28,7 @@ html[data-theme='dark'] .docusaurus-highlight-code-line {
 }
 
 .margin-bottom--xl{
-  background: lightgray;
+  #background: lightgray;
   border-radius: 10px;
   padding: 20px;
 }
