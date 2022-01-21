@@ -517,6 +517,10 @@ export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (
     const localClient = getUserID(state)
     const stream = getStream(state, localClient)
 
+    // if stream is undefined that means this method was called via the pre-space settings, therefore, we don't need to
+    // add the new stream to any other variable
+    if (stream == undefined) return
+
     navigator.mediaDevices.getUserMedia(getMediaConstrains(state, video, audio)).then((newUserMediaStream) => {
         // This forEach loop updates the local stream
         // We either get video and audio tracks or just one of them depending on the MediaConstraints. We don't need the
