@@ -108,7 +108,7 @@ const config = {
               },
               {
                 label: 'Imprint',
-                to: '/docs/Data,%20Security%20and%20Privacy/Contact',
+                href: 'https://www.yacht.chat/imprint',
               },
               {
                 label: 'Contact',
@@ -118,7 +118,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © 2021-${new Date().getFullYear()} Yacht.Chat, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © 2021-${new Date().getFullYear()} Yacht.Chat, GbR. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,
