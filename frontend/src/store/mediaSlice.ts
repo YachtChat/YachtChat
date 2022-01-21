@@ -513,7 +513,6 @@ export const changeVirtualBackground = (background: string): AppThunk => dispatc
 
 export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (dispatch, getState) => {
     const state = getState()
-    const user = getUserWrapped(state)
     const localClient = getUserID(state)
     const stream = getStream(state, localClient)
 
@@ -522,9 +521,9 @@ export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (
         // We either get video and audio tracks or just one of them depending on the MediaConstraints. We don't need the
         // two boolean during the forEach loop.
         newUserMediaStream.getTracks().forEach(newUserMediaTrack => {
-            let isVideo = newUserMediaTrack.kind == "video"
+            let isVideo = newUserMediaTrack.kind === "video"
             // apply the virtualBackground to the Stream if it's kind is video
-            if (isVideo){
+            if (isVideo) {
                 let [virtualBackgroundNewUserMediaStream, cp] = applyVirtualBackground(newUserMediaStream,
                     getState().media.selected.virtualBackground, camera_processor)
 
@@ -535,7 +534,7 @@ export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (
             const oldMediaStreamTracks: MediaStreamTrack[] | undefined = (isVideo) ? stream?.getVideoTracks() : stream?.getAudioTracks()
 
             // either add a new stream
-            if (oldMediaStreamTracks?.length == 0){
+            if (oldMediaStreamTracks?.length === 0) {
                 stream?.addTrack(newUserMediaTrack)
                 dispatch(addTracks(newUserMediaTrack))
 
@@ -544,7 +543,7 @@ export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (
                 audio = (!isVideo) ? false : audio
 
             }// or replace it
-            else{
+            else {
                 let oldVideoTrack = oldMediaStreamTracks![0]
                 stream?.removeTrack(oldVideoTrack)
                 stream?.addTrack(newUserMediaTrack)
