@@ -2,4 +2,4 @@
 
 # I can't share my screen
 
-This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
+If you're still facing the issue, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
