@@ -108,7 +108,7 @@ const config = {
               },
               {
                 label: 'Imprint',
-                to: '/docs/Contact',
+                to: '/docs/Data,%20Security%20and%20Privacy/Contact',
               },
               {
                 label: 'Contact',

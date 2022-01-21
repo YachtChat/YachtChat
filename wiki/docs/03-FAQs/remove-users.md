@@ -7,3 +7,5 @@ The admin of space can remove users from a space. You can see if you are an admi
 Then you can just click on the bin next to the user you want to remove.
 
 <img alt="Remove Users" src="/img/docs/SpaceMembers.png" width="750"/>
+
+If you have urgent questions, please feel free to contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

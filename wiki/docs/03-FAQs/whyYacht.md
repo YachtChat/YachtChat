@@ -32,3 +32,5 @@ The name is with a bit of self-irony and should express the joy Yacht should bri
 The logo adapts to the circle theme, which is an integral part of our corporate design. On the logo itself, you can see a yacht. The yacht is driven by a chatbox as a sail, which represents the verbal exchange. So here we take up the irony of the name, combine it with the core theme of our product and wrap it up in an appealing design.
 
 ![Yacht.Chat Name](/img/docs/Yachtname.jpeg)
+
+If you have urgent questions, please feel free to contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

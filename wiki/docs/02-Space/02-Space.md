@@ -10,4 +10,4 @@ Spaces are like Rooms in a Building. There are not like Zoom or MS Teams calls. 
 - **[remove a user](ManageSpaceMembers)**
 - **[set user rights](ManageSpaceMembers)**
 
-This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
+If you have urgent questions, please feel free to contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

@@ -17,4 +17,4 @@ It is possible to invite Users at a later stage as well. Just click on INVITE LI
 <img alt="Invite from Spaces View" src="/img/docs/SpacesView.png" width="750"/>
 
 
-This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
+If you have urgent questions, please feel free to contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

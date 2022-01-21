@@ -16,9 +16,13 @@ For a detailed description click **[here](/docs/Space/createAccount)**
 
 If you are logged in you can hit the "plus" symbol to create a new space. You just have to name it.
 
+For a detailed description click **[here](/docs/Space/create-spaces)**
+
 ## **[Invite users](/docs/Space/inviteMembers)**
 
 If you created a space you can easily invite users by copying the shown link and sending it to your colleges. 
+
+For a detailed description click **[here](/docs/Space/inviteMembers)**
 
 ## Join the space and enjoy seamless collaboration
 

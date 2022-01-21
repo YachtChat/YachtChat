@@ -15,4 +15,4 @@ Get started by **[Register](https://auth.yacht.chat/auth/realms/Application/logi
 
 **[Here](/docs/FAQs/access-to-media)** you find how to set your browser and Computer settings to give Yacht.Chat the rights to access your media.
 
-If you're still facing the issue, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
+If you're still facing the issue, please feel free to contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

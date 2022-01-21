@@ -16,4 +16,4 @@ Make sure that you allow the website www.app.yacht.chat access to your camera an
 
 You can find a detailed description of your browser **[here](/docs/Basics/set-permissions)**
 
-If you're still facing the issue, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
+If you're still facing the issue, please feel free to contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).

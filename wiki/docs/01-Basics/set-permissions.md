@@ -73,4 +73,4 @@ If you are using a macintosh and you want to share your screen for the first tim
 <img alt="Mac Settings screen recording" src="/img/docs/MacSettingsScreen.png" width="750"/>
 
 
-This website is under construction. If you have urgent questions, please contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
+If you have urgent questions, please feel free to contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
