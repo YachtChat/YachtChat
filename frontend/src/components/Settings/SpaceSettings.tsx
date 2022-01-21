@@ -25,22 +25,24 @@ export class SpaceSettings extends Component<Props> {
                         open={this.props.open}
                         onClose={this.props.onClose}
                         aria-labelledby="form-dialog-title">
-                    <div className={"headlineBox"}>
-                        <div className={"buttons"}>
-                            <button onClick={this.props.onClose} className={"iconButton nostyle"}>
-                                <IoCloseOutline/>
+                    <div className={"settingsPanel"}>
+                        <div className={"headlineBox"}>
+                            <div className={"buttons"}>
+                                <button onClick={this.props.onClose} className={"iconButton nostyle"}>
+                                    <IoCloseOutline/>
+                                </button>
+                            </div>
+                            <button className={"outlined"} onClick={() => this.props.logout()}>
+                                <IoCogOutline/> Go to settings
+                            </button>
+                            <h1>Settings</h1>
+                        </div>
+                        <div className={"settings"}>
+                            <MediaSettings/>
+                            <button onClick={this.props.onClose} className={"settingsButton submit"}>
+                                done
                             </button>
                         </div>
-                        <button className={"outlined"} onClick={() => this.props.logout()}>
-                            <IoCogOutline/> Go to settings
-                        </button>
-                        <h1>Settings</h1>
-                    </div>
-                    <div className={"settings"}>
-                        <MediaSettings/>
-                        <button onClick={this.props.onClose} className={"settingsButton submit"}>
-                            done
-                        </button>
                     </div>
                 </Dialog>
             </div>
