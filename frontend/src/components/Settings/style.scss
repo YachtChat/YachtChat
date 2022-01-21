@@ -3,7 +3,8 @@
 .settingsPanel {
   background: transparent;
   border-radius: $border_radius;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   .buttons {
     color: black;

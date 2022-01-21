@@ -354,8 +354,8 @@ export const exchangeTracks = (stream: MediaStream | undefined, video: boolean, 
 
     stream?.getTracks().forEach(s => {
         // replace only stream of type and only if the video/audio aint muted
-        if ((s.kind == "video" && video) && (user.video || user.screen) ||
-            (s.kind == "audio" && audio) && (user.audio)){
+        if (((s.kind === "video" && video) && (user.video || user.screen)) ||
+            ((s.kind === "audio" && audio) && (user.audio))) {
 
             getOnlineUsers(state).forEach(u => {
                 Object.keys(rtpSender[u.id]).forEach(k => {
