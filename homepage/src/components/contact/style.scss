@@ -3,7 +3,7 @@
 #contact {
   position: relative;
   overflow: hidden;
-  padding: 8rem 0;
+  padding: 4rem 0;
 
   background: $background_light;
   @media (prefers-color-scheme: dark) {
@@ -49,7 +49,7 @@
     flex-direction: row;
     flex-wrap: wrap;
 
-    .card {
+    a.card {
       box-shadow: $shadow;
       color: $accent_light;
       flex-shrink: 1;
@@ -113,22 +113,4 @@
     }
   }
 
-}
-
-#legal {
-  position: relative;
-  text-align: center;
-
-  label, button {
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 0.8rem;
-    color: $accent_light;
-    display: block;
-    margin: auto;
-  }
-
-  button:hover {
-    opacity: 0.5;
-  }
 }

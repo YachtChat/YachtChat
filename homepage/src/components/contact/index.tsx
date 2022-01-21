@@ -1,14 +1,11 @@
 import {IoHelpBuoyOutline, IoLogoInstagram, IoLogoLinkedin, IoMail} from "react-icons/all";
-import React, {useState} from "react";
+import React from "react";
 import "./style.scss"
 import classNames from "classnames";
 import {Card} from "../card";
 import {EMAIL, INSTA, LINKEDIN, SUPPORT} from "../../util/config";
-import {Imprint} from "../imprint";
 
 export function Contact() {
-
-    const [legal, setLegal] = useState<string | undefined>("")
 
     return (
         <div id={"contact"}>
@@ -24,41 +21,31 @@ export function Contact() {
                 </div>
 
                 <div className={classNames({"aboutCards": true})}>
-                    <Card>
-                        <a href={LINKEDIN}>
+                    <a className={"card"} href={LINKEDIN}>
+                        <Card>
                             <IoLogoLinkedin className={"linkedin"}/>
                             <label>Linkedin</label>
-                        </a>
-                    </Card>
-                    <Card>
-                        <a href={INSTA}>
+                        </Card>
+                    </a>
+                    <a className={"card"} href={INSTA}>
+                        <Card>
                             <IoLogoInstagram className={"insta"}/>
                             <label>Instagram</label>
-                        </a>
-                    </Card>
-                    <Card>
-                        <a href={EMAIL}>
+                        </Card>
+                    </a>
+                    <a className={"card"} href={EMAIL}>
+                        <Card>
                             <IoMail className={"mail"}/>
                             <label>Mail</label>
-                        </a>
-                    </Card>
-                    <Card>
-                        <a href={SUPPORT}>
+                        </Card>
+                    </a>
+                    <a className={"card"} href={SUPPORT}>
+                        <Card>
                             <IoHelpBuoyOutline className={"insta"}/>
                             <label>Support</label>
-                        </a>
-                    </Card>
+                        </Card>
+                    </a>
                 </div>
-            </div>
-            <div id={"legal"}>
-                <label>copyright 2021-2022 by yacht.chat</label>
-                <br/>
-                <button onClick={() => setLegal("terms")}>Terms & Conditions</button>
-                <button onClick={() => setLegal("privacy")}>Privacy Policy</button>
-                <button onClick={() => setLegal("impressum")}>Imprint</button>
-                <Imprint visible={!!legal}
-                         page={legal ? legal : ""}
-                         onClick={() => setLegal(undefined)}/>
             </div>
         </div>
     )

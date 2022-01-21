@@ -1,0 +1,48 @@
+@import "../frontend/src/variables.module";
+
+#footer {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  background: $accent_dark;
+  margin: 0;
+  padding: 4rem 0;
+
+  .contentWrapper {
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    justify-items: center;
+  }
+
+  label, a {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.8rem;
+    display: block;
+    margin: 0.5rem auto;
+  }
+
+  a {
+    color: white;
+  }
+
+  a:hover {
+    opacity: 0.5;
+  }
+
+  label {
+    text-align: center;
+    color: $accent_light;
+  }
+
+  .footer_item {
+    padding: 2rem;
+
+    label {
+      text-align: left;
+    }
+  }
+}
