@@ -334,6 +334,20 @@ export const handleCandidate = (candidate: any, fromId: string): AppThunk => (di
     }
 }
 
+/**
+ * Adds MediaStreamTrack to each online User. Does not care about the type of the MediaStreamTrack. Should only be called
+ * if there is no track of the tracks kind set for all users.
+ * @param newMediaStreamTrack
+ */
+export const addTracks = (newMediaStreamTrack: MediaStreamTrack): AppThunk => (dispatch, getState) => {
+    const state = getState()
+    const localId = getUserID(state)
+    const users = getOnlineUsers(state)
+    users.forEach(u => {
+        rtpSender[u.id][newMediaStreamTrack.kind] = rtcConnections[u.id].addTrack(newMediaStreamTrack.clone(), getStream(state, localId)!)
+    })
+}
+
 export const exchangeTracks = (stream: MediaStream | undefined, video: boolean, audio: boolean): AppThunk => (dispatch, getState) => {
     const state = getState()
     const user = getUserWrapped(state)

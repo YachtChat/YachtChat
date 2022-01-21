@@ -13,7 +13,7 @@ import {MediaType} from "./model/model";
 import {applyVirtualBackground, stopAllVideoEffects} from "./utils/utils";
 import CameraProcessor from "camera-processor";
 import {UserWrapper} from "./model/UserWrapper";
-import {exchangeTracks, getRtpSender, resetRTC, stopTracks} from "./rtc";
+import {addTracks, exchangeTracks, getRtpSender, resetRTC, stopTracks} from "./rtc";
 
 interface MediaState {
     audio: { [user: string]: boolean }
@@ -515,20 +515,46 @@ export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (
     const state = getState()
     const user = getUserWrapped(state)
     const localClient = getUserID(state)
-    const oldStream = getStream(state, localClient)
+    const stream = getStream(state, localClient)
 
-    // If true all tracks have to be replaced otherwise just of type
-    const replaceAllTracks = user.video && user.audio
+    navigator.mediaDevices.getUserMedia(getMediaConstrains(state, video, audio)).then((newUserMediaStream) => {
+        // This forEach loop updates the local stream
+        // We either get video and audio tracks or just one of them depending on the MediaConstraints. We don't need the
+        // two boolean during the forEach loop.
+        newUserMediaStream.getTracks().forEach(newUserMediaTrack => {
+            let isVideo = newUserMediaTrack.kind == "video"
+            // apply the virtualBackground to the Stream if it's kind is video
+            if (isVideo){
+                let [virtualBackgroundNewUserMediaStream, cp] = applyVirtualBackground(newUserMediaStream,
+                    getState().media.selected.virtualBackground, camera_processor)
 
-    navigator.mediaDevices.getUserMedia(getMediaConstrains(state, video, audio)).then((e) => {
-        // If type is not set or no localStream available reset the whole stream object
-        const [ls, cp] = applyVirtualBackground(e, getState().media.selected.virtualBackground, camera_processor)
-        dispatch(setStream(state, localClient, ls))
-        camera_processor = cp
+                newUserMediaTrack = virtualBackgroundNewUserMediaStream.getVideoTracks()[0]
+                camera_processor = cp
+            }
 
-        dispatch(exchangeTracks(getStream(state, localClient), video, audio))
+            const oldMediaStreamTracks: MediaStreamTrack[] | undefined = (isVideo) ? stream?.getVideoTracks() : stream?.getAudioTracks()
 
-        oldStream!.getTracks().forEach(t => t.stop())
+            // either add a new stream
+            if (oldMediaStreamTracks?.length == 0){
+                stream?.addTrack(newUserMediaTrack)
+                dispatch(addTracks(newUserMediaTrack))
+
+                // if we added the track here we don't want to exchange it later
+                video = (isVideo) ? false : video
+                audio = (!isVideo) ? false : audio
+
+            }// or replace it
+            else{
+                let oldVideoTrack = oldMediaStreamTracks![0]
+                stream?.removeTrack(oldVideoTrack)
+                stream?.addTrack(newUserMediaTrack)
+                oldVideoTrack.stop()
+            }
+        })
+
+        // Also tell the other users in the space about the changes
+        dispatch(exchangeTracks(stream, video, audio))
+
         dispatch(setUserMedia(true))
     }).catch(() => {
         dispatch(setUserMedia(false))
