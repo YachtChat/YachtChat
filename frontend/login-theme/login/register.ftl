@@ -155,7 +155,7 @@
 
             <div class="${properties.kcFormGroupClass!}">
                 <div id="kc-form-buttons" class="${properties.kcFormButtonsClass!}">
-                    <label >By clicking on "${msg("doRegister")}" you accept our terms service. </label>
+                    <label >By clicking on "${msg("doRegister")}" you accept our <a href="https://www.yacht.chat/terms">terms of service</a> and our <a href="https://www.yacht.chat/privacy">privacy policy</a>. </label>
                     <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
                            type="submit" value="${msg("doRegister")}"/>
                 </div>
