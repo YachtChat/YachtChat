@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [elevator pitch, christmas countdown]
 ---
 
+<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:6876818502162894848?compact=1" height="284" width="504" frameborder="0" allowfullscreen="" title="Eingebetteter Beitrag"></iframe>
+
 🎅Day 15/24 of our Christmas countdown 🎄
 
 Today we will show you what a typical one minute pitch looks like.

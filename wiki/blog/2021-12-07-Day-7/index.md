@@ -5,7 +5,7 @@ authors: [yacht]
 tags: [interview, christmas countdown]
 ---
 
-![Interview](Day07V2.png)
+<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:6873957475016613889?compact=1" height="284" width="504" frameborder="0" allowfullscreen="" title="Eingebetteter Beitrag"></iframe>
 
 🎅Day 7/24 of our Christmas countdown 🎄
 

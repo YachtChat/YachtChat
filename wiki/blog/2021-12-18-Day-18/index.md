@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [target group, christmas countdown]
 ---
 
+![customer](Day18.png)
+
 🎅Day 18/24 of our Christmas countdown 🎄
 
 Today we will talk about the most important asset a start up can have: customers.

@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [features, christmas countdown]
 ---
 
+![Future Features](Day23.jpeg)
+
 🎅Day 23/24 of our Christmas countdown 🎄
 
 Yacht.Chat's MVP has already been online for a few weeks. We will still make adjustments to our Design and fix some minor bugs this year. But for the next year, we have already planned new features that our users would like to see 💡

@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [facts, christmas countdown]
 ---
 
+![Facts](Day14.png)
+
 🎅Day 14/24 of our Christmas countdown 🎄
 
 Did you know that already 16% of all companies around the world are fully-remote? 🤯

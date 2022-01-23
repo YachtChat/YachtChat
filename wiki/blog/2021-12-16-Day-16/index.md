@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [name, christmas countdown]
 ---
 
+![Name](Day16.jpeg)
+
 🎅Day 16/24 of our Christmas countdown 🎄
 
 Today we will explain the meaning behind our name and our logo.

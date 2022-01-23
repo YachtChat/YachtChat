@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [gift, christmas countdown]
 ---
 
+![Winner](Day24.png)
+
 Thank you for joining us on our journey throughout this christmas time.
 We hope you enjoyed it as much as we did.
 
