@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [facts, christmas countdown]
 ---
 
+![Facts](Day20.png)
+
 🎅Day 20/24 of our Christmas countdown 🎄
 
 Did you know that remote work has financial benefits for your company and your employees? 🤯

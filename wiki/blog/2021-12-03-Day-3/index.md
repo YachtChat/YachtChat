@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [Development Team, christmas countdown]
 ---
 
+![Dev Team](DevTeam.jpg)
+
 🎅Day 3/24 of our Christmas countdown 🎄
 
 Today we will introduce you to the development team of Yacht.Chat 🎉

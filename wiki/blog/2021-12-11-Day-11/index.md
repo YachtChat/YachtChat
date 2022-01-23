@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [wrap up, christmas countdown]
 ---
 
+![Wrap up](Day11.jpeg)
+
 🎅Day 11/24 of our Christmas countdown 🎄
 
 Today we will give you a quick wrap up about Yacht.Chat.

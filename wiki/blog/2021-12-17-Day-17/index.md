@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [gift, christmas countdown]
 ---
 
+![Gift Card](Day17_linkedin.png)
+
 🎅Day 17/24 of our Christmas countdown 🎄
 
 Today is the last reminder to take part in our competition! Make sure to save your chance on winning this 🎉

@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [roadmap, christmas countdown]
 ---
 
+![roadmap](Day19.png)
+
 🎅Day 19/24 of our Christmas countdown 🎄
 
 Today we present you our roadmap to show you where we are coming from and where we want to go. 🗺

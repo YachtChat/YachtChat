@@ -5,6 +5,8 @@ authors: [yacht]
 tags: [gift, christmas countdown]
 ---
 
+![Gift Card](Day06.png)
+
 🎅Day 6/24 of our Christmas countdown 🎄
 
 Today you can win something to put underneath your Christmas tree: A Amazon gift card! 🎉

@@ -5,6 +5,7 @@ authors: [yacht]
 tags: [design, christmas countdown]
 ---
 
+![Frontend](Day09Linkedin.png)
 
 🎅Day 9/24 of our Christmas countdown 🎄
 
