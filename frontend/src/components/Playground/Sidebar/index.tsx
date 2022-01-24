@@ -21,7 +21,7 @@ import MessageComponent from "./Message";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";
 import MembersComponent from "../Members";
-import {ClickAwayListener, Collapse, Tooltip} from "@material-ui/core";
+import {ClickAwayListener, Collapse, Tooltip} from "@mui/material";
 import posthog from "posthog-js";
 import VideoIcon from "./VideoIcon";
 import {getUserWrapped} from "../../../store/userSlice";

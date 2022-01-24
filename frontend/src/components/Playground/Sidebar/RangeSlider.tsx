@@ -4,7 +4,7 @@ import {RootState} from "../../../store/utils/store";
 import {connect} from "react-redux";
 import {submitRadius} from "../../../store/userSlice";
 import './style.scss';
-import {Slider} from "@material-ui/core";
+import {Slider} from "@mui/material";
 
 
 interface Props {

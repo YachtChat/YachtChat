@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import './style.scss';
 import {IoChevronBack, IoWifi} from "react-icons/all";
-import {CircularProgress} from "@material-ui/core";
+import {CircularProgress} from "@mui/material";
 import Navigation from "../Navigation";
 import {Route, Link} from "react-router-dom";
 

@@ -13,11 +13,10 @@ import {
 } from "react-icons/all";
 import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import {Tooltip} from "@material-ui/core";
 import {SUPPORT_URL} from "../../store/utils/config";
 import {copyInviteLink} from "../../store/utils/utils";
+import {Menu, MenuItem, Tooltip} from "@mui/material";
+import {TransitionGroup} from "react-transition-group";
 
 interface Props {
     spaces: Space[]

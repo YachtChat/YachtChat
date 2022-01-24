@@ -9,8 +9,8 @@ import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
 import FocusUser from "./focusUser";
-import {Fade} from "@material-ui/core";
 import {UserWrapper} from "../../store/model/UserWrapper";
+import {Fade} from "@mui/material";
 
 interface Props {
     activeUser: UserWrapper

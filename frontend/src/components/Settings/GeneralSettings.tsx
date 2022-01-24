@@ -1,5 +1,5 @@
 import React from "react";
-import {Tooltip} from "@material-ui/core";
+import {Tooltip} from "@mui/material";
 import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {setNotifications, setShowVolumeIndicators, setVideoInAvatar} from "../../store/playgroundSlice";
@@ -25,7 +25,7 @@ export function GeneralSettings(props: Props) {
             <div className={"toggles"}>
                 <Tooltip title={
                     "To know when your team is online get notified when the first person joins a space."
-                } arrow interactive placement={"top"}>
+                } arrow placement={"top"}>
                     <div className={"settings-item"}
                          onClick={() =>
                              alert("This feature is not available yet")
@@ -50,7 +50,7 @@ export function GeneralSettings(props: Props) {
                 <Tooltip title={
                     "Volume Indicators are a great way to show who is speaking. " +
                     "To save computing power you can disable them."
-                } arrow interactive placement={"top"}>
+                } arrow placement={"top"}>
                     <div className={"settings-item"}>
                         <label>
                             Show volume indicators in space
@@ -79,7 +79,7 @@ export function GeneralSettings(props: Props) {
                     <div>
                         To not get distracted from your conversations you can disable the video in your own avatar.
                     </div>
-                } arrow interactive placement={"top"}>
+                } arrow placement={"top"}>
                     <div className={"settings-item"}>
                         <label>
                             Show video in your avatar

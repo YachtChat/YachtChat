@@ -5,12 +5,12 @@ import {FaChevronLeft} from "react-icons/fa";
 import {IoArrowForward, IoCopyOutline} from "react-icons/all";
 import {connect} from "react-redux";
 import {RootState} from "../../store/utils/store";
-import {CircularProgress, Tooltip} from "@material-ui/core";
+import {CircularProgress, Tooltip} from "@mui/material";
 import {applicationName, FRONTEND_URL} from "../../store/utils/config";
 import {Space} from "../../store/model/model";
 import {Steps} from "./Steps";
 import {copyInviteLink} from "../../store/utils/utils";
-import {getInvitationToken} from "../../store/spaceSlice";
+import {getToken, requestSpaces} from "../../store/spaceSlice";
 
 interface OwnProps {
     match?: {
@@ -22,15 +22,15 @@ interface OwnProps {
 
 interface OtherProps {
     copy: () => Promise<string>
-    getToken: (spaceID: string) => Promise<string>
+    token: string | undefined
     spaces: Space[]
     success: (s: string) => void
+    requestSpaces: () => void
 }
 
 type Props = OwnProps & OtherProps
 
 interface State {
-    token?: string
     invite: boolean
 }
 
@@ -47,14 +47,8 @@ export class CreateSpace extends Component<Props, State> {
     componentDidMount() {
         if (!this.props.match)
             return
-        
-        this.props.getToken(this.props.match.params.spaceID).then(token => {
-                console.log(token)
-                this.setState({
-                    token
-                })
-            }
-        )
+        if (this.props.spaces === [])
+            this.props.requestSpaces()
     }
 
     render() {
@@ -75,9 +69,9 @@ export class CreateSpace extends Component<Props, State> {
                     A joy that's shared is a joy made double.
                 </div>
                 <form className={"spacesWrapper"}>
-                    {(!!this.state.token) ?
+                    {(!!this.props.token) ?
                         <input ref={this.copyText}
-                               value={"https://" + FRONTEND_URL + "/join/" + this.state.token}
+                               value={"https://" + FRONTEND_URL + "/join/" + this.props.token}
                                type={"text"}/> :
                         <CircularProgress className={"loadingAnimation"} color={"inherit"}/>
                     }
@@ -106,13 +100,14 @@ export class CreateSpace extends Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state: RootState) => ({
-    getToken: (spaceID: string) => getInvitationToken(state, spaceID),
+const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
+    token: ownProps.match ? getToken(state, ownProps.match.params.spaceID) : undefined,
     spaces: state.space.spaces
 })
 
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     copy: () => ownProps.match ? dispatch(copyInviteLink(ownProps.match.params.spaceID)) : {},
+    requestSpaces: () => dispatch(requestSpaces()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateSpace)

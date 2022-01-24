@@ -1,9 +1,9 @@
 import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {IoLink} from "react-icons/all";
-import {Tooltip} from "@material-ui/core";
 import React from "react";
 import {copyInviteLink} from "../../store/utils/utils";
+import {Tooltip} from "@mui/material";
 
 interface OwnProps {
     title?: string | Element

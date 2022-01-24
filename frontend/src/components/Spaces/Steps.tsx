@@ -1,4 +1,4 @@
-import {Step, StepIconProps, StepLabel, Stepper} from "@material-ui/core";
+import {Step, StepIconProps, StepLabel, Stepper} from "@mui/material";
 import {IoCheckmark} from "react-icons/all";
 
 interface Props {

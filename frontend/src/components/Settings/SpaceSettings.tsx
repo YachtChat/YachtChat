@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Dialog from '@material-ui/core/Dialog';
+import Dialog from '@mui/material/Dialog';
 import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import "./style.scss";

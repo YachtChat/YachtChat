@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import Dialog from '@material-ui/core/Dialog';
+import Dialog from '@mui/material/Dialog';
 import {connect} from "react-redux";
 import {IoCloseOutline, IoLink} from "react-icons/all";
 import UserList from "./UserList";
 import {RootState} from "../../../store/utils/store";
 import {FRONTEND_URL} from "../../../store/utils/config";
-import {Tooltip} from "@material-ui/core";
+import {Tooltip} from "@mui/material";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {copyInviteLink} from "../../../store/utils/utils";
 

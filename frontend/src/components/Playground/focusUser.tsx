@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
-import Dialog from '@material-ui/core/Dialog';
 import {connect} from "react-redux";
 import {getStream} from "../../store/mediaSlice";
 import {RootState} from "../../store/utils/store";
-import {Tooltip, Zoom} from "@material-ui/core";
 import {getUserByIdWrapped} from "../../store/userSlice";
 import {IoCloseOutline} from "react-icons/all";
 import Sidebar from "./Sidebar";
 import {UserWrapper} from "../../store/model/UserWrapper";
+import {Dialog, Tooltip, Zoom} from "@mui/material";
 
 interface StateProps {
     getStream: (uid: string) => MediaStream | undefined

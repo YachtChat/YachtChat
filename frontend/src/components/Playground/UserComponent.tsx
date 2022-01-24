@@ -4,7 +4,7 @@ import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/mediaSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
-import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@material-ui/core";
+import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@mui/material";
 import {IoCopyOutline, IoMicOffOutline, IoTvOutline, IoVideocamOffOutline} from "react-icons/all";
 import {handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils/utils";
@@ -302,7 +302,7 @@ export class UserComponent extends Component<Props, State> {
                             </div>
                         </Grow>
                     </Popper>
-                    <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message} interactive
+                    <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message}
                              data-class={"clickable"}
                              title={
 

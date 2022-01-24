@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import {Snackbar} from "@material-ui/core";
-import MuiAlert, {AlertProps} from "@material-ui/lab/Alert";
+import {Snackbar} from "@mui/material";
+import MuiAlert, {AlertProps} from "@mui/material/Alert";
 import {RootState} from "../../store/utils/store";
 import {handleError, handleSuccess} from "../../store/statusSlice";
 import {connect} from "react-redux";

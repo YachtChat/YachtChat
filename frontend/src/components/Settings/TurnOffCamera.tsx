@@ -1,6 +1,6 @@
 import React from "react";
 import {IoArrowForward} from "react-icons/all";
-import {Tooltip} from "@material-ui/core";
+import {Tooltip} from "@mui/material";
 import {applicationName, SUPPORT_URL} from "../../store/utils/config";
 import {CameraMode} from "../../store/model/model";
 import {RootState} from "../../store/utils/store";
@@ -33,7 +33,7 @@ export function TurnOffCamera(props: Props) {
                 <a className={"button"} href={SUPPORT_URL}>Learn more <IoArrowForward/></a>
                 <br/>
             </div>
-        } arrow interactive placement={"top"}>
+        } arrow placement={"top"}>
 
             <div className={"settings-item"}>
                 <label>

@@ -1,6 +1,4 @@
 import {IoCameraOutline, IoChevronDownOutline, IoCogOutline, IoPersonOutline, IoPowerOutline,} from "react-icons/all";
-import {ClickAwayListener, Grow, MenuList, Paper, Popper} from "@material-ui/core";
-import MenuItem from "@material-ui/core/MenuItem";
 import React, {Component, createRef} from "react";
 import {User} from "../../store/model/model";
 import {RootState} from "../../store/utils/store";
@@ -8,6 +6,7 @@ import {logout} from "../../store/authSlice";
 import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
 import {push} from "connected-react-router";
+import {ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper} from "@mui/material";
 
 interface OwnProps {
     minimal?: boolean
