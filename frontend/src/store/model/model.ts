@@ -69,3 +69,14 @@ export enum CameraMode {
     Manual,
     Automatically
 }
+
+export enum StatusType {
+    error = "error",
+    success = "success"
+}
+
+export interface StatusMessage {
+    type: string
+    id: number
+    message: string
+}
