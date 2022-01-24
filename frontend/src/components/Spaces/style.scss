@@ -4,16 +4,17 @@
   width: 800px;
   max-width: 100%;
   text-align: left;
-  max-height: 90%;
+  max-height: 100%;
   min-height: 500px;
   display: flex;
   flex-direction: column;
   padding: 2rem;
   box-sizing: border-box;
+  overflow-y: auto;
 
   .stepper {
     background: transparent;
-    padding: 0 3rem;
+    padding: 0 0 1rem 0;
 
     .stepIcon {
       display: flex;

@@ -15,7 +15,7 @@ import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
 import {SUPPORT_URL} from "../../store/utils/config";
 import {copyInviteLink} from "../../store/utils/utils";
-import {Collapse, Menu, MenuItem, Tooltip} from "@mui/material";
+import {Collapse, Fade, Menu, MenuItem, Tooltip} from "@mui/material";
 import {TransitionGroup} from "react-transition-group";
 
 interface Props {
@@ -126,9 +126,9 @@ export class Spaces extends Component<Props, State> {
                                             }
                                             className={"item " + ((idx > 0) ? "separator" : "")}>
                                             {s.name}
-                                            {(!!s.online && s.online !== 0) && (
+                                            <Fade in={!!s.online && s.online !== 0} key={s.online} unmountOnExit>
                                                 <span className={"tag"}>{s.online} online</span>
-                                            )}
+                                            </Fade>
                                             <div className={"buttons"}>
                                                 <button onClick={e => this.handleContext(e, s)}
                                                         className={"nostyle outlined"}>

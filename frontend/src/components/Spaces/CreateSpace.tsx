@@ -28,7 +28,6 @@ export class CreateSpace extends Component<Props, State> {
     render() {
         return (
             <Wrapper className={"create spaces"}>
-                    <Steps active={0} />
                 <div className={"headlineBox"}>
                     <Link to={"/spaces"}>
                         <button className={"outlined"}><FaChevronLeft/> back to spaces</button>
@@ -46,6 +45,7 @@ export class CreateSpace extends Component<Props, State> {
                         }
                         this.props.createSpace(this.state.spaceName.trim())
                 }}>
+                    <Steps active={0} />
                     <input value={this.state.spaceName}
                            placeholder={"space name"}
                            onChange={({target: {value}}) => this.setState({spaceName: value})} type={"text"}/>

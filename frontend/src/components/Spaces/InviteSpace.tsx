@@ -47,14 +47,13 @@ export class CreateSpace extends Component<Props, State> {
     componentDidMount() {
         if (!this.props.match)
             return
-        if (this.props.spaces === [])
+        if (this.props.spaces.length === 0)
             this.props.requestSpaces()
     }
 
     render() {
         return (
             <Wrapper className={"create spaces"}>
-                <Steps active={(this.state.invite) ? 2 : 1}/>
                 <div className={"headlineBox"}>
                     <Link to={"/spaces"}>
                         <button className={"outlined"}><FaChevronLeft/> back to spaces</button>
@@ -69,6 +68,7 @@ export class CreateSpace extends Component<Props, State> {
                     A joy that's shared is a joy made double.
                 </div>
                 <form className={"spacesWrapper"}>
+                    <Steps active={(this.state.invite) ? 2 : 1}/>
                     {(!!this.props.token) ?
                         <input ref={this.copyText}
                                value={"https://" + FRONTEND_URL + "/join/" + this.props.token}
