@@ -79,7 +79,10 @@ export const requestSpaces = (): AppThunk => (dispatch, getState) => {
             let spaces = spaceResponse.data
             axios.post("http://" + SOCKET_URL + ":" + SOCKET_PORT + "/api/v1/space/members", ids, header).then(onlineUserResponse => {
                 spaces = spaceResponse.data.map((d: Space) => {
-                    getInvitationToken(getState(), d.id).then(inviteToken => dispatch(setInviteToken({spaceid: d.id, token: inviteToken})))
+                    getInvitationToken(getState(), d.id).then(inviteToken => dispatch(setInviteToken({
+                        spaceid: d.id,
+                        token: inviteToken
+                    })))
                     return {
                         ...d,
                         online: onlineUserResponse.data[d.id] ?? 0
@@ -111,7 +114,10 @@ export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
             dispatch(handleSuccess("Space successfully created"))
             dispatch(addSpace(response.data))
             dispatch(push("/invite/" + response.data.id))
-            getInvitationToken(getState(), response.data.id).then(t => dispatch(setInviteToken({spaceid: response.data.id, token: t})))
+            getInvitationToken(getState(), response.data.id).then(t => dispatch(setInviteToken({
+                spaceid: response.data.id,
+                token: t
+            })))
         }).catch(e => {
             console.log(complete_spaces_url + "/api/v1/spaces/?name=" + name)
             dispatch(handleError("Space could not be created"))
@@ -150,10 +156,11 @@ export const resetSpace = (): AppThunk => (dispatch) => {
 
 export const getInvitationToken = (state: RootState, spaceID: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
-        if (getToken(state, spaceID))
+        if (getToken(state, spaceID)) {
             resolve(getToken(state, spaceID)!)
+            return
+        }
         getHeaders(state).then(headers => {
-                console.log(headers)
                 axios.get(complete_spaces_url + "/api/v1/spaces/invitation?spaceId=" + spaceID, headers).then(response => {
                     resolve(response.data)
                 }).catch((e) => {
