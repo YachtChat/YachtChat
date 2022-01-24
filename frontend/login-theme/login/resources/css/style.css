@@ -261,6 +261,8 @@ label, .required {
     transform: translate(-50%, -50%);
     box-sizing: border-box;
     font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    width: 100%;
+    max-width: 800px;
 }
 @media (prefers-color-scheme: dark) {
     .contentBox {
@@ -594,7 +596,10 @@ label, .required {
 }
 
 .login-box {
-    width: 600px;
+    width: 100%;#600px;
+    overflow: auto;
+    max-height: 100vh;
+
 }
 .login-box form {
     padding: 2rem;
@@ -634,10 +639,10 @@ label, .required {
     display: flex;
     overflow: auto;
     flex-direction: column;
-    margin-bottom: 2rem;
     position: relative;
     text-align: left;
     padding: 1rem;
+    margin: 2rem;
 }
 @media (prefers-color-scheme: dark) {
     .login-box .user-box {
