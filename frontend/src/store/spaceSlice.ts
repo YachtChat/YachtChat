@@ -111,6 +111,7 @@ export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
             dispatch(handleSuccess("Space successfully created"))
             dispatch(addSpace(response.data))
             dispatch(push("/invite/" + response.data.id))
+            getInvitationToken(getState(), response.data.id).then(t => dispatch(setInviteToken({spaceid: response.data.id, token: t})))
         }).catch(e => {
             console.log(complete_spaces_url + "/api/v1/spaces/?name=" + name)
             dispatch(handleError("Space could not be created"))
