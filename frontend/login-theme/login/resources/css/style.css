@@ -637,6 +637,7 @@ label, .required {
     margin-bottom: 2rem;
     position: relative;
     text-align: left;
+    padding: 1rem;
 }
 @media (prefers-color-scheme: dark) {
     .login-box .user-box {
@@ -652,13 +653,25 @@ label, .required {
 .login-box .user-box button {
     margin-top: 0.5rem;
 }
-.login-box .user-box #input-error, .login-box .user-box .alert-error {
+.login-box .user-box #input-error, .login-box .user-box .alert-error,
+.login-box .user-box #input-warning, .login-box .user-box .alert-warning {
     border-radius: 0.5rem;
-    background: #fdc2c2;
+    background: #ff6d6d;
+    margin: 2rem 2rem 0rem;
     padding: 1rem;
     text-align: center;
     color: white;
 }
+
+.login-box .user-box #input-success, .login-box .user-box .alert-success {
+    border-radius: 0.5rem;
+    background: #a4cd4c;
+    margin: 2rem 2rem 0rem;
+    padding: 1rem;
+    text-align: center;
+    color: white;
+}
+
 .login-box .user-box #input-error i, .login-box .user-box .alert-error i {
     margin: 0 0.5rem;
 }
