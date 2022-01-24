@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './utils/store';
 import {MediaType, Message, Point, User, UserCoordinates, UserPayload} from "./model/model";
-import {send, sendPosition, userSetupReady} from "./webSocketSlice";
+import {send, sendPosition} from "./webSocketSlice";
 import {getMedia, setMedia} from "./mediaSlice";
 import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
@@ -13,6 +13,7 @@ import {getNextValidPostion, isPostionValid} from "./utils/positionUtils";
 import {UserWrapper} from "./model/UserWrapper";
 import {handleRTCEvents, sendAudio, sendVideo, unsendAudio, unsendVideo} from "./rtc";
 import {sendNotification} from "./utils/notifications";
+import {spaceSetupReady} from "./spaceSlice";
 
 interface UserState {
     activeUser: User
@@ -175,7 +176,7 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                 })
                 // finally call set users with user list
                 dispatch(setUsers(userObjects))
-                dispatch(userSetupReady())
+                dispatch(spaceSetupReady(spaceId))
             })
         })
     )

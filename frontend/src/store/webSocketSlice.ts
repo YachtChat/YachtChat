@@ -3,14 +3,13 @@ import {AppThunk} from './utils/store';
 import {UserCoordinates, UserPayload} from "./model/model";
 import {
     getOnlineUsers,
-    getUser,
     getUserById,
     getUserID, getUserWrapped,
     handleMessage,
     handlePositionUpdate,
     handleSpaceUser,
     handleSpaceUsers,
-    removeUser, setInRange, submitMovement,
+    removeUser, setInRange,
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
 import {setMedia} from "./mediaSlice";
@@ -18,11 +17,10 @@ import {SOCKET_PORT, SOCKET_URL} from "./utils/config";
 import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
 import {destroySession} from "./destroySession";
-import {disconnectUser, handleCandidate, handleRTCEvents, handleSdp} from "./rtc";
+import {disconnectUser, handleCandidate, handleSdp} from "./rtc";
 
 interface WebSocketState {
     connected: boolean
-    joinedRoom: boolean
 }
 
 let socket: WebSocket | null = null;
@@ -30,7 +28,6 @@ let heartBeat: number | null = null;
 
 const initialState: WebSocketState = {
     connected: false,
-    joinedRoom: false,
 };
 
 export const webSocketSlice = createSlice({
@@ -40,19 +37,13 @@ export const webSocketSlice = createSlice({
         connect: (state) => {
             state.connected = true
         },
-        joined: (state) => {
-            state.joinedRoom = true
-        },
-        leftRoom: (state) => {
-            state.joinedRoom = false
-        },
         disconnect: (state) => {
             state.connected = false
         }
     },
 });
 
-export const {connect, disconnect, joined, leftRoom} = webSocketSlice.actions;
+export const {connect, disconnect} = webSocketSlice.actions;
 
 export const connectToServer = (spaceID: string): AppThunk => (dispatch, getState) => {
     if (!SOCKET_URL) {
@@ -94,43 +85,43 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
         const data = JSON.parse(msg.data);
         // if (data.type !== "position_change")
         // console.log("Object", data);
-        const loggedIn = getState().webSocket.joinedRoom
+        const joinedSpace = !!getState().space.joinedSpace
         switch (data.type) {
             case "login":
                 dispatch(handleLogin(data.success, spaceID, data.users));
                 break;
             case "new_user":
-                if (loggedIn) {
+                if (joinedSpace) {
                     dispatch(handleSpaceUser(data.id, data.position, data.video, data.audio));
                 }
                 break;
             case "reconnection":
-                if (loggedIn) {
+                if (joinedSpace) {
                     dispatch(handleSpaceUser(data.id, data.position, data.video, data.audio, data.isCaller))
                 }
                 break;
             case "leave":
-                if (loggedIn)
+                if (joinedSpace)
                     dispatch(disconnectUser(data.id))
                 break;
             case "position":
-                if (loggedIn && data.id !== getUserID(getState()))
+                if (joinedSpace && data.id !== getUserID(getState()))
                     dispatch(handlePositionUpdate(data));
                 break;
             case "media":
-                if (loggedIn)
+                if (joinedSpace)
                     dispatch(setMedia({id: data.id, type: data.medium, state: data.event}));
                 break;
             case "message":
-                if (!loggedIn) break;
+                if (!joinedSpace) break;
                 dispatch(handleMessage(data.content, data.sender_id))
                 break;
             case "range":
-                if (!loggedIn) break;
+                if (!joinedSpace) break;
                 dispatch(setInRange(data))
                 break;
             case "kick":
-                if (!loggedIn) break;
+                if (!joinedSpace) break;
                 if (getState().userState.activeUser.id === data.id) {
                     dispatch(destroySession(true))
                     dispatch(requestSpaces())
@@ -142,7 +133,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 }
                 break;
             case "signal":
-                if (!loggedIn)
+                if (!joinedSpace)
                     break;
                 const fromId: string = data.sender_id;
                 if (fromId !== getUserID(getState())) {
@@ -226,18 +217,10 @@ export const handleLogin = (success: boolean, spaceid: string, users: Set<UserPa
     }
 }
 
-export const userSetupReady = (): AppThunk => (dispatch, getState) => {
-    const user = getUser(getState())
-    dispatch(handleRTCEvents(getUserID(getState())));
-    dispatch(submitMovement(user.position!, false))
-    dispatch(joined())
-}
-
 export const resetWebsocket = (): AppThunk => dispatch => {
     if (socket) {
         socket?.close()
         dispatch(disconnect())
-        dispatch(leftRoom())
         socket = null
     }
 }

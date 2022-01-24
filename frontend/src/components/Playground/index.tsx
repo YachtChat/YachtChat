@@ -165,7 +165,7 @@ const mapStateToProps = (state: RootState) => ({
     microphones: state.media.microphones,
     cameras: state.media.cameras,
     userMedia: state.media.userMedia,
-    joinedSpace: state.webSocket.joinedRoom,
+    joinedSpace: !!state.space.joinedSpace,
     dnd: state.media.doNotDisturb,
 })
 

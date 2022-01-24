@@ -11,7 +11,10 @@ import {
 import {AppThunk} from "./store";
 import {FRONTEND_URL} from "./config";
 import {handleError, handleSuccess} from "../statusSlice";
-import {getInvitationToken} from "../spaceSlice";
+import {getInvitationToken, getToken} from "../spaceSlice";
+import posthog from "posthog-js";
+import {push} from "connected-react-router";
+import {destroySession} from "../destroySession";
 
 export function getCookie(cname: string) {
     const name = cname + "=";
@@ -171,32 +174,25 @@ function isOS() {
 }
 
 export const copyToClipboard = (message: string): Promise<void> => {
-    return new Promise<void>((resolve, reject) => {
-        const textArea = document.createElement('input') as HTMLInputElement;
-        textArea.value = message
-        document.body.appendChild(textArea);
+    const textArea = document.createElement('input') as HTMLInputElement;
+    textArea.value = message
+    document.body.appendChild(textArea);
 
-        let clipboard: DataTransfer | null = null
+    if (!isOS()) {
+        const range = document.createRange();
+        range.selectNodeContents(textArea);
+        const selection = window.getSelection();
+        selection!.removeAllRanges();
+        selection!.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+    } else {
+        textArea.select();
+    }
 
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(message).then(resolve).catch(e => reject(e))
-        } else if (window.ClipboardEvent) {
-            clipboard = new ClipboardEvent("copy").clipboardData
-            clipboard?.setData("string", message)
-        }
-
-        if (document.execCommand || !clipboard) {
-            if (!isOS()) {
-                const range = document.createRange();
-                range.selectNodeContents(textArea);
-                const selection = window.getSelection();
-                selection!.removeAllRanges();
-                selection!.addRange(range);
-                textArea.setSelectionRange(0, 999999);
-            } else {
-                textArea.select();
-            }
-
+    if (navigator.clipboard) {
+        return navigator.clipboard.writeText(textArea.value)
+    } else if (document.execCommand) {
+        return new Promise<void>((resolve, reject) => {
             const success = document.execCommand('copy', true, "message")
             document.body.removeChild(textArea);
             if (!success) {
@@ -204,17 +200,35 @@ export const copyToClipboard = (message: string): Promise<void> => {
                 return
             }
             resolve()
-        }
-    })
+        })
+    } else {
+        return new Promise<void>((resolve, reject) => {
+            reject()
+            document.body.removeChild(textArea);
+        })
+    }
 }
 
 
 export const copyInviteLink = (spaceID: string): AppThunk => (dispatch, getState) => {
-    getInvitationToken(getState(), spaceID).then(token => {
-        copyToClipboard("https://" + FRONTEND_URL + "/join/" + token).then(() => {
+    function tokenToLink(inviteToken: string) {
+        copyToClipboard("https://" + FRONTEND_URL + "/join/" + inviteToken).then(() => {
             dispatch(handleSuccess("Successfully copied invite link."))
+            posthog.capture("Invite link copied")
         }).catch((e) => {
             dispatch(handleError("Could not copy invite link", e))
+            dispatch(push("/invite/" + spaceID))
+            dispatch(destroySession())
         })
-    }).catch(() => dispatch(handleError("Unable to request token")))
+    }
+
+    const token = getToken(getState(), spaceID)
+
+    if (token) {
+        getInvitationToken(getState(), spaceID).then(inviteToken => {
+            tokenToLink(inviteToken)
+        }).catch(() => dispatch(handleError("Unable to request token")))
+    } else {
+        tokenToLink(token!)
+    }
 }

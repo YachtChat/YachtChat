@@ -21,7 +21,7 @@ import posthog from 'posthog-js';
 interface Props {
     loggedIn: boolean
     authFlowReady: boolean
-    joinedRoom: boolean
+    joinedSpace: boolean
     connected: boolean
     checkAuth: (token?: string) => void
 }
@@ -81,7 +81,7 @@ export class App extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     loggedIn: state.auth.loggedIn,
-    joinedRoom: state.webSocket.joinedRoom,
+    joinedSpace: !!state.space.joinedSpace,
     connected: state.webSocket.connected,
     authFlowReady: state.auth.authFlow
 })
