@@ -6,7 +6,7 @@ import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "
 import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@mui/material";
 import {IoCopyOutline, IoMicOffOutline, IoTvOutline, IoVideocamOffOutline} from "react-icons/all";
-import {handleSuccess} from "../../store/statusSlice";
+import {handleError, handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils/utils";
 import {centerUser} from "../../store/playgroundSlice";
 import {UserWrapper} from "../../store/model/UserWrapper";
@@ -28,6 +28,7 @@ interface OtherProps {
     getStream: (id: string) => MediaStream | undefined
     getScreenStream: (id: string) => MediaStream | undefined
     success: (s: string) => void
+    error: (s: string, e?: any) => void
     messages: Message[]
     showVideoInAvatar: boolean
     center: () => void
@@ -102,6 +103,11 @@ export class UserComponent extends Component<Props, State> {
 
 
         }
+
+        if (!prevProps.selected && this.props.selected) {
+            this.mouseOut(true)
+        }
+
         if (this.messagesEnd.current &&
             (prevProps.messages !== this.props.messages ||
                 prevState.onMessages !== this.state.onMessages))
@@ -109,13 +115,15 @@ export class UserComponent extends Component<Props, State> {
     }
 
     mouseOver(onMessages?: boolean) {
+        if (this.props.selected)
+            return
+
         if (this.messagesEnd.current && onMessages !== this.state.onMessages)
             setTimeout(() => {
                     if (this.messagesEnd.current)
                         this.messagesEnd.current!.scrollIntoView({behavior: "smooth"})
                 },
-                500, [this])
-
+                100, [this])
 
         clearTimeout(this.closeTimeout)
         this.setState({
@@ -130,10 +138,10 @@ export class UserComponent extends Component<Props, State> {
                     hovered: true,
                     onMessages: !!onMessages
                 })
-            }, 500)
+            }, 700)
     }
 
-    mouseOut() {
+    mouseOut(direct?: boolean) {
         clearTimeout(this.closeTimeout)
 
         // If timeout still active close it
@@ -146,7 +154,7 @@ export class UserComponent extends Component<Props, State> {
                     hovered: false,
                     onMessages: false
                 })
-            , 500)
+            , direct ? 0 : 100)
     }
 
     render() {
@@ -262,7 +270,11 @@ export class UserComponent extends Component<Props, State> {
                                                                                           className={"clickable"}>
                                                             {(
                                                                 m.message.toLocaleLowerCase().startsWith("http") ||
-                                                                m.message.toLocaleLowerCase().startsWith("www.")
+                                                                m.message.toLocaleLowerCase().startsWith("www.") ||
+                                                                m.message.toLocaleLowerCase().includes(".de") ||
+                                                                m.message.toLocaleLowerCase().includes(".nl") ||
+                                                                m.message.toLocaleLowerCase().includes(".chat") ||
+                                                                m.message.toLocaleLowerCase().includes(".com")
                                                             ) ?
                                                                 <a href={m.message}
                                                                    className={"clickable"}
@@ -278,8 +290,11 @@ export class UserComponent extends Component<Props, State> {
                                                                     e.nativeEvent.preventDefault()
                                                                     e.stopPropagation()
                                                                     e.nativeEvent.stopPropagation()
-                                                                    navigator.clipboard.writeText(this.props.user.message ?? "")
-                                                                    this.props.success("copied message")
+                                                                    navigator.clipboard.writeText(this.props.user.message ?? "").then(() => {
+                                                                        this.props.success("Copied message")
+                                                                    }).catch(e => {
+                                                                        this.props.error("Cannot copy message", e)
+                                                                    })
                                                                 }}/>
                                                             </td>
                                                         </Tooltip>
@@ -332,7 +347,7 @@ export class UserComponent extends Component<Props, State> {
                                        playsInline
                                        ref={this.mediaElement}
                                        onMouseOver={() => this.mouseOver()}
-                                       onMouseLeave={this.mouseOut.bind(this)}
+                                       onMouseLeave={() => this.mouseOut()}
                                        className={
                                            (((!screen && !video) || (!inRange && screen))) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
@@ -377,7 +392,8 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
 
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     center: () => dispatch(centerUser(ownProps.user.user)),
-    success: (s: string) => dispatch(handleSuccess(s))
+    success: (s: string) => dispatch(handleSuccess(s)),
+    error: (s: string, e?: any) => dispatch(handleError(s,e))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserComponent)

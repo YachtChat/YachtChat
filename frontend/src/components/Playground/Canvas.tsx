@@ -48,7 +48,7 @@ export class Canvas extends Component<Props, State> {
         this.state = {
             userDragActive: false,
             mapDragActive: false,
-            scrolling: false,
+            scrolling: true,
         }
     }
 
