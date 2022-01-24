@@ -14,6 +14,7 @@ interface Props {
 
 interface State {
     spaceName: string
+    tooLong: boolean
 }
 
 export class CreateSpace extends Component<Props, State> {
@@ -21,7 +22,17 @@ export class CreateSpace extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            spaceName: ""
+            spaceName: "",
+            tooLong: false
+        }
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
+        if (this.state.spaceName.length > 40 && !this.state.tooLong) {
+            this.props.error("The name is too long")
+            this.setState({tooLong: true})
+        } else if (this.state.spaceName.length <= 40 && this.state.tooLong) {
+            this.setState({tooLong: false})
         }
     }
 
@@ -43,6 +54,12 @@ export class CreateSpace extends Component<Props, State> {
                             this.props.error("The name is not valid")
                             return
                         }
+
+                        if (this.state.spaceName.length > 40) {
+                            this.props.error("The name is too long")
+                            return
+                        }
+
                         this.props.createSpace(this.state.spaceName.trim())
                 }}>
                     <Steps active={0} />
