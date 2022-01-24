@@ -11,6 +11,7 @@ import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store
 import FocusUser from "./focusUser";
 import {UserWrapper} from "../../store/model/UserWrapper";
 import {Fade} from "@mui/material";
+import {TransitionGroup} from "react-transition-group";
 
 interface Props {
     activeUser: UserWrapper
@@ -112,7 +113,7 @@ export class Canvas extends Component<Props, State> {
         }
 
         // offset on top of the user itself
-        const userOffsetX = x / this.props.offset.scale + this.props.offset.x  - this.props.activeUser.position!.x
+        const userOffsetX = x / this.props.offset.scale + this.props.offset.x - this.props.activeUser.position!.x
         const userOffsetY = y / this.props.offset.scale + this.props.offset.y - this.props.activeUser.position!.y
 
         // If user was clicked
@@ -329,35 +330,39 @@ export class Canvas extends Component<Props, State> {
                  onTouchMove={this.moveTouch.bind(this)}
                  onTouchEnd={this.dragEnd.bind(this)}
                  tabIndex={0}>
-                {this.props.spaceUsers.map(user => (
-                    <Fade in={user.online} unmountOnExit>
-                        <div>
-                            <RangeComponent key={user.id}
-                                            className={(animate) ? "" : "animate"}
-                                            user={user}/>
-                        </div>
-                    </Fade>
-                ))}
+                <TransitionGroup>
+                    {this.props.spaceUsers.map(user => (
+                        <Fade in={user.online} unmountOnExit key={"range" + user.id}>
+                            <div>
+                                <RangeComponent key={user.id}
+                                                className={(animate) ? "" : "animate"}
+                                                user={user}/>
+                            </div>
+                        </Fade>
+                    ))}
+                </TransitionGroup>
                 <RangeComponent user={this.props.activeUser}
                                 className={(animate) ? "" : "animate"}
                                 selected={this.state.mapDragActive || this.state.userDragActive}
                                 isActiveUser/>
-                {this.props.spaceUsers.map(user =>
-                    <Fade in={user.online} unmountOnExit>
-                        <div>
-                            <UserComponent key={user.id}
-                                           className={(animate) ? "" : "animate"}
-                                           user={user}/>
-                        </div>
-                    </Fade>
-                )}
+                <TransitionGroup>
+                    {this.props.spaceUsers.map(user =>
+                        <Fade in={user.online} unmountOnExit key={user.id}>
+                            <div>
+                                <UserComponent key={user.id}
+                                               className={(animate) ? "" : "animate"}
+                                               user={user}/>
+                            </div>
+                        </Fade>
+                    )}
+                </TransitionGroup>
                 <UserComponent
                     className={(animate) ? "" : "animate"}
                     user={this.props.activeUser}
                     selected={
                         //this.state.mapDragActive ||
                         this.state.userDragActive
-                    } />
+                    }/>
                 {this.state.focusUser &&
                     <FocusUser userID={this.state.focusUser} spaceID={this.props.spaceID}
                                onClose={() => this.handleClose()}/>

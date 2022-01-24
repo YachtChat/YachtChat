@@ -15,7 +15,7 @@ import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
 import {SUPPORT_URL} from "../../store/utils/config";
 import {copyInviteLink} from "../../store/utils/utils";
-import {Menu, MenuItem, Tooltip} from "@mui/material";
+import {Collapse, Menu, MenuItem, Tooltip} from "@mui/material";
 import {TransitionGroup} from "react-transition-group";
 
 interface Props {
@@ -98,7 +98,7 @@ export class Spaces extends Component<Props, State> {
                             </Link>
                             <a href={SUPPORT_URL}>
                                 <button className={"outlined"}>
-                                    <IoPeopleOutline /> Support
+                                    <IoPeopleOutline/> Support
                                 </button>
                             </a>
                         </div>
@@ -114,48 +114,54 @@ export class Spaces extends Component<Props, State> {
                 <div className={"spacesWrapper"}>
 
                     <div className={"itemWrapper"}>
-                        {this.props.spaces.map((s, idx) => (
-                            <Link to={`/spaces/${s.id}`} key={idx}>
-                                <div
-                                    onContextMenu={e =>
-                                        this.handleContext(e, s)
-                                    }
-                                    className={"item " + ((idx > 0) ? "separator" : "")}>
-                                    {s.name}
-                                    {(!!s.online && s.online !== 0) && (
-                                        <span className={"tag"}>{s.online} online</span>
-                                    )}
-                                    <div className={"buttons"}>
-                                        <button onClick={e => this.handleContext(e, s)}
-                                                className={"nostyle outlined"}>
-                                            <IoEllipsisHorizontal/>
-                                        </button>
-                                        <Tooltip title={"Copy invite link"} arrow placement={"top"}>
-                                            <button
-                                                onClick={e => this.invite(e, s.id)}
-                                                className={"outlined spaceRight"}>
-                                                Invite
-                                            </button>
-                                        </Tooltip>
-                                        <button>
-                                            Join
-                                        </button>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
+                        <TransitionGroup>
+
+                            {this.props.spaces.map((s, idx) => (
+                                <Collapse key={s.id}>
+
+                                    <Link to={`/spaces/${s.id}`} key={idx}>
+                                        <div
+                                            onContextMenu={e =>
+                                                this.handleContext(e, s)
+                                            }
+                                            className={"item " + ((idx > 0) ? "separator" : "")}>
+                                            {s.name}
+                                            {(!!s.online && s.online !== 0) && (
+                                                <span className={"tag"}>{s.online} online</span>
+                                            )}
+                                            <div className={"buttons"}>
+                                                <button onClick={e => this.handleContext(e, s)}
+                                                        className={"nostyle outlined"}>
+                                                    <IoEllipsisHorizontal/>
+                                                </button>
+                                                <Tooltip title={"Copy invite link"} arrow placement={"top"}>
+                                                    <button
+                                                        onClick={e => this.invite(e, s.id)}
+                                                        className={"outlined spaceRight"}>
+                                                        Invite
+                                                    </button>
+                                                </Tooltip>
+                                                <button>
+                                                    Join
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </Collapse>
+                            ))}
+                        </TransitionGroup>
                     </div>
-                        <Link to={"/create-space"}>
-                            <button
-                                style={{
-                                    marginLeft: "3rem",
-                                    paddingTop: "0.5rem",
-                                    borderRadius: "0"
-                                }}
-                                className={"nostyle outlined spaceTop"}>
-                                <IoAddOutline/> add space
-                            </button>
-                        </Link>
+                    <Link to={"/create-space"}>
+                        <button
+                            style={{
+                                marginLeft: "3rem",
+                                paddingTop: "0.5rem",
+                                borderRadius: "0"
+                            }}
+                            className={"nostyle outlined spaceTop"}>
+                            <IoAddOutline/> add space
+                        </button>
+                    </Link>
                     <Menu
                         keepMounted
                         onContextMenu={e => {

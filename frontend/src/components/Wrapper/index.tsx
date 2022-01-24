@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import './style.scss';
 import {IoChevronBack, IoWifi} from "react-icons/all";
-import {CircularProgress} from "@mui/material";
+import {CircularProgress, Fade} from "@mui/material";
 import Navigation from "../Navigation";
 import {Route, Link} from "react-router-dom";
 
@@ -12,15 +12,21 @@ interface Props {
 
 export class Wrapper extends Component<Props> {
 
+
     render() {
+        const transitionKey = !window.location.href.includes("settings") ? window.location.href : "settings"
         return (
             <div className={"contentWrapper"}>
                 <div className={"backgroundRange"}/>
                 <div className={"backgroundBall"}/>
                 <div id={this.props.id} className={"contentBox " + this.props.className}>
-                    {this.props.children}
+                    <Fade timeout={500} in={true} key={transitionKey}>
+                        <div>
+                            {this.props.children}
+                        </div>
+                    </Fade>
                 </div>
-                <Route path={"/:site/"} children={<Navigation />}/>
+                <Route path={"/:site/"} children={<Navigation/>}/>
             </div>
         )
     }
@@ -40,7 +46,7 @@ export class Loading extends Component<LoadingProps> {
                 <div className={"headlineBox"}>
                     <Link to={"/"}>
                         <button className={"outlined"}>
-                            <IoChevronBack /> back to spaces
+                            <IoChevronBack/> back to spaces
                         </button>
                     </Link>
                     <h1>{this.props.icon ? this.props.icon : <IoWifi/>}</h1>

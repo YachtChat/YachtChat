@@ -7,7 +7,7 @@ import {IoArrowBack} from "react-icons/all";
 import {Link, Route, Switch, useParams} from "react-router-dom";
 import GeneralSettings from "./GeneralSettings";
 import Profile from "./Profile";
-import {Grow} from "@mui/material";
+import {Fade} from "@mui/material";
 import {SUPPORT_URL} from "../../store/utils/config";
 
 export function Settings() {
@@ -49,25 +49,25 @@ export function Settings() {
                     <Route exact path={"/settings/media/"}>
                         {/*<p>Edit your preferences. Alter your camera, microphone and even your virtual*/}
                         {/*    background.</p>*/}
-                        <Grow timeout={500} in={active === "media"} unmountOnExit>
+                        <Fade key={"media"} timeout={500} in={active === "media"} unmountOnExit>
                             <div>
                                 <MediaSettings/>
                             </div>
-                        </Grow>
+                        </Fade>
                     </Route>
                     <Route exact path={"/settings/general/"}>
-                        <Grow timeout={500} in={active === "general"} unmountOnExit>
+                        <Fade key={"general"} timeout={500} in={active === "general"} unmountOnExit>
                             <div>
                                 <GeneralSettings/>
                             </div>
-                        </Grow>
+                        </Fade>
                     </Route>
                     <Route exact path={"/settings/profile/"}>
-                        <Grow timeout={500} in={active === "profile"} unmountOnExit>
+                        <Fade key={"profile"} timeout={500} in={active === "profile"} unmountOnExit>
                             <div>
                                 <Profile/>
                             </div>
-                        </Grow>
+                        </Fade>
                     </Route>
                 </Switch>
             </div>
