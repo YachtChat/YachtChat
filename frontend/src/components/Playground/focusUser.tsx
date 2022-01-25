@@ -174,21 +174,23 @@ export class FocusUser extends Component<Props, State> {
         return (
             <div onClick={e => e.stopPropagation()}>
                 <Dialog open={!!this.props.userID}
-                        onClick={e => e.stopPropagation()}
                         onMouseDown={e => e.stopPropagation()}
                         onClose={this.handleClose.bind(this)}
+                        onBackdropClick={this.handleClose.bind(this)}
                         maxWidth={"lg"}
                         onKeyPress={this.keyPress.bind(this)}
                         onMouseMove={this.mouseDidMove.bind(this)}
                         fullWidth={true}
                         style={style}>
                     <div className={"focus-video " +
-                        ((this.state.fullscreen) ? "fullscreen" : "")}
-                         onClick={e => e.stopPropagation()}>
+                        ((this.state.fullscreen) ? "fullscreen" : "")}>
                         <div ref={this.videoDiv} className={"panel-content"}
                              onClick={this.toggleFullScreen.bind(this)}>
                             <div className={"closeButton " + ((this.state.idle) ? "idle" : "")}
-                                 onClick={this.handleClose.bind(this)}>
+                                 onClick={e => {
+                                     e.stopPropagation()
+                                     this.handleClose()
+                                 }}>
                                 <IoCloseOutline />
                             </div>
                             <div onClick={e => {
@@ -207,7 +209,6 @@ export class FocusUser extends Component<Props, State> {
                                        className={"video"}
                                        ref={this.videoObject}/>
                             </Tooltip>
-                            <button>Fullscreen</button>
                         </div>
                     </div>
                 </Dialog>
