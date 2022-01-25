@@ -2,7 +2,7 @@
 
 # I can not use other videoconferencing software while using Yacht.Chat
 
-## What is this for?
+## What is the reason for this issue?
 Sometimes using Yacht.Chat in the background can lead to interference with other video
 conferencing tools – especially on Microsoft Windows.
 
