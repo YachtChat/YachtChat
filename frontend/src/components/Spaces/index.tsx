@@ -15,7 +15,7 @@ import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
 import {SUPPORT_URL} from "../../store/utils/config";
 import {copyInviteLink} from "../../store/utils/utils";
-import {Collapse, Fade, Menu, MenuItem, Tooltip} from "@mui/material";
+import {CircularProgress, Collapse, Fade, Menu, MenuItem, Tooltip} from "@mui/material";
 import {TransitionGroup} from "react-transition-group";
 
 interface Props {
@@ -114,6 +114,8 @@ export class Spaces extends Component<Props, State> {
                 <div className={"spacesWrapper"}>
 
                     <div className={"itemWrapper"}>
+                        {this.props.spaces.length === 0 &&
+                        <CircularProgress className={"loadingAnimation"} color={"inherit"}/>}
                         <TransitionGroup>
 
                             {this.props.spaces.map((s, idx) => (

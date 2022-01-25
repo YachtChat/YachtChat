@@ -352,6 +352,7 @@ export class UserComponent extends Component<Props, State> {
                                            (((!screen && !video) || (!inRange && screen))) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
+                            {(this.props.user.userStream && user.screen && !inRange) && <IoTvOutline className={"loader"} />}
                             {!this.props.user.userStream &&
                                 <CircularProgress className={"loader"}/>
                             }
@@ -368,7 +369,6 @@ export class UserComponent extends Component<Props, State> {
                       style={userNameStyle}>
                     {(!user.audio) && <IoMicOffOutline/>}
                     {(!user.video && !user.screen) && <IoVideocamOffOutline/>}
-                    {(user.screen && !inRange) && <IoTvOutline />}
                     {" "}
                     {(this.props.isActiveUser) ? "You" : user.firstName + " " + user.lastName}</span>
             </div>

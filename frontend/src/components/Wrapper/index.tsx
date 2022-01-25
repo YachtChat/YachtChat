@@ -20,7 +20,7 @@ export class Wrapper extends Component<Props> {
                 <div className={"backgroundRange"}/>
                 <div className={"backgroundBall"}/>
                 <div id={this.props.id} className={"contentBox " + this.props.className}>
-                    <Fade timeout={500} in={true} key={transitionKey}>
+                    <Fade in={true} key={transitionKey}>
                         <div>
                             {this.props.children}
                         </div>
