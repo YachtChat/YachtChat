@@ -46,24 +46,24 @@ export function Settings() {
             </div>
             <div className={"content"}>
                 <Switch>
-                    <Route exact path={"/settings/media/"}>
+                    <Route path={"/settings/media/"}>
                         {/*<p>Edit your preferences. Alter your camera, microphone and even your virtual*/}
                         {/*    background.</p>*/}
-                        <Fade key={"media"} timeout={500} in={active === "media"} unmountOnExit>
+                        <Fade key={"media"} timeout={500} in={true} unmountOnExit>
                             <div>
                                 <MediaSettings/>
                             </div>
                         </Fade>
                     </Route>
-                    <Route exact path={"/settings/general/"}>
-                        <Fade key={"general"} timeout={500} in={active === "general"} unmountOnExit>
+                    <Route path={"/settings/general/"}>
+                        <Fade key={"general"} timeout={500} in={true} unmountOnExit>
                             <div>
                                 <GeneralSettings/>
                             </div>
                         </Fade>
                     </Route>
-                    <Route exact path={"/settings/profile/"}>
-                        <Fade key={"profile"} timeout={500} in={active === "profile"} unmountOnExit>
+                    <Route path={"/settings/profile/"}>
+                        <Fade key={"profile"} timeout={500} in={true} unmountOnExit>
                             <div>
                                 <Profile/>
                             </div>
