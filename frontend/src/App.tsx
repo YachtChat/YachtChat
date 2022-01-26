@@ -56,7 +56,7 @@ export class App extends Component<Props, State> {
                 <Routes>
                     <Route path='/invite/:spaceID' element={
                         <RequireAuth>
-                            <InviteSpace/>
+                            <ParamsPass Component={InviteSpace} />
                         </RequireAuth>
                     }/>
                     <Route path='/join/:token' element={

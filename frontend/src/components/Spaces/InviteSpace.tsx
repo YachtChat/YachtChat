@@ -13,10 +13,8 @@ import {copyInviteLink} from "../../store/utils/utils";
 import {getToken, requestSpaces} from "../../store/spaceSlice";
 
 interface OwnProps {
-    match?: {
-        params: {
-            spaceID: string
-        }
+    params: {
+        spaceID: string
     }
 }
 
@@ -44,8 +42,6 @@ export class CreateSpace extends Component<Props, State> {
     }
 
     componentDidMount() {
-        if (!this.props.match)
-            return
         if (this.props.spaces.length === 0)
             this.props.requestSpaces()
     }
@@ -62,8 +58,9 @@ export class CreateSpace extends Component<Props, State> {
                         Share your space.
                     </h1>
                     Share this link to let people join
-                    "{this.props.spaces.find(s => s.id === this.props.match?.params.spaceID)?.name}".<br/>
-                    After sharing this link your team just has to open this link in their browser to join your Space.<br/>
+                    "{this.props.spaces.find(s => s.id === this.props.params.spaceID)?.name}".<br/>
+                    After sharing this link your team just has to open this link in their browser to join your
+                    Space.<br/>
                     A joy that's shared is a joy made double.
                 </div>
                 <form className={"spacesWrapper"}>
@@ -71,7 +68,7 @@ export class CreateSpace extends Component<Props, State> {
                     {(!!this.props.token) ?
                         <input ref={this.copyText}
                                value={"https://" + FRONTEND_URL + "/join/" + this.props.token}
-                               type={"text"}/> :
+                               type={"text"} readOnly /> :
                         <CircularProgress className={"loadingAnimation"} color={"inherit"}/>
                     }
                     <button onClick={e => {
@@ -83,11 +80,11 @@ export class CreateSpace extends Component<Props, State> {
                         <IoCopyOutline/> Copy invite Link
                     </button>
                     <Tooltip title={(this.state.invite) ? "" :
-                        <h2 style={{ textAlign: "center"}}>
+                        <h2 style={{textAlign: "center"}}>
                             Invite friends & colleagues first to make the most out of {applicationName}
                         </h2>} arrow placement={"bottom"}>
 
-                        <Link to={"/spaces/" + this.props.match?.params.spaceID}>
+                        <Link to={"/spaces/" + this.props.params.spaceID}>
                             <button className={"outlined submit"}>
                                 Join space {this.state.invite ? "" : "allone"} <IoArrowForward/>
                             </button>
@@ -100,12 +97,12 @@ export class CreateSpace extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
-    token: ownProps.match ? getToken(state, ownProps.match.params.spaceID) : undefined,
+    token: getToken(state, ownProps.params.spaceID),
     spaces: state.space.spaces
 })
 
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
-    copy: () => ownProps.match ? dispatch(copyInviteLink(ownProps.match.params.spaceID)) : {},
+    copy: () => dispatch(copyInviteLink(ownProps.params.spaceID)),
     requestSpaces: () => dispatch(requestSpaces()),
 })
 
