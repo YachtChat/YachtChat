@@ -5,9 +5,9 @@ import {connect} from "react-redux";
 import "./style.scss";
 import {User} from "../../store/model/model";
 import MediaSettings from "./MediaSettings";
-import {IoCloseOutline, IoCogOutline} from "react-icons/all";
+import {IoCloseOutline, IoCogOutline} from "react-icons/io5";
 import {sendLogout} from "../../store/webSocketSlice";
-import {push} from "connected-react-router";
+import {push} from "redux-first-history";
 
 interface Props {
     user: User

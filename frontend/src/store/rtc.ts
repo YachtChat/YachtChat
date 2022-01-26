@@ -215,7 +215,7 @@ function isUserInSpace(state: RootState, id: string) {
 export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThunk => (dispatch: any, getState: any) => {
     // Reconnection functionality / stream health check
     if (isCaller) {
-        connectionTimer[userId] = setTimeout(() => {
+        connectionTimer[userId] = window.setTimeout(() => {
             // delete old reference to timer
             delete connectionTimer[userId];
             // if the connection was not established in time, try to reconnect

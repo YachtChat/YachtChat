@@ -1,5 +1,5 @@
 import './style.scss'
-import {IoCloseOutline, IoMenu} from "react-icons/all";
+import {IoCloseOutline, IoMenu} from "react-icons/io5";
 import React, {useState} from "react";
 import AuthButtons from "./AuthButtons";
 import NavButtons from "./NavButtons";

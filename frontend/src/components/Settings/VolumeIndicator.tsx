@@ -112,7 +112,7 @@ export class MediaSettings extends Component<Props, State> {
             this.props.users.length > 0 &&
             this.props.users.filter(u => u.inProximity).length === 0) {
             clearTimeout(this.timer)
-            this.timer = setTimeout(() => {
+            this.timer = window.setTimeout(() => {
                 this.setState({
                     showWarning: false
                 })

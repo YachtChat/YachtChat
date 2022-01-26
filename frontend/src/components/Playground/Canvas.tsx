@@ -8,7 +8,7 @@ import {toggleUserVideo, toggleUserAudio} from "../../store/mediaSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
-import FocusUser from "./focusUser";
+import FocusUser from "./FocusUser";
 import {UserWrapper} from "../../store/model/UserWrapper";
 import {Fade} from "@mui/material";
 import {TransitionGroup} from "react-transition-group";

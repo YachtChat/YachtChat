@@ -1,5 +1,5 @@
 import React from "react";
-import {IoArrowForward} from "react-icons/all";
+import {IoArrowForward} from "react-icons/io5";
 import {Tooltip} from "@mui/material";
 import {applicationName, SUPPORT_URL} from "../../store/utils/config";
 import {CameraMode} from "../../store/model/model";

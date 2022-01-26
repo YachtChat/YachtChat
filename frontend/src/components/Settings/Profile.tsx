@@ -2,7 +2,7 @@ import {
     IoCreateOutline,
     IoLockClosedOutline,
     IoPowerOutline
-} from "react-icons/all";
+} from "react-icons/io5";
 import React from "react";
 import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";

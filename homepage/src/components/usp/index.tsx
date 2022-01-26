@@ -1,9 +1,9 @@
-import {IoLockClosed, IoMdClock} from "react-icons/all";
+import {IoLockClosed} from "react-icons/io5";
 import "./style.scss"
 import {applicationName} from "../../util/config";
 import classNames from "classnames";
 import {Card} from "../card";
-import {IoMdHeart} from "react-icons/io";
+import {IoMdClock, IoMdHeart} from "react-icons/io";
 import {Separator} from "../separator";
 
 export function Usp() {

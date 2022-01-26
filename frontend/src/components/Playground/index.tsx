@@ -10,7 +10,7 @@ import {RootState} from "../../store/utils/store";
 import {requestSpaces} from "../../store/spaceSlice";
 import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/mediaSlice";
 import {Link} from "react-router-dom";
-import {IoCamera, IoChevronBack, IoMic} from "react-icons/all";
+import {IoCamera, IoChevronBack, IoMic} from "react-icons/io5";
 import {applicationName} from "../../store/utils/config";
 import {sendLogout} from "../../store/webSocketSlice";
 import Navigation from "../Navigation";
@@ -23,10 +23,8 @@ import {isWindows} from "../../store/utils/utils";
 interface Props {
     activeUser: UserWrapper
     handleZoom: (zoom: number) => void
-    match?: {
-        params: {
-            spaceID: string
-        }
+    params: {
+        spaceID: string
     }
     requestUserMedia: (spaceID: string, video: boolean, audio: boolean) => void
     initPlayground: () => void
@@ -50,7 +48,7 @@ export class Playground extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        const spaceName = this.props.spaces.find(space => space.id === this.props.match!.params.spaceID)?.name
+        const spaceName = this.props.spaces.find(space => space.id === this.props.params.spaceID)?.name
         this.state = {spaceName: spaceName ?? ""}
         if (!spaceName)
             this.props.requestSpaces()
@@ -61,7 +59,7 @@ export class Playground extends Component<Props, State> {
         this.props.loadMediaDevices(() => {
             console.log(this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
             if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
-                this.props.requestUserMedia(this.props.match!.params.spaceID, true, true)
+                this.props.requestUserMedia(this.props.params.spaceID, true, true)
         })
 
         window.onpopstate = () => {
@@ -71,7 +69,7 @@ export class Playground extends Component<Props, State> {
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
         if (prevProps.spaces !== this.props.spaces) {
-            const spaceName = this.props.spaces.find(space => space.id === this.props.match!.params.spaceID)?.name
+            const spaceName = this.props.spaces.find(space => space.id === this.props.params.spaceID)?.name
             this.setState({spaceName: spaceName ?? ""})
             document.title = (spaceName) ? spaceName + " - " + applicationName : applicationName
         }
@@ -94,9 +92,9 @@ export class Playground extends Component<Props, State> {
             return (
                 <Wrapper className={"mediaPermission"}>
                     <div className={"headlineBox"}>
-                            <Link to={"/"}>
-                                <button className={"outlined"}><IoChevronBack /> back to spaces</button>
-                            </Link>
+                        <Link to={"/"}>
+                            <button className={"outlined"}><IoChevronBack/> back to spaces</button>
+                        </Link>
                         <h1><IoCamera/> <IoMic/></h1>
                         <h1>Hey, {this.props.activeUser.firstName}</h1>
                         <p>
@@ -106,16 +104,16 @@ export class Playground extends Component<Props, State> {
                     </div>
                     <div className={"content"}>
                         <button className={"submit"} onClick={() => {
-                            this.props.requestUserMedia(this.props.match!.params.spaceID, true, true)
+                            this.props.requestUserMedia(this.props.params.spaceID, true, true)
                         }}>Request camera & microphone
                         </button>
                         <button className={"submit"} onClick={() => {
-                            this.props.requestUserMedia(this.props.match!.params.spaceID, false, true)
+                            this.props.requestUserMedia(this.props.params.spaceID, false, true)
                         }}>Request only Microphone
                         </button>
                         {isWindows() &&
 
-                        <TurnOffCamera />
+                            <TurnOffCamera/>
                         }
                     </div>
                     <div className={"headlineBox"}>
@@ -144,10 +142,10 @@ export class Playground extends Component<Props, State> {
 
         return (
             <div id={"PlaygroundWrapper"}>
-                <Navigation title={this.state.spaceName} spaceID={this.props.match?.params.spaceID}/>
+                <Navigation title={this.state.spaceName} spaceID={this.props.params.spaceID}/>
                 <div id={"Playground"} className={"contentWrapper"}>
-                    <Sidebar spaceID={this.props.match!.params.spaceID}/>
-                    <Canvas spaceID={this.props.match?.params.spaceID ?? ""}/>
+                    <Sidebar spaceID={this.props.params.spaceID}/>
+                    <Canvas spaceID={this.props.params.spaceID ?? ""}/>
                     <div className="btn">
                         <button onClick={this.handleZoomIn.bind(this)}>+</button>
                         <button onClick={this.handleZoomOut.bind(this)}>-</button>

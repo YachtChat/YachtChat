@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import Wrapper from "../Wrapper";
 import {Link} from "react-router-dom";
 import {FaChevronLeft} from "react-icons/fa";
-import {IoArrowForward, IoCopyOutline} from "react-icons/all";
+import {IoArrowForward, IoCopyOutline} from "react-icons/io5";
 import {connect} from "react-redux";
 import {RootState} from "../../store/utils/store";
 import {CircularProgress, Tooltip} from "@mui/material";
@@ -24,7 +24,6 @@ interface OtherProps {
     copy: () => Promise<string>
     token: string | undefined
     spaces: Space[]
-    success: (s: string) => void
     requestSpaces: () => void
 }
 

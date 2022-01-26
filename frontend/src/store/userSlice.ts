@@ -88,6 +88,7 @@ export const userSlice = createSlice({
                 if (id === state.activeUser.id) {
                     state.activeUser = {
                         ...u,
+                        position: state.activeUser.position ?? u.position,
                         userStream: state.activeUser.userStream,
                         inProximity: state.activeUser.inProximity
                     }
@@ -288,7 +289,7 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
 
         // After timeout message will be deleted
         if (messageTimeout[fromId]) clearTimeout(messageTimeout[fromId])
-        messageTimeout[fromId] = setTimeout(() => dispatch(destroyMessage(fromId)), 6000)
+        messageTimeout[fromId] = window.setTimeout(() => dispatch(destroyMessage(fromId)), 6000)
     }
 }
 

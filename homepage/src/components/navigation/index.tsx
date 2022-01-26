@@ -1,6 +1,6 @@
 import './style.scss'
 import {Logo} from "./Logo";
-import {IoMenu} from "react-icons/all";
+import {IoMenu} from "react-icons/io5";
 import {useState} from "react";
 import {AuthButtons} from "./AuthButtons";
 import {NavButtons} from "./NavButtons";

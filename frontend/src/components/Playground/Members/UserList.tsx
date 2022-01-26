@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import './style.scss';
 import {User} from "../../../store/model/model";
-import {FaCrown, IoHandRight, IoTrashOutline} from "react-icons/all";
+import {IoHandRight, IoTrashOutline} from "react-icons/io5";
 import {Tooltip} from "@mui/material";
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
@@ -17,6 +17,7 @@ import {
 } from "../../../store/spaceSlice";
 import {handleError, handleSuccess} from "../../../store/statusSlice";
 import {sendLogout} from "../../../store/webSocketSlice";
+import {FaCrown} from "react-icons/fa";
 
 interface OwnProps {
     type: "users" | "friends"

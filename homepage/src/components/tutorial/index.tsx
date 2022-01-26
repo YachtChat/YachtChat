@@ -1,10 +1,11 @@
-import {BiMouse, IoArrowForward, IoHelpBuoyOutline, IoVolumeHigh} from "react-icons/all";
+import {IoHelpBuoyOutline, IoVolumeHigh} from "react-icons/io5";
 import React from "react";
 import "./style.scss"
-import {applicationName, FRONTEND_URL} from "../../util/config";
+import {applicationName} from "../../util/config";
 import {JoinButton} from "../joinButton";
 import {Separator} from "../separator";
 import {SUPPORT} from "../../util/config";
+import {BiMouse} from "react-icons/all";
 
 export function Tutorial() {
     return (

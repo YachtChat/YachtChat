@@ -1,5 +1,5 @@
 import Wrapper from "../../Wrapper";
-import {IoMoon, IoMoonOutline} from "react-icons/all";
+import {IoMoon, IoMoonOutline} from "react-icons/io5";
 import React from "react";
 import {connect} from "react-redux";
 import {RootState} from "../../../store/utils/store";

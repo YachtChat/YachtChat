@@ -63,7 +63,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
     socket.onopen = () => {
         dispatch(connect())
         dispatch(requestLogin())
-        heartBeat = setInterval(() => {
+        heartBeat = window.setInterval(() => {
             dispatch(send({type: "ping"}));
         }, 5000);
     }

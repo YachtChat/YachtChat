@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/mediaSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@mui/material";
-import {IoCopyOutline, IoMicOffOutline, IoTvOutline, IoVideocamOffOutline} from "react-icons/all";
+import {IoCopyOutline, IoMicOffOutline, IoTvOutline, IoVideocamOffOutline} from "react-icons/io5";
 import {handleError, handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils/utils";
 import {centerUser} from "../../store/playgroundSlice";
@@ -133,7 +133,7 @@ export class UserComponent extends Component<Props, State> {
 
         // Only open the messages panel after 0.5s
         if (!this.openTimeout)
-            this.openTimeout = setTimeout(() => {
+            this.openTimeout = window.setTimeout(() => {
                 this.setState({
                     hovered: true,
                     onMessages: !!onMessages
@@ -149,7 +149,7 @@ export class UserComponent extends Component<Props, State> {
             clearTimeout(this.openTimeout)
             this.openTimeout = undefined
         }
-        this.closeTimeout = setTimeout(() =>
+        this.closeTimeout = window.setTimeout(() =>
                 this.setState({
                     hovered: false,
                     onMessages: false

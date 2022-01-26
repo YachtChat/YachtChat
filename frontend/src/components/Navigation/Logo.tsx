@@ -1,6 +1,6 @@
 import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
-import {IoLink} from "react-icons/all";
+import {IoLink} from "react-icons/io5";
 import React from "react";
 import {copyInviteLink} from "../../store/utils/utils";
 import {Tooltip} from "@mui/material";

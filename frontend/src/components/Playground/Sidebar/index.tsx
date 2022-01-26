@@ -16,7 +16,7 @@ import {
     IoPeople,
     IoTv,
     IoTvOutline
-} from "react-icons/all";
+} from "react-icons/io5";
 import MessageComponent from "./Message";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {handleSuccess} from "../../../store/statusSlice";

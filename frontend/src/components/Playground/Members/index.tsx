@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Dialog from '@mui/material/Dialog';
 import {connect} from "react-redux";
-import {IoCloseOutline, IoLink} from "react-icons/all";
+import {IoCloseOutline, IoLink} from "react-icons/io5";
 import UserList from "./UserList";
 import {RootState} from "../../../store/utils/store";
 import {FRONTEND_URL} from "../../../store/utils/config";

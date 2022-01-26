@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 import './style.scss';
-import {IoChevronBack, IoWifi} from "react-icons/all";
+import {IoChevronBack, IoWifi} from "react-icons/io5";
 import {CircularProgress, Fade} from "@mui/material";
 import Navigation from "../Navigation";
-import {Route, Link} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 interface Props {
     className?: string
@@ -26,7 +26,7 @@ export class Wrapper extends Component<Props> {
                         </div>
                     </Fade>
                 </div>
-                <Route path={"/:site/"} children={<Navigation/>}/>
+                <Navigation/>
             </div>
         )
     }

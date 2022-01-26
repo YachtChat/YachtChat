@@ -1,8 +1,8 @@
-import {IoAddOutline, IoChatbubblesOutline, IoCogOutline, IoPeopleOutline} from "react-icons/all";
+import {IoAddOutline, IoChatbubblesOutline, IoCogOutline, IoPeopleOutline} from "react-icons/io5";
 import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
 import {SUPPORT_URL} from "../../store/utils/config";
-import {push} from "connected-react-router";
+import {push} from "redux-first-history";
 
 interface OwnProps {
     spaceID?: string

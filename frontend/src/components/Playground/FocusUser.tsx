@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {getStream} from "../../store/mediaSlice";
 import {RootState} from "../../store/utils/store";
 import {getUserByIdWrapped} from "../../store/userSlice";
-import {IoCloseOutline} from "react-icons/all";
+import {IoCloseOutline} from "react-icons/io5";
 import Sidebar from "./Sidebar";
 import {UserWrapper} from "../../store/model/UserWrapper";
 import {Dialog, Tooltip, Zoom} from "@mui/material";
@@ -149,7 +149,7 @@ export class FocusUser extends Component<Props, State> {
     // Reset timer for the idle time
     resetTimer() {
         clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
+        this.timer = window.setTimeout(() => {
             this.setState({
                 idle: true
             })

@@ -10,7 +10,7 @@ import {
     IoCogOutline, IoCreateOutline,
     IoEllipsisHorizontal, IoPeopleOutline,
     IoTrashOutline
-} from "react-icons/all";
+} from "react-icons/io5";
 import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
 import {SUPPORT_URL} from "../../store/utils/config";
@@ -48,7 +48,7 @@ export class Spaces extends Component<Props, State> {
 
     componentDidMount() {
         this.props.requestSpaces()
-        this.requestInterval = setInterval(() => this.props.requestSpaces(), 2000)
+        this.requestInterval = window.setInterval(() => this.props.requestSpaces(), 2000)
     }
 
     componentWillUnmount() {

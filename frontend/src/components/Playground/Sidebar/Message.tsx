@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {sendMessage} from "../../../store/webSocketSlice";
-import {IoCloseOutline} from "react-icons/all";
+import {IoCloseOutline} from "react-icons/io5";
 import {Popover} from "@mui/material";
 import {handleError} from "../../../store/statusSlice";
 

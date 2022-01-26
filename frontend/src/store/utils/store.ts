@@ -6,14 +6,17 @@ import spaceSlice from "../spaceSlice";
 import statusSlice from "../statusSlice";
 import authSlice from "../authSlice";
 import playgroundSlice from "../playgroundSlice";
-import {connectRouter, routerMiddleware} from 'connected-react-router';
 import {createBrowserHistory} from 'history'
+import {createReduxHistoryContext} from "redux-first-history";
 
-export const history = createBrowserHistory()
+const { createReduxHistory, routerMiddleware, routerReducer } = createReduxHistoryContext({
+  history: createBrowserHistory(),
+  //other options if needed
+});
 
 export const store = configureStore({
   reducer: {
-    router: connectRouter<unknown>(history),
+    router: routerReducer,
     userState: userReducer,
     webSocket: webSocketSlice,
     media: mediaSlice,
@@ -22,9 +25,10 @@ export const store = configureStore({
     playground: playgroundSlice,
     auth: authSlice,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(routerMiddleware(history)),
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(routerMiddleware),
 });
 
+export const history = createReduxHistory(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,

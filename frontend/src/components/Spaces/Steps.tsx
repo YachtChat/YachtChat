@@ -1,5 +1,5 @@
 import {Step, StepIconProps, StepLabel, Stepper} from "@mui/material";
-import {IoCheckmark} from "react-icons/all";
+import {IoCheckmark} from "react-icons/io5";
 
 interface Props {
     active: number

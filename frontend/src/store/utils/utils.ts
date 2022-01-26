@@ -13,8 +13,8 @@ import {FRONTEND_URL} from "./config";
 import {handleError, handleSuccess} from "../statusSlice";
 import {getInvitationToken, getToken} from "../spaceSlice";
 import posthog from "posthog-js";
-import {push} from "connected-react-router";
 import {destroySession} from "../destroySession";
+import {push} from "redux-first-history";
 
 export function getCookie(cname: string) {
     const name = cname + "=";
@@ -98,7 +98,7 @@ export function applyVirtualBackground(stream: MediaStream, kind?: string, camer
         background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Transparent);
     } else if (kind === "image") {
         const image = new Image()
-        image.src = URL.createObjectURL("")
+        //image.src = URL.createObjectURL("")
         background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, image);
     } else if (kind === "yacht") {
         const image = new Image()
@@ -224,11 +224,11 @@ export const copyInviteLink = (spaceID: string): AppThunk => (dispatch, getState
 
     const token = getToken(getState(), spaceID)
 
-    if (token) {
+    if (!token) {
         getInvitationToken(getState(), spaceID).then(inviteToken => {
             tokenToLink(inviteToken)
         }).catch(() => dispatch(handleError("Unable to request token")))
     } else {
-        tokenToLink(token!)
+        tokenToLink(token)
     }
 }

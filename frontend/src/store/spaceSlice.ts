@@ -5,9 +5,9 @@ import axios from "axios";
 import {handleError, handleSuccess} from "./statusSlice";
 import {complete_spaces_url, SOCKET_PORT, SOCKET_URL, SPACES_URL} from "./utils/config";
 import {getHeaders} from "./authSlice";
-import {push} from "connected-react-router";
 import {getUser, getUserID, submitMovement} from "./userSlice";
 import {handleRTCEvents} from "./rtc";
+import {push} from "redux-first-history";
 
 // either the spaces server is run locally or on the server
 
@@ -156,7 +156,7 @@ export const resetSpace = (): AppThunk => (dispatch) => {
 
 export const getInvitationToken = (state: RootState, spaceID: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
-        if (getToken(state, spaceID)) {
+        if (!!getToken(state, spaceID)) {
             resolve(getToken(state, spaceID)!)
             return
         }
