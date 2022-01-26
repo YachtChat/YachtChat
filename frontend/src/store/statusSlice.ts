@@ -43,7 +43,7 @@ export const handleError = (error: string, e?: any): AppThunk => (dispatch, getS
     const id = getState().status.counter
     dispatch(addStatusMessage({ type: StatusType.error, id: 0, message: error}))
     setTimeout(() => dispatch(removeStatusMessage(id)), 6000)
-    posthog.capture("[ERROR] " + error)
+    posthog.capture("error", { message: error, error: e.toString() })
 }
 
 export const handleSuccess = (success: string): AppThunk => (dispatch, getState) => {
@@ -56,7 +56,7 @@ export const handleSuccess = (success: string): AppThunk => (dispatch, getState)
 
 export const handleInfo = (info: string): AppThunk => () => {
     console.log(info)
-    posthog.capture("[INFO] " + info)
+    posthog.capture("info", {message: info})
 }
 
 export default statusSlice.reducer;
