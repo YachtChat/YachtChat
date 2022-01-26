@@ -94,7 +94,7 @@ class UserList extends Component<Props> {
                     </Link>
                 </div>
                 {users.map((u, idx) => (
-                    <div className={"item " + ((idx > 0) ? "separator" : "")}>
+                    <div key={idx} className={"item " + ((idx > 0) ? "separator" : "")}>
                         <div className={"iconButton profilePic"}
                              style={{backgroundImage: `url(${u.profile_image})`}}/>
                         {u.firstName} {u.lastName}

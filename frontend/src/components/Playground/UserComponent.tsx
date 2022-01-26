@@ -262,8 +262,8 @@ export class UserComponent extends Component<Props, State> {
                                         <div className={"messagesWrapper"}>
                                             {this.props.messages.length > 0 &&
                                                 <table cellSpacing="0" cellPadding="0" className={"clickable"}>
-                                                    {this.props.messages.map((m) =>
-                                                        <tr className={"clickable message"}>
+                                                    {this.props.messages.map((m, idx) =>
+                                                        <tr key={m.time + idx.toString()} className={"clickable message"}>
                                                             <td className={"clickable"}>
                                                                 <label className={"clickable"}>{m.time}</label>
                                                             </td>
