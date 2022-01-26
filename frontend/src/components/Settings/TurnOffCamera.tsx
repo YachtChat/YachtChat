@@ -22,7 +22,7 @@ export function TurnOffCamera(props: Props) {
                 conferencing tools – especially on Microsoft Windows.
 
                 <h2>Solution</h2>
-                To avoid this we recommend to install a virtual camera software. <br/>
+                To avoid this we recommend installing virtual camera software. <br/>
                 Alternatively, you can also let us automatically disable your camera
                 when {applicationName} enters the background.
                 <br/>
@@ -30,7 +30,7 @@ export function TurnOffCamera(props: Props) {
                 To learn more about this topic click below:
                 <br/>
                 <br/>
-                <a className={"button"} href={SUPPORT_URL}>Learn more <IoArrowForward/></a>
+                <a className={"button"} href={SUPPORT_URL + "/docs/Troubleshooting/background_video"}>Learn more <IoArrowForward/></a>
                 <br/>
             </div>
         } arrow placement={"top"}>
