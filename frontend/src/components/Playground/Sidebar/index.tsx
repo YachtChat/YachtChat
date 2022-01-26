@@ -51,7 +51,7 @@ interface Props {
 
 interface State {
     confirmlogout: boolean
-    open: { [component: string]: boolean }
+    open: { [component: string]: boolean | undefined }
 }
 
 export class NavigationBar extends Component<Props, State> {
@@ -213,7 +213,7 @@ export class NavigationBar extends Component<Props, State> {
                                             <div>
                                                 <MessageComponent button={this.anchorRef.current}
 
-                                                                  open={this.state.open["messages"]}
+                                                                  open={!!this.state.open["messages"]}
                                                                   onClose={() => this.handleClose("messages")}/>
                                             </div>
                                         </li>
@@ -268,7 +268,7 @@ export class NavigationBar extends Component<Props, State> {
                                                 </Tooltip>
                                             </div>
                                             <div>
-                                                <MembersComponent open={this.state.open["users"]}
+                                                <MembersComponent open={!!this.state.open["users"]}
                                                                   spaceID={this.props.spaceID}
                                                                   onClose={() => this.handleClose("users")}/>
                                             </div>
@@ -291,7 +291,7 @@ export class NavigationBar extends Component<Props, State> {
                                                 </Tooltip>
                                             </div>
                                             <div>
-                                                <Settings open={this.state.open["settings"]}
+                                                <Settings open={!!this.state.open["settings"]}
                                                           onClose={() => this.handleClose("settings")}/>
                                             </div>
                                         </li>
