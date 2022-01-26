@@ -13,6 +13,7 @@ export const applicationName: string = "Yacht.Chat"
 // `REACT_APP_SOCKET_URL=ws://localhost:6503` ... yarn run start
 
 export const complete_spaces_url: String = !SPACES_PORT ? "https://" + SPACES_URL : "http://" + SPACES_URL + ":" + SPACES_PORT
+export const complete_socket_url_http: String = !SOCKET_PORT ? "https://" + SOCKET_URL : "http://" + SOCKET_URL + ":" + SOCKET_PORT
 
 export const rtcConfiguration = {
     iceTransportPolicy: "all",// set to "relay" to force TURN.

@@ -3,7 +3,7 @@ import {Space} from "./model/model";
 import {AppThunk, RootState} from "./utils/store";
 import axios from "axios";
 import {handleError, handleSuccess} from "./statusSlice";
-import {complete_spaces_url, SOCKET_PORT, SOCKET_URL, SPACES_URL} from "./utils/config";
+import {complete_socket_url_http, complete_spaces_url, SPACES_URL} from "./utils/config";
 import {getHeaders} from "./authSlice";
 import {getUser, getUserID, submitMovement} from "./userSlice";
 import {handleRTCEvents} from "./rtc";
@@ -77,7 +77,7 @@ export const requestSpaces = (): AppThunk => (dispatch, getState) => {
         axios.get(complete_spaces_url + "/api/v1/spaces/", header).then(spaceResponse => {
             const ids = spaceResponse.data.map((d: { id: string }) => d.id)
             let spaces = spaceResponse.data
-            axios.post("http://" + SOCKET_URL + ":" + SOCKET_PORT + "/api/v1/space/members", ids, header).then(onlineUserResponse => {
+            axios.post(complete_socket_url_http + "/api/v1/space/members", ids, header).then(onlineUserResponse => {
                 spaces = spaceResponse.data.map((d: Space) => {
                     getInvitationToken(getState(), d.id).then(inviteToken => dispatch(setInviteToken({
                         spaceid: d.id,
