@@ -174,24 +174,24 @@ function isOS() {
 }
 
 export const copyToClipboard = (message: string): Promise<void> => {
-    const textArea = document.createElement('input') as HTMLInputElement;
-    textArea.value = message
-    document.body.appendChild(textArea);
-
-    if (!isOS()) {
-        const range = document.createRange();
-        range.selectNodeContents(textArea);
-        const selection = window.getSelection();
-        selection!.removeAllRanges();
-        selection!.addRange(range);
-        textArea.setSelectionRange(0, 999999);
-    } else {
-        textArea.select();
-    }
-
     if (navigator.clipboard) {
-        return navigator.clipboard.writeText(textArea.value)
+        return navigator.clipboard.writeText(message)
     } else if (document.execCommand) {
+        const textArea = document.createElement('input') as HTMLInputElement;
+        textArea.value = message
+        document.body.appendChild(textArea);
+
+        if (!isOS()) {
+            const range = document.createRange();
+            range.selectNodeContents(textArea);
+            const selection = window.getSelection();
+            selection!.removeAllRanges();
+            selection!.addRange(range);
+            textArea.setSelectionRange(0, 999999);
+        } else {
+            textArea.select();
+        }
+
         return new Promise<void>((resolve, reject) => {
             const success = document.execCommand('copy', true, "message")
             document.body.removeChild(textArea);
@@ -204,7 +204,6 @@ export const copyToClipboard = (message: string): Promise<void> => {
     } else {
         return new Promise<void>((resolve, reject) => {
             reject()
-            document.body.removeChild(textArea);
         })
     }
 }
