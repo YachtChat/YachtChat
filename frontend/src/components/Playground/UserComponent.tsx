@@ -237,37 +237,38 @@ export class UserComponent extends Component<Props, State> {
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                      className={"User " + this.props.className}
                      style={userStyle}>
-                    <Popper placement={"bottom"}
-                            data-class={"clickable"}
-                            onClick={() => this.setState({hovered: false})}
-                            anchorEl={this.mediaElement.current}
-                            open={true}>
-                        <Grow in={this.state.hovered && !this.props.selected && user.inProximity} unmountOnExit>
-                            <div onMouseOver={() => {
-                                this.mouseOver(true)
-                            }}
-                                 onMouseLeave={() => {
-                                     this.mouseOut()
-                                 }}
-                                 onWheel={e => e.stopPropagation()}
-                                 className={"messages clickable"}>
-                                <label className={"clickable"}>
-                                    {(this.props.isActiveUser) &&
-                                        "Your "}
-                                    {(!this.props.isActiveUser) &&
-                                        user.firstName + "'s "}
-                                    Messages</label>
-                                <Collapse in={this.state.onMessages} unmountOnExit>
-                                    <div className={"messagesWrapper"}>
-                                        {this.props.messages.length > 0 &&
-                                            <table cellSpacing="0" cellPadding="0" className={"clickable"}>
-                                                {this.props.messages.map((m) =>
-                                                    <tr className={"clickable message"}>
-                                                        <td className={"clickable"}>
-                                                            <label className={"clickable"}>{m.time}</label>
-                                                        </td>
-                                                        <td className={"clickable"}><span ref={this.messagesEnd}
-                                                                                          className={"clickable"}>
+                    {this.mediaElement.current &&
+                        <Popper placement={"bottom"}
+                                data-class={"clickable"}
+                                onClick={() => this.setState({hovered: false})}
+                                anchorEl={this.mediaElement.current ?? null}
+                                open={true}>
+                            <Grow in={this.state.hovered && !this.props.selected && user.inProximity} unmountOnExit>
+                                <div onMouseOver={() => {
+                                    this.mouseOver(true)
+                                }}
+                                     onMouseLeave={() => {
+                                         this.mouseOut()
+                                     }}
+                                     onWheel={e => e.stopPropagation()}
+                                     className={"messages clickable"}>
+                                    <label className={"clickable"}>
+                                        {(this.props.isActiveUser) &&
+                                            "Your "}
+                                        {(!this.props.isActiveUser) &&
+                                            user.firstName + "'s "}
+                                        Messages</label>
+                                    <Collapse in={this.state.onMessages} unmountOnExit>
+                                        <div className={"messagesWrapper"}>
+                                            {this.props.messages.length > 0 &&
+                                                <table cellSpacing="0" cellPadding="0" className={"clickable"}>
+                                                    {this.props.messages.map((m) =>
+                                                        <tr className={"clickable message"}>
+                                                            <td className={"clickable"}>
+                                                                <label className={"clickable"}>{m.time}</label>
+                                                            </td>
+                                                            <td className={"clickable"}><span ref={this.messagesEnd}
+                                                                                              className={"clickable"}>
                                                             {(
                                                                 m.message.toLocaleLowerCase().startsWith("http") ||
                                                                 m.message.toLocaleLowerCase().startsWith("www.") ||
@@ -282,41 +283,42 @@ export class UserComponent extends Component<Props, State> {
                                                                 >{m.message}</a> :
                                                                 m.message}
                                                         </span></td>
-                                                        <Tooltip title={"Copy message"} arrow placement={"right"}>
-                                                            <td className={"clickable"}>
-                                                                <IoCopyOutline
-                                                                    className={"icon clickable"} onClick={(e) => {
-                                                                    e.preventDefault()
-                                                                    e.nativeEvent.preventDefault()
-                                                                    e.stopPropagation()
-                                                                    e.nativeEvent.stopPropagation()
-                                                                    navigator.clipboard.writeText(this.props.user.message ?? "").then(() => {
-                                                                        this.props.success("Copied message")
-                                                                    }).catch(e => {
-                                                                        this.props.error("Cannot copy message", e)
-                                                                    })
-                                                                }}/>
-                                                            </td>
-                                                        </Tooltip>
-                                                    </tr>
-                                                )}
-                                            </table>}
-                                        {this.props.messages.length === 0 &&
-                                            <table cellSpacing="0" cellPadding="0" className={"clickable"}>
-                                                <tr className={"clickable message"}>
-                                                    <td>
+                                                            <Tooltip title={"Copy message"} arrow placement={"right"}>
+                                                                <td className={"clickable"}>
+                                                                    <IoCopyOutline
+                                                                        className={"icon clickable"} onClick={(e) => {
+                                                                        e.preventDefault()
+                                                                        e.nativeEvent.preventDefault()
+                                                                        e.stopPropagation()
+                                                                        e.nativeEvent.stopPropagation()
+                                                                        navigator.clipboard.writeText(this.props.user.message ?? "").then(() => {
+                                                                            this.props.success("Copied message")
+                                                                        }).catch(e => {
+                                                                            this.props.error("Cannot copy message", e)
+                                                                        })
+                                                                    }}/>
+                                                                </td>
+                                                            </Tooltip>
+                                                        </tr>
+                                                    )}
+                                                </table>}
+                                            {this.props.messages.length === 0 &&
+                                                <table cellSpacing="0" cellPadding="0" className={"clickable"}>
+                                                    <tr className={"clickable message"}>
+                                                        <td>
                                                             <span>
                                                                 No messages yet.
                                                             </span>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        }
-                                    </div>
-                                </Collapse>
-                            </div>
-                        </Grow>
-                    </Popper>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            }
+                                        </div>
+                                    </Collapse>
+                                </div>
+                            </Grow>
+                        </Popper>
+                    }
                     <Tooltip TransitionComponent={Zoom} open={!!this.props.user.message}
                              data-class={"clickable"}
                              title={
@@ -352,7 +354,8 @@ export class UserComponent extends Component<Props, State> {
                                            (((!screen && !video) || (!inRange && screen))) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
-                            {(this.props.user.userStream && user.screen && !inRange) && <IoTvOutline className={"loader"} />}
+                            {(this.props.user.userStream && user.screen && !inRange) &&
+                                <IoTvOutline className={"loader"}/>}
                             {!this.props.user.userStream &&
                                 <CircularProgress className={"loader"}/>
                             }
@@ -393,7 +396,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     center: () => dispatch(centerUser(ownProps.user.user)),
     success: (s: string) => dispatch(handleSuccess(s)),
-    error: (s: string, e?: any) => dispatch(handleError(s,e))
+    error: (s: string, e?: any) => dispatch(handleError(s, e))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserComponent)
