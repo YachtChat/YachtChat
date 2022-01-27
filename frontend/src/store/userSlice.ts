@@ -101,6 +101,8 @@ export const userSlice = createSlice({
         resetUsers: (state) => {
             state.spaceUsers = {}
             state.messages = []
+            state.activeUser.position = undefined
+            state.activeUser.userStream = { audio: undefined, video: undefined, screen: undefined }
         },
         setMessage: (state, action: PayloadAction<{ message: string, id: string }>) => {
             if (state.spaceUsers[action.payload.id])
