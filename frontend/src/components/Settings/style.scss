@@ -80,13 +80,26 @@
 .settings {
   box-sizing: border-box;
   overflow-y: auto;
-  width: 800px;
+  #width: 800px;
+  width: 100%;
   max-width: 100%;
   text-align: left;
   height: 100%;
   display: flex;
   flex-direction: column;
   padding: 2rem;
+
+  .headlineBox {
+    width: 800px;
+    max-width: 100%;
+    margin: auto;
+  }
+
+  .content {
+    width: 800px;
+    max-width: 100%;
+    margin: auto;
+  }
 
   .mediaSettings {
     width: 100%;
