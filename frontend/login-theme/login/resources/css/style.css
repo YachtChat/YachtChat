@@ -219,7 +219,6 @@ label, .required {
     background: white;
     border-radius: 0.5rem;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-    overflow-y: auto;
 }
 @media (prefers-color-scheme: dark) {
     .content {
@@ -261,8 +260,9 @@ label, .required {
     transform: translate(-50%, -50%);
     box-sizing: border-box;
     font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    width: 100%;
-    max-width: 800px;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
 }
 @media (prefers-color-scheme: dark) {
     .contentBox {
@@ -324,7 +324,6 @@ label, .required {
     font-size: 0.6rem;
     background-color: #b9c2d0;
     padding: 0.25rem 0.5rem;
-    height: auto;
     margin: 0;
 }
 #navigation .authentification {
@@ -598,7 +597,9 @@ label, .required {
 .login-box {
     width: 100%;#600px;
     overflow: auto;
-    max-height: 100vh;
+    max-width: 800px;
+    margin: auto;
+    box-sizing: border-box;
 
 }
 .login-box form {
@@ -637,7 +638,6 @@ label, .required {
     border-radius: 0.5rem;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
     display: flex;
-    overflow: auto;
     flex-direction: column;
     position: relative;
     text-align: left;
@@ -740,13 +740,13 @@ label, .required {
 }
 
 .fa-google {
-  background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) 73% 55%/150% 150% no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+    background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) 73% 55%/150% 150% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
 }
 .fa-linkedin {
-  background: #2867B2;
-  color: white;
+    background: #2867B2;
+    color: white;
 }
