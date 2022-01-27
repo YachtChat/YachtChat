@@ -4,7 +4,7 @@ import React, {useState} from "react";
 import AuthButtons from "./AuthButtons";
 import NavButtons from "./NavButtons";
 import Logo from "./Logo";
-import {Link, useParams} from "react-router-dom";
+import {Link, matchPath, useLocation, useMatch, useParams} from "react-router-dom";
 
 interface Props {
     title?: string
@@ -14,7 +14,7 @@ interface Props {
 export const Navigation = (props: Props) => {
 
     const [open, setOpen] = useState(false)
-    const {site} = useParams<{site: string}>()
+    const site = useMatch("/:site/*")?.params.site
 
     return (
         <header id={"navigation"}>

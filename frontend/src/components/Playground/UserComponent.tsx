@@ -260,17 +260,18 @@ export class UserComponent extends Component<Props, State> {
                                         Messages</label>
                                     <Collapse in={this.state.onMessages} unmountOnExit>
                                         <div className={"messagesWrapper"}>
-                                            {this.props.messages.length > 0 &&
-                                                <table cellSpacing="0" cellPadding="0" className={"clickable"}>
-                                                    <tbody>
-
+                                            <table cellSpacing="0" cellPadding="0" className={"clickable"}>
+                                                <tbody>
+                                                {this.props.messages.length > 0 &&
+                                                    <>
                                                     {this.props.messages.map((m, idx) =>
-                                                        <tr key={m.time + idx.toString()} className={"clickable message"}>
-                                                            <td className={"clickable"}>
-                                                                <label className={"clickable"}>{m.time}</label>
-                                                            </td>
-                                                            <td className={"clickable"}><span ref={this.messagesEnd}
-                                                                                              className={"clickable"}>
+                                                                <tr key={m.time + idx.toString()}
+                                                                    className={"clickable message"}>
+                                                                    <td className={"clickable"}>
+                                                                        <label className={"clickable"}>{m.time}</label>
+                                                                    </td>
+                                                                    <td className={"clickable"}><span ref={this.messagesEnd}
+                                                                                                      className={"clickable"}>
                                                             {(
                                                                 m.message.toLocaleLowerCase().startsWith("http") ||
                                                                 m.message.toLocaleLowerCase().startsWith("www.") ||
@@ -285,28 +286,30 @@ export class UserComponent extends Component<Props, State> {
                                                                 >{m.message}</a> :
                                                                 m.message}
                                                         </span></td>
-                                                            <Tooltip title={"Copy message"} arrow placement={"right"}>
-                                                                <td className={"clickable"}>
-                                                                    <IoCopyOutline
-                                                                        className={"icon clickable"} onClick={(e) => {
-                                                                        e.preventDefault()
-                                                                        e.nativeEvent.preventDefault()
-                                                                        e.stopPropagation()
-                                                                        e.nativeEvent.stopPropagation()
-                                                                        navigator.clipboard.writeText(this.props.user.message ?? "").then(() => {
-                                                                            this.props.success("Copied message")
-                                                                        }).catch(e => {
-                                                                            this.props.error("Cannot copy message", e)
-                                                                        })
-                                                                    }}/>
-                                                                </td>
-                                                            </Tooltip>
-                                                        </tr>
-                                                    )}
-                                                    </tbody>
-                                                </table>}
-                                            {this.props.messages.length === 0 &&
-                                                <table cellSpacing="0" cellPadding="0" className={"clickable"}>
+                                                                    <Tooltip title={"Copy message"} arrow
+                                                                             placement={"right"}>
+                                                                        <td className={"clickable"}>
+                                                                            <IoCopyOutline
+                                                                                className={"icon clickable"}
+                                                                                onClick={(e) => {
+                                                                                    e.preventDefault()
+                                                                                    e.nativeEvent.preventDefault()
+                                                                                    e.stopPropagation()
+                                                                                    e.nativeEvent.stopPropagation()
+                                                                                    navigator.clipboard.writeText(this.props.user.message ?? "").then(() => {
+                                                                                        this.props.success("Copied message")
+                                                                                    }).catch(e => {
+                                                                                        this.props.error("Cannot copy message", e)
+                                                                                    })
+                                                                                }}/>
+                                                                        </td>
+                                                                    </Tooltip>
+                                                                </tr>
+                                                        )
+                                                    }
+                                                    </>
+                                                }
+                                                {this.props.messages.length === 0 &&
                                                     <tr className={"clickable message"}>
                                                         <td>
                                                             <span>
@@ -314,8 +317,9 @@ export class UserComponent extends Component<Props, State> {
                                                             </span>
                                                         </td>
                                                     </tr>
-                                                </table>
-                                            }
+                                                }
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </Collapse>
                                 </div>
