@@ -262,6 +262,8 @@ export class UserComponent extends Component<Props, State> {
                                         <div className={"messagesWrapper"}>
                                             {this.props.messages.length > 0 &&
                                                 <table cellSpacing="0" cellPadding="0" className={"clickable"}>
+                                                    <tbody>
+
                                                     {this.props.messages.map((m, idx) =>
                                                         <tr key={m.time + idx.toString()} className={"clickable message"}>
                                                             <td className={"clickable"}>
@@ -301,6 +303,7 @@ export class UserComponent extends Component<Props, State> {
                                                             </Tooltip>
                                                         </tr>
                                                     )}
+                                                    </tbody>
                                                 </table>}
                                             {this.props.messages.length === 0 &&
                                                 <table cellSpacing="0" cellPadding="0" className={"clickable"}>
