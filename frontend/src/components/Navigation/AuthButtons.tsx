@@ -80,7 +80,7 @@ export class AuthButtons extends Component<Props, State> {
                             {...TransitionProps}
                             style={{transformOrigin: placement === 'bottom' ? 'top' : 'top'}}
                         >
-                            <Paper>
+                            <Paper sx={{ bgcolor: "#202020" }}>
                                 <ClickAwayListener onClickAway={this.handleClose.bind(this)}>
                                     <MenuList autoFocusItem={open} id="menu-list-grow">
                                         {/*<Link to={""}>*/}
