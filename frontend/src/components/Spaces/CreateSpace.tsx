@@ -66,7 +66,7 @@ export class CreateSpace extends Component<Props, State> {
                     <input value={this.state.spaceName}
                            placeholder={"space name"}
                            onChange={({target: {value}}) => this.setState({spaceName: value})} type={"text"}/>
-                    <input type={"submit"} title={"Create Space"} />
+                    <input type={"submit"} value={"Create Space"} />
                 </form>
             </Wrapper>
         );
