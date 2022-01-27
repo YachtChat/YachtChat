@@ -86,7 +86,7 @@ export class CreateSpace extends Component<Props, State> {
 
                         <Link to={"/spaces/" + this.props.params.spaceID}>
                             <button className={"outlined submit"}>
-                                Join space {this.state.invite ? "" : "allone"} <IoArrowForward/>
+                                Join space {this.state.invite ? "" : "alone"} <IoArrowForward/>
                             </button>
                         </Link>
                     </Tooltip>
