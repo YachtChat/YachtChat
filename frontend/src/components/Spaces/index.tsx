@@ -17,11 +17,13 @@ import {SUPPORT_URL} from "../../store/utils/config";
 import {copyInviteLink} from "../../store/utils/utils";
 import {CircularProgress, Collapse, Fade, Menu, MenuItem, Tooltip} from "@mui/material";
 import {TransitionGroup} from "react-transition-group";
+import {destroySession} from "../../store/destroySession";
 
 interface Props {
     spaces: Space[]
     logout: () => void
     requestSpaces: () => void
+    destroySession: () => void
     invite: (s: string) => void
     deleteSpaceForUser: (id: string) => void
 }
@@ -48,6 +50,7 @@ export class Spaces extends Component<Props, State> {
 
     componentDidMount() {
         this.props.requestSpaces()
+        this.props.destroySession()
         this.requestInterval = window.setInterval(() => this.props.requestSpaces(), 2000)
     }
 
@@ -206,6 +209,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: any) => ({
     requestSpaces: () => dispatch(requestSpaces()),
+    destroySession: () => dispatch(destroySession()),
     logout: () => dispatch(logout()),
     deleteSpaceForUser: (id: string) => dispatch(deleteSpaceForUser(id)),
     invite: (s: string) => dispatch(copyInviteLink(s)),

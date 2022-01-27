@@ -18,6 +18,7 @@ import {spaceSetupReady} from "./spaceSlice";
 interface UserState {
     activeUser: User
     spaceUsers: { [key: string]: User },
+    inRange: { [key: string]: boolean },
     messages: Message[]
 }
 
@@ -28,6 +29,7 @@ const initialState: UserState = {
         userStream: {video: undefined, audio: undefined, screen: undefined}
     },
     spaceUsers: {},
+    inRange: {},
     messages: []
 };
 
@@ -101,6 +103,7 @@ export const userSlice = createSlice({
         resetUsers: (state) => {
             state.spaceUsers = {}
             state.messages = []
+            state.inRange = {}
             state.activeUser.position = undefined
             state.activeUser.userStream = { audio: undefined, video: undefined, screen: undefined }
         },
@@ -125,9 +128,9 @@ export const userSlice = createSlice({
         },
         setInRange: (state, action: PayloadAction<{ id: string, event: boolean }>) => {
             if (state.spaceUsers[action.payload.id])
-                state.spaceUsers[action.payload.id].inRange = action.payload.event
+                state.inRange[action.payload.id] = action.payload.event
             if (state.activeUser.id === action.payload.id)
-                state.activeUser.inRange = action.payload.event
+                state.inRange[action.payload.id] = action.payload.event
         },
     },
 });
@@ -218,7 +221,7 @@ export const handleSpaceUser = (userId: string, position: UserCoordinates, video
             dispatch(setMedia({id: userId, type: MediaType.VIDEO, state: video}))
             dispatch(setMedia({id: userId, type: MediaType.AUDIO, state: audio}))
             // if the user.id is ourselves skip the next steps
-            if (getUser(getState()).id !== userId) {
+            if (getUserID(getState()) !== userId) {
                 // isCaller is true if this is a reconncetion and the local user was the previous caller
                 // if isCaller is undefined it can be treated as false
                 dispatch(handleRTCEvents(userId, !!isCaller))

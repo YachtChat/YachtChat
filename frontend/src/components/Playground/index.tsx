@@ -57,7 +57,6 @@ export class Playground extends Component<Props, State> {
     componentDidMount() {
         this.props.initPlayground()
         this.props.loadMediaDevices(() => {
-            console.log(this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
             if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
                 this.props.requestUserMedia(this.props.params.spaceID, true, true)
         })

@@ -97,7 +97,7 @@ export class UserWrapper implements User {
     }
 
     public get inRange(): boolean {
-        return !!this.user.inRange
+        return !!UserWrapper.getState().userState.inRange[this.id]
     }
 
     public get userStream(): Record<MediaType, string | undefined> {

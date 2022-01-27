@@ -4,7 +4,7 @@ import React, {useState} from "react";
 import AuthButtons from "./AuthButtons";
 import NavButtons from "./NavButtons";
 import Logo from "./Logo";
-import {Link, matchPath, useLocation, useMatch, useParams} from "react-router-dom";
+import {Link, useMatch} from "react-router-dom";
 
 interface Props {
     title?: string

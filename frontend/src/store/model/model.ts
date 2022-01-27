@@ -10,7 +10,6 @@ export interface User {
 
     message?: string
     inProximity?: boolean // if in my proximity
-    inRange?: boolean // if in their proximity
     userStream: Record<MediaType, string | undefined>
     position?: UserCoordinates
 }

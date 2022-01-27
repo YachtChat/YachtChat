@@ -117,7 +117,6 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 dispatch(handleMessage(data.content, data.sender_id))
                 break;
             case "range":
-                if (!joinedSpace) break;
                 dispatch(setInRange(data))
                 break;
             case "kick":
