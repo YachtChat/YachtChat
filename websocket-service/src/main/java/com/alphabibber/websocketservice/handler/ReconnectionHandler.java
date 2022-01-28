@@ -21,6 +21,7 @@ public class ReconnectionHandler {
      * @param userId: id of the previous callee
      */
     public void handleReconnection(Map<String, User> room, User sender, String userId){
+        log.warn("Reconnection between {} and {} was triggered", sender.getId(), userId);
 
         User target = null;
         for (User u: room.values()){

@@ -14,7 +14,7 @@ import java.util.Map;
 public class MessageHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public void handleMessage(Map<String, User> room, String roomId, User sender, String content, String target_id) {
+    public void handleMessage(Map<String, User> room, String spaceId, User sender, String content, String target_id) {
         // get User via the target id
         User target = null;
         for (User user : room.values()) {
@@ -37,6 +37,6 @@ public class MessageHandler {
             log.error("Could not send message from {} to {}", sender.getId(), target.getId());
             log.error(String.valueOf(e.getStackTrace()));
         }
-
+        log.info("{}: User send message to user {} in room {}", sender.getId(), target.getId(), spaceId);
     }
 }

@@ -34,7 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
         MessageEncoder.class,
         KickAnswerEncoder.class,
         ReconnectionEncoder.class,
-        RangeAnswerEncoder.class
+        RangeAnswerEncoder.class,
+        DNDAnswerEncoder.class
 })
 public class WsServerEndpoint {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -76,10 +77,10 @@ public class WsServerEndpoint {
             spaceUserService.put(spaceID, room);
             log.info("Room {} newly opened", spaceID);
         }
-        log.info("User joined the room {}", spaceID);
+        log.info("User joined the space: {}", spaceID);
 
         // we expect the user to send a ping every 5 seconds
-        pingHandler.initPing(session);
+        pingHandler.initPing(session, room);
     }
 
     @OnMessage(maxMessageSize = -1L)
@@ -139,23 +140,19 @@ public class WsServerEndpoint {
                     content = jsonObject.getAsJsonObject("content");
                     targetId = jsonObject.get("target_id").getAsString();
                     signalHandler.handleSignal(spaceUserService.get(spaceID), spaceID, sender, content, targetId);
-                    log.info("User {} signaled to user {} in room {}", sender.getId(), targetId, spaceID);
                     break;
                 case "message":
                     userMessage = jsonObject.get("content").getAsString();
                     targetId = jsonObject.get("target_id").getAsString();
                     messageHandler.handleMessage(spaceUserService.get(spaceID), spaceID, sender, userMessage, targetId);
-                    log.info("User {} send message to user {} in room {}", sender.getId(), targetId, spaceID);
                     break;
                 case "leave":
                     leaveHandler.handleLeave(spaceID, spaceUserService.get(spaceID), sender);
-                    log.info("User {} has left the room {}", sender.getId(), spaceID);
                     break;
                 case "media":
                     String media = jsonObject.get("media").getAsString();
                     event = jsonObject.get("event").getAsBoolean();
                     mediaHandler.handleMedia(spaceUserService.get(spaceID), sender, media, event);
-                    log.info("User {} changed his media type for {} to {}", sender.getId(), media, event);
                     break;
                 case "kick":
                     if (!room.containsKey(session.getId())) {
@@ -166,7 +163,6 @@ public class WsServerEndpoint {
                     token = jsonObject.get("token").getAsString();
                     userId = jsonObject.get("user_id").getAsString();
                     kickHandler.handleKick(room, spaceID, sender, token, userId);
-                    log.info("User {} was kicked by {} out of Space {}", userId, sender.getId(), spaceID);
                     break;
                 case "reconnection":
                     if (!room.containsKey(session.getId())) {
@@ -176,7 +172,6 @@ public class WsServerEndpoint {
                     sender = room.get(session.getId());
                     userId = jsonObject.get("user_id").getAsString();
                     reconnectionHandler.handleReconnection(spaceUserService.get(spaceID), sender, userId);
-                    log.info("Reconnection between {} and {} was handled", sender.getId(), userId);
                     break;
                 default:
                     log.warn("The {} type is not defined", type);
@@ -195,21 +190,21 @@ public class WsServerEndpoint {
         pingHandler.handleLeave(session.getId());
         if (sender != null) {
             leaveHandler.handleLeave(spaceID, spaceUserService.get(spaceID), sender);
-            log.info("User {} has left the room {}", sender.getId(), spaceID);
+            log.info("{}: User has left the room {}", sender.getId(), spaceID);
         }
     }
 
     @OnError
     public void onError(@PathParam("spaceID") String spaceID, Session session, Throwable t) {
-        log.error(ExceptionUtils.readStackTrace(t));
+        User sender = spaceUserService.get(spaceID).get(session.getId());
+
+        log.error(sender.getId() + ": " + ExceptionUtils.readStackTrace(t));
         try {
             // This should call the onClose method where the user is then removed from the room
             session.close();
         } catch (IOException ioException) {
             log.info("Error was handled with cascading IOException");
             ioException.printStackTrace();
-        } finally {
-            log.info("Session error was handled");
         }
     }
 }

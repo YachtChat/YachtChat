@@ -19,6 +19,7 @@ public class User {
         media.put(MediaHandler.SCREEN, false);
         this.media = media;
 
+        this.doNotDisturb = false;
         this.id = id;
     }
     @Getter @Setter @Expose(serialize = false)
@@ -31,6 +32,9 @@ public class User {
 
     @Expose
     private HashMap<String, Boolean> media;
+
+    @Expose @Getter @Setter
+    private Boolean doNotDisturb;
 
     public HashMap<String, Boolean> getMedia(){
         return this.media;
