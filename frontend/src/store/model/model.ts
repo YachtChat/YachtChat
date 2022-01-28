@@ -23,6 +23,7 @@ export interface UserPayload {
         audio: boolean,
         screen: boolean
     }
+    doNotDisturb: boolean
 }
 
 export interface Message {

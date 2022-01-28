@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './utils/store';
 import {MediaType, Message, Point, User, UserCoordinates, UserPayload} from "./model/model";
 import {send, sendPosition} from "./webSocketSlice";
-import {getMedia, setMedia} from "./mediaSlice";
+import {getMedia, setDoNotDisturb, setMedia} from "./mediaSlice";
 import {getHeaders, getToken} from "./authSlice";
 import axios from "axios";
 import {ACCOUNT_URL, complete_spaces_url} from "./utils/config";
@@ -177,6 +177,7 @@ export const handleSpaceUsers = (spaceId: string, users: Set<UserPayload>): AppT
                         dispatch(setMedia({id: userPayload.id, state: userPayload.media.audio, type: MediaType.AUDIO}))
                         dispatch(setMedia({id: userPayload.id, state: userPayload.media.video, type: MediaType.VIDEO}))
                         dispatch(setMedia({id: userPayload.id, state: userPayload.media.screen, type: MediaType.SCREEN}))
+                        dispatch(setDoNotDisturb({id: userPayload.id, state: userPayload.doNotDisturb,}))
                     }
                     return keycloakUserToUser(user, !!userPayload, userPayload?.position)
                 })

@@ -123,7 +123,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 break;
             case "range":
                 dispatch(setInRange(data))
-                if (getState().media.doNotDisturb) {
+                if (getUserWrapped(getState()).doNotDisturb && data.event) {
                     const user = getUserById(getState(), data.id)
                     sendNotification(getState(), `${user.firstName} wants to talk to you.`, user.profile_image)
                 }
