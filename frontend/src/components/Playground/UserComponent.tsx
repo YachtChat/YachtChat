@@ -5,7 +5,7 @@ import {connect} from "react-redux";
 import {getCamera, getMicrophone, getScreenStream, getSpeaker, getStream} from "../../store/mediaSlice";
 import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@mui/material";
-import {IoCopyOutline, IoMicOffOutline, IoTvOutline, IoVideocamOffOutline} from "react-icons/io5";
+import {IoCopyOutline, IoMicOffOutline, IoMoon, IoTvOutline, IoVideocamOffOutline} from "react-icons/io5";
 import {handleError, handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils/utils";
 import {centerUser} from "../../store/playgroundSlice";
@@ -362,6 +362,8 @@ export class UserComponent extends Component<Props, State> {
                             }
                             {(user.userStream && user.screen && !inRange) &&
                                 <IoTvOutline className={"loader"}/>}
+                            {(user.doNotDisturb) &&
+                                <IoMoon className={"loader"}/>}
                             {!user.userStream &&
                                 <CircularProgress className={"loader"}/>
                             }

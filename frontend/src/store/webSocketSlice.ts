@@ -12,7 +12,7 @@ import {
     removeUser, setInRange,
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
-import {setMedia} from "./mediaSlice";
+import {setDoNotDisturb, setMedia} from "./mediaSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./utils/config";
 import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
@@ -112,6 +112,10 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
             case "media":
                 if (joinedSpace)
                     dispatch(setMedia({id: data.id, type: data.medium, state: data.event}));
+                break;
+            case "doNotDisturb":
+                if (joinedSpace)
+                    dispatch(setDoNotDisturb({id: data.id, state: data.event}));
                 break;
             case "message":
                 if (!joinedSpace) break;

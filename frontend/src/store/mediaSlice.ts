@@ -19,7 +19,7 @@ interface MediaState {
     audio: { [user: string]: boolean }
     video: { [user: string]: boolean }
     screen: { [user: string]: boolean }
-    doNotDisturb: boolean
+    doNotDisturb: { [ user: string]: boolean }
     previousVideo: boolean
     previousAudio: boolean
     cameras: string[]
@@ -40,7 +40,7 @@ const initialState: MediaState = {
     screen: {},
     previousVideo: true,
     previousAudio: true,
-    doNotDisturb: false,
+    doNotDisturb: {},
     cameras: [],
     microphones: [],
     speakers: [],
@@ -87,8 +87,8 @@ export const mediaSlice = createSlice({
                     break;
             }
         },
-        setDoNotDisturb: (state, action: PayloadAction<boolean>) => {
-            state.doNotDisturb = action.payload
+        setDoNotDisturb: (state, action: PayloadAction<{ id: string, state: boolean}>) => {
+            state.doNotDisturb[action.payload.id] = action.payload.state
         },
         setCamera: (state, action: PayloadAction<string>) => {
             state.selected.camera = action.payload
@@ -443,7 +443,14 @@ export const toggleDoNotDisturb = (): AppThunk => (dispatch, getState) => {
 
     }
 
-    dispatch(setDoNotDisturb(!doNotDisturb))
+    dispatch(setDoNotDisturb({ id: user.id, state: !user.doNotDisturb }))
+
+    dispatch(send({
+        type: 'media',
+        id: getUserID(getState()),
+        media: "doNotDisturb",
+        event: user.doNotDisturb
+    }))
 }
 
 export const resetMediaSlice = (): AppThunk => (dispatch, getState) => {
@@ -621,6 +628,10 @@ export const getMedia = (state: RootState, type: MediaType, id: string) => {
         return state.media.screen[id]
     }
     return false
+}
+
+export const getDoNotDisturb = (state: RootState, id: string) => {
+    return state.media.doNotDisturb[id]
 }
 
 export const getMediaConstrains = (state: RootState, video: boolean, audio: boolean) => {

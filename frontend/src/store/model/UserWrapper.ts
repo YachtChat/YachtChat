@@ -1,8 +1,7 @@
 import {RootState} from "../utils/store";
-import {getMedia, getScreenStream, getStream, setMedia} from "../mediaSlice";
+import {getDoNotDisturb, getMedia, getScreenStream, getStream, setMedia} from "../mediaSlice";
 import {MediaType, User, UserCoordinates} from "./model";
 import {getUserID, move, setMessage} from "../userSlice";
-
 
 export class UserWrapper implements User {
 
@@ -76,7 +75,16 @@ export class UserWrapper implements User {
         //return !!UserWrapper.getState().rtc.audio[this.id]
     }
 
+    public get doNotDisturb(): boolean {
+        return !!getDoNotDisturb(UserWrapper.getState(), this.id)
+        //return !!UserWrapper.getState().rtc.audio[this.id]
+    }
+
     public set video(b: boolean) {
+        UserWrapper.dispatch(setMedia({ id: this.id, type: MediaType.VIDEO, state: b}))
+    }
+
+    public set doNotDisturb(b: boolean) {
         UserWrapper.dispatch(setMedia({ id: this.id, type: MediaType.VIDEO, state: b}))
     }
 

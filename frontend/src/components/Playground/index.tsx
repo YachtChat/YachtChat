@@ -16,7 +16,7 @@ import {sendLogout} from "../../store/webSocketSlice";
 import Navigation from "../Navigation";
 import DoNotDisturb from "./DoNotDisturb";
 import {UserWrapper} from "../../store/model/UserWrapper";
-import {getUser} from "../../store/userSlice";
+import {getUserWrapped} from "../../store/userSlice";
 import TurnOffCamera from "../Settings/TurnOffCamera";
 import {isWindows} from "../../store/utils/utils";
 
@@ -157,13 +157,13 @@ export class Playground extends Component<Props, State> {
 
 
 const mapStateToProps = (state: RootState) => ({
-    activeUser: new UserWrapper(getUser(state)),
+    activeUser: getUserWrapped(state),
     spaces: state.space.spaces,
     microphones: state.media.microphones,
     cameras: state.media.cameras,
     userMedia: state.media.userMedia,
     joinedSpace: !!state.space.joinedSpace,
-    dnd: state.media.doNotDisturb,
+    dnd: getUserWrapped(state).doNotDisturb,
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
