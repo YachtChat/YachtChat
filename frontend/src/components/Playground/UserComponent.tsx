@@ -66,14 +66,12 @@ export class UserComponent extends Component<Props, State> {
         const screen = this.props.user.screen
         if (this.mediaElement.current) {
 
-            if (!this.mediaElement.current.srcObject) {
-                if (screen && this.props.isActiveUser) {
-                    this.mediaElement.current.srcObject = this.props.user.getScreenStream()!
-                } else {
-                    this.mediaElement.current.srcObject = this.props.stream!
-                }
-                //console.log(this.props.getStream(this.props.user.id)!)
+            if (screen && this.props.isActiveUser) {
+                this.mediaElement.current.srcObject = this.props.user.getScreenStream()!
+            } else {
+                this.mediaElement.current.srcObject = this.props.stream!
             }
+            //console.log(this.props.getStream(this.props.user.id)!)
 
             //@ts-ignore
             if (this.mediaElement.current.setSinkId)
@@ -265,7 +263,7 @@ export class UserComponent extends Component<Props, State> {
                                                 <tbody>
                                                 {this.props.messages.length > 0 &&
                                                     <>
-                                                    {this.props.messages.map((m, idx) =>
+                                                        {this.props.messages.map((m, idx) =>
                                                                 <tr key={m.time + idx.toString()}
                                                                     className={"clickable message"}>
                                                                     <td className={"clickable"}>
@@ -307,7 +305,7 @@ export class UserComponent extends Component<Props, State> {
                                                                     </Tooltip>
                                                                 </tr>
                                                         )
-                                                    }
+                                                        }
                                                     </>
                                                 }
                                                 {this.props.messages.length === 0 &&
@@ -350,7 +348,7 @@ export class UserComponent extends Component<Props, State> {
                                      </div>
                                      : ""} placement="top" arrow>
                         <div>
-                            {(this.props.user.anyStreamAvailable && !(this.props.isActiveUser && !this.props.showVideoInAvatar)) &&
+                            {(!(this.props.isActiveUser && !this.props.showVideoInAvatar)) &&
                                 <video data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                                        key={this.props.camera}
                                        autoPlay muted={this.props.isActiveUser}
@@ -359,12 +357,12 @@ export class UserComponent extends Component<Props, State> {
                                        onMouseOver={() => this.mouseOver()}
                                        onMouseLeave={() => this.mouseOut()}
                                        className={
-                                           (((!screen && !video) || (!inRange && screen))) ? "profile-picture" : "" +
+                                           (!this.props.user.anyStreamAvailable || ((!screen && !video) || (!inRange && screen))) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
-                            {(this.props.user.userStream && user.screen && !inRange) &&
+                            {(user.userStream && user.screen && !inRange) &&
                                 <IoTvOutline className={"loader"}/>}
-                            {!this.props.user.userStream &&
+                            {!user.userStream &&
                                 <CircularProgress className={"loader"}/>
                             }
                         </div>

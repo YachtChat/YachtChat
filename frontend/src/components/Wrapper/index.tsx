@@ -38,9 +38,7 @@ interface LoadingProps {
     loadingText?: string
 }
 
-export class Loading extends Component<LoadingProps> {
-
-    render() {
+export function Loading(props: LoadingProps) {
         return (
             <Wrapper className={"Loading"}>
                 <div className={"headlineBox"}>
@@ -49,14 +47,12 @@ export class Loading extends Component<LoadingProps> {
                             <IoChevronBack/> back to spaces
                         </button>
                     </Link>
-                    <h1>{this.props.icon ? this.props.icon : <IoWifi/>}</h1>
-                    <h1>{this.props.loadingText ? this.props.loadingText : "Loading..."}</h1>
+                    <h1>{props.icon ? props.icon : <IoWifi/>}</h1>
+                    <h1>{props.loadingText ? props.loadingText : "Loading..."}</h1>
                     <CircularProgress color={"inherit"}/>
                 </div>
             </Wrapper>
         )
-    }
-
 }
 
 export default Wrapper
