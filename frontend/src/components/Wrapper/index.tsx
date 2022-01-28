@@ -48,7 +48,7 @@ export function Loading(props: LoadingProps) {
                         </button>
                     </Link>
                     <h1>{props.icon ? props.icon : <IoWifi/>}</h1>
-                    <h1>{props.loadingText ? props.loadingText : "Loading..."}</h1>
+                    <h1>{props.loadingText ?? "Connecting..."}</h1>
                     <CircularProgress color={"inherit"}/>
                 </div>
             </Wrapper>
