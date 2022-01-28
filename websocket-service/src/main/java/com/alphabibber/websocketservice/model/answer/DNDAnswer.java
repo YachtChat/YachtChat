@@ -8,12 +8,11 @@ public class DNDAnswer extends Answer{
     String id;
 
     @Expose
-    User user;
+    boolean event;
 
-
-    public DNDAnswer(String id, User user) {
+    public DNDAnswer(String id, boolean event) {
         super("doNotDisturb");
         this.id = id;
-        this.user = user;
+        this.event = event;
     }
 }

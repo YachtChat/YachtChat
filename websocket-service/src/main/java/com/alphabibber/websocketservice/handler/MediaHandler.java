@@ -29,7 +29,7 @@ public class MediaHandler {
         // update the state
         sender.setDoNotDisturb(event);
 
-        DNDAnswer answer = new DNDAnswer(sender.getId(), sender);
+        DNDAnswer answer = new DNDAnswer(sender.getId(), event);
 
         ArrayList<User> users = new ArrayList<>(space.values());
         users.forEach(user -> {
