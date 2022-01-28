@@ -212,14 +212,15 @@ function isUserInSpace(state: RootState, id: string) {
     return !!rtcConnections[id] && user.online
 }
 
-export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThunk => (dispatch: any, getState: any) => {
+export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThunk => (dispatch, getState) => {
     // Reconnection functionality / stream health check
     if (isCaller) {
         connectionTimer[userId] = window.setTimeout(() => {
             // delete old reference to timer
             delete connectionTimer[userId];
             // if the connection was not established in time, try to reconnect
-            if (!getUserById(getState(), userId).userStream.audio || !getUserById(getState(), userId).userStream.video) {
+            const user = getUserByIdWrapped(getState(), userId)
+            if ((user.audio && !user.userStream.audio) || (user.video && !user.userStream.video)) {
                 // This if statement only yields true if the peer is still in the space and I am still in the Space.
                 // if this is true we want to try a reconnection.
                 if (getUserById(getState(), userId) !== undefined) {
@@ -235,17 +236,22 @@ export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThu
                         return
                     }
 
+                    
+
+                    // If user is not connected to websocket do not try to reconnect, since it would be hopeless
+                    if (!getState().webSocket.connected)
+                        return
+
                     rtcConnections[userId].getStats().then(
                         (report: RTCStatsReport) => {
                             if (!bytesReceived[userId]) {
                                 bytesReceived[userId] = {audio: 0, screen: 0, video: 0}
                             }
                             const br = bytesReceived
-                            const user = getUserByIdWrapped(getState(), userId)
                             report.forEach(k => {
                                 if (k.type === "inbound-rtp" && k.kind === "video") {
                                     if (br['video'] === k.bytesReceived && user.video) {
-                                        console.log(`${user.firstName} does not send any video data.`)
+                                        console.log(`${user.firstName} does not send any video data. Reconnecting.`)
                                         clearInterval(interval)
                                         // dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
                                         dispatch(triggerReconnection(userId));
@@ -253,7 +259,7 @@ export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThu
                                     bytesReceived[userId][MediaType.VIDEO] = k.bytesReceived
                                 } else if (k.type === "inbound-rtp" && k.kind === "audio") {
                                     if (br['audio'] === k.bytesReceived && user.audio) {
-                                        console.log(`${user.firstName} does not send any video data.`)
+                                        console.log(`${user.firstName} does not send any audio data. Reconnecting.`)
                                         clearInterval(interval)
                                         // dispatch(handleError(`Reconnecting to ${getUserById(getState(), userId).firstName}`));
                                         dispatch(triggerReconnection(userId));

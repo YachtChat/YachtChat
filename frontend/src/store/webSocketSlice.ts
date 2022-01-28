@@ -70,7 +70,8 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
         }, 5000);
     }
 
-    socket.onerror = () => {
+    socket.onerror = e => {
+        console.log(e)
         dispatch(disconnect())
         dispatch(reconnectToWs())
     };
