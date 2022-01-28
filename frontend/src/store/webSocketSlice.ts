@@ -18,6 +18,7 @@ import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
 import {destroySession} from "./destroySession";
 import {disconnectUser, handleCandidate, handleSdp} from "./rtc";
+import {sendNotification} from "./utils/notifications";
 
 interface WebSocketState {
     connected: boolean
@@ -118,6 +119,10 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 break;
             case "range":
                 dispatch(setInRange(data))
+                if (getState().media.doNotDisturb) {
+                    const user = getUserById(getState(), data.id)
+                    sendNotification(getState(), `${user.firstName} wants to talk to you.`, user.profile_image)
+                }
                 break;
             case "kick":
                 if (!joinedSpace) break;
