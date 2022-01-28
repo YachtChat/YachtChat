@@ -15,7 +15,7 @@ function DoNotDisturb(props: Props) {
             <div className={"headlineBox"}>
                 <div className={"nav-buttons"}>
                     <button onClick={props.toggleDnd} className={"outlined spaceRight"}>
-                        <IoMoonOutline/> deactivate do not disturb
+                        <IoMoonOutline/> disable do not disturb
                     </button>
                 </div>
                 <h1>
