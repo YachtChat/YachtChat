@@ -126,7 +126,13 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 dispatch(setInRange(data))
                 if (getUserWrapped(getState()).doNotDisturb && data.event) {
                     const user = getUserById(getState(), data.id)
-                    sendNotification(getState(), `${user.firstName} wants to talk to you.`, user.profile_image)
+                    const message = `${user.firstName} wants to talk to you.`
+                    if (getState().playground.inBackground) {
+                        sendNotification(getState(), message, user.profile_image)
+                    } else {
+                        dispatch(handleSuccess(message))
+                    }
+                    dispatch(sendMessage("I'm in do not disturb mode. I cannot hear you. I'll be back right away."))
                 }
                 break;
             case "kick":
