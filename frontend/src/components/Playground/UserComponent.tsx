@@ -10,6 +10,7 @@ import {handleError, handleSuccess} from "../../store/statusSlice";
 import {convertRemToPixels} from "../../store/utils/utils";
 import {centerUser} from "../../store/playgroundSlice";
 import {UserWrapper} from "../../store/model/UserWrapper";
+import profile_pic from "../../rsc/profile.png"
 
 interface OwnProps {
     user: UserWrapper
@@ -25,7 +26,7 @@ interface OtherProps {
     speaker: string
     camera: string
     microphone: string
-    getStream: (id: string) => MediaStream | undefined
+    stream: MediaStream | undefined
     getScreenStream: (id: string) => MediaStream | undefined
     success: (s: string) => void
     error: (s: string, e?: any) => void
@@ -67,9 +68,9 @@ export class UserComponent extends Component<Props, State> {
 
             if (!this.mediaElement.current.srcObject) {
                 if (screen && this.props.isActiveUser) {
-                    this.mediaElement.current.srcObject = this.props.getScreenStream(this.props.user.id)!
+                    this.mediaElement.current.srcObject = this.props.user.getScreenStream()!
                 } else {
-                    this.mediaElement.current.srcObject = this.props.getStream(this.props.user.id)!
+                    this.mediaElement.current.srcObject = this.props.stream!
                 }
                 //console.log(this.props.getStream(this.props.user.id)!)
             }
@@ -91,7 +92,7 @@ export class UserComponent extends Component<Props, State> {
                 if (this.props.user.screen && this.props.isActiveUser) {
                     this.mediaElement.current.srcObject = this.props.user.getScreenStream()!
                 } else {
-                    this.mediaElement.current.srcObject = this.props.user.stream!
+                    this.mediaElement.current.srcObject = this.props.stream!
                 }
                 //console.log(this.props.getStream(this.props.user.id)!)
             }
@@ -223,7 +224,7 @@ export class UserComponent extends Component<Props, State> {
                 ((!screen) && (!user.video))
                 || (!this.props.user.userStream.video && !this.props.user.userStream.screen)
                 || (screen && !inRange)
-                || !this.mediaElement.current?.srcObject) ? `url(${user.profile_image})` : "none",
+                || !this.mediaElement.current?.srcObject) ? `url(${user.profile_image}), url(${profile_pic})` : "none",
         }
 
         const userNameStyle = {
@@ -394,7 +395,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     microphone: getMicrophone(state),
     isActiveUser: ownProps.user.isActiveUser(),
     inRange: ownProps.user.inRange,
-    getStream: (id: string) => getStream(state, id),
+    stream: getStream(state, ownProps.user.id),
     getScreenStream: (id: string) => getScreenStream(state, id),
     messages: getUserMessages(state, ownProps.user.id),
     showVideoInAvatar: state.playground.videoInAvatar
