@@ -69,7 +69,7 @@ export function Logo(props: Props) {
             </svg>
             <h1>{props.title}</h1>
             {!!props.spaceID &&
-            <Tooltip title={"Get invitation link"} placement={"top"} arrow>
+            <Tooltip title={"Copy invitation link"} placement={"bottom"} arrow>
                 <button onClick={e => {
                         e.preventDefault()
                         props.invite()

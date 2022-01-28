@@ -4,7 +4,6 @@ import {connect} from "react-redux";
 import {IoCloseOutline, IoLink} from "react-icons/io5";
 import UserList from "./UserList";
 import {RootState} from "../../../store/utils/store";
-import {FRONTEND_URL} from "../../../store/utils/config";
 import {Tooltip} from "@mui/material";
 import {getInvitationToken} from "../../../store/spaceSlice";
 import {copyInviteLink} from "../../../store/utils/utils";
@@ -18,25 +17,11 @@ interface Props {
     getSpaceName: (sid: string) => string
 }
 
-interface State {
-    token: string
-}
-
-export class MembersComponent extends Component<Props, State> {
+export class MembersComponent extends Component<Props> {
 
     constructor(props: Props) {
         super(props);
 
-        this.state = {token: ""}
-    }
-
-    componentDidMount() {
-        this.props.getToken(this.props.spaceID).then(token => {
-            console.log(token)
-            this.setState({
-                token: token
-            })
-        })
     }
 
     render() {
@@ -57,13 +42,13 @@ export class MembersComponent extends Component<Props, State> {
                                     <IoCloseOutline/>
                                 </button>
                             </div>
-                            <Tooltip title={"https://" + FRONTEND_URL + "/join/" + this.state.token} placement={"top"}
+                            <Tooltip title={"Copy invite link"} placement={"top"}
                                      arrow>
                                 <button onClick={e => {
                                     e.preventDefault()
                                     this.props.invite(this.props.spaceID)
                                 }} className={"outlined"}>
-                                    <IoLink/> copy invite link
+                                    <IoLink/> invite link
                                 </button>
                             </Tooltip>
 

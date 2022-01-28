@@ -47,6 +47,7 @@ export class UserComponent extends Component<Props, State> {
     private myName: React.RefObject<HTMLMediaElement>;
     private mediaElement: React.RefObject<HTMLVideoElement>;
     private messagesEnd: React.RefObject<HTMLDivElement>;
+    private userObject: React.RefObject<HTMLDivElement>;
     private closeTimeout: number = -1;
     private openTimeout?: number;
 
@@ -55,6 +56,7 @@ export class UserComponent extends Component<Props, State> {
 
         this.mediaElement = React.createRef();
         this.messagesEnd = React.createRef();
+        this.userObject = React.createRef();
         this.myName = React.createRef();
         this.state = {
             hovered: false,
@@ -235,12 +237,13 @@ export class UserComponent extends Component<Props, State> {
             <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
                 <div data-id={(this.props.isActiveUser) ? "activeUser" : this.props.user.id}
                      className={"User " + this.props.className}
+                     ref={this.userObject}
                      style={userStyle}>
-                    {this.mediaElement.current &&
+                    {this.userObject.current &&
                         <Popper placement={"bottom"}
                                 data-class={"clickable"}
                                 onClick={() => this.setState({hovered: false})}
-                                anchorEl={this.mediaElement.current ?? null}
+                                anchorEl={this.userObject.current ?? null}
                                 open={true}>
                             <Grow in={this.state.hovered && !this.props.selected && user.inProximity} unmountOnExit>
                                 <div onMouseOver={() => {
