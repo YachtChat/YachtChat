@@ -28,7 +28,8 @@ public class LoginHandler {
 
     public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session, boolean video, boolean microphone) {
         if (userId.equals("-1")){
-            throw new IllegalArgumentException("Id should not be -1");
+            log.error("{}: User tried to login with invalid ID", userId);
+            return;
         }
 
         if (!spacesService.isUserAllowedToJoin(roomId, token)) {
@@ -38,19 +39,19 @@ public class LoginHandler {
                 session.getBasicRemote().sendObject(deniedAnswer);
                 session.close();
             } catch (IOException | EncodeException e) {
-                log.error("User {} is not allowed to enter room but could not exit connection", userId);
+                log.error("{}: Deniedanswer could not be sent to user", userId);
                 log.error(String.valueOf(e.getStackTrace()));
                 return;
             }
 
-            log.info("User {} is not allowed to enter the room {}. Connection to him is closed", userId, roomId);
+            log.error("{}: User tried to login in space for which he is not allowed", userId);
             return;
         }
         // check if a user with the given userId is already part of this room
         for (User user:room.values()){
             if (user.getId().equals(userId)){
                 // kick this user that was already in the space
-                log.error("A user with id: {} is already part of room {} and will be kicked", userId, roomId);
+                log.info("{}: Tried to login while already being in the space {}", userId, roomId);
                 leaveHandler.handleLeave(roomId, room, user);
             }
         }
@@ -68,10 +69,10 @@ public class LoginHandler {
         try {
             session.getBasicRemote().sendObject(loginAnswer);
         } catch (EncodeException | IOException e) {
-          log.error("Could not send Loginmessage to {}", userId);
+          log.error("{}: Could not send Loginmessage", userId);
           log.error(String.valueOf(e.getStackTrace()));
         }
-        log.info("User {} is now part of room {}", userId, roomId);
+        log.info("{}: User is now part of room {}", userId, roomId);
 
         // tell all other users that a new User joined
         NewUserAnswer newUserAnswer = new NewUserAnswer(user.getId(), user.getPosition(), video, microphone);
@@ -82,7 +83,7 @@ public class LoginHandler {
                 try {
                     target.getSession().getBasicRemote().sendObject(newUserAnswer);
                 } catch (EncodeException | IOException e) {
-                    log.error("Could not send NewUserMessage to {}", target.getId());
+                    log.error("{}: Could not send NewUserMessage", target.getId());
                 }
             }
         });

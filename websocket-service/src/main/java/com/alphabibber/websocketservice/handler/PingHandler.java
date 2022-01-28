@@ -50,21 +50,24 @@ public class PingHandler {
         }
     }
 
-    public void initPing(Session session) {
+    public void initPing(Session session, Map<String, User> space) {
+        User sender = space.get(session.getId());
+
         timerMap.put(session.getId(),
                 scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
                     if(!pingMap.containsKey(session.getId()) || !pingMap.get(session.getId())) {
                         try {
+                            log.error("{}: Pinghandler removed user from space", sender.getId());
                             session.close();
                         } catch (IOException e) {
-                            log.error("Session could not be closed in PingHandler");
+                            log.error("{}: Session could not be closed in PingHandler", sender.getId());
                         }
                     }
                     else{
                         pingMap.put(session.getId(), false);
                     }
                 },
-                11, 11, TimeUnit.SECONDS)
+                20, 20, TimeUnit.SECONDS)
         );
     }
 }

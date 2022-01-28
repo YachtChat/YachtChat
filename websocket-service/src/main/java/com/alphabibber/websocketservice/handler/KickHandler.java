@@ -17,7 +17,7 @@ public class KickHandler {
 
     public void handleKick(Map<String, User> room, String roomId, User sender, String token, String userId){
         if (!spacesService.isUserHost(roomId, token)){
-            log.warn("User {} tried to kick another user for room {} but is no host for that room", sender.getId(), roomId);
+            log.error("{}: User tried to kick another user for room {} but is no host for that room", sender.getId(), roomId);
             return;
         }
         // check if the user which should be kicked is part of the space
@@ -26,7 +26,7 @@ public class KickHandler {
             if (u.getId().equals(userId)) user = u;
         }
         if (user == null){
-            log.warn("User {} was tried to be kicked but is not part of the room {}", userId, roomId);
+            log.warn("{}: User was tried to be kicked but is not part of the room {}", userId, roomId);
             return;
         }
 
@@ -49,6 +49,7 @@ public class KickHandler {
             log.error("Could not send kick answer to {}", user.getId());
             log.error(String.valueOf(e.getStackTrace()));
         }
+        log.info("User {} was kicked by {} out of Space {}", userId, sender.getId(), roomId);
 
         // tell the room that a user left
         leaveHandler.handleLeave(roomId, room, user);

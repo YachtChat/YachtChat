@@ -25,7 +25,7 @@ public class SignalHandler {
         }
         // check if the user exist
         if(target == null){
-            log.error("User {} tried to signal to target {} but target does not exist", sender.getId(), target_id);
+            log.error("{}: User tried to signal to target {} but target does not exist", sender.getId(), target_id);
             return;
         }
 
@@ -39,5 +39,6 @@ public class SignalHandler {
             log.error("Could not send signaling from {} to {}", sender.getId(), target.getId());
             log.error(String.valueOf(e.getStackTrace()));
         }
+        log.info("User {} signaled to user {} in room {}", sender.getId(), target_id, roomId);
     }
 }

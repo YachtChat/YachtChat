@@ -24,7 +24,7 @@ public class RangeHandler {
         }
 
         if (target == null){
-            log.error("User {} tried to send range event to {} but target does not exist", sender.getId(), target_id);
+            log.error("{}: User tried to send range event to {} but target does not exist", sender.getId(), target_id);
             return;
         }
 
@@ -33,7 +33,7 @@ public class RangeHandler {
             try{
                 target.getSession().getAsyncRemote().sendObject(answer);
             } catch (IllegalArgumentException e) {
-                log.error("Could not send range event from {} to {}.", sender.getId(), target.getId());
+                log.error("{}: Could not send range event to {}.", sender.getId(), target.getId());
                 log.error(String.valueOf(e.getStackTrace()));
             }
         }

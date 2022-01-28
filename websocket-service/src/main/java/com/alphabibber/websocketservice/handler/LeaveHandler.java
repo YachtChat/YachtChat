@@ -38,7 +38,7 @@ public class LeaveHandler {
                 }
             }
         });
-
+        log.info("{}: User has left the room {}", sender.getId(), roomId);
         try {
             sender.getSession().close();
         } catch (IOException e) {

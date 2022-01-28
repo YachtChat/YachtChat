@@ -27,7 +27,7 @@ public class PositionChangeHandler {
                 try{
                     user.getSession().getBasicRemote().sendObject(answer);
                 } catch (EncodeException | IOException e) {
-                    log.error("Could not send new Position to {}", user.getId());
+                    log.error("{}: Could not send new Position to {}", changedUser.getId(), user.getId());
                     log.error(String.valueOf(e.getStackTrace()));
                 }
             }

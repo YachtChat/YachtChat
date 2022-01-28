@@ -25,6 +25,8 @@ public class PosthogService {
     @Getter
     private static final String spaceIdString = "spaceId";
     @Getter
+    private static final String doNotDisturb = "doNotDisturb";
+    @Getter
     private static final String spaceWithOtherUserString = "spaceWithOtherUser";
     @Getter
     private static final String roomSizeString = "roomSize";
@@ -64,6 +66,8 @@ public class PosthogService {
         for (Map.Entry<String, Boolean> set: user.getMedia().entrySet()){
             startTracking(user.getId(), set.getKey(), set.getValue());
         }
+        // startTracking the DND
+        startTracking(user.getId(), doNotDisturb, false);
 
         // track room size
         if (room.size() > 1) {
@@ -79,6 +83,8 @@ public class PosthogService {
         for (Map.Entry<String, Boolean> set: user.getMedia().entrySet()){
             stopTracking(user.getId(), set.getKey(), set.getValue());
         }
+        // stop tracking the DND mode
+        stopTracking(user.getId(), doNotDisturb, user.getDoNotDisturb());
         // tell posthog that the user logged out of that space
         sendEvent(user.getId(), spaceLeftString, new HashMap<String, Object>(){{put(spaceIdString, spaceId);}});
     }
