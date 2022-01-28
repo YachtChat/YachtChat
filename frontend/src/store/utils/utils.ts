@@ -15,6 +15,7 @@ import {getInvitationToken, getToken} from "../spaceSlice";
 import posthog from "posthog-js";
 import {destroySession} from "../destroySession";
 import {push} from "redux-first-history";
+import axios from "axios";
 
 export function getCookie(cname: string) {
     const name = cname + "=";
@@ -230,4 +231,26 @@ export const copyInviteLink = (spaceID: string): AppThunk => (dispatch, getState
     } else {
         tokenToLink(token)
     }
+}
+
+export function isOnline(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        if (!navigator.onLine) {
+            // If it has no connection at all
+            reject()
+            return
+        }
+        axios.get("https://www.yacht.chat").then(() => {
+            // If connection to homepage could be established
+            resolve()
+        }).catch(() => {
+            // No connection? Homepage down?
+            axios.get("https://" + FRONTEND_URL).then(() => {
+                // Test
+                resolve()
+            }).catch(() => {
+                reject()
+            })
+        })
+    })
 }

@@ -19,6 +19,7 @@ import {requestSpaces} from "./spaceSlice";
 import {destroySession} from "./destroySession";
 import {disconnectUser, handleCandidate, handleSdp} from "./rtc";
 import {sendNotification} from "./utils/notifications";
+import {isOnline} from "./utils/utils";
 
 interface WebSocketState {
     connected: boolean
@@ -69,16 +70,15 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
         }, 5000);
     }
 
-    socket.onerror = (err) => {
-        dispatch(handleError("Connection failed", err))
-        dispatch(destroySession(true))
+    socket.onerror = () => {
+        dispatch(disconnect())
+        dispatch(reconnectToWs())
     };
 
-    socket.onclose = () => {
-        dispatch(destroySession())
-        if (heartBeat) {
-            clearInterval(heartBeat);
-        }
+    socket.onclose = (e) => {
+        dispatch(disconnect())
+        if (!e.wasClean)
+            dispatch(reconnectToWs())
     }
 
     socket.onmessage = function (msg) {
@@ -166,6 +166,32 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
         }
     };
 };
+export const reconnectToWs = (): AppThunk => (dispatch, getState) => {
+    if (heartBeat) clearInterval(heartBeat)
+
+    // If not part of a space
+    if (!getState().space.joinedSpace)
+        return
+
+    const relogin = setInterval(() => {
+        if (socket?.OPEN) {
+            clearInterval(relogin)
+            return
+        }
+
+        console.log("Trying to reconnect...")
+
+        isOnline().then(() => {
+
+            console.log("Connected to the internet. Reconnecting.")
+            clearInterval(relogin)
+            if (getState().space.joinedSpace)
+                setTimeout(() => dispatch(connectToServer(getState().space.joinedSpace!)))
+        })
+    }, 4000)
+    //else
+    //dispatch(destroySession(true))
+}
 
 export const sendMessage = (message: string): AppThunk => (dispatch, getState) => {
     getOnlineUsers(getState()).forEach(u => {
@@ -186,6 +212,8 @@ export const send = (message: { [key: string]: any }): AppThunk => (dispatch, ge
         ...message,
         id: getUserID(getState()),
     }
+
+    console.log(socket)
 
     if (socket !== null)
         socket.send(JSON.stringify(msgObj));
@@ -219,6 +247,7 @@ export const sendPosition = (position: UserCoordinates): AppThunk => (dispatch) 
 export const handleLogin = (success: boolean, spaceid: string, users: Set<UserPayload>): AppThunk => dispatch => {
     if (!success) {
         dispatch(handleError("Join failed. Try again later."))
+        dispatch(destroySession(true))
     } else {
         dispatch(handleSuccess("Connected to space. Connecting to other users..."))
         dispatch(handleSpaceUsers(spaceid, users))
@@ -230,6 +259,10 @@ export const resetWebsocket = (): AppThunk => dispatch => {
         socket?.close()
         dispatch(disconnect())
         socket = null
+        if (heartBeat) {
+            clearInterval(heartBeat);
+            heartBeat = null
+        }
     }
 }
 
