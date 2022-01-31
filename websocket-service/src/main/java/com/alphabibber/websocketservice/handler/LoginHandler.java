@@ -1,9 +1,11 @@
 package com.alphabibber.websocketservice.handler;
 
+import com.alphabibber.websocketservice.WsServerEndpoint;
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.model.answer.LoginAnswer;
 import com.alphabibber.websocketservice.model.answer.NewUserAnswer;
 import com.alphabibber.websocketservice.service.PosthogService;
+import com.alphabibber.websocketservice.service.SpaceUserService;
 import com.alphabibber.websocketservice.service.SpacesService;
 import com.alphabibber.websocketservice.service.PosthogService;
 import net.minidev.json.JSONObject;
@@ -18,74 +20,69 @@ import java.util.*;
 
 public class LoginHandler {
     private final SpacesService spacesService = new SpacesService();
-    private final String URL = System.getenv("SPACES_URL");
-    private final HttpClient httpClient = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_2)
-            .build();
+    private final SpaceUserService spaceUserService = new SpaceUserService();
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final LeaveHandler leaveHandler = new LeaveHandler();
     private final PosthogService posthogService = PosthogService.getInstance();
 
-    public void handleLogin(Map<String, User> room, String roomId, String token, String userId, Session session, boolean video, boolean microphone) {
-        if (userId.equals("-1")){
+    public void handleLogin(String spaceId, String token, String userId, Session session, boolean video, boolean microphone) {
+        if (userId.equals("-1")) {
             log.error("{}: User tried to login with invalid ID", userId);
             return;
         }
 
-        if (!spacesService.isUserAllowedToJoin(roomId, token)) {
+        if (!spacesService.isUserAllowedToJoin(spaceId, token)) {
             // if the user is not allowed to enter the room the websocket connection will be closed
+            LoginAnswer deniedAnswer = new LoginAnswer(false, new HashSet<User>(), userId);
             try {
-                LoginAnswer deniedAnswer = new LoginAnswer(false, new HashSet<User>(), userId);
-                session.getBasicRemote().sendObject(deniedAnswer);
-                session.close();
-            } catch (IOException | EncodeException e) {
-                log.error("{}: Deniedanswer could not be sent to user", userId);
+                WsServerEndpoint.sendToOne(new User(session, userId, video, microphone), deniedAnswer);
+            } catch (EncodeException | IOException e) {
+                log.error("{}: Could not send Loginmessage", userId);
                 log.error(String.valueOf(e.getStackTrace()));
-                return;
             }
-
-            log.error("{}: User tried to login in space for which he is not allowed", userId);
+            try {
+                session.close();
+            } catch (IOException e) {
+                log.error("{}: Could not close websocket connection", userId);
+            }
             return;
         }
+
         // check if a user with the given userId is already part of this room
-        for (User user:room.values()){
-            if (user.getId().equals(userId)){
+        Collection<User> users = spaceUserService.getUserSet(spaceId);
+        for (User user : users) {
+            if (user.getId().equals(userId)) {
                 // kick this user that was already in the space
-                log.info("{}: Tried to login while already being in the space {}", userId, roomId);
-                leaveHandler.handleLeave(roomId, room, user);
+                log.info("{}: Tried to login while already being in the space {}", userId, spaceId);
+                leaveHandler.handleLeave(spaceId, user);
             }
         }
 
         // user is allowed to log in
         User user = new User(session, userId, video, microphone);
-        room.put(session.getId(), user);
+        spaceUserService.putUserInSpace(spaceId, user, session.getId());
 
         // tell the user that he was added to the room
-        LoginAnswer loginAnswer = new LoginAnswer(true, new HashSet<>(room.values()), userId);
+        LoginAnswer loginAnswer = new LoginAnswer(true, spaceUserService.getUserSet(spaceId), userId);
 
         // handle all the posthog tracking
-       posthogService.handleLogin(user, roomId, room);
+        posthogService.handleLogin(user, spaceId, spaceUserService.getUserSet(spaceId));
 
         try {
-            session.getBasicRemote().sendObject(loginAnswer);
+            WsServerEndpoint.sendToOne(user, loginAnswer);
         } catch (EncodeException | IOException e) {
-          log.error("{}: Could not send Loginmessage", userId);
-          log.error(String.valueOf(e.getStackTrace()));
+            log.error("{}: Could not send Login message", userId);
+            log.error(userId + " : " + e.getMessage(), e);
         }
-        log.info("{}: User is now part of room {}", userId, roomId);
+        log.info("{}: User is now part of room {}", userId, spaceId);
 
         // tell all other users that a new User joined
         NewUserAnswer newUserAnswer = new NewUserAnswer(user.getId(), user.getPosition(), video, microphone);
-        ArrayList<User> users = new ArrayList<>(room.values());
-        // this should only skip this iteration
-        users.stream().filter(target -> !target.getId().equals(user.getId())).forEach(target -> {
-            synchronized (target) {
-                try {
-                    target.getSession().getBasicRemote().sendObject(newUserAnswer);
-                } catch (EncodeException | IOException e) {
-                    log.error("{}: Could not send NewUserMessage", target.getId());
-                }
-            }
-        });
+        try {
+            WsServerEndpoint.broadcast(spaceUserService.getUserSet(spaceId), newUserAnswer, user.getId());
+        }catch (EncodeException | IOException e) {
+            log.error("{}: Could not send NewUserMessage when new user joined", userId);
+            log.error(String.valueOf(e.getStackTrace()));
+        }
     }
 }

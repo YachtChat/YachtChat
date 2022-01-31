@@ -1,7 +1,9 @@
 package com.alphabibber.websocketservice.handler;
 
+import com.alphabibber.websocketservice.WsServerEndpoint;
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.model.answer.RangeAnswer;
+import org.junit.platform.commons.util.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +31,11 @@ public class RangeHandler {
         }
 
         RangeAnswer answer = new RangeAnswer(sender.getId(), event);
-        synchronized (target){
-            try{
-                target.getSession().getAsyncRemote().sendObject(answer);
-            } catch (IllegalArgumentException e) {
-                log.error("{}: Could not send range event to {}.", sender.getId(), target.getId());
-                log.error(String.valueOf(e.getStackTrace()));
-            }
+        try {
+            WsServerEndpoint.sendToOne(target, answer);
+        } catch (EncodeException | IOException e) {
+            log.error("{}: Error while sending range event to {}", sender.getId(), target_id, e);
+            log.error(target.getId() + ": " + ExceptionUtils.readStackTrace(e));
         }
     }
 }

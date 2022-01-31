@@ -5,6 +5,7 @@ import com.alphabibber.websocketservice.handler.MessageHandler;
 import com.alphabibber.websocketservice.handler.*;
 import com.alphabibber.websocketservice.model.Position;
 import com.alphabibber.websocketservice.model.User;
+import com.alphabibber.websocketservice.model.answer.Answer;
 import com.alphabibber.websocketservice.service.SpaceUserService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,7 +21,10 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -38,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
         DNDAnswerEncoder.class
 })
 public class WsServerEndpoint {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(WsServerEndpoint.class);
     Gson gson = new GsonBuilder().create();
     private final LoginHandler loginHandler = new LoginHandler();
     private final PositionChangeHandler positionChangeHandler = new PositionChangeHandler();
@@ -88,9 +92,6 @@ public class WsServerEndpoint {
         // get data which the user send
         JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
 
-        // Get room that was created when the user entered the space
-        Map<String, User> room = spaceUserService.get(spaceID);
-
         // check if the user send a type (it probably does not make sense to check this here. Just let it fail.
         if (jsonObject.get("type") == null) {
             throw new IllegalArgumentException("Field 'type' should be provided");
@@ -98,15 +99,16 @@ public class WsServerEndpoint {
         String type = jsonObject.get("type").getAsString();
 
         // if the user is not yet part of the room the type has to be 'login'
-        if (!room.containsKey(session.getId())) {
+        if (!spaceUserService.isUserPartOfSpace(spaceID, session.getId())) {
             if (!type.equals("login")) {
-                throw new IllegalArgumentException("If the user is not yet logged in the type should be login");
+                log.error("New user tried to send a message without being logged in for space {}", spaceID);
             }
             String token = jsonObject.get("token").getAsString();
             String userId = jsonObject.get("id").getAsString();
             boolean video = jsonObject.get("video").getAsBoolean();
             boolean microphone = jsonObject.get("microphone").getAsBoolean();
-            loginHandler.handleLogin(room, spaceID, token, userId, session, video, microphone);
+            loginHandler.handleLogin(spaceID, token, userId, session, video, microphone);
+            return;
         }
 
         if (type.equals("ping")) {
@@ -117,9 +119,10 @@ public class WsServerEndpoint {
         // if the user is already logged in the space, it can be various type
         else {
             // get the sender as a User object
-            User sender = room.get(session.getId());
-            String token;
-            String userId;
+            User sender = spaceUserService.getUser(spaceID, session.getId());
+//            User sender = room.get(session.getId());
+//            String token;
+//            String userId;
 
             JsonObject content;
             String targetId;
@@ -134,44 +137,34 @@ public class WsServerEndpoint {
                 case "position":
                     JsonObject positionStr = jsonObject.get("position").getAsJsonObject();
                     Position position = gson.fromJson(positionStr, Position.class);
-                    positionChangeHandler.handlePositinChange(spaceUserService.get(spaceID), spaceID, session, position);
+                    positionChangeHandler.handlePositinChange(spaceID, session.getId(), position);
                     break;
                 case "signal":
                     content = jsonObject.getAsJsonObject("content");
                     targetId = jsonObject.get("target_id").getAsString();
-                    signalHandler.handleSignal(spaceUserService.get(spaceID), spaceID, sender, content, targetId);
+                    signalHandler.handleSignal(spaceID, session.getId(), content, targetId);
                     break;
                 case "message":
                     userMessage = jsonObject.get("content").getAsString();
                     targetId = jsonObject.get("target_id").getAsString();
-                    messageHandler.handleMessage(spaceUserService.get(spaceID), spaceID, sender, userMessage, targetId);
+                    messageHandler.handleMessage(spaceID, spaceUserService.getUser(spaceID, session.getId()), userMessage, targetId);
                     break;
                 case "leave":
-                    leaveHandler.handleLeave(spaceID, spaceUserService.get(spaceID), sender);
+                    leaveHandler.handleLeave(spaceID, sender);
                     break;
                 case "media":
                     String media = jsonObject.get("media").getAsString();
                     event = jsonObject.get("event").getAsBoolean();
-                    mediaHandler.handleMedia(spaceUserService.get(spaceID), sender, media, event);
+                    mediaHandler.handleMedia(spaceID, session.getId(), media, event);
                     break;
                 case "kick":
-                    if (!room.containsKey(session.getId())) {
-                        log.warn("User tried to kick another user while not being in a room");
-                        return;
-                    }
-                    sender = room.get(session.getId());
-                    token = jsonObject.get("token").getAsString();
-                    userId = jsonObject.get("user_id").getAsString();
-                    kickHandler.handleKick(room, spaceID, sender, token, userId);
+                    String token = jsonObject.get("token").getAsString();
+                    String userId = jsonObject.get("user_id").getAsString();
+                    kickHandler.handleKick(spaceID, session.getId(), token, userId);
                     break;
                 case "reconnection":
-                    if (!room.containsKey(session.getId())) {
-                        log.warn("User tried to reconnect to another user while not being in a room");
-                        return;
-                    }
-                    sender = room.get(session.getId());
                     userId = jsonObject.get("user_id").getAsString();
-                    reconnectionHandler.handleReconnection(spaceUserService.get(spaceID), sender, userId);
+                    reconnectionHandler.handleReconnection(spaceID, session.getId(), userId);
                     break;
                 default:
                     log.warn("The {} type is not defined", type);
@@ -189,7 +182,7 @@ public class WsServerEndpoint {
         }
         pingHandler.handleLeave(session.getId());
         if (sender != null) {
-            leaveHandler.handleLeave(spaceID, spaceUserService.get(spaceID), sender);
+            leaveHandler.handleLeave(spaceID, sender);
             log.info("{}: User has left the room {}", sender.getId(), spaceID);
         }
     }
@@ -197,14 +190,40 @@ public class WsServerEndpoint {
     @OnError
     public void onError(@PathParam("spaceID") String spaceID, Session session, Throwable t) {
         User sender = spaceUserService.get(spaceID).get(session.getId());
-
         log.error(sender.getId() + ": " + ExceptionUtils.readStackTrace(t));
         try {
             // This should call the onClose method where the user is then removed from the room
             session.close();
         } catch (IOException ioException) {
             log.info("Error was handled with cascading IOException");
-            ioException.printStackTrace();
+            log.error(sender.getId() + ": " + ioException.getMessage(), ioException);
+        }
+    }
+
+    /**
+     * This method is used to send a message to a specific user
+     * @param target: User to send the message to
+     * @param answer: Message to send
+     */
+    public static void sendToOne(User target, Answer answer) throws EncodeException, IOException {
+        Session session = target.getSession();
+
+        synchronized (session) {
+            session.getBasicRemote().sendObject(answer);
+        }
+    }
+
+    /**
+     * This method is used to send a message to all users in a room with the exception of the sender
+     * @param users: Users in the room
+     * @param answer: Message to send
+     * @param userId: User that sent the message
+     */
+    public static void broadcast(Collection<User> users, Answer answer, String userId) throws EncodeException, IOException {
+        for (User user : users) {
+            if (!user.getId().equals(userId)) {
+                sendToOne(user, answer);
+            }
         }
     }
 }

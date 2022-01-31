@@ -6,6 +6,7 @@ import com.alphabibber.websocketservice.model.answer.MediaAnswer;
 import com.posthog.java.PostHog;
 import lombok.Getter;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,9 +58,9 @@ public class PosthogService {
      * Send all necessay events to posthog when user loggs into space
      * @param user: user object
      * @param spaceId: space id
-     * @param room: room that represents space
+     * @param space: space that represents space
      */
-    public void handleLogin(User user, String spaceId, Map<String, User> room) {
+    public void handleLogin(User user, String spaceId, Collection<User> space) {
         // tell posthog that the user logged into that space
         sendEvent(user.getId(), spaceJoinedString, new HashMap<String, Object>(){{put(spaceIdString, spaceId);}});
         // init camera to on
@@ -70,10 +71,10 @@ public class PosthogService {
         startTracking(user.getId(), doNotDisturb, false);
 
         // track room size
-        if (room.size() > 1) {
-            for (User u : room.values()) {
+        if (space.size() > 1) {
+            for (User u : space) {
                 sendEvent(u.getId(), spaceWithOtherUserString, new HashMap<String, Object>() {{
-                    put(roomSizeString, room.size());
+                    put(roomSizeString, space.size());
                 }});
             }
         }
