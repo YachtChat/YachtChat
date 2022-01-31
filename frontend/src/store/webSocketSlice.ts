@@ -71,14 +71,15 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
     }
 
     socket.onerror = e => {
-        console.log(e)
-        dispatch(disconnect())
-        dispatch(reconnectToWs())
+        // console.log(e)
+        // dispatch(disconnect())
+        // dispatch(reconnectToWs())
+        dispatch(handleError("An error with the server connection occurred", e))
     };
 
     socket.onclose = (e) => {
         dispatch(disconnect())
-        if (!e.wasClean)
+        if (!e.wasClean || e.code !== 1000)
             dispatch(reconnectToWs())
     }
 
