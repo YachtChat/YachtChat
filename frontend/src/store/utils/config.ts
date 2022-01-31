@@ -2,6 +2,7 @@ export const SOCKET_URL: string | undefined = process.env.REACT_APP_SIGNAL_URL;
 export const SPACES_URL: string | undefined = process.env.REACT_APP_SPACES_URL;
 export const ACCOUNT_URL: string | undefined = process.env.REACT_APP_ACCOUNT_URL
 export const FRONTEND_URL: string | undefined = process.env.REACT_APP_FRONTEND_URL
+export const HOMEPAGE_URL: string | undefined = "https://" + process.env.REACT_APP_HOMEPAGE_URL
 export const SUPPORT_URL: string | undefined = "https://" + process.env.REACT_APP_SUPPORT_URL;
 export const SOCKET_PORT: string | undefined = process.env.REACT_APP_SIGNAL_PORT;
 export const SPACES_PORT: string | undefined = process.env.REACT_APP_SPACES_PORT;

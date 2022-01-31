@@ -3,7 +3,7 @@ import React from "react";
 import "./style.scss"
 import classNames from "classnames";
 import {Card} from "../card";
-import {EMAIL, INSTA, LINKEDIN, SUPPORT} from "../../util/config";
+import {EMAIL, INSTA, LINKEDIN, SUPPORT_URL} from "../../util/config";
 
 export function Contact() {
 
@@ -39,7 +39,7 @@ export function Contact() {
                             <label>Mail</label>
                         </Card>
                     </a>
-                    <a className={"card"} href={SUPPORT}>
+                    <a className={"card"} href={SUPPORT_URL}>
                         <Card>
                             <IoHelpBuoyOutline className={"insta"}/>
                             <label>Support</label>

@@ -1,10 +1,9 @@
 import {IoHelpBuoyOutline, IoVolumeHigh} from "react-icons/io5";
 import React from "react";
 import "./style.scss"
-import {applicationName} from "../../util/config";
+import {applicationName, SUPPORT_URL} from "../../util/config";
 import {JoinButton} from "../joinButton";
 import {Separator} from "../separator";
-import {SUPPORT} from "../../util/config";
 import {BiMouse} from "react-icons/all";
 
 export function Tutorial() {
@@ -54,7 +53,7 @@ export function Tutorial() {
                 </div>
                 <JoinButton className={"join"}/>
                 <a className={"join joinButton outlined"}
-                     href={SUPPORT}>
+                     href={SUPPORT_URL}>
                     <IoHelpBuoyOutline/> Get help
                 </a>
             </div>
