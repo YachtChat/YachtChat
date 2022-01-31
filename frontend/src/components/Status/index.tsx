@@ -40,7 +40,6 @@ export class StatusComponent extends Component<Props> {
                                 <div>
                                     <Alert style={{ marginTop: "0.5rem" }} severity={"warning"}>
                                         Unstable internet connection. Trying to reconnect.
-                                        {(this.props.reconnect).toString()}
                                         <CircularProgress style={{ margin: "0 0.5rem" }} size={15} color={"inherit"} />
                                     </Alert>
                                 </div>

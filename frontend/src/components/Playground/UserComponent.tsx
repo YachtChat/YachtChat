@@ -7,10 +7,11 @@ import {getUserMessages, userProportion} from "../../store/userSlice";
 import {CircularProgress, Collapse, Grow, Popper, Tooltip, Zoom} from "@mui/material";
 import {IoCopyOutline, IoMicOffOutline, IoMoon, IoTvOutline, IoVideocamOffOutline} from "react-icons/io5";
 import {handleError, handleSuccess} from "../../store/statusSlice";
-import {convertRemToPixels} from "../../store/utils/utils";
+import {convertRemToPixels, copyToClipboard} from "../../store/utils/utils";
 import {centerUser} from "../../store/playgroundSlice";
 import {UserWrapper} from "../../store/model/UserWrapper";
 import profile_pic from "../../rsc/profile.png"
+import {parseLinks} from "../../store/utils/linkParser";
 
 interface OwnProps {
     user: UserWrapper
@@ -28,7 +29,7 @@ interface OtherProps {
     microphone: string
     stream: MediaStream | undefined
     getScreenStream: (id: string) => MediaStream | undefined
-    success: (s: string) => void
+    copy: (s: string) => void
     error: (s: string, e?: any) => void
     messages: Message[]
     showVideoInAvatar: boolean
@@ -274,19 +275,7 @@ export class UserComponent extends Component<Props, State> {
                                                                     </td>
                                                                     <td className={"clickable"}><span ref={this.messagesEnd}
                                                                                                       className={"clickable"}>
-                                                            {(
-                                                                m.message.toLocaleLowerCase().startsWith("http") ||
-                                                                m.message.toLocaleLowerCase().startsWith("www.") ||
-                                                                m.message.toLocaleLowerCase().includes(".de") ||
-                                                                m.message.toLocaleLowerCase().includes(".nl") ||
-                                                                m.message.toLocaleLowerCase().includes(".chat") ||
-                                                                m.message.toLocaleLowerCase().includes(".com")
-                                                            ) ?
-                                                                <a href={m.message}
-                                                                   className={"clickable"}
-                                                                   target="_blank" rel="noopener noreferrer"
-                                                                >{m.message}</a> :
-                                                                m.message}
+                                                            {parseLinks(m.message)}
                                                         </span></td>
                                                                     <Tooltip title={"Copy message"} arrow
                                                                              placement={"right"}>
@@ -298,11 +287,7 @@ export class UserComponent extends Component<Props, State> {
                                                                                     e.nativeEvent.preventDefault()
                                                                                     e.stopPropagation()
                                                                                     e.nativeEvent.stopPropagation()
-                                                                                    navigator.clipboard.writeText(this.props.user.message ?? "").then(() => {
-                                                                                        this.props.success("Copied message")
-                                                                                    }).catch(e => {
-                                                                                        this.props.error("Cannot copy message", e)
-                                                                                    })
+                                                                                    this.props.copy(m.message ?? "")
                                                                                 }}/>
                                                                         </td>
                                                                     </Tooltip>
@@ -334,19 +319,10 @@ export class UserComponent extends Component<Props, State> {
 
                                  (this.props.user.message) ?
                                      <div className={"clickable"}>
-                                         {(
-                                             this.props.user.message.toLocaleLowerCase().startsWith("http") ||
-                                             this.props.user.message.toLocaleLowerCase().startsWith("www.")
-                                         ) ?
-                                             <a href={this.props.user.message}
-                                                className={"clickable ph-no-capture"}
-                                                target="_blank" rel="noopener noreferrer"
-                                             >{this.props.user.message}</a> :
-                                             this.props.user.message}
-                                         {" "}<IoCopyOutline className={"clickable"}
+                                         {parseLinks(this.props.user.message)}
+                                         <IoCopyOutline className={"clickable"}
                                                              onClick={() => {
-                                                                 navigator.clipboard.writeText(this.props.user.message ?? "")
-                                                                 this.props.success("copied message")
+                                                                 this.props.copy(this.props.user.message ?? "")
                                                              }}/>
                                      </div>
                                      : ""} placement="top" arrow>
@@ -406,7 +382,9 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
 
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     center: () => dispatch(centerUser(ownProps.user.user)),
-    success: (s: string) => dispatch(handleSuccess(s)),
+    copy: (s: string) => copyToClipboard(s).then(() =>
+        dispatch(handleSuccess("Copied message"))).catch(e =>
+        dispatch("Cannot copy message", e)),
     error: (s: string, e?: any) => dispatch(handleError(s, e))
 })
 

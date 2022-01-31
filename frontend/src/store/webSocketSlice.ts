@@ -20,6 +20,7 @@ import {destroySession} from "./destroySession";
 import {disconnectUser, handleCandidate, handleSdp} from "./rtc";
 import {sendNotification} from "./utils/notifications";
 import {isOnline} from "./utils/utils";
+import posthog from "posthog-js";
 
 interface WebSocketState {
     connected: boolean
@@ -79,6 +80,7 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
 
     socket.onclose = (e) => {
         dispatch(disconnect())
+        console.log(e)
         if (!e.wasClean || e.code !== 1000)
             dispatch(reconnectToWs())
     }
@@ -188,6 +190,7 @@ export const reconnectToWs = (): AppThunk => (dispatch, getState) => {
         }
 
         console.log("Trying to reconnect...")
+        posthog.capture("Reconnect", { description: "Frontend to space " +  getState().space.joinedSpace })
 
         isOnline().then(() => {
 

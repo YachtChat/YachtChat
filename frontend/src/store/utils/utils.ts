@@ -254,3 +254,27 @@ export function isOnline(): Promise<void> {
         })
     })
 }
+
+export function isValidHttpUrl(s: string) {
+    let url;
+
+    try {
+        url = new URL(s);
+    } catch (_) {
+        // url = undefined
+        return false
+    }
+
+    // if (!url && s.indexOf(".") > 0 && s.indexOf(".") < s.length-1) {
+    //     s = "https://" + s
+    //
+    //     try {
+    //         url = new URL(s);
+    //     } catch (_) {
+    //         return false
+    //     }
+    // } else
+    //     return false
+
+    return url.protocol === "http:" || url.protocol === "https:";
+}
