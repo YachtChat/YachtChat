@@ -9,7 +9,7 @@ import {
     VirtualBackgroundRenderer
 } from '@camera-processor/virtual-background';
 import {AppThunk} from "./store";
-import {FRONTEND_URL} from "./config";
+import {FRONTEND_URL, HOMEPAGE_URL} from "./config";
 import {handleError, handleSuccess} from "../statusSlice";
 import {getInvitationToken, getToken} from "../spaceSlice";
 import posthog from "posthog-js";
@@ -240,7 +240,7 @@ export function isOnline(): Promise<void> {
             reject()
             return
         }
-        axios.get("https://www.yacht.chat").then(() => {
+        axios.get(HOMEPAGE_URL).then(() => {
             // If connection to homepage could be established
             resolve()
         }).catch(() => {

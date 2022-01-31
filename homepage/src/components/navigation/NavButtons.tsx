@@ -1,6 +1,6 @@
 import {IoClose} from "react-icons/all";
 import {useEffect, useState} from "react";
-import {SUPPORT} from "../../util/config";
+import {SUPPORT_URL} from "../../util/config";
 import {useLocation, useNavigate} from "react-router-dom";
 
 interface Props {
@@ -49,7 +49,7 @@ export function NavButtons(props: Props) {
                                    onClick={() => scrollTo(el)}>{names[i]}</button>
                 }
             )}
-            <a className={""} href={SUPPORT}>Help</a>
+            <a className={""} href={SUPPORT_URL}>Help</a>
 
         </nav>
     )
