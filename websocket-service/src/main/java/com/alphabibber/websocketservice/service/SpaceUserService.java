@@ -64,7 +64,6 @@ public class SpaceUserService {
 
     public Integer size(String spaceID) {
         if (spaceMap.containsKey(spaceID)) {
-            System.out.println(spaceMap.get(spaceID));
             return spaceMap.get(spaceID).size();
         } else
             return 0;
