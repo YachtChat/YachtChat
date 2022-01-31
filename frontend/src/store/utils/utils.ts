@@ -240,7 +240,7 @@ export function isOnline(): Promise<void> {
             reject()
             return
         }
-        axios.get(HOMEPAGE_URL).then(() => {
+        axios.get(HOMEPAGE_URL!).then(() => {
             // If connection to homepage could be established
             resolve()
         }).catch(() => {
