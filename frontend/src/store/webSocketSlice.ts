@@ -220,8 +220,6 @@ export const send = (message: { [key: string]: any }): AppThunk => (dispatch, ge
         id: getUserID(getState()),
     }
 
-    console.log(socket)
-
     if (socket !== null)
         socket.send(JSON.stringify(msgObj));
 }
