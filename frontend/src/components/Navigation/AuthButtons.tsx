@@ -52,6 +52,9 @@ export class AuthButtons extends Component<Props, State> {
     render() {
         const open = this.state.profileOpen && !this.props.minimal
 
+        const dark = window.matchMedia("(prefers-color-scheme: dark)").matches
+        const theme = dark ? { bgcolor: "#202020" } : {}
+
         return (
             <div className={"authentification"}
                  onMouseOver={() => this.setState({profileOpen: true})}
@@ -80,7 +83,7 @@ export class AuthButtons extends Component<Props, State> {
                             {...TransitionProps}
                             style={{transformOrigin: placement === 'bottom' ? 'top' : 'top'}}
                         >
-                            <Paper sx={{ bgcolor: "#202020" }}>
+                            <Paper sx={theme}>
                                 <ClickAwayListener onClickAway={this.handleClose.bind(this)}>
                                     <MenuList autoFocusItem={open} id="menu-list-grow">
                                         {/*<Link to={""}>*/}
