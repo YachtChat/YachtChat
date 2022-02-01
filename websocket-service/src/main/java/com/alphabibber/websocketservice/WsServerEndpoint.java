@@ -193,7 +193,7 @@ public class WsServerEndpoint {
             User sender = spaceUserService.get(spaceID).get(session.getId());
             log.error("{}: Error occured in the space {}", sender.getId(), spaceID, t);
         }catch (NullPointerException e){
-            log.error("Error for user that is not longer part of space {}", spaceID);
+            log.error("Error for user that is not longer part of space {}", spaceID, t);
         }finally {
             try{
                 session.close();
