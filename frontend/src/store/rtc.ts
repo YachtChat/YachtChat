@@ -1,6 +1,6 @@
 import {AppThunk, RootState} from "./utils/store";
 import {
-    getOnlineUsers,
+    getOnlineUsers, getOnlineUsersWrapped,
     getUser,
     getUserById, getUserByIdWrapped,
     getUserID,
@@ -363,13 +363,13 @@ export const exchangeTracks = (stream: MediaStream | undefined, video: boolean, 
         if (((s.kind === "video" && video) && (user.video || user.screen)) ||
             ((s.kind === "audio" && audio) && (user.audio))) {
 
-            getOnlineUsers(state).forEach(u => {
+            getOnlineUsersWrapped(state).forEach(u => {
                 Object.keys(rtpSender[u.id]).forEach(k => {
                     const rs = rtpSender[u.id][k]
                     if (rs.track && rs.track.kind === s.kind) {
                         const clone = s.clone()
                         if (clone.kind === 'audio')
-                            clone.enabled = !!u.inProximity
+                            clone.enabled = u.inProximity
                         rs.track.stop()
 
                         // do not exchange if the user shares screen but other user is not in proximity

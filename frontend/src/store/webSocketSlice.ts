@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './utils/store';
 import {UserCoordinates, UserPayload} from "./model/model";
 import {
-    getOnlineUsers,
+    getOnlineUsersWrapped,
     getUserById,
     getUserID, getUserWrapped,
     handleMessage,
@@ -81,8 +81,11 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
     socket.onclose = (e) => {
         dispatch(disconnect())
         console.log(e)
-        if (!e.wasClean || e.code !== 1000)
+        if (!e.wasClean || e.code !== 1000 || !!getState().space.joinedSpace)
             dispatch(reconnectToWs())
+        else if (!!getState().space.joinedSpace) {}
+        else
+            dispatch(destroySession(true))
     }
 
     socket.onmessage = function (msg) {
@@ -189,6 +192,10 @@ export const reconnectToWs = (): AppThunk => (dispatch, getState) => {
             return
         }
 
+        // Only try to reconnect if tab is in focus
+        if (getState().playground.inBackground)
+            return
+
         console.log("Trying to reconnect...")
         posthog.capture("Reconnect", { description: "Frontend to space " +  getState().space.joinedSpace })
 
@@ -198,6 +205,10 @@ export const reconnectToWs = (): AppThunk => (dispatch, getState) => {
             clearInterval(relogin)
             if (getState().space.joinedSpace)
                 setTimeout(() => dispatch(connectToServer(getState().space.joinedSpace!)))
+            else {
+                clearInterval(relogin)
+                dispatch(destroySession(true))
+            }
         })
     }, 4000)
     //else
@@ -205,7 +216,7 @@ export const reconnectToWs = (): AppThunk => (dispatch, getState) => {
 }
 
 export const sendMessage = (message: string): AppThunk => (dispatch, getState) => {
-    getOnlineUsers(getState()).forEach(u => {
+    getOnlineUsersWrapped(getState()).forEach(u => {
         if (u.inProximity) {
             dispatch(send({
                 type: "message",

@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import "./style.scss";
-import {getOnlineUsers} from "../../store/userSlice";
-import {User} from "../../store/model/model";
+import {getOnlineUsersWrapped} from "../../store/userSlice";
+import {UserWrapper} from "../../store/model/UserWrapper";
 
 interface Props {
     audio?: MediaStream
@@ -16,7 +16,7 @@ interface Props {
     maxHeight?: number
     unit?: string // percent px
     label?: boolean // percent px
-    users: User[]
+    users: UserWrapper[]
     proximityWarning?: boolean
 }
 
@@ -141,7 +141,7 @@ export class MediaSettings extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    users: getOnlineUsers(state),
+    users: getOnlineUsersWrapped(state),
 })
 
 export default connect(mapStateToProps)(MediaSettings)
