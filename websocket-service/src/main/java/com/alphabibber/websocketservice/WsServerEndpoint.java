@@ -101,7 +101,7 @@ public class WsServerEndpoint {
         // if the user is not yet part of the room the type has to be 'login'
         if (!spaceUserService.isUserPartOfSpace(spaceID, session.getId())) {
             if (!type.equals("login")) {
-                log.error("New user tried to send a message without being logged in for space {}", spaceID);
+                log.error("New user tried to send a message with type: {} without being logged in for space {}", type, spaceID);
             }
             String token = jsonObject.get("token").getAsString();
             String userId = jsonObject.get("id").getAsString();
