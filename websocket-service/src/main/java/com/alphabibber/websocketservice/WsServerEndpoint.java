@@ -189,14 +189,17 @@ public class WsServerEndpoint {
 
     @OnError
     public void onError(@PathParam("spaceID") String spaceID, Session session, Throwable t) {
-        User sender = spaceUserService.get(spaceID).get(session.getId());
-        log.error(sender.getId() + ": " + ExceptionUtils.readStackTrace(t));
-        try {
-            // This should call the onClose method where the user is then removed from the room
-            session.close();
-        } catch (IOException ioException) {
-            log.info("Error was handled with cascading IOException");
-            log.error(sender.getId() + ": " + ioException.getMessage(), ioException);
+        try{
+            User sender = spaceUserService.get(spaceID).get(session.getId());
+            log.error("{}: Error occured in the space {}", sender.getId(), spaceID, t);
+        }catch (NullPointerException e){
+            log.error("Error for user that is not longer part of space {}", spaceID);
+        }finally {
+            try{
+                session.close();
+            }catch (IOException ioException) {
+                log.info("Error was handled with cascading IOException");
+            }
         }
     }
 
