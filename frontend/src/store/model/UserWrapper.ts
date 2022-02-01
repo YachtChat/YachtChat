@@ -32,8 +32,7 @@ export class UserWrapper implements User {
     }
 
     public get anyStreamAvailable(): boolean {
-        const user = this.user
-        return !!user.userStream.video || !!user.userStream.audio || !!user.userStream.screen
+        return !!this.userStream.video || !!this.userStream.audio || !!this.userStream.screen
     }
 
     public get online(): boolean {
@@ -101,7 +100,7 @@ export class UserWrapper implements User {
     }
 
     public get inProximity(): boolean {
-        return !!this.user.inProximity
+        return !!UserWrapper.getState().userState.inProximity[this.id]
     }
 
     public get inRange(): boolean {
@@ -109,7 +108,7 @@ export class UserWrapper implements User {
     }
 
     public get userStream(): Record<MediaType, string | undefined> {
-        return this.user.userStream
+        return UserWrapper.getState().media.userStream[this.id] ?? {}
     }
 
     public get position(): UserCoordinates {

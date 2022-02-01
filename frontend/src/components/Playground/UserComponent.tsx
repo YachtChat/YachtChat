@@ -33,6 +33,8 @@ interface OtherProps {
     error: (s: string, e?: any) => void
     messages: Message[]
     showVideoInAvatar: boolean
+    anyStreamAvailable: boolean
+    inProximity: boolean
     center: () => void
 }
 
@@ -173,8 +175,8 @@ export class UserComponent extends Component<Props, State> {
         const y = user.position!.y * scale
         const offsetX = this.props.playgroundOffset.x * scale
         const offsetY = this.props.playgroundOffset.y * scale
-        let userOpacity = ((user.inProximity && audio) || this.props.selected) ? 1 : 0.5
-        let userScale = (user.inProximity && audio) ? "scale(1)" : "scale(0.8)"
+        let userOpacity = ((this.props.inProximity && audio) || this.props.selected) ? 1 : 0.5
+        let userScale = (this.props.inProximity && audio) ? "scale(1)" : "scale(0.8)"
         if (this.props.selected) {
             userScale = "scale(1.2)"
         }
@@ -336,7 +338,7 @@ export class UserComponent extends Component<Props, State> {
                                        onMouseOver={() => this.mouseOver()}
                                        onMouseLeave={() => this.mouseOut()}
                                        className={
-                                           (!this.props.user.anyStreamAvailable || ((!screen && !video) || (!inRange && screen))) ? "profile-picture" : "" +
+                                           (!this.props.anyStreamAvailable || ((!screen && !video) || (!inRange && screen))) ? "profile-picture" : "" +
                                                ((user.inProximity && !this.props.isActiveUser) ? " in-proximity" : "")}/>
                             }
                             {(user.userStream && user.screen && !inRange) &&
@@ -373,6 +375,8 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     camera: getCamera(state),
     microphone: getMicrophone(state),
     isActiveUser: ownProps.user.isActiveUser(),
+    anyStreamAvailable: ownProps.user.anyStreamAvailable,
+    inProximity: ownProps.user.inProximity,
     inRange: ownProps.user.inRange,
     stream: getStream(state, ownProps.user.id),
     getScreenStream: (id: string) => getScreenStream(state, id),

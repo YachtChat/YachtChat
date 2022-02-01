@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './utils/store';
 import {UserCoordinates, UserPayload} from "./model/model";
 import {
-    getOnlineUsers,
+    getOnlineUsersWrapped,
     getUserById,
     getUserID, getUserWrapped,
     handleMessage,
@@ -205,7 +205,7 @@ export const reconnectToWs = (): AppThunk => (dispatch, getState) => {
 }
 
 export const sendMessage = (message: string): AppThunk => (dispatch, getState) => {
-    getOnlineUsers(getState()).forEach(u => {
+    getOnlineUsersWrapped(getState()).forEach(u => {
         if (u.inProximity) {
             dispatch(send({
                 type: "message",

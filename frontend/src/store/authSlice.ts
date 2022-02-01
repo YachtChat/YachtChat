@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './utils/store';
-import {handleLoginUser} from './userSlice';
+import {handleLoginUser, setUserId} from './userSlice';
 import keycloak from "./utils/keycloak";
 import {AxiosRequestConfig} from "axios";
 import {UserWrapper} from "./model/UserWrapper";
@@ -58,6 +58,7 @@ export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) =
                 const existingToken = getState().auth.token
                 if (existingToken && existingToken !== "") {
                     dispatch(setLogin(auth)) // TODO: to be set to keycloak.authenticated
+                    dispatch(setUserId(keycloak.idTokenParsed?.sub ?? "-1"))
 
                     dispatch(handleLoginUser())
                 } else {

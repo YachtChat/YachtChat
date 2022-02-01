@@ -19,6 +19,7 @@ interface UserState {
     activeUser: User
     spaceUsers: { [key: string]: User },
     inRange: { [key: string]: boolean },
+    inProximity: { [key: string]: boolean },
     messages: Message[]
 }
 
@@ -26,10 +27,10 @@ const initialState: UserState = {
     activeUser: {
         id: "-1",
         online: true,
-        userStream: {video: undefined, audio: undefined, screen: undefined}
     },
     spaceUsers: {},
     inRange: {},
+    inProximity: {},
     messages: []
 };
 
@@ -54,16 +55,8 @@ export const userSlice = createSlice({
         changeRadius: (state, action: PayloadAction<number>) => {
             state.activeUser.position!.range = action.payload;
         },
-        setStreamID: (state, action: PayloadAction<{ user_id: string, type: MediaType, stream_id: string | undefined }>) => {
-            if (state.activeUser.id === action.payload.user_id) {
-                state.activeUser.userStream[action.payload.type] = action.payload.stream_id
-                state.activeUser.inProximity = true
-            } else
-                state.spaceUsers[action.payload.user_id].userStream[action.payload.type] = action.payload.stream_id
-        },
         setUserId: (state, action: PayloadAction<string>) => {
             state.activeUser.id = action.payload
-            state.activeUser.inProximity = true
         },
         initUser: (state, action: PayloadAction<User>) => {
             state.activeUser = action.payload
@@ -91,8 +84,6 @@ export const userSlice = createSlice({
                     state.activeUser = {
                         ...u,
                         position: state.activeUser.position ?? u.position,
-                        userStream: state.activeUser.userStream,
-                        inProximity: state.activeUser.inProximity
                     }
                 } else if (u.position || !u.online) {
                     spaceUsers[id] = u
@@ -105,7 +96,6 @@ export const userSlice = createSlice({
             state.messages = []
             state.inRange = {}
             state.activeUser.position = undefined
-            state.activeUser.userStream = { audio: undefined, video: undefined, screen: undefined }
         },
         setMessage: (state, action: PayloadAction<{ message: string, id: string }>) => {
             if (state.spaceUsers[action.payload.id])
@@ -132,13 +122,18 @@ export const userSlice = createSlice({
             if (state.activeUser.id === action.payload.id)
                 state.inRange[action.payload.id] = action.payload.event
         },
+        setInProximity: (state, action: PayloadAction<{ id: string, event: boolean }>) => {
+            if (state.spaceUsers[action.payload.id])
+                state.inProximity[action.payload.id] = action.payload.event
+            if (state.activeUser.id === action.payload.id)
+                state.inProximity[action.payload.id] = action.payload.event
+        },
     },
 });
 
 export const {
     move,
     changeRadius,
-    setStreamID,
     initUser,
     setUser,
     setUsers,
@@ -148,7 +143,8 @@ export const {
     setMessage,
     destroyMessage,
     resetUsers,
-    setInRange
+    setInRange,
+    setInProximity
 } = userSlice.actions;
 
 // Called on initial login to retrieve the user information for all users
@@ -308,14 +304,14 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
     const user = getUser(getState())
     const currentRange = maxRange * (user.position?.range ?? 30) / 100
 
-    let users: User[] = []
+    let users: UserWrapper[] = []
 
     //  If moving user is activeUser the proximity has to be compared to every user
     //  Else: The moving user has only to be compared to the active user
     if (user.id === object.id)
-        users = getOnlineUsers(getState())
+        users = getOnlineUsersWrapped(getState())
     else
-        users.push(getUserById(getState(), object.id))
+        users.push(getUserByIdWrapped(getState(), object.id))
 
     // if (getUser(getState()).position === user.position)
     users.forEach(u => {
@@ -330,7 +326,7 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
         // Else: If the user is marked as in proximity, but actually is not, reset flag and unsend audio
         if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
             // console.log(user.id, "in Range - sending audio to", u.id)
-            dispatch(setUser({...u, inProximity: true}))
+            dispatch(setInProximity({ id: u.id, event: true }))
             if (user.id !== u.id) {
                 if (getUserWrapped(getState()).screen) {
                     dispatch(sendVideo(u.id))
@@ -342,9 +338,9 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
                     event: true
                 }))
             }
-        } else if (dist > (currentRange + userProportion / 2) && (!!u.inProximity || u.inProximity === undefined)) {
+        } else if (dist > (currentRange + userProportion / 2) && u.inProximity) {
             // console.log(user.id, "not in Range - dont send audio", u.id)
-            dispatch(setUser({...u, inProximity: false}))
+            dispatch(setInProximity({ id: u.id, event: false }))
             if (user.id !== u.id) {
                 dispatch(send({
                     type: "range",

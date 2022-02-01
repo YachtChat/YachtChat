@@ -5,8 +5,7 @@ import {
     getOnlineUsers,
     getUser,
     getUserID,
-    getUserWrapped,
-    setStreamID
+    getUserWrapped, setInProximity,
 } from "./userSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./model/model";
@@ -19,7 +18,7 @@ interface MediaState {
     audio: { [user: string]: boolean }
     video: { [user: string]: boolean }
     screen: { [user: string]: boolean }
-    doNotDisturb: { [ user: string]: boolean }
+    doNotDisturb: { [user: string]: boolean }
     previousVideo: boolean
     previousAudio: boolean
     cameras: string[]
@@ -32,6 +31,7 @@ interface MediaState {
         virtualBackground?: string
     }
     userMedia: boolean // marked obsolete?
+    userStream: Record<string, Record<MediaType, string | undefined>>
 }
 
 const initialState: MediaState = {
@@ -50,7 +50,8 @@ const initialState: MediaState = {
         microphone: (!!localStorage.getItem("microphone")) ? localStorage.getItem("microphone")! : undefined,
         speaker: (!!localStorage.getItem("speaker")) ? localStorage.getItem("speaker")! : undefined,
         virtualBackground: (!!localStorage.getItem("virtualBackground")) ? localStorage.getItem("virtualBackground")! : "none",
-    }
+    },
+    userStream: {}
 };
 
 let localStream: MediaStream | undefined = undefined // local video and audio
@@ -87,7 +88,7 @@ export const mediaSlice = createSlice({
                     break;
             }
         },
-        setDoNotDisturb: (state, action: PayloadAction<{ id: string, state: boolean}>) => {
+        setDoNotDisturb: (state, action: PayloadAction<{ id: string, state: boolean }>) => {
             state.doNotDisturb[action.payload.id] = action.payload.state
         },
         setCamera: (state, action: PayloadAction<string>) => {
@@ -133,6 +134,11 @@ export const mediaSlice = createSlice({
                 state.screen[action.payload.id] = action.payload.state
             }
         },
+        setStreamID: (state, action: PayloadAction<{ user_id: string, type: MediaType, stream_id: string | undefined }>) => {
+            if (!state.userStream[action.payload.user_id])
+                state.userStream[action.payload.user_id] = { audio: undefined, video: undefined, screen: undefined }
+            state.userStream[action.payload.user_id][action.payload.type] = action.payload.stream_id
+        },
         resetMedia: (state, action: PayloadAction<string | undefined>) => {
             if (action.payload) {
                 delete state.video[action.payload]
@@ -144,6 +150,8 @@ export const mediaSlice = createSlice({
             state.video = {}
             state.audio = {}
             state.screen = {}
+            state.userStream = {}
+
         }
     },
 });
@@ -164,7 +172,8 @@ export const {
     turnOnAudio,
     setScreen,
     setMedia,
-    resetMedia
+    resetMedia,
+    setStreamID
 } = mediaSlice.actions;
 
 export const loadAllMediaDevices = (callback?: () => void): AppThunk => (dispatch) => {
@@ -199,19 +208,19 @@ export const requestUserMediaAndJoin = (spaceID: string, video: boolean, audio: 
     navigator.mediaDevices.getUserMedia(getMediaConstrains(getState(), video, audio)).then((e) => {
         const localClient = getUserID(getState())
         const [ls, cp] = applyVirtualBackground(e, getState().media.selected.virtualBackground, camera_processor)
-        dispatch(setStream(getState(), localClient, ls))
         camera_processor = cp
+        dispatch(loadAllMediaDevices(() => {
+            dispatch(setStream(getState(), localClient, ls))
+            dispatch(setUserMedia(true))
+            dispatch(setInProximity({id: localClient, event: true}))
 
-        dispatch(loadAllMediaDevices())
-        dispatch(setUserMedia(true))
-    }).then(() => {
             // init the video and audio state
             dispatch(setMedia({id: getUserID(getState()), type: MediaType.AUDIO, state: audio}))
             dispatch(setMedia({id: getUserID(getState()), type: MediaType.VIDEO, state: video}))
 
             dispatch(connectToServer(spaceID))
-        }
-    ).catch((e) => {
+        }))
+    }).catch((e) => {
         dispatch(handleError("Unable to get media.", e))
         dispatch(setUserMedia(false))
     })
@@ -443,7 +452,7 @@ export const toggleDoNotDisturb = (): AppThunk => (dispatch, getState) => {
 
     }
 
-    dispatch(setDoNotDisturb({ id: user.id, state: !user.doNotDisturb }))
+    dispatch(setDoNotDisturb({id: user.id, state: !user.doNotDisturb}))
 
     dispatch(send({
         type: 'media',
@@ -484,6 +493,8 @@ export const resetMediaSlice = (): AppThunk => (dispatch, getState) => {
 export const setStream = (state: RootState, id: string, stream: MediaStream): AppThunk => dispatch => {
     if (getUser(state).id === id) {
         localStream = stream
+        console.log(stream.getVideoTracks())
+        console.log(stream.getAudioTracks())
     } else {
         streams[id] = stream
     }
