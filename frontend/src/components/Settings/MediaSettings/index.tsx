@@ -1,24 +1,21 @@
 import React, {Component} from 'react';
-import {RootState} from "../../store/utils/store";
+import {RootState} from "../../../store/utils/store";
 import {connect} from "react-redux";
-import "./style.scss";
+import "../style.scss";
 import {
     changeAudioInput,
     changeAudioOutput,
     changeVideoInput,
     changeVirtualBackground,
     getCamera,
-    getFreshMediaStream,
     getMediaDevices,
     getMicrophone,
     getSpeaker,
     handleInputChange,
     loadAllMediaDevices
-} from "../../store/mediaSlice";
-import {User} from "../../store/model/model";
-import VolumeIndicator from "./VolumeIndicator";
-import {applyVirtualBackground, stopAllVideoEffects} from "../../store/utils/utils";
-import CameraProcessor from "camera-processor";
+} from "../../../store/mediaSlice";
+import {User} from "../../../store/model/model";
+import Preview from "./Preview";
 
 interface Props {
     user: User
@@ -35,76 +32,22 @@ interface Props {
     changeAudioInput: (microphone: string) => void
     changeVirtualBackground: (background: string) => void
     requestUserMedia: () => void
-    getStream: () => Promise<MediaStream>
 }
 
-export class MediaSettings extends Component<Props> {
-
-    stream?: MediaStream
-    cam?: CameraProcessor
+class MediaSettings extends Component<Props> {
 
     componentDidMount() {
         this.props.loadMedia()
-        this.props.getStream().then(stream => {
-            const [str, cam] = applyVirtualBackground(stream, this.props.virtualBackground)
-            this.stream = str
-            this.cam = cam
-            this.forceUpdate()
-        })
-    }
-
-    retryUserMedia() {
-        this.props.requestUserMedia()
-        this.props.loadMedia()
-    }
-
-    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        if ((prevProps.camera !== this.props.camera || prevProps.virtualBackground !== this.props.virtualBackground)) {
-            this.props.getStream().then(stream => {
-                if (this.stream)
-                    this.stream.getTracks().forEach(t => t.stop())
-                const [str, cam] = applyVirtualBackground(stream, this.props.virtualBackground, this.cam)
-                this.stream = str
-                this.cam = cam
-                this.forceUpdate()
-            })
-        }
-    }
-
-    componentWillUnmount() {
-        this.stream?.getTracks().forEach(t => t.stop())
-        stopAllVideoEffects(this.cam)
-        this.cam = undefined
-        this.stream = undefined
     }
 
     render() {
         const mediaDevices = getMediaDevices()
 
-        if (this.props.speakers.length === 0 && this.props.microphones.length === 0 && this.props.cameras.length === 0) {
-            return (<div className={"no-media"}>
-                <div>
-                    No media devices found. <br/>Request media again?
-                </div>
-                <button onClick={this.retryUserMedia.bind(this)}>
-                    Request media devices
-                </button>
-            </div>)
-        }
-
         const virtualBackgrounds = ["blur", "yacht", "transparent", "none"]
 
         return (
             <div className={"mediaSettings"}>
-                <div className={"preview"}>
-                    <div className={"videoPreview"}>
-                        <video key={this.props.camera} autoPlay muted ref={ref => {
-                            if (ref && this.stream)
-                                ref.srcObject = this.stream
-                        }}/>
-                    </div>
-                    <VolumeIndicator className={"settings-item"} audio={this.stream} label/>
-                </div>
+                <Preview video={true} audio={true} />
                 <div className={"toggles"}>
                     {this.props.cameras.length !== 0 &&
                         <div className={"settings-item"}>
@@ -199,7 +142,6 @@ const mapStateToProps = (state: RootState) => ({
     camera: getCamera(state),
     speaker: getSpeaker(state),
     virtualBackground: state.media.selected.virtualBackground,
-    getStream: () => getFreshMediaStream(state),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
