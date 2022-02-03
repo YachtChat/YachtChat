@@ -56,7 +56,12 @@ export function sendNotification(state: RootState, m: string, pic?: string,
         const n = new Notification("Yacht.Chat", {body: m, icon: pic, actions: actions})
         notifications.push(n)
 
-        n.onclick = !!actions ? actionClick : null
+        n.onclick = () => {
+            window.focus()
+            n.close()
+        }
+
+        // n.onclick = !!actions ? actionClick : null
     }
 }
 
