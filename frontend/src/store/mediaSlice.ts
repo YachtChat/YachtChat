@@ -136,7 +136,7 @@ export const mediaSlice = createSlice({
         },
         setStreamID: (state, action: PayloadAction<{ user_id: string, type: MediaType, stream_id: string | undefined }>) => {
             if (!state.userStream[action.payload.user_id])
-                state.userStream[action.payload.user_id] = { audio: undefined, video: undefined, screen: undefined }
+                state.userStream[action.payload.user_id] = {audio: undefined, video: undefined, screen: undefined}
             state.userStream[action.payload.user_id][action.payload.type] = action.payload.stream_id
         },
         resetMedia: (state, action: PayloadAction<string | undefined>) => {
@@ -420,7 +420,7 @@ export const unshareScreen = (isFromCamera?: boolean): AppThunk => (dispatch, ge
 export const toggleDoNotDisturb = (): AppThunk => (dispatch, getState) => {
     const state = getState()
     const user = getUserWrapped(state)
-    const doNotDisturb = state.media.doNotDisturb
+    const doNotDisturb = state.media.doNotDisturb[user.id]
 
     if (doNotDisturb) {
         // If it is getting turned off --> turn on all previous media
