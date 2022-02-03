@@ -17,6 +17,7 @@ interface Props {
     setVideoInAvatar: (s: boolean) => void
     enableNotifications: () => void
     disableNotifications: () => void
+    success: (s: string) => void
 }
 
 export function GeneralSettings(props: Props) {
@@ -58,10 +59,13 @@ export function GeneralSettings(props: Props) {
                         <div className="dropdown">
                             <select value={props.showVolumeIndicators.toString()}
                                     onChange={({target: {value}}) => {
-                                        if (value === "true")
+                                        if (value === "true") {
                                             props.setShowVolumeIndicators(true)
-                                        else
+                                            props.success("Enabled volume indicators")
+                                        }else {
                                             props.setShowVolumeIndicators(false)
+                                            props.success("Disabled volume indicators")
+                                        }
 
                                     }} name="volumeindicators">
                                 <option value={"true"}>
@@ -87,11 +91,13 @@ export function GeneralSettings(props: Props) {
                         <div className="dropdown">
                             <select value={props.videoInAvatar.toString()}
                                     onChange={({target: {value}}) => {
-                                        if (value === "true")
+                                        if (value === "true") {
                                             props.setVideoInAvatar(true)
-                                        else
+                                            props.success("Enabled video in avatar")
+                                        }else {
                                             props.setVideoInAvatar(false)
-
+                                            props.success("Disabled the video in avatar")
+                                        }
                                     }}
                                     name="video_avatar">
                                 <option value={"true"}>
@@ -125,13 +131,19 @@ export function GeneralSettings(props: Props) {
 
                                 {(!props.notifications || Notification.permission === 'denied' || Notification.permission === 'default') &&
                                     <button className={"submit outlined"}
-                                            onClick={() => props.enableNotifications()}>
+                                            onClick={() => {
+                                                props.enableNotifications()
+                                                props.success("Notifications enabled")
+                                            }}>
                                         Enable
                                     </button>
                                 }
                                 {(Notification.permission === 'granted' && props.notifications) &&
                                     <button className={"submit outlined"}
-                                            onClick={() => props.disableNotifications()}>
+                                            onClick={() => {
+                                                props.success("Notifications disabled")
+                                                props.disableNotifications()
+                                            }}>
                                         Disable
                                     </button>
                                 }
@@ -158,6 +170,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     setShowVolumeIndicators: (s: boolean) => dispatch(setShowVolumeIndicators(s)),
     setVideoInAvatar: (s: boolean) => dispatch(setVideoInAvatar(s)),
     enableNotifications: () => dispatch(requestNotifications()),
+    success: (s: string) => dispatch(handleSuccess(s)),
     disableNotifications: () => {
         handleSuccess("Disabled notifications")
         dispatch(setNotifications(false))
