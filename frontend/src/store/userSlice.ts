@@ -37,7 +37,7 @@ const initialState: UserState = {
 const messageTimeout: { [fromId: string]: number } = {}
 
 export const userProportion = 100
-export const maxRange = 300
+export const maxRange = 500
 
 export const userSlice = createSlice({
     name: 'user',

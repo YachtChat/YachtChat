@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class User {
     public User(Session session, String id, boolean video, boolean audio){
         this.session = session;
-        this.position = new Position(0, 0, 20);
+        this.position = new Position(0, 0, 30);
 
         HashMap<String, Boolean> media = new HashMap<String, Boolean>();
         media.put(MediaHandler.VIDEO, video);
