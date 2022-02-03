@@ -13,6 +13,7 @@ import {applyVirtualBackground, stopAllVideoEffects} from "./utils/utils";
 import CameraProcessor from "camera-processor";
 import {UserWrapper} from "./model/UserWrapper";
 import {addTracks, exchangeTracks, getRtpSender, resetRTC, stopTracks} from "./rtc";
+import posthog from "posthog-js";
 
 interface MediaState {
     audio: { [user: string]: boolean }
@@ -112,6 +113,13 @@ export const mediaSlice = createSlice({
                 localStorage.setItem("virtualBackground", action.payload)
             else
                 localStorage.removeItem("virtualBackground")
+
+            posthog.capture("virtualBackground-setting", {
+                $set: {
+                    virtualBackround: action.payload ?? "none"
+                }
+            })
+
         },
         setUserMedia: (state, action: PayloadAction<boolean>) => {
             state.userMedia = action.payload

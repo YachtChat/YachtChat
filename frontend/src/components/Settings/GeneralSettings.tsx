@@ -6,6 +6,7 @@ import {setNotifications, setShowVolumeIndicators, setVideoInAvatar} from "../..
 import TurnOffCamera from "./TurnOffCamera";
 import {requestNotifications} from "../../store/utils/notifications";
 import {handleSuccess} from "../../store/statusSlice";
+import posthog from "posthog-js";
 
 interface Props {
     emailNotifications: boolean
@@ -27,17 +28,18 @@ export function GeneralSettings(props: Props) {
                 <Tooltip title={
                     "To know when your team is online get notified when the first person joins a space."
                 } arrow placement={"top"}>
-                    <div className={"settings-item"}
-                         onClick={() =>
-                             alert("This feature is not available yet")
-                         }>
+                    <div className={"settings-item"}>
                         <label>
                             Send email notification when first user joins space
                         </label>
                         <div className="dropdown">
-                            <select disabled
+                            <select
+                                onChange={e => {
+                                    posthog.capture("email-settings", {value: e.target.value})
+                                    alert("This feature is not available yet")
+                                }}
                                 //onChange={({target: {value}}) => this.props.changeVideoInput(value)}
-                                    name="volumeindicators">
+                                name="volumeindicators">
                                 <option value={"false"}>
                                     No
                                 </option>
@@ -62,11 +64,10 @@ export function GeneralSettings(props: Props) {
                                         if (value === "true") {
                                             props.setShowVolumeIndicators(true)
                                             props.success("Enabled volume indicators")
-                                        }else {
+                                        } else {
                                             props.setShowVolumeIndicators(false)
                                             props.success("Disabled volume indicators")
                                         }
-
                                     }} name="volumeindicators">
                                 <option value={"true"}>
                                     Show
@@ -94,7 +95,7 @@ export function GeneralSettings(props: Props) {
                                         if (value === "true") {
                                             props.setVideoInAvatar(true)
                                             props.success("Enabled video in avatar")
-                                        }else {
+                                        } else {
                                             props.setVideoInAvatar(false)
                                             props.success("Disabled the video in avatar")
                                         }
@@ -115,7 +116,10 @@ export function GeneralSettings(props: Props) {
                         Background image
                     </label>
                     <button className={"submit outlined"}
-                            onClick={() => alert("This feature is not available yet")}>
+                            onClick={() => {
+                                posthog.capture("setBackgroundImage")
+                                alert("This feature is not available yet")
+                            }}>
                         Select
                     </button>
                 </div>
@@ -151,7 +155,7 @@ export function GeneralSettings(props: Props) {
                         </Tooltip>
                     }
                     {!("Notification" in window) &&
-                        <input disabled value={"Not available in your browser"} />
+                        <input disabled value={"Not available in your browser"}/>
                     }
                 </div>
             </div>

@@ -5,6 +5,7 @@ import {requestSpaces} from "./spaceSlice";
 import {getUser, getUserWrapped, userProportion} from "./userSlice";
 import {setPrevious, toggleUserVideo, unshareScreen} from "./mediaSlice";
 import {clearAllNotifications} from "./utils/notifications";
+import posthog from "posthog-js";
 
 interface PlaygroundState {
     offset: PlaygroundOffset
@@ -57,14 +58,17 @@ export const spaceSlice = createSlice({
         setVideoInAvatar: (state, action: PayloadAction<boolean>) => {
             state.videoInAvatar = action.payload
             localStorage.setItem("videoInAvatar", action.payload.toString())
+            posthog.capture("videoInAvatar-setting", {$set: {videoInAvatar: action.payload}})
         },
         setShowVolumeIndicators: (state, action: PayloadAction<boolean>) => {
             state.showVolumeIndicators = action.payload
             localStorage.setItem("showVolumeIndicators", action.payload.toString())
+            posthog.capture("showVolumeIndicators-setting", {$set: {showVolumeIndicator: action.payload}})
         },
         setNotifications: (state, action: PayloadAction<boolean>) => {
             state.notifications = action.payload
             localStorage.setItem("notifications", action.payload.toString())
+            posthog.capture("notification", {$set: {notifications: action.payload}})
         },
         setCameraMode: (state, action: PayloadAction<CameraMode>) => {
             state.cameraMode = action.payload
