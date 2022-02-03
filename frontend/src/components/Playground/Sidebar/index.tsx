@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, ReactNode} from "react";
 import './style.scss';
 import {User} from "../../../store/model/model";
 import {RootState} from "../../../store/utils/store";
@@ -47,6 +47,9 @@ interface Props {
     className?: string
     userOutOfBounds: boolean
     requestNotifications: () => void
+    children?: ReactNode
+    onMouseEnter?: () => void
+    onMouseLeave?: () => void
 }
 
 interface State {
@@ -104,6 +107,8 @@ export class NavigationBar extends Component<Props, State> {
         return (
             <div className={"navwrapper"}>
                 <div id="sidebar" ref={this.anchorRef}
+                     onMouseEnter={this.props.onMouseEnter}
+                     onMouseLeave={this.props.onMouseLeave}
                      className={"navbar " + (this.props.minimal ? "minimal " : "") + this.props.className}>
                     <div className="navbar-inner">
                         <div className="navbar-layout">
@@ -160,22 +165,22 @@ export class NavigationBar extends Component<Props, State> {
                                         </div>
                                     </li>
                                     {!this.props.minimal &&
-                                    <li className="menu-item" onClick={() => {
-                                        this.sendToPosthog("screen")
-                                        this.props.toggleScreen()
-                                    }}>
-                                        <div className="inner-item">
-                                            <Tooltip disableFocusListener
-                                                     title={(this.props.screen) ? "Stop Sharing" : "Share Screen"}
-                                                     placement="right" arrow>
+                                        <li className="menu-item" onClick={() => {
+                                            this.sendToPosthog("screen")
+                                            this.props.toggleScreen()
+                                        }}>
+                                            <div className="inner-item">
+                                                <Tooltip disableFocusListener
+                                                         title={(this.props.screen) ? "Stop Sharing" : "Share Screen"}
+                                                         placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
                                                     {(this.props.screen) ? <IoTv/> : <IoTvOutline/>}
                                                 </span>
                                             </span>
-                                            </Tooltip>
-                                        </div>
-                                    </li>
+                                                </Tooltip>
+                                            </div>
+                                        </li>
                                     }
                                     <li onClick={() => {
                                         this.sendToPosthog("donotdisturb")
@@ -243,7 +248,7 @@ export class NavigationBar extends Component<Props, State> {
                                                          title={"Enable notifications"} placement="right" arrow>
                                             <span className="icon-wrapper">
                                                 <span className="icon">
-                                                    <IoNotifications />
+                                                    <IoNotifications/>
                                                 </span>
                                             </span>
                                                 </Tooltip>
@@ -327,6 +332,7 @@ export class NavigationBar extends Component<Props, State> {
                             </div>
                         </div>
                     </div>
+                    {this.props.children}
                 </div>
             </div>
         )

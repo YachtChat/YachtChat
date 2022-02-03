@@ -8,7 +8,7 @@ import {toggleUserVideo, toggleUserAudio} from "../../store/mediaSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
-import FocusUser from "./FocusUser";
+import FocusUser from "./FullScreen";
 import {UserWrapper} from "../../store/model/UserWrapper";
 import {Fade} from "@mui/material";
 import {TransitionGroup} from "react-transition-group";
@@ -52,12 +52,10 @@ export class Canvas extends Component<Props, State> {
         }
     }
 
-    focus(userID: string) {
-        if (!this.state.focusUser) {
-            this.setState({
-                focusUser: userID
-            })
-        }
+    focus(userID: string | undefined) {
+        this.setState({
+            focusUser: userID
+        })
     }
 
     handleClose() {
@@ -364,7 +362,7 @@ export class Canvas extends Component<Props, State> {
                         this.state.userDragActive
                     }/>
                 {this.state.focusUser &&
-                    <FocusUser userID={this.state.focusUser} spaceID={this.props.spaceID}
+                    <FocusUser focus={this.focus.bind(this)} userID={this.state.focusUser} spaceID={this.props.spaceID}
                                onClose={() => this.handleClose()}/>
                 }
             </div>
