@@ -99,8 +99,8 @@ export class UserWrapper implements User {
         UserWrapper.dispatch(setMessage({ id: this.id, message: m }))
     }
 
-    public get inProximity(): boolean {
-        return !!UserWrapper.getState().userState.inProximity[this.id]
+    public get inProximity(): boolean | undefined {
+        return UserWrapper.getState().userState.inProximity[this.id]
     }
 
     public get inRange(): boolean {

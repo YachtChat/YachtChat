@@ -369,7 +369,7 @@ export const exchangeTracks = (stream: MediaStream | undefined, video: boolean, 
                     if (rs.track && rs.track.kind === s.kind) {
                         const clone = s.clone()
                         if (clone.kind === 'audio')
-                            clone.enabled = u.inProximity
+                            clone.enabled = !!u.inProximity
                         rs.track.stop()
 
                         // do not exchange if the user shares screen but other user is not in proximity
