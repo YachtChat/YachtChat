@@ -354,7 +354,10 @@ const mapDispatchToProps = (dispatch: any) => ({
         if (window.confirm(`Notifications will be shown if ${applicationName} is in background and you receive a message or a user suddenly can hear you.`))
             dispatch(requestNotifications())
     },
-    logout: () => dispatch(sendLogout(true)),
+    logout: () => {
+        document.title = applicationName
+        dispatch(sendLogout(true))
+    },
     center: () => dispatch(centerUser()),
 })
 
