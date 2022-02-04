@@ -1,5 +1,6 @@
 
-# Spaces
+
+# Manage spaces and members
 
 Spaces are like Rooms in a Building. There are not like Zoom or MS Teams calls. Spaces are persistent. So you only have to create once 
 
