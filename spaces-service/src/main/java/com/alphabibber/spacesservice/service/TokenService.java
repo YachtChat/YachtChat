@@ -49,6 +49,12 @@ public class TokenService {
     public String getInviteTokenForSpaceAndExistingUser(String spaceId) {
         var user = userService.getContextUserIfExistsElseCreate();
 
+        if (user.getMemberSpaces().stream().noneMatch(spaceMember -> spaceMember.getSpace().getId().equals(spaceId))){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "User " + user.getId() + " is not a member of the space " + spaceId
+            );
+        }
+
         // Create token with claims inviteeId and spaceId, signing etc. and return
         long jwtDurationInSeconds = (long) 60 * 60 * 24 * 7 * 4; // 4 Weeks
         return Jwts.builder()
