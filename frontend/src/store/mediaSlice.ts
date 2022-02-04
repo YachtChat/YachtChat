@@ -152,6 +152,7 @@ export const mediaSlice = createSlice({
                 delete state.video[action.payload]
                 delete state.audio[action.payload]
                 delete state.screen[action.payload]
+                delete state.doNotDisturb[action.payload]
                 return
             }
 
