@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-import {getStream} from "../../store/mediaSlice";
-import {RootState} from "../../store/utils/store";
-import {getUserByIdWrapped} from "../../store/userSlice";
+import {getStream} from "../../../store/mediaSlice";
+import {RootState} from "../../../store/utils/store";
+import {getOnlineUsersWrapped, getUserByIdWrapped} from "../../../store/userSlice";
 import {IoCloseOutline} from "react-icons/io5";
-import Sidebar from "./Sidebar";
-import {UserWrapper} from "../../store/model/UserWrapper";
-import {Dialog, Tooltip, Zoom} from "@mui/material";
+import Sidebar from "../Sidebar";
+import {UserWrapper} from "../../../store/model/UserWrapper";
+import {Collapse, Tooltip} from "@mui/material";
+import {Video} from "./Video";
+import {TransitionGroup} from "react-transition-group";
 
 interface StateProps {
     getStream: (uid: string) => MediaStream | undefined
@@ -14,6 +16,9 @@ interface StateProps {
     spaceID: string
     online?: boolean
     inRange?: boolean
+    dnd?: boolean
+    users: UserWrapper[]
+    focus: (id: string | undefined) => void
 }
 
 interface OwnProps {
@@ -25,11 +30,12 @@ interface State {
     ready: boolean
     fullscreen: boolean
     idle: boolean
+    onSidebar: boolean
 }
 
 type Props = OwnProps & StateProps
 
-export class FocusUser extends Component<Props, State> {
+class FullScreen extends Component<Props, State> {
 
     private videoObject: React.RefObject<HTMLVideoElement>
     private videoDiv: React.RefObject<HTMLDivElement>
@@ -44,7 +50,8 @@ export class FocusUser extends Component<Props, State> {
         this.state = {
             fullscreen: false,
             ready: false,
-            idle: false
+            idle: false,
+            onSidebar: false
         }
     }
 
@@ -79,6 +86,7 @@ export class FocusUser extends Component<Props, State> {
             idle: false
         })
         this.resetTimer()
+        this.toggleFullScreen()
     }
 
     mountStream() {
@@ -131,10 +139,8 @@ export class FocusUser extends Component<Props, State> {
                 fullscreen: false
             })
 
-            if (document.fullscreenElement) {
-                // Exit fullscreen if on fullscreen
-                this.handleClose()
-            }
+            // Exit fullscreen and close
+            this.handleClose()
         }
     }
 
@@ -143,17 +149,31 @@ export class FocusUser extends Component<Props, State> {
         this.setState({
             idle: false
         })
-        this.resetTimer()
+        if (!this.state.onSidebar)
+            this.resetTimer()
     }
 
     // Reset timer for the idle time
     resetTimer() {
+        this.setState({
+            onSidebar: false
+        })
         clearTimeout(this.timer)
         this.timer = window.setTimeout(() => {
             this.setState({
-                idle: true
+                idle: true,
             })
         }, 2000)
+    }
+
+    removeTimer() {
+        if (this.timer !== -1)
+            clearTimeout(this.timer)
+        this.timer = -1
+        this.setState({
+            idle: false,
+            onSidebar: true
+        })
     }
 
     keyPress(e: React.KeyboardEvent) {
@@ -168,50 +188,63 @@ export class FocusUser extends Component<Props, State> {
             zIndex: 10001
         }
 
-        if (!this.props.user || !this.props.inRange || !this.props.online)
+        if (!this.props.user || !this.props.inRange || !this.props.online || this.props.dnd)
             this.handleClose()
 
         return (
             <div onClick={e => e.stopPropagation()}>
-                <Dialog open={!!this.props.userID}
-                        onMouseDown={e => e.stopPropagation()}
-                        onClose={this.handleClose.bind(this)}
-                        onBackdropClick={this.handleClose.bind(this)}
-                        maxWidth={"lg"}
-                        onKeyPress={this.keyPress.bind(this)}
-                        onMouseMove={this.mouseDidMove.bind(this)}
-                        fullWidth={true}
-                        style={style}>
-                    <div className={"focus-video " +
-                        ((this.state.fullscreen) ? "fullscreen" : "")}>
-                        <div ref={this.videoDiv} className={"panel-content"}
-                             onClick={this.toggleFullScreen.bind(this)}>
-                            <div className={"closeButton " + ((this.state.idle) ? "idle" : "")}
-                                 onClick={e => {
-                                     e.stopPropagation()
-                                     this.handleClose()
-                                 }}>
-                                <IoCloseOutline />
-                            </div>
-                            <div onClick={e => {
-                                e.stopPropagation()
-                                e.nativeEvent.stopPropagation()
-                            }}>
-                                {this.state.fullscreen &&
-                                    <Sidebar minimal spaceID={this.props.spaceID}
-                                             className={(this.state.idle) ? "idle" : ""}/>
-                                }
-                            </div>
-                            <Tooltip TransitionComponent={Zoom} disableFocusListener
-                                     title={"Click for fullscreen"} placement="top" arrow>
-                                <video autoPlay muted
-                                       playsInline
-                                       className={"video"}
-                                       ref={this.videoObject}/>
-                            </Tooltip>
+
+                <div style={style} className={"focus-video " +
+                    ((this.state.fullscreen) ? "fullscreen" : "")}
+                     onMouseDown={e => e.stopPropagation()}
+                     onKeyPress={this.keyPress.bind(this)}
+                     onMouseMove={this.mouseDidMove.bind(this)}>
+                    <div ref={this.videoDiv} className={"panel-content"}
+                         onClick={this.toggleFullScreen.bind(this)}>
+                        <div className={"closeButton " + ((this.state.idle) ? "idle" : "")}
+                             onClick={e => {
+                                 e.stopPropagation()
+                                 this.handleClose()
+                             }}>
+                            <IoCloseOutline/>
                         </div>
+                        <div onClick={e => {
+                            e.stopPropagation()
+                            e.nativeEvent.stopPropagation()
+                        }}>
+                            {this.state.fullscreen &&
+                                <>
+                                    <Sidebar minimal spaceID={this.props.spaceID}
+                                             className={(this.state.idle) ? "idle" : ""}
+                                             onMouseEnter={this.removeTimer.bind(this)}
+                                             onMouseLeave={this.resetTimer.bind(this)}>
+                                        <div className={"otherUserWrapper"}>
+                                            <TransitionGroup>
+                                                {this.props.users.map(u =>
+                                                    <Collapse in={u.inRange}>
+                                                        <Tooltip title={u.firstName + " " + u.lastName} arrow>
+                                                            <Video key={u.id} onClick={() => this.props.focus(u.id)}
+                                                                   className={"otherUser"} stream={u.stream}/>
+                                                        </Tooltip>
+                                                    </Collapse>
+                                                )}
+                                            </TransitionGroup>
+                                        </div>
+                                    </Sidebar>
+                                </>
+                            }
+                        </div>
+                        <video autoPlay muted
+                               playsInline
+                               className={"video"}
+                               ref={this.videoObject}/>
+                        {this.state.fullscreen &&
+                            <span className={"name " + ((this.state.idle) ? "idle" : "")}>
+                                {this.props.user?.firstName + " " + this.props.user?.lastName}
+                            </span>
+                        }
                     </div>
-                </Dialog>
+                </div>
             </div>
         );
     }
@@ -221,8 +254,10 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     getStream: (uid: string) => getStream(state, uid),
     user: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID) : undefined,
     online: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID).online : undefined,
-    inRange: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID).inRange : undefined
+    inRange: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID).inRange : undefined,
+    dnd: (!!ownProps.userID) ? getUserByIdWrapped(state, ownProps.userID).doNotDisturb : undefined,
+    users: getOnlineUsersWrapped(state).filter(u => u.inRange && !u.doNotDisturb && u.id !== ownProps.userID)
     //stream: (ownProps.userID) ? getStream(state, ownProps.userID) : undefined,
 })
 
-export default connect(mapStateToProps)(FocusUser)
+export default connect(mapStateToProps)(FullScreen)

@@ -7,6 +7,7 @@ import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
 import {ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper} from "@mui/material";
 import {push} from "redux-first-history";
+import {applicationName} from "../../store/utils/config";
 
 interface OwnProps {
     minimal?: boolean
@@ -122,9 +123,13 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
-    logout: () => dispatch(logout()),
+    logout: () => {
+        document.title = applicationName
+        dispatch(logout())
+    },
     logoutOfSpace: (s: string) => {
         if (!ownProps.spaceID || window.confirm("Are you sure to leave this space").valueOf()) {
+            document.title = applicationName
             dispatch(sendLogout(false))
             dispatch(push(s))
         }

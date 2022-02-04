@@ -1,7 +1,7 @@
 import {IoAddOutline, IoChatbubblesOutline, IoCogOutline, IoPeopleOutline} from "react-icons/io5";
 import {connect} from "react-redux";
 import {sendLogout} from "../../store/webSocketSlice";
-import {SUPPORT_URL} from "../../store/utils/config";
+import {applicationName, SUPPORT_URL} from "../../store/utils/config";
 import {push} from "redux-first-history";
 
 interface OwnProps {
@@ -56,6 +56,7 @@ export function NavButtons(props: Props) {
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
     logout: (s: string) => {
         if (!ownProps.spaceID || window.confirm("Are you sure to leave this space").valueOf()) {
+            document.title = applicationName
             dispatch(sendLogout(false))
             dispatch(push(s))
         }

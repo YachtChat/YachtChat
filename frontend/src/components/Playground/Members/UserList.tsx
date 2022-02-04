@@ -18,6 +18,7 @@ import {
 import {handleError, handleSuccess} from "../../../store/statusSlice";
 import {sendLogout} from "../../../store/webSocketSlice";
 import {FaCrown} from "react-icons/fa";
+import {applicationName} from "../../../store/utils/config";
 
 interface OwnProps {
     type: "users" | "friends"
@@ -150,7 +151,10 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
 })
 
 const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
-    logout: () => dispatch(sendLogout()),
+    logout: () => {
+        document.title = applicationName
+        dispatch(sendLogout())
+    },
     removeSpaceForUser: () => dispatch(deleteSpaceForUser(ownProps.spaceID)),
     success: (s: string) => dispatch(handleSuccess(s)),
     error: (s: string) => dispatch(handleError(s)),

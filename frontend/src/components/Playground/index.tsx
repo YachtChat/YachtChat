@@ -167,7 +167,10 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    sendLogout: () => dispatch(sendLogout()),
+    sendLogout: () => {
+        document.title = applicationName
+        dispatch(sendLogout())
+    },
     handleZoom: (z: number) => dispatch(handleZoom(z)),
     requestSpaces: () => dispatch(requestSpaces()),
     initPlayground: () => dispatch(initPlayground()),

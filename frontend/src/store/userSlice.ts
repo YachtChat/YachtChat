@@ -37,7 +37,7 @@ const initialState: UserState = {
 const messageTimeout: { [fromId: string]: number } = {}
 
 export const userProportion = 100
-export const maxRange = 300
+export const maxRange = 500
 
 export const userSlice = createSlice({
     name: 'user',
@@ -338,7 +338,7 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
                     event: true
                 }))
             }
-        } else if (dist > (currentRange + userProportion / 2) && u.inProximity) {
+        } else if (dist > (currentRange + userProportion / 2) && u.inProximity || u.inProximity === undefined) {
             // console.log(user.id, "not in Range - dont send audio", u.id)
             dispatch(setInProximity({ id: u.id, event: false }))
             if (user.id !== u.id) {

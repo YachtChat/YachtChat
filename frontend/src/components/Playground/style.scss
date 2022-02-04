@@ -157,8 +157,8 @@
     0.2s color,
     0.2s transition;
     background: $background_light;
-      color: $button_font_light;
-      border-color: $background_light;
+    color: $button_font_light;
+    border-color: $background_light;
 
     &.inRange {
       color: $online_color;
@@ -276,8 +276,8 @@
       color: white;
       position: absolute;
       padding: 40%;
-      background: rgba(0,0 ,0,0.5);
-      filter: drop-shadow( 0 0 10px rgba(0, 0, 0, .7));
+      background: rgba(0, 0, 0, 0.5);
+      filter: drop-shadow(0 0 10px rgba(0, 0, 0, .7));
       width: 50%;
       height: 50%;
       top: 50%;
@@ -310,6 +310,42 @@
 
     &:hover {
       fill: red;
+    }
+  }
+
+  .otherUserWrapper {
+    display: block;
+    position: relative;
+
+    .otherUser {
+      margin-top: 1rem;
+      overflow: hidden;
+      border-radius: 50%;
+      box-shadow: $shadow;
+
+      .video {
+        border-radius: 50%;
+        transition: opacity 0.3s;
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  .name {
+    position: absolute;
+    bottom: 1rem;
+    background: rgba(255,255,255,0.8);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.25rem 0.5rem;
+    border-radius: $border_radius;
+    transition: transform 0.5s;
+
+    &.idle {
+      transform: translate(-50%, 200%);
     }
   }
 
@@ -349,11 +385,14 @@
       transform: translateX(400%);
     }
 
-    #sidebar {
-      transition: transform 0.5s;
+    .navwrapper {
 
-      &.idle {
-        transform: translateX(-200%);
+      #sidebar {
+        transition: transform 0.5s;
+
+        &.idle {
+          transform: translateX(-200%);
+        }
       }
     }
   }

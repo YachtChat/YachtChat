@@ -6,6 +6,7 @@ import {setNotifications, setShowVolumeIndicators, setVideoInAvatar} from "../..
 import TurnOffCamera from "./TurnOffCamera";
 import {requestNotifications} from "../../store/utils/notifications";
 import {handleSuccess} from "../../store/statusSlice";
+import posthog from "posthog-js";
 
 interface Props {
     emailNotifications: boolean
@@ -17,6 +18,7 @@ interface Props {
     setVideoInAvatar: (s: boolean) => void
     enableNotifications: () => void
     disableNotifications: () => void
+    success: (s: string) => void
 }
 
 export function GeneralSettings(props: Props) {
@@ -26,17 +28,18 @@ export function GeneralSettings(props: Props) {
                 <Tooltip title={
                     "To know when your team is online get notified when the first person joins a space."
                 } arrow placement={"top"}>
-                    <div className={"settings-item"}
-                         onClick={() =>
-                             alert("This feature is not available yet")
-                         }>
+                    <div className={"settings-item"}>
                         <label>
                             Send email notification when first user joins space
                         </label>
                         <div className="dropdown">
-                            <select disabled
+                            <select
+                                onChange={e => {
+                                    posthog.capture("email-settings", {value: e.target.value})
+                                    alert("This feature is not available yet")
+                                }}
                                 //onChange={({target: {value}}) => this.props.changeVideoInput(value)}
-                                    name="volumeindicators">
+                                name="volumeindicators">
                                 <option value={"false"}>
                                     No
                                 </option>
@@ -58,11 +61,13 @@ export function GeneralSettings(props: Props) {
                         <div className="dropdown">
                             <select value={props.showVolumeIndicators.toString()}
                                     onChange={({target: {value}}) => {
-                                        if (value === "true")
+                                        if (value === "true") {
                                             props.setShowVolumeIndicators(true)
-                                        else
+                                            props.success("Enabled volume indicators")
+                                        } else {
                                             props.setShowVolumeIndicators(false)
-
+                                            props.success("Disabled volume indicators")
+                                        }
                                     }} name="volumeindicators">
                                 <option value={"true"}>
                                     Show
@@ -87,11 +92,13 @@ export function GeneralSettings(props: Props) {
                         <div className="dropdown">
                             <select value={props.videoInAvatar.toString()}
                                     onChange={({target: {value}}) => {
-                                        if (value === "true")
+                                        if (value === "true") {
                                             props.setVideoInAvatar(true)
-                                        else
+                                            props.success("Enabled video in avatar")
+                                        } else {
                                             props.setVideoInAvatar(false)
-
+                                            props.success("Disabled the video in avatar")
+                                        }
                                     }}
                                     name="video_avatar">
                                 <option value={"true"}>
@@ -109,7 +116,10 @@ export function GeneralSettings(props: Props) {
                         Background image
                     </label>
                     <button className={"submit outlined"}
-                            onClick={() => alert("This feature is not available yet")}>
+                            onClick={() => {
+                                posthog.capture("setBackgroundImage")
+                                alert("This feature is not available yet")
+                            }}>
                         Select
                     </button>
                 </div>
@@ -125,13 +135,19 @@ export function GeneralSettings(props: Props) {
 
                                 {(!props.notifications || Notification.permission === 'denied' || Notification.permission === 'default') &&
                                     <button className={"submit outlined"}
-                                            onClick={() => props.enableNotifications()}>
+                                            onClick={() => {
+                                                props.enableNotifications()
+                                                props.success("Notifications enabled")
+                                            }}>
                                         Enable
                                     </button>
                                 }
                                 {(Notification.permission === 'granted' && props.notifications) &&
                                     <button className={"submit outlined"}
-                                            onClick={() => props.disableNotifications()}>
+                                            onClick={() => {
+                                                props.success("Notifications disabled")
+                                                props.disableNotifications()
+                                            }}>
                                         Disable
                                     </button>
                                 }
@@ -139,7 +155,7 @@ export function GeneralSettings(props: Props) {
                         </Tooltip>
                     }
                     {!("Notification" in window) &&
-                        <input disabled value={"Not available in your browser"} />
+                        <input disabled value={"Not available in your browser"}/>
                     }
                 </div>
             </div>
@@ -158,6 +174,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     setShowVolumeIndicators: (s: boolean) => dispatch(setShowVolumeIndicators(s)),
     setVideoInAvatar: (s: boolean) => dispatch(setVideoInAvatar(s)),
     enableNotifications: () => dispatch(requestNotifications()),
+    success: (s: string) => dispatch(handleSuccess(s)),
     disableNotifications: () => {
         handleSuccess("Disabled notifications")
         dispatch(setNotifications(false))

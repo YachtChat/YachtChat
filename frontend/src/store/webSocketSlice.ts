@@ -83,9 +83,8 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
         console.log(e)
         if (!e.wasClean || e.code !== 1000 || !!getState().space.joinedSpace)
             dispatch(reconnectToWs())
-        else if (!!getState().space.joinedSpace) {}
         else
-            dispatch(destroySession(true))
+            dispatch(destroySession(false))
     }
 
     socket.onmessage = function (msg) {

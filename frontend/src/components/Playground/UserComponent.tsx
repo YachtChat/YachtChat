@@ -376,7 +376,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
     microphone: getMicrophone(state),
     isActiveUser: ownProps.user.isActiveUser(),
     anyStreamAvailable: ownProps.user.anyStreamAvailable,
-    inProximity: ownProps.user.inProximity,
+    inProximity: !!ownProps.user.inProximity,
     inRange: ownProps.user.inRange,
     stream: getStream(state, ownProps.user.id),
     getScreenStream: (id: string) => getScreenStream(state, id),
