@@ -2,6 +2,7 @@ package com.alphabibber.websocketservice.handler;
 
 import com.alphabibber.websocketservice.model.User;
 import com.alphabibber.websocketservice.model.answer.LeaveAnswer;
+import com.alphabibber.websocketservice.service.SpaceUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,12 +11,15 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.*;
 
 public class PingHandler {
     private static PingHandler instance;
     private final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(5);
     private final LeaveHandler leaveHandler = new LeaveHandler();
+    private final SpaceUserService spaceUserService = new SpaceUserService();
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -23,7 +27,7 @@ public class PingHandler {
     private Map<String, Boolean> pingMap = new HashMap<>();
 
     // map storing all the timer for all user
-    private Map<String, ScheduledFuture<?>> timerMap = new HashMap<>();
+    private Map<String, Timer> timerMap = new HashMap<>();
 
     private PingHandler(){}
     public static PingHandler getInstance() {
@@ -42,7 +46,7 @@ public class PingHandler {
 
     public void handleLeave(String sessionId) {
         if (timerMap.containsKey(sessionId)) {
-            timerMap.get(sessionId).cancel(false);
+            timerMap.get(sessionId).cancel();
             timerMap.remove(sessionId);
         }
         if(pingMap.containsKey(sessionId)) {
@@ -50,24 +54,30 @@ public class PingHandler {
         }
     }
 
-    public void initPing(Session session, Map<String, User> space) {
-        User sender = space.get(session.getId());
-
-        timerMap.put(session.getId(),
-                scheduledThreadPoolExecutor.scheduleAtFixedRate(() -> {
-                    if(!pingMap.containsKey(session.getId()) || !pingMap.get(session.getId())) {
-                        try {
-                            log.error("{}: Pinghandler removed user from space", sender.getId());
-                            session.close();
-                        } catch (IOException e) {
-                            log.error("{}: Session could not be closed in PingHandler", sender.getId());
-                        }
+    public void initPing(Session session, String spaceId) {
+        Timer timer = new Timer();
+        // Task that should be scheduled to run every n seconds
+        TimerTask task = new TimerTask(){
+            public void run() {
+                log.info("Ping check was started");
+                if (!pingMap.containsKey(session.getId()) || !pingMap.get(session.getId())) {
+                    try{
+                        User sender = spaceUserService.getUser(spaceId, session.getId());
+                        log.warn(sender.getId() + ": was kicked in PingHandler");
+                    }catch(NullPointerException e){
+                        log.error("Websocket tried to kick a user that is not part of the space");
                     }
-                    else{
-                        pingMap.put(session.getId(), false);
+                    try {
+                        session.close();
+                    } catch(IOException e) {
+                        log.error("Error closing session");
                     }
-                },
-                20, 20, TimeUnit.SECONDS)
-        );
+                } else{
+                    pingMap.put(session.getId(), false);
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(task, 5000, 10000);
+        timerMap.put(session.getId(), timer);
     }
 }

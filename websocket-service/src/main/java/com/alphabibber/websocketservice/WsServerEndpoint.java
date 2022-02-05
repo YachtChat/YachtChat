@@ -84,7 +84,7 @@ public class WsServerEndpoint {
         log.info("User joined the space: {}", spaceID);
 
         // we expect the user to send a ping every 5 seconds
-        pingHandler.initPing(session, room);
+        pingHandler.initPing(session, spaceID);
     }
 
     @OnMessage(maxMessageSize = -1L)
@@ -183,7 +183,6 @@ public class WsServerEndpoint {
         pingHandler.handleLeave(session.getId());
         if (sender != null) {
             leaveHandler.handleLeave(spaceID, sender);
-            log.info("{}: User has left the room {}", sender.getId(), spaceID);
         }
     }
 
