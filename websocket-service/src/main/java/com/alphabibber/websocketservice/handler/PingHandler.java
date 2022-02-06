@@ -52,6 +52,9 @@ public class PingHandler {
                     if(spaceUserService.getUser(spaceId, session.getId()) != null) {
                         User sender = spaceUserService.getUser(spaceId, session.getId());
                         leaveHandler.handleLeave(spaceId, sender);
+                        log.warn(sender.getId() + ": was kicked by PingHandler");
+                    }else{
+                        log.warn("User was that is not part of a space was kicked by PingHandler");
                     }
                     // delete the timer for the user
                     handleLeave(session.getId());
