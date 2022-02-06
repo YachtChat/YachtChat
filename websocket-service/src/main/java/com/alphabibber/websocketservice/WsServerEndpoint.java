@@ -54,7 +54,7 @@ public class WsServerEndpoint {
     private final ReconnectionHandler reconnectionHandler = new ReconnectionHandler();
     private final RangeHandler rangeHandler = new RangeHandler();
 
-    private final PingHandler pingHandler = PingHandler.getInstance();
+    private final PingHandler pingHandler = new PingHandler();
 
 
     // Have a look at the ConcurrentHashMap here:
@@ -175,13 +175,8 @@ public class WsServerEndpoint {
     @OnClose
     public void onClose(@PathParam("spaceID") String spaceID, Session session) {
         User sender = null;
-        try {
+        if (spaceUserService.getUser(spaceID, session.getId()) != null) {
             sender = spaceUserService.get(spaceID).get(session.getId());
-        } catch (NullPointerException e) {
-            log.error("Room {} does not exist but user closed connection on that room", spaceID);
-        }
-        pingHandler.handleLeave(session.getId());
-        if (sender != null) {
             leaveHandler.handleLeave(spaceID, sender);
         }
     }

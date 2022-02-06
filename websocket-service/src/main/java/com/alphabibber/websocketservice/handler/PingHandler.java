@@ -16,28 +16,16 @@ import java.util.TimerTask;
 import java.util.concurrent.*;
 
 public class PingHandler {
-    private static PingHandler instance;
-    private final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(5);
     private final LeaveHandler leaveHandler = new LeaveHandler();
     private final SpaceUserService spaceUserService = new SpaceUserService();
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     // map[userId] = true when the client sends his ping
-    private Map<String, Boolean> pingMap = new HashMap<>();
+    private final static Map<String, Boolean> pingMap = new HashMap<>();
 
     // map storing all the timer for all user
-    private Map<String, Timer> timerMap = new HashMap<>();
-
-    private PingHandler(){}
-    public static PingHandler getInstance() {
-        if(instance == null) {
-            instance = new PingHandler();
-            // after we call .cancel on the timer we want to fully remove the timer.
-            instance.scheduledThreadPoolExecutor.setRemoveOnCancelPolicy(true);
-        }
-        return instance;
-    }
+    private final static Map<String, Timer> timerMap = new HashMap<>();
 
     public void handlePing(String sessionId){
         pingMap.put(sessionId, true);
@@ -59,17 +47,18 @@ public class PingHandler {
         // Task that should be scheduled to run every n seconds
         TimerTask task = new TimerTask(){
             public void run() {
-                log.info("Ping check was started");
+                log.debug("Ping check was started");
                 if (!pingMap.containsKey(session.getId()) || !pingMap.get(session.getId())) {
-                    try{
+                    if(spaceUserService.getUser(spaceId, session.getId()) != null) {
                         User sender = spaceUserService.getUser(spaceId, session.getId());
-                        log.warn(sender.getId() + ": was kicked in PingHandler");
-                    }catch(NullPointerException e){
-                        log.error("Websocket tried to kick a user that is not part of the space");
+                        leaveHandler.handleLeave(spaceId, sender);
                     }
+                    // delete the timer for the user
+                    handleLeave(session.getId());
                     try {
+                        // check if the user is still in the space
                         session.close();
-                    } catch(IOException e) {
+                    }catch(IOException e) {
                         log.error("Error closing session");
                     }
                 } else{
@@ -77,7 +66,7 @@ public class PingHandler {
                 }
             }
         };
-        timer.scheduleAtFixedRate(task, 50000000, 10000000);
+        timer.scheduleAtFixedRate(task, 5 * 1000, 10 * 1000);
         timerMap.put(session.getId(), timer);
     }
 }
