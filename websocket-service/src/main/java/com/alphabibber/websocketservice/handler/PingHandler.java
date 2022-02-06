@@ -69,7 +69,7 @@ public class PingHandler {
                 }
             }
         };
-        timer.scheduleAtFixedRate(task, 5 * 1000, 10 * 1000);
+        timer.scheduleAtFixedRate(task, 5 * 1000, 15 * 1000);
         timerMap.put(session.getId(), timer);
     }
 }
