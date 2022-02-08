@@ -140,7 +140,7 @@ public class SpaceController extends SpringBootServletInitializer {
 
     @PostMapping(path = "/invitation")
     public Space joinWithInviteToken(@RequestBody Map<String, String> tokenRequest) {
-        var inviteToken = tokenRequest.get("inviteToken");
+        var inviteToken = tokenRequest.get("token");
 
         if (inviteToken == null)
             throw new BadRequestException("Invalid Token Request");
