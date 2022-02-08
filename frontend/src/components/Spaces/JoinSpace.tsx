@@ -4,10 +4,8 @@ import {joinSpace} from "../../store/spaceSlice";
 import {Loading} from "../Wrapper";
 
 interface Props {
-    match?: {
-        params: {
-            token: string
-        }
+    params: {
+        token: string
     }
     join: (token: string) => void
 }
@@ -16,7 +14,7 @@ interface Props {
 export class JoinSpace extends Component<Props> {
 
     componentDidMount() {
-        this.props.join(this.props.match?.params.token!)
+        this.props.join(this.props.params.token!)
     }
 
     render() {

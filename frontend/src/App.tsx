@@ -56,12 +56,12 @@ export class App extends Component<Props, State> {
                 <Routes>
                     <Route path='/invite/:spaceID' element={
                         <RequireAuth>
-                            <ParamsPass Component={InviteSpace} />
+                            <ParamsPass Component={InviteSpace}/>
                         </RequireAuth>
                     }/>
                     <Route path='/join/:token' element={
                         <RequireAuth>
-                            <JoinSpace/>
+                            <ParamsPass Component={JoinSpace}/>
                         </RequireAuth>
                     }/>
                     <Route path='spaces'>
@@ -72,7 +72,7 @@ export class App extends Component<Props, State> {
                         }/>
                         <Route path=':spaceID' element={
                             <RequireAuth>
-                                <ParamsPass Component={Playground} />
+                                <ParamsPass Component={Playground}/>
                             </RequireAuth>
                         }/>
                     </Route>
