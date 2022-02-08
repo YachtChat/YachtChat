@@ -152,6 +152,7 @@ export const mediaSlice = createSlice({
                 delete state.video[action.payload]
                 delete state.audio[action.payload]
                 delete state.screen[action.payload]
+                delete state.userStream[action.payload]
                 delete state.doNotDisturb[action.payload]
                 return
             }
@@ -160,6 +161,7 @@ export const mediaSlice = createSlice({
             state.audio = {}
             state.screen = {}
             state.userStream = {}
+            state.doNotDisturb = {}
 
         }
     },
@@ -502,8 +504,6 @@ export const resetMediaSlice = (): AppThunk => (dispatch, getState) => {
 export const setStream = (state: RootState, id: string, stream: MediaStream): AppThunk => dispatch => {
     if (getUser(state).id === id) {
         localStream = stream
-        console.log(stream.getVideoTracks())
-        console.log(stream.getAudioTracks())
     } else {
         streams[id] = stream
     }
