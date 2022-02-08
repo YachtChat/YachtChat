@@ -33,7 +33,7 @@
       <param>
         <option name="enabled" value="true" />
         <option name="name" value="KEYCLOAK_URL" />
-        <option name="value" value="auth.yacht.chat" />
+        <option name="value" value="auth.alphabibber.com" />
       </param>
       <param>
         <option name="enabled" value="true" />
