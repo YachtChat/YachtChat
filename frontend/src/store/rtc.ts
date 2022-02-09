@@ -414,6 +414,8 @@ export const resetRTC = (state: RootState) => {
     })
     rtcConnections = {}
     rtpSender = {}
+
+    bytesReceived = {}; // Stores bytes received per user
 }
 
 export const stopTracks = (state: RootState, media: MediaType) => {

@@ -95,7 +95,10 @@ export const userSlice = createSlice({
             state.spaceUsers = {}
             state.messages = []
             state.inRange = {}
+            state.inProximity = {}
             state.activeUser.position = undefined
+            state.activeUser.message = undefined
+            Object.keys(messageTimeout).forEach(k => clearTimeout(messageTimeout[k]))
         },
         setMessage: (state, action: PayloadAction<{ message: string, id: string }>) => {
             if (state.spaceUsers[action.payload.id])

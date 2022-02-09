@@ -20,8 +20,11 @@ interface MediaState {
     video: { [user: string]: boolean }
     screen: { [user: string]: boolean }
     doNotDisturb: { [user: string]: boolean }
+    userStream: Record<string, Record<MediaType, string | undefined>>
     previousVideo: boolean
     previousAudio: boolean
+    userMedia: boolean
+
     cameras: string[]
     microphones: string[]
     speakers: string[]
@@ -31,28 +34,27 @@ interface MediaState {
         microphone?: string,
         virtualBackground?: string
     }
-    userMedia: boolean // marked obsolete?
-    userStream: Record<string, Record<MediaType, string | undefined>>
 }
 
 const initialState: MediaState = {
     audio: {},
     video: {},
     screen: {},
+    doNotDisturb: {},
+    userStream: {},
     previousVideo: true,
     previousAudio: true,
-    doNotDisturb: {},
+    userMedia: false,
+
     cameras: [],
     microphones: [],
     speakers: [],
-    userMedia: false,
     selected: {
         camera: (!!localStorage.getItem("camera")) ? localStorage.getItem("camera")! : undefined,
         microphone: (!!localStorage.getItem("microphone")) ? localStorage.getItem("microphone")! : undefined,
         speaker: (!!localStorage.getItem("speaker")) ? localStorage.getItem("speaker")! : undefined,
         virtualBackground: (!!localStorage.getItem("virtualBackground")) ? localStorage.getItem("virtualBackground")! : "none",
     },
-    userStream: {}
 };
 
 let localStream: MediaStream | undefined = undefined // local video and audio
@@ -162,7 +164,9 @@ export const mediaSlice = createSlice({
             state.screen = {}
             state.userStream = {}
             state.doNotDisturb = {}
-
+            state.previousVideo = true
+            state.previousAudio = true
+            state.userMedia = false
         }
     },
 });
