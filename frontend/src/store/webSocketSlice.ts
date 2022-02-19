@@ -12,7 +12,7 @@ import {
     removeUser, setInRange,
 } from "./userSlice";
 import {handleError, handleSuccess} from "./statusSlice";
-import {setDoNotDisturb, setMedia} from "./mediaSlice";
+import {mediaSlice, requestUserMediaAndJoin, setDoNotDisturb, setMedia} from "./mediaSlice";
 import {SOCKET_PORT, SOCKET_URL} from "./utils/config";
 import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
@@ -21,6 +21,7 @@ import {disconnectUser, handleCandidate, handleSdp} from "./rtc";
 import {sendNotification} from "./utils/notifications";
 import {isOnline} from "./utils/utils";
 import posthog from "posthog-js";
+import {initPlayground} from "./playgroundSlice";
 
 interface WebSocketState {
     connected: boolean
@@ -186,28 +187,20 @@ export const reconnectToWs = (): AppThunk => (dispatch, getState) => {
         return
 
     const relogin = setInterval(() => {
-        if (socket?.OPEN) {
-            clearInterval(relogin)
-            return
-        }
-
         // Only try to reconnect if tab is in focus
         if (getState().playground.inBackground)
             return
-
-        console.log("Trying to reconnect...")
         posthog.capture("Reconnect", { description: "Frontend to space " +  getState().space.joinedSpace })
 
         isOnline().then(() => {
-
-            console.log("Connected to the internet. Reconnecting.")
             clearInterval(relogin)
-            if (getState().space.joinedSpace)
-                setTimeout(() => dispatch(connectToServer(getState().space.joinedSpace!)))
-            else {
-                clearInterval(relogin)
-                dispatch(destroySession(true))
-            }
+            let space_id = getState().space.joinedSpace
+            let user = getUserWrapped(getState())
+
+            dispatch(destroySession(false))
+            dispatch(initPlayground())
+            dispatch(requestUserMediaAndJoin(space_id!, user.video, user.audio))
+
         })
     }, 4000)
     //else

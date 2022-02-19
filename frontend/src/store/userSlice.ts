@@ -11,7 +11,7 @@ import {handleError, handleSuccess} from "./statusSlice";
 import {identifyUser} from "./utils/posthog";
 import {getNextValidPostion, isPostionValid} from "./utils/positionUtils";
 import {UserWrapper} from "./model/UserWrapper";
-import {handleRTCEvents, sendAudio, sendVideo, unsendAudio, unsendVideo} from "./rtc";
+import {handleRTCEvents, localUserIsSendingAudioTo, sendAudio, sendVideo, unsendAudio, unsendVideo} from "./rtc";
 import {sendNotification} from "./utils/notifications";
 import {spaceSetupReady} from "./spaceSlice";
 
@@ -324,7 +324,9 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
         )
         // If the user is not marked as in proximity, but actually is, set flag and send audio
         // Else: If the user is marked as in proximity, but actually is not, reset flag and unsend audio
-        if (dist <= (currentRange + userProportion / 2) && !u.inProximity) {
+        if (dist <= (currentRange + userProportion / 2) &&
+            (!u.inProximity || !localUserIsSendingAudioTo(u.id)))
+        {
             // console.log(user.id, "in Range - sending audio to", u.id)
             dispatch(setInProximity({ id: u.id, event: true }))
             if (user.id !== u.id) {
@@ -338,7 +340,8 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
                     event: true
                 }))
             }
-        } else if (dist > (currentRange + userProportion / 2) && u.inProximity || u.inProximity === undefined) {
+        } else if (dist > (currentRange + userProportion / 2) &&
+            (u.inProximity || u.inProximity === undefined || localUserIsSendingAudioTo(u.id))) {
             // console.log(user.id, "not in Range - dont send audio", u.id)
             dispatch(setInProximity({ id: u.id, event: false }))
             if (user.id !== u.id) {

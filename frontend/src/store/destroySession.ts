@@ -9,11 +9,10 @@ import {resetWebsocket} from "./webSocketSlice";
 export const destroySession = (returnToRoot?: boolean): AppThunk => dispatch => {
 
     dispatch(resetMediaSlice())
-    dispatch(resetUsers())
     dispatch(resetPlayground())
     dispatch(resetWebsocket())
     dispatch(resetSpace())
-
+    dispatch(resetUsers())
     dispatch(requestSpaces())
 
     if (returnToRoot)

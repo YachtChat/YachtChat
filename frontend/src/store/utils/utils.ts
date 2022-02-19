@@ -234,23 +234,14 @@ export const copyInviteLink = (spaceID: string): AppThunk => (dispatch, getState
 
 export function isOnline(): Promise<void> {
     return new Promise((resolve, reject) => {
-        if (!navigator.onLine) {
-            // If it has no connection at all
-            reject()
-            return
-        }
-        axios.get(HOMEPAGE_URL!).then(() => {
-            // If connection to homepage could be established
-            resolve()
-        }).catch(() => {
-            // No connection? Homepage down?
-            axios.get("https://" + FRONTEND_URL).then(() => {
-                // Test
+        // see if the user is online by checking public api
+        axios.get("https://api.ipify.org?format=json")
+            .then(() => {
                 resolve()
-            }).catch(() => {
+            })
+            .catch(() => {
                 reject()
             })
-        })
     })
 }
 

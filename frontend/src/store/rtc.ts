@@ -146,6 +146,10 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
     //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }
 
+export const localUserIsSendingAudioTo = (id: string) => {
+    return rtpSender[id]["audio"].track!.enabled
+}
+
 // Function that will enable spatial video to a given user
 export const sendVideo = (id: string): AppThunk => (dispatch, getState) => {
     const user: UserWrapper = getUserWrapped(getState());
