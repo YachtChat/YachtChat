@@ -26,7 +26,8 @@ export function GeneralSettings(props: Props) {
         <div className={"mediaSettings"}>
             <div className={"toggles"}>
                 <Tooltip title={
-                    "To know when your team is online get notified when the first person joins a space."
+                    "If this feature is enabled, all Space-Members will get notified by mail when the first user joins a " +
+                    "Space."
                 } arrow placement={"top"}>
                     <div className={"settings-item"}>
                         <label>
@@ -34,25 +35,24 @@ export function GeneralSettings(props: Props) {
                         </label>
                         <div className="dropdown">
                             <select
-                                onChange={e => {
-                                    posthog.capture("email-settings", {value: e.target.value})
-                                    alert("This feature is not available yet")
+                                onClick={e => {
+                                    posthog.capture("email-settings", {value: e.target})
+                                    alert("This feature is not available yet. Let us know if you really need it.")
                                 }}
                                 //onChange={({target: {value}}) => this.props.changeVideoInput(value)}
                                 name="volumeindicators">
                                 <option value={"false"}>
-                                    No
+                                    Disable
                                 </option>
-                                <option value={"true"}>
-                                    Yes
+                                <option disabled={true} value={"true"}>
+                                    Enable
                                 </option>
                             </select>
                         </div>
                     </div>
                 </Tooltip>
                 <Tooltip title={
-                    "Volume Indicators are a great way to show who is speaking. " +
-                    "To save computing power you can disable them."
+                   "If this feature is enabled, there will be visual feedback when you or another user speaks."
                 } arrow placement={"top"}>
                     <div className={"settings-item"}>
                         <label>
@@ -60,20 +60,25 @@ export function GeneralSettings(props: Props) {
                         </label>
                         <div className="dropdown">
                             <select value={props.showVolumeIndicators.toString()}
-                                    onChange={({target: {value}}) => {
-                                        if (value === "true") {
-                                            props.setShowVolumeIndicators(true)
-                                            props.success("Enabled volume indicators")
-                                        } else {
-                                            props.setShowVolumeIndicators(false)
-                                            props.success("Disabled volume indicators")
-                                        }
-                                    }} name="volumeindicators">
-                                <option value={"true"}>
-                                    Show
-                                </option>
+                            //          onChange={({target: {value}}) => {
+                            //     if (value === "true") {
+                            //         props.setShowVolumeIndicators(true)
+                            //         props.success("Enabled volume indicators")
+                            //     } else {
+                            //         props.setShowVolumeIndicators(false)
+                            //         props.success("Disabled volume indicators")
+                            //     }
+                            // }}
+                                    onClick={e => {
+                                        posthog.capture("volume-indicators", {value: e.target})
+                                        alert("This feature is not available yet. Let us know if you really need it.")
+                                    }}
+                                    name="volumeindicators">
                                 <option value={"false"}>
                                     Disable
+                                </option>
+                                <option disabled={true} value={"true"}>
+                                    Enable
                                 </option>
                             </select>
                         </div>
@@ -87,25 +92,29 @@ export function GeneralSettings(props: Props) {
                 } arrow placement={"top"}>
                     <div className={"settings-item"}>
                         <label>
-                            Show video in your avatar
+                            Do not show own video
                         </label>
                         <div className="dropdown">
                             <select value={props.videoInAvatar.toString()}
-                                    onChange={({target: {value}}) => {
-                                        if (value === "true") {
-                                            props.setVideoInAvatar(true)
-                                            props.success("Enabled video in avatar")
-                                        } else {
-                                            props.setVideoInAvatar(false)
-                                            props.success("Disabled the video in avatar")
-                                        }
+                                    // onChange={({target: {value}}) => {
+                                    //     if (value === "true") {
+                                    //         props.setVideoInAvatar(true)
+                                    //         props.success("Enabled video in avatar")
+                                    //     } else {
+                                    //         props.setVideoInAvatar(false)
+                                    //         props.success("Disabled the video in avatar")
+                                    //     }
+                                    // }}
+                                    onClick={e => {
+                                        posthog.capture("not-show-video", {value: e.target})
+                                        alert("This feature is not available yet. Let us know if you really need it.")
                                     }}
                                     name="video_avatar">
                                 <option value={"true"}>
-                                    Show
-                                </option>
-                                <option value={"false"}>
                                     Disable
+                                </option>
+                                <option disabled={true} value={"false"}>
+                                    Enable
                                 </option>
                             </select>
                         </div>
@@ -118,7 +127,7 @@ export function GeneralSettings(props: Props) {
                     <button className={"submit outlined"}
                             onClick={() => {
                                 posthog.capture("setBackgroundImage")
-                                alert("This feature is not available yet")
+                                alert("This feature is not available yet. Let us know if you really need it.")
                             }}>
                         Select
                     </button>
@@ -129,7 +138,8 @@ export function GeneralSettings(props: Props) {
                     </label>
                     {"Notification" in window &&
                         <Tooltip
-                            title={"Get notified about messages as well as when users can hear you while the tab is in background"}
+                            title={"Get notified when a colleague moves close to you and Yacht.Chat is currently in the " +
+                                "background."}
                             arrow placement={"top"}>
                             <div>
 
@@ -137,7 +147,6 @@ export function GeneralSettings(props: Props) {
                                     <button className={"submit outlined"}
                                             onClick={() => {
                                                 props.enableNotifications()
-                                                props.success("Notifications enabled")
                                             }}>
                                         Enable
                                     </button>

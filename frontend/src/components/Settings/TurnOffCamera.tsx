@@ -6,6 +6,7 @@ import {CameraMode} from "../../store/model/model";
 import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import {setupCameraMode} from "../../store/playgroundSlice";
+import posthog from "posthog-js";
 
 interface Props {
     cameraMode: CameraMode,
@@ -37,26 +38,31 @@ export function TurnOffCamera(props: Props) {
 
             <div className={"settings-item"}>
                 <label>
-                    Turn off camera
+                    Turn off camera automatically
                 </label>
                 <div className="dropdown">
                     <select value={props.cameraMode}
-                            onChange={({target: {value}}) => {
-                                switch (value) {
-                                    case CameraMode.Manual.toString():
-                                        props.setupCameraMode(CameraMode.Manual)
-                                        break
-                                    case CameraMode.Automatically.toString():
-                                        props.setupCameraMode(CameraMode.Automatically)
-                                        break;
-                                }
-
-                            }} name="cameramode">
+                            // onChange={({target: {value}}) => {
+                            //     switch (value) {
+                            //         case CameraMode.Manual.toString():
+                            //             props.setupCameraMode(CameraMode.Manual)
+                            //             break
+                            //         case CameraMode.Automatically.toString():
+                            //             props.setupCameraMode(CameraMode.Automatically)
+                            //             break;
+                            //     }
+                            //
+                            // }}
+                            onClick={e => {
+                                posthog.capture("camera-automation", {value: e.target})
+                                alert("This feature is not available yet. Let us know if you really need it.")
+                            }}
+                            name="cameramode">
                         <option value={CameraMode.Manual}>
-                            Manual
+                            Disable
                         </option>
-                        <option value={CameraMode.Automatically}>
-                            Automatically – when leaving the window in the background
+                        <option disabled={true} value={CameraMode.Automatically}>
+                            Enable
                         </option>
                     </select>
                 </div>
