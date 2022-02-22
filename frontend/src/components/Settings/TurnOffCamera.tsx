@@ -55,7 +55,7 @@ export function TurnOffCamera(props: Props) {
                             // }}
                             onClick={e => {
                                 posthog.capture("camera-automation", {value: e.target})
-                                alert("This feature is not available yet. Let us know if you really need it.")
+                                window.alert("This feature is not available yet. Let us know if you really need it.")
                             }}
                             name="cameramode">
                         <option value={CameraMode.Manual}>

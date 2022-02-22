@@ -37,7 +37,7 @@ export function GeneralSettings(props: Props) {
                             <select
                                 onClick={e => {
                                     posthog.capture("email-settings", {value: e.target})
-                                    alert("This feature is not available yet. Let us know if you really need it.")
+                                    window.alert("This feature is not available yet. Let us know if you really need it.")
                                 }}
                                 //onChange={({target: {value}}) => this.props.changeVideoInput(value)}
                                 name="volumeindicators">
@@ -71,7 +71,7 @@ export function GeneralSettings(props: Props) {
                             // }}
                                     onClick={e => {
                                         posthog.capture("volume-indicators", {value: e.target})
-                                        alert("This feature is not available yet. Let us know if you really need it.")
+                                        window.alert("This feature is not available yet. Let us know if you really need it.")
                                     }}
                                     name="volumeindicators">
                                 <option value={"false"}>
@@ -107,7 +107,7 @@ export function GeneralSettings(props: Props) {
                                     // }}
                                     onClick={e => {
                                         posthog.capture("not-show-video", {value: e.target})
-                                        alert("This feature is not available yet. Let us know if you really need it.")
+                                        window.alert("This feature is not available yet. Let us know if you really need it.")
                                     }}
                                     name="video_avatar">
                                 <option value={"true"}>
@@ -127,7 +127,7 @@ export function GeneralSettings(props: Props) {
                     <button className={"submit outlined"}
                             onClick={() => {
                                 posthog.capture("setBackgroundImage")
-                                alert("This feature is not available yet. Let us know if you really need it.")
+                                window.alert("This feature is not available yet. Let us know if you really need it.")
                             }}>
                         Select
                     </button>
