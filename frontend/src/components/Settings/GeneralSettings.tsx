@@ -33,13 +33,12 @@ export function GeneralSettings(props: Props) {
                         <label>
                             Send email notification when first user joins space
                         </label>
-                        <div className="dropdown">
+                        <div className="dropdown" onClick={() => {
+                            posthog.capture("email-notifications-feature")
+                            alert("This feature is not available yet. Let us know if you really need it.")
+                        }}>
                             <select
-                                onClick={e => {
-                                    posthog.capture("email-settings", {value: e.target})
-                                    window.alert("This feature is not available yet. Let us know if you really need it.")
-                                }}
-                                //onChange={({target: {value}}) => this.props.changeVideoInput(value)}
+                                // onChange={({target: {value}}) => this.props.changeVideoInput(value)}
                                 name="volumeindicators">
                                 <option value={"false"}>
                                     Disable
@@ -58,7 +57,10 @@ export function GeneralSettings(props: Props) {
                         <label>
                             Show volume indicators in space
                         </label>
-                        <div className="dropdown">
+                        <div className="dropdown" onClick={() => {
+                            posthog.capture("volume-indicators-feature")
+                            alert("This feature is not available yet. Let us know if you really need it.")
+                        }}>
                             <select value={props.showVolumeIndicators.toString()}
                             //          onChange={({target: {value}}) => {
                             //     if (value === "true") {
@@ -69,10 +71,6 @@ export function GeneralSettings(props: Props) {
                             //         props.success("Disabled volume indicators")
                             //     }
                             // }}
-                                    onClick={e => {
-                                        posthog.capture("volume-indicators", {value: e.target})
-                                        window.alert("This feature is not available yet. Let us know if you really need it.")
-                                    }}
                                     name="volumeindicators">
                                 <option value={"false"}>
                                     Disable
@@ -94,7 +92,10 @@ export function GeneralSettings(props: Props) {
                         <label>
                             Do not show own video
                         </label>
-                        <div className="dropdown">
+                        <div className="dropdown" onClick={() => {
+                            posthog.capture("own-video-feature")
+                            alert("This feature is not available yet. Let us know if you really need it.")
+                        }}>
                             <select value={props.videoInAvatar.toString()}
                                     // onChange={({target: {value}}) => {
                                     //     if (value === "true") {
@@ -105,10 +106,6 @@ export function GeneralSettings(props: Props) {
                                     //         props.success("Disabled the video in avatar")
                                     //     }
                                     // }}
-                                    onClick={e => {
-                                        posthog.capture("not-show-video", {value: e.target})
-                                        window.alert("This feature is not available yet. Let us know if you really need it.")
-                                    }}
                                     name="video_avatar">
                                 <option value={"true"}>
                                     Disable

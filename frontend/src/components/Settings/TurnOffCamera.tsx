@@ -40,7 +40,10 @@ export function TurnOffCamera(props: Props) {
                 <label>
                     Turn off camera automatically
                 </label>
-                <div className="dropdown">
+                <div className="dropdown" onClick={() => {
+                    posthog.capture("camera-automation-feature")
+                    alert("This feature is not available yet. Let us know if you really need it.")
+                }}>
                     <select value={props.cameraMode}
                             // onChange={({target: {value}}) => {
                             //     switch (value) {
@@ -53,10 +56,6 @@ export function TurnOffCamera(props: Props) {
                             //     }
                             //
                             // }}
-                            onClick={e => {
-                                posthog.capture("camera-automation", {value: e.target})
-                                window.alert("This feature is not available yet. Let us know if you really need it.")
-                            }}
                             name="cameramode">
                         <option value={CameraMode.Manual}>
                             Disable
