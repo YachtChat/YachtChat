@@ -132,18 +132,12 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
         rtp.track.enabled = true
         const user = getUserById(getState(), id)
         if (getState().playground.inBackground)
-            sendNotification(getState(), `${user.firstName} can now hear you`, user.profile_image,
-                // Actions currently not supported
-                // [{
-                //     action: "mute",
-                //     title: "Mute yourself",
-                //     onClick: () => {
-                //         window.alert("ALERT")
-                //     }
-                // }]
+            if (getState().media.screen[getUserID(getState())])
+                sendNotification(getState(), `${user.firstName} can now hear you and see your screen`, user.profile_image,)
+            else
+                sendNotification(getState(), `${user.firstName} can now hear you`, user.profile_image,
             )
     }
-    //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }
 
 export const localUserIsSendingAudioTo = (id: string) => {
@@ -167,21 +161,7 @@ export const sendVideo = (id: string): AppThunk => (dispatch, getState) => {
         if (user.screen) {
             rtp.replaceTrack(getScreenStream(getState(), user.id)?.getVideoTracks()[0]?.clone() ?? null)
         }
-
-        const target_user = getUserById(getState(), id)
-        if (getState().playground.inBackground)
-            sendNotification(getState(), `${target_user.firstName} can now see ${getUserWrapped(getState()).screen ? "your screen" : "you"}`, target_user.profile_image,
-                // Actions currently not supported
-                // [{
-                //     action: "mute",
-                //     title: "Mute yourself",
-                //     onClick: () => {
-                //         window.alert("ALERT")
-                //     }
-                // }]
-            )
     }
-    //console.log(getUserID(getState()), " has changed", rtp.track!.kind, "track to", id, "to", rtp.track!.enabled )
 }
 
 
