@@ -179,6 +179,8 @@ public class WsServerEndpoint {
             sender = spaceUserService.get(spaceID).get(session.getId());
             leaveHandler.handleLeave(spaceID, sender);
         }
+        // remove the user forn the ping map
+        pingHandler.handleLeave(session.getId());
     }
 
     @OnError
