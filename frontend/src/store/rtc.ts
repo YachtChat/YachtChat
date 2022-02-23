@@ -133,9 +133,9 @@ export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
         const user = getUserById(getState(), id)
         if (getState().playground.inBackground)
             if (getState().media.screen[getUserID(getState())])
-                sendNotification(getState(), `${user.firstName} can now hear you and see your screen`, user.profile_image,)
+                sendNotification(getState(), `${user.firstName} can hear you and see your screen`, user.profile_image,)
             else
-                sendNotification(getState(), `${user.firstName} can now hear you`, user.profile_image,
+                sendNotification(getState(), `${user.firstName} can hear you`, user.profile_image,
             )
     }
 }
