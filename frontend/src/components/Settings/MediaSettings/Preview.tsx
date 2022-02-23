@@ -111,12 +111,12 @@ const mapStateToProps = (state: RootState) => ({
     microphone: getMicrophone(state),
     camera: getCamera(state),
     virtualBackground: state.media.selected.virtualBackground,
-    getStream: (video: boolean, audio: boolean) => getFreshMediaStream(state, video, audio),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     loadMedia: () => dispatch(loadAllMediaDevices()),
     requestUserMedia: () => dispatch(handleInputChange(true, true)),
+    getStream: (video: boolean, audio: boolean) => dispatch(getFreshMediaStream(video, audio))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Preview)
