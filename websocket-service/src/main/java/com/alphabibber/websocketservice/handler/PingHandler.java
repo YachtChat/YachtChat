@@ -33,6 +33,7 @@ public class PingHandler {
     }
 
     public void handleLeave(String sessionId) {
+        log.debug("Ping checking was stopped for user with sessionId: " + sessionId);
         if (timerMap.containsKey(sessionId)) {
             timerMap.get(sessionId).cancel();
             timerMap.remove(sessionId);
@@ -54,10 +55,8 @@ public class PingHandler {
                         leaveHandler.handleLeave(spaceId, sender);
                         log.warn(sender.getId() + ": was kicked by PingHandler");
                     }else{
-                        log.warn("User was that is not part of a space was kicked by PingHandler");
+                        log.warn("User that is not part of a space was kicked by PingHandler");
                     }
-                    // delete the timer for the user
-                    handleLeave(session.getId());
                     try {
                         // check if the user is still in the space
                         session.close();

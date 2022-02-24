@@ -56,6 +56,11 @@ export function sendNotification(state: RootState, m: string, pic?: string,
         const n = new Notification("Yacht.Chat", {body: m, icon: pic, actions: actions})
         notifications.push(n)
 
+        // close the interval after 5 seconds
+        setInterval(() => {
+            n.close()
+        }, 5000)
+
         n.onclick = () => {
             window.focus()
             n.close()

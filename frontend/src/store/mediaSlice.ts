@@ -686,7 +686,10 @@ export const getScreenSharingConstraints = () => {
     }
 }
 
-export const getFreshMediaStream = (state: RootState, video: boolean, audio: boolean): Promise<MediaStream> =>
-    navigator.mediaDevices.getUserMedia(getMediaConstrains(state, video, audio))
+export const getFreshMediaStream = (video: boolean, audio: boolean): AppThunk => (dispatch, getState) => {
+    const constraints = getMediaConstrains(getState(), video, audio)
+    return navigator.mediaDevices.getUserMedia(constraints)
+}
+
 export const getMediaDevices = () => mediaDevices
 export default mediaSlice.reducer;

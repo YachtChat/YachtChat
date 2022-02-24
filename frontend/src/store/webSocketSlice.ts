@@ -188,8 +188,6 @@ export const reconnectToWs = (): AppThunk => (dispatch, getState) => {
 
     const relogin = setInterval(() => {
         // Only try to reconnect if tab is in focus
-        if (getState().playground.inBackground)
-            return
         posthog.capture("Reconnect", { description: "Frontend to space " +  getState().space.joinedSpace })
 
         isOnline().then(() => {
@@ -202,7 +200,7 @@ export const reconnectToWs = (): AppThunk => (dispatch, getState) => {
             dispatch(requestUserMediaAndJoin(space_id!, user.video, user.audio))
 
         })
-    }, 4000)
+    }, 5000)
     //else
     //dispatch(destroySession(true))
 }

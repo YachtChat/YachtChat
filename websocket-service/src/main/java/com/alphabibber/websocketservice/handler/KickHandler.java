@@ -39,7 +39,7 @@ public class KickHandler {
             return;
         }
 
-        // tell the kicker that it was successful
+        // tell the kicker that the kick was successful
         KickAnswer answer = new KickAnswer(userId);
         try {
             WsServerEndpoint.sendToOne(sender, answer);

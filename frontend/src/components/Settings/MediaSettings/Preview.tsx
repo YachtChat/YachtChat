@@ -55,16 +55,39 @@ class Preview extends Component<Props> {
             prevProps.audio !== this.props.audio ||
             prevProps.video !== this.props.video ||
             prevProps.virtualBackground !== this.props.virtualBackground)) {
-            if (this.stream) {
-                this.stream.getTracks().forEach(t => t.stop())
-                this.stream = undefined
-            }
+            // TODO @Tristan
+            // this solution leads to the volume indicator not updating and I therefore temporary removed it.
+            // this.stream?.getTracks().forEach(t => t.stop())
+            // this.stream = undefined
+
+
             this.props.getStream(this.props.video, this.props.audio).then(stream => {
-                if (this.stream)
-                    this.stream.getTracks().forEach(t => t.stop())
                 const [str, cam] = applyVirtualBackground(stream, this.props.virtualBackground, this.cam)
-                this.stream = str
+                // this.stream = str
+                // this.cam = cam
+                // this.cam = cam
+
+                this.stream?.getTracks().forEach(t => t.stop())
+                this.stream?.removeTrack(this.stream?.getVideoTracks()![0])
+                this.stream?.removeTrack(this.stream?.getAudioTracks()![0])
                 this.cam = cam
+                str.getTracks().forEach(t => {
+                    this.stream?.addTrack(t)
+                })
+
+
+                // stream.getTracks().forEach(newUserMediaTrack => {
+                //     let [str, cam] = applyVirtualBackground(stream, this.props.virtualBackground)
+                // })
+                // // if (this.stream){
+                // //     this.stream.getTracks().forEach(t => t.stop())
+                // //     this.stream = undefined
+                // // }
+                // console.log(stream.getVideoTracks().length)
+                // const [str, cam] = applyVirtualBackground(stream, this.props.virtualBackground, this.cam)
+                // this.stream = str
+                // this.cam = cam
+                // this.forceUpdate()
                 this.forceUpdate()
             })
         }
@@ -96,9 +119,9 @@ class Preview extends Component<Props> {
                     <Video stream={this.stream}
                            className={"videoPreview"}/>
                 </Collapse>
-                <Collapse in={this.props.audio && (this.stream?.getAudioTracks().length ?? 0) > 0} unmountOnExit>
-                    <VolumeIndicator className={"settings-item"} audio={this.stream} label/>
-                </Collapse>
+                {/*<Collapse in={this.props.audio && (this.stream?.getAudioTracks().length ?? 0) > 0} unmountOnExit>*/}
+                {/*    <VolumeIndicator className={"settings-item"} audio={this.stream} label/>*/}
+                {/*</Collapse>*/}
             </div>
         );
     }
@@ -111,12 +134,12 @@ const mapStateToProps = (state: RootState) => ({
     microphone: getMicrophone(state),
     camera: getCamera(state),
     virtualBackground: state.media.selected.virtualBackground,
-    getStream: (video: boolean, audio: boolean) => getFreshMediaStream(state, video, audio),
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
     loadMedia: () => dispatch(loadAllMediaDevices()),
     requestUserMedia: () => dispatch(handleInputChange(true, true)),
+    getStream: (video: boolean, audio: boolean) => dispatch(getFreshMediaStream(video, audio))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Preview)
