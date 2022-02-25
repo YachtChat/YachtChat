@@ -225,7 +225,7 @@ export const handleSpaceUser = (userId: string, position: UserCoordinates, video
                 // isCaller is true if this is a reconncetion and the local user was the previous caller
                 // if isCaller is undefined it can be treated as false
                 dispatch(handleRTCEvents(userId, !!isCaller))
-                dispatch(handlePositionUpdate({id: userId, position: position}))
+                dispatch(handlePositionUpdate({id: userId, position: position}, true))
             }
         })
     )
@@ -299,7 +299,7 @@ export const handleMessage = (message: string, fromId: string): AppThunk => (dis
 }
 
 // Is called everytime a range or position changes in order to calculate distances and trigger the right rtc events
-export const handlePositionUpdate = (object: { id: string, position: UserCoordinates }): AppThunk => (dispatch, getState) => {
+export const handlePositionUpdate = (object: { id: string, position: UserCoordinates }, isNewUser: boolean=false): AppThunk => (dispatch, getState) => {
     // Set user position
     dispatch(move(object))
 
@@ -327,8 +327,8 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
         )
         // If the user is not marked as in proximity, but actually is, set flag and send audio
         // Else: If the user is marked as in proximity, but actually is not, reset flag and unsend audio
-        if (dist <= (currentRange + userProportion / 2) &&
-            (!u.inProximity || !localUserIsSendingAudioTo(u.id)))
+            if (dist <= (currentRange + userProportion / 2) &&
+            (!u.inProximity || !localUserIsSendingAudioTo(u.id) || isNewUser))
         {
             // console.log(user.id, "in Range - sending audio to", u.id)
             dispatch(setInProximity({ id: u.id, event: true }))
@@ -337,14 +337,29 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
                     dispatch(sendVideo(u.id))
                 }
                 dispatch(sendAudio(u.id))
-                dispatch(send({
-                    type: "range",
-                    target_id: u.id,
-                    event: true
-                }))
+                if (isNewUser) {
+                    // we cannot send this event immediately, because if we do the receriver will not have initialized
+                    // the space user yet, and therefore he will not be able to handle the event properly.
+                    // A cleaner way would be to store the state of in-range in the server and set it with the space user
+                    // when a user logs in.
+                    // This might fail when a client is really slow.
+                    setTimeout(() => {
+                        dispatch(send({
+                            type: "range",
+                            target_id: u.id,
+                            event: true
+                        }))
+                    }, 100)
+                }else{
+                    dispatch(send({
+                        type: "range",
+                        target_id: u.id,
+                        event: true
+                    }))
+                }
             }
-        } else if (dist > (currentRange + userProportion / 2) &&
-            (u.inProximity || u.inProximity === undefined || localUserIsSendingAudioTo(u.id))) {
+            } else if (dist > (currentRange + userProportion / 2) &&
+            (u.inProximity || u.inProximity === undefined || localUserIsSendingAudioTo(u.id) || isNewUser )) {
             // console.log(user.id, "not in Range - dont send audio", u.id)
             dispatch(setInProximity({ id: u.id, event: false }))
             if (user.id !== u.id) {
