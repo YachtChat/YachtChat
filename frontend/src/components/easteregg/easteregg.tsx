@@ -1,6 +1,6 @@
 import {IoMdClose} from "react-icons/io";
 import Reward, {RewardElement} from "react-rewards";
-import {IoArrowForward} from "react-icons/all";
+import {IoArrowForward} from "react-icons/io5";
 import Fade from "react-reveal/Fade";
 import React, {useEffect, useState} from "react";
 import posthog from "posthog-js";

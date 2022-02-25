@@ -1,0 +1,26 @@
+yacht:
+  name: Yacht.Chat
+  title: start up
+  url: https://www.yacht.chat
+  image_url: https://app.yacht.chat/yacht512.png
+
+danilo:
+  name: Danilo Walenta
+  title: Dev Ops
+  url: https://www.danilowalenta.com
+  image_url: TODO
+
+tristan:
+  name: Tristan Ratz
+  title: Software Engineer and Design
+  url: https://www.tristanratz.com
+  image_url: TODO
+
+marc:
+  name: Marc Brede
+
+seba:
+  name: Sebastian Meier
+
+marcel:
+  name: Marcel Nawrath

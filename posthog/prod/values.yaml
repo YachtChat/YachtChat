@@ -3,5 +3,15 @@ ingress:
   hostname: posthog.yacht.chat
   nginx:
     enabled: true
+
+ingress-nginx:
+  controller:
+    config:
+      use-proxy-protocol: true
+    service:
+      annotations:
+        service.beta.kubernetes.io/do-loadbalancer-hostname: posthog.yacht.chat
+        service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+
 cert-manager:
   enabled: true

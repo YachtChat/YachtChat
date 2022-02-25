@@ -1,27 +1,28 @@
 import React, {Component} from 'react';
 import './App.scss';
 import Playground from "./components/Playground";
-import {RootState} from "./store/store";
+import {RootState} from "./store/utils/store";
 import {connect} from "react-redux";
 import StatusComponent from "./components/Status";
 import "webrtc-adapter";
 import Spaces from './components/Spaces';
-import {Redirect, Route, Switch} from 'react-router-dom';
+import {Navigate, Route, Routes} from 'react-router-dom';
 import {checkAuth} from "./store/authSlice";
-import PrivateRoute from "./components/PrivateRoute";
 import Settings from './components/Settings';
 import {Loading} from "./components/Wrapper";
-import {IoCogOutline} from "react-icons/all";
+import {IoCogOutline} from "react-icons/io5";
 import CreateSpace from "./components/Spaces/CreateSpace";
 import InviteSpace from "./components/Spaces/InviteSpace";
 import JoinSpace from "./components/Spaces/JoinSpace";
 import mobile from "is-mobile";
 import posthog from 'posthog-js';
+import RequireAuth from "./components/RequireAuth";
+import {ParamsPass} from "./components/Wrapper/ParamsPass";
 
 interface Props {
     loggedIn: boolean
     authFlowReady: boolean
-    joinedRoom: boolean
+    joinedSpace: boolean
     connected: boolean
     checkAuth: (token?: string) => void
 }
@@ -52,25 +53,57 @@ export class App extends Component<Props, State> {
                 {/*{!this.props.joinedRoom && !this.props.loggedIn &&*/}
                 {/*<Login/>*/}
                 {/*}*/}
-                <Switch>
-                    <PrivateRoute path='/spaces/:spaceID' exact={false} component={Playground}/>
-                    <PrivateRoute path='/spaces/:spaceID/:token' exact={false} component={Playground}/>
-                    <PrivateRoute path='/invite/:spaceID' exact={false} component={InviteSpace}/>
-                    <PrivateRoute path='/join/:token' exact={false} component={JoinSpace}/>
-                    <PrivateRoute exact path='/spaces' component={Spaces}/>
-                    <PrivateRoute exact path='/settings' component={Settings}/>
-                    <PrivateRoute exact path='/create-space' component={CreateSpace}/>
-                    <Route path='/'>
-                        {(this.props.authFlowReady) ?
-                            ((this.props.loggedIn) ?
-                                <Redirect to={"/spaces"}/> :
-                                <Loading loadingText="Loading" icon={<IoCogOutline/>}/>)
-                            : <Loading loadingText="Authenticating" icon={<IoCogOutline/>}/>}
+                <Routes>
+                    <Route path='/invite/:spaceID' element={
+                        <RequireAuth>
+                            <ParamsPass Component={InviteSpace}/>
+                        </RequireAuth>
+                    }/>
+                    <Route path='/join/:token' element={
+                        <RequireAuth>
+                            <ParamsPass Component={JoinSpace}/>
+                        </RequireAuth>
+                    }/>
+                    <Route path='spaces'>
+                        <Route index element={
+                            <RequireAuth>
+                                <Spaces/>
+                            </RequireAuth>
+                        }/>
+                        <Route path=':spaceID' element={
+                            <RequireAuth>
+                                <ParamsPass Component={Playground}/>
+                            </RequireAuth>
+                        }/>
                     </Route>
-                    <Route path="*">
-                        <Redirect to={"/"}/>
+                    <Route path='settings'>
+                        <Route index element={
+                            <Navigate to={"general"}/>
+                        }/>
+                        <Route path={":site"} element={
+                            <RequireAuth>
+                                <Settings/>
+                            </RequireAuth>
+                        }/>
                     </Route>
-                </Switch>
+                    <Route path='/create-space' element={
+                        <RequireAuth>
+                            <CreateSpace/>
+                        </RequireAuth>
+                    }/>
+                    <Route path='/' element={
+                        <>
+                            {(this.props.authFlowReady) ?
+                                ((this.props.loggedIn) ?
+                                    <Navigate to={"/spaces"}/> :
+                                    <Loading loadingText="Loading" icon={<IoCogOutline/>}/>)
+                                : <Loading loadingText="Authenticating" icon={<IoCogOutline/>}/>}
+                        </>
+                    }/>
+                    <Route path="*" element={
+                        <Navigate to={"/"}/>
+                    }/>
+                </Routes>
                 <StatusComponent/>
             </div>
         );
@@ -80,7 +113,7 @@ export class App extends Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => ({
     loggedIn: state.auth.loggedIn,
-    joinedRoom: state.webSocket.joinedRoom,
+    joinedSpace: !!state.space.joinedSpace,
     connected: state.webSocket.connected,
     authFlowReady: state.auth.authFlow
 })

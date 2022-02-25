@@ -1,24 +1,32 @@
 import React, {Component} from "react";
 import './style.scss';
-import {IoWifi} from "react-icons/all";
-import {CircularProgress} from "@material-ui/core";
-import {EasterEgg} from "../easteregg";
+import {IoChevronBack, IoWifi} from "react-icons/io5";
+import {CircularProgress, Fade} from "@mui/material";
+import Navigation from "../Navigation";
+import {Link} from "react-router-dom";
 
 interface Props {
-    className: string
+    className?: string
+    id?: string
 }
 
 export class Wrapper extends Component<Props> {
 
+
     render() {
+        const transitionKey = !window.location.href.includes("settings") ? window.location.href : "settings"
         return (
             <div className={"contentWrapper"}>
                 <div className={"backgroundRange"}/>
                 <div className={"backgroundBall"}/>
-                <div className={"contentBox " + this.props.className}>
-                    {this.props.children}
+                <div id={this.props.id} className={"contentBox " + this.props.className}>
+                    <Fade in={true} key={transitionKey}>
+                        <div>
+                            {this.props.children}
+                        </div>
+                    </Fade>
                 </div>
-                <EasterEgg expiry={"December 23, 2021 23:59:00"} />
+                <Navigation/>
             </div>
         )
     }
@@ -30,20 +38,21 @@ interface LoadingProps {
     loadingText?: string
 }
 
-export class Loading extends Component<LoadingProps> {
-
-    render() {
+export function Loading(props: LoadingProps) {
         return (
             <Wrapper className={"Loading"}>
                 <div className={"headlineBox"}>
-                    <h1>{this.props.icon ? this.props.icon : <IoWifi/>}</h1>
-                    <h1>{this.props.loadingText ? this.props.loadingText : "Loading..."}</h1>
+                    <Link to={"/"}>
+                        <button className={"outlined"}>
+                            <IoChevronBack/> back to spaces
+                        </button>
+                    </Link>
+                    <h1>{props.icon ? props.icon : <IoWifi/>}</h1>
+                    <h1>{props.loadingText ?? "Connecting..."}</h1>
                     <CircularProgress color={"inherit"}/>
                 </div>
             </Wrapper>
         )
-    }
-
 }
 
 export default Wrapper

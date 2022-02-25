@@ -1,18 +1,21 @@
 import React, {Component} from "react";
-import {PlaygroundOffset, User, UserCoordinates} from "../../store/models";
-import {RootState} from "../../store/store";
+import {PlaygroundOffset, UserCoordinates} from "../../store/model/model";
+import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
 import './style.scss';
-import {getUsers, submitMovement} from "../../store/userSlice";
-import {toggleUserVideo, mute} from "../../store/rtcSlice";
+import {getOnlineUsersWrapped, getUser, submitMovement} from "../../store/userSlice";
+import {toggleUserVideo, toggleUserAudio} from "../../store/mediaSlice";
 import UserComponent from "./UserComponent";
 import RangeComponent from "./RangeComponent";
 import {handleZoom, movePlayground, scalePlayground, setScale} from "../../store/playgroundSlice";
-import FocusUser from "./focusUser";
+import FocusUser from "./FullScreen";
+import {UserWrapper} from "../../store/model/UserWrapper";
+import {Fade} from "@mui/material";
+import {TransitionGroup} from "react-transition-group";
 
 interface Props {
-    activeUser: User
-    spaceUsers: User[]
+    activeUser: UserWrapper
+    spaceUsers: UserWrapper[]
     move: (userCoordinates: UserCoordinates, isDragActivated: boolean) => void
     offset: PlaygroundOffset
     changeSizeMultiplier: (size: number) => void
@@ -21,20 +24,21 @@ interface Props {
     setScale: (zoom: number, x?: number, y?: number) => void
     toggleAudio: () => void
     toggleVideo: () => void
-    video: boolean
-    muted: boolean
+    spaceID: string
+    inBackground: boolean
 }
 
 interface State {
-    userDragActive: boolean
-    mapDragActive: boolean
-    previousOffset?: { x: number, y: number }
-    previousPosition?: { x: number, y: number }
-    dragStart?: { x: number, y: number }
-    userOffset?: { x: number, y: number }
-    pinchStart?: { x1: number, y1: number, x2: number, y2: number, scale: number }
-    focusUser?: string
-    possibleFocusUser?: string
+    userDragActive: boolean // If the user is actively dragged
+    mapDragActive: boolean // If the map is dragged
+    scrolling: boolean // When true animations will be paused - active while scrolling
+    previousOffset?: { x: number, y: number } // Previous offset of the map
+    previousPosition?: { x: number, y: number } // Previous position of the user
+    dragStart?: { x: number, y: number } // Start position of the drag
+    userOffset?: { x: number, y: number } // Offset on the user itself
+    pinchStart?: { x1: number, y1: number, x2: number, y2: number, scale: number } // Position of the pinch start
+    focusUser?: string // which user is beeing focused on
+    possibleFocusUser?: string // captured on the drag start – could become focus user when same user on dragend
 }
 
 export class Canvas extends Component<Props, State> {
@@ -44,18 +48,17 @@ export class Canvas extends Component<Props, State> {
         this.state = {
             userDragActive: false,
             mapDragActive: false,
+            scrolling: true,
         }
     }
 
-    focus(userID: string) {
-        if (!this.state.focusUser) {
-            this.setState({
-                focusUser: userID
-            })
-        }
+    focus(userID: string | undefined) {
+        this.setState({
+            focusUser: userID
+        })
     }
 
-    handleClose(component: string) {
+    handleClose() {
         if (this.state.focusUser) {
             this.setState({
                 focusUser: undefined
@@ -86,6 +89,10 @@ export class Canvas extends Component<Props, State> {
     // if the mouse is clicked on the active user
     dragStart(event: React.MouseEvent | React.TouchEvent) {
         event.stopPropagation()
+        if ((event.target as HTMLElement).classList.contains("clickable") || this.props.inBackground)
+            return
+
+        // Figure out which element was clicked
         const activeUser = ((event.target as HTMLVideoElement).dataset.id === "activeUser")
         const message = ((event.target as HTMLDivElement).dataset.id === "message")
 
@@ -93,8 +100,8 @@ export class Canvas extends Component<Props, State> {
 
         const canvas = !(activeUser || message)
 
+        // Capture mouse/touch position
         let x, y;
-
         if (event.type === "mousedown") {
             x = (event as React.MouseEvent).clientX
             y = (event as React.MouseEvent).clientY
@@ -102,17 +109,20 @@ export class Canvas extends Component<Props, State> {
             x = (event as React.TouchEvent).touches[0].clientX
             y = (event as React.TouchEvent).touches[0].clientY
         }
-        let userOffsetx, userOffsety;
-        userOffsetx = x / this.props.offset.scale + this.props.offset.x - this.props.activeUser.position!.x
-        userOffsety = y / this.props.offset.scale + this.props.offset.y - this.props.activeUser.position!.y
 
+        // offset on top of the user itself
+        const userOffsetX = x / this.props.offset.scale + this.props.offset.x - this.props.activeUser.position!.x
+        const userOffsetY = y / this.props.offset.scale + this.props.offset.y - this.props.activeUser.position!.y
+
+        // If user was clicked
         if (activeUser)
             this.setState({
                 possibleFocusUser: clickedUserId,
                 userDragActive: true,
                 dragStart: {x, y},
-                userOffset: {x: userOffsetx, y: userOffsety}
+                userOffset: {x: userOffsetX, y: userOffsetY}
             })
+        // If user clicked on the map
         else if (canvas)
             this.setState({
                 possibleFocusUser: clickedUserId,
@@ -127,6 +137,13 @@ export class Canvas extends Component<Props, State> {
     }
 
     onMouseUp(e: React.MouseEvent) {
+        // If labeled as clickable no action is done
+        if ((e.target as HTMLElement).classList.contains("clickable")) {
+            this.dragEnd(e)
+            return
+        }
+
+
         // if the user is currently in the focus user mode this.state.focusUser will not be undefined and therefore we
         // don't want to move
         if (((!this.state.dragStart ||
@@ -139,21 +156,20 @@ export class Canvas extends Component<Props, State> {
             const clickedUserId = ((e.target as HTMLVideoElement).dataset.id)
             let focused = false
             this.props.spaceUsers.forEach(user => {
-                if (user.id === clickedUserId && user.inProximity) {
+                if (user.id === clickedUserId && user.inRange) {
                     this.focus(user.id)
-                    //    <FocusUser open={this.state.open["focus"]} onClose={() => this.handleClose("focus")}/>
                     focused = true
                 }
             })
 
             // If not opened fullscreen jump to that spot
-            if (!focused) {
+            if (!focused && clickedUserId !== "activeUser") {
                 const scaling = this.props.offset.scale
                 const x = e.currentTarget.getBoundingClientRect().x
                 const y = e.currentTarget.getBoundingClientRect().y
                 this.props.move({
                     x: e.clientX / scaling - x + this.props.offset.x,
-                    y: e.clientY / scaling - y + this.props.offset.y,
+                    y: e.clientY / scaling - y + this.props.offset.y + 10,
                     range: this.props.activeUser.position!.range
                 }, this.state.userDragActive)
             }
@@ -164,7 +180,7 @@ export class Canvas extends Component<Props, State> {
     // function that sets the state of dragActive on false
     // if the mouse left the playground or is not pressed anymore
     dragEnd(e: React.MouseEvent | React.TouchEvent) {
-        if(this.state.userDragActive){
+        if (this.state.userDragActive) {
             this.props.move(this.props.activeUser.position!, false)
         }
         this.setState({
@@ -178,21 +194,17 @@ export class Canvas extends Component<Props, State> {
 
     // function that moves the active user if the mouse
     moveMouse(e: React.MouseEvent) {
-        const x = e.currentTarget.getBoundingClientRect().x
-        const y = e.currentTarget.getBoundingClientRect().y
         const clientX = e.clientX
         const clientY = e.clientY
-        this.move(x, y, clientX, clientY)
+        this.move(clientX, clientY)
     }
 
     // function that moves the active user if user touches
     moveTouch(e: React.TouchEvent) {
         e.preventDefault()
-        const x = e.currentTarget.getBoundingClientRect().x
-        const y = e.currentTarget.getBoundingClientRect().y
         const clientX = e.touches[0].clientX
         const clientY = e.touches[0].clientY
-        this.move(x, y, clientX, clientY)
+        this.move(clientX, clientY)
 
         // If user is pinching
         if (e.touches.length === 2) {
@@ -208,7 +220,8 @@ export class Canvas extends Component<Props, State> {
         e.preventDefault()
     }
 
-    move(x: number, y: number, clientX: number, clientY: number) {
+    move(clientX: number, clientY: number) {
+        // move(x: number, y: number, clientX: number, clientY: number) {
         const scaling = this.props.offset.scale
         if (this.state.userDragActive) {
             this.props.move({
@@ -222,8 +235,8 @@ export class Canvas extends Component<Props, State> {
             const start = this.state.dragStart!
             this.props.movePlayground({
                 ...this.props.offset,
-                x: (prev.x + (start.x - clientX) / scaling) - x,
-                y: (prev.y + (start.y - clientY) / scaling) - y
+                x: (prev.x + (start.x - clientX) / scaling),
+                y: (prev.y + (start.y - clientY) / scaling)
             })
             // this.props.move({
             //     x: this.state.previousPosition!.x + (start.x - e.clientX) / scaling,
@@ -236,6 +249,10 @@ export class Canvas extends Component<Props, State> {
     // calls handleZoomOut if user scrolls down/ handleZoomIn if user scrolls up
     onWheel(event: React.WheelEvent) {
         event.preventDefault()
+
+        this.setState({
+            scrolling: true
+        })
 
         if (!event.ctrlKey)
             this.props.handleZoom(event.deltaY / 100, event.clientX, event.clientY)
@@ -253,16 +270,30 @@ export class Canvas extends Component<Props, State> {
         }
     }
 
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
+        if (this.state.scrolling) {
+            if (prevProps.offset.scale === this.props.offset.scale) {
+                this.setState({
+                    scrolling: false
+                })
+            }
+        }
+    }
+
     componentDidMount() {
         // Enable Safari pinch to zoom gesture
         window.addEventListener("gesturestart", (e: any) => {
             e.preventDefault()
             this.setState({
+                scrolling: true,
                 pinchStart: {x1: 0, x2: 0, y1: 0, y2: 0, scale: this.props.offset.trueScale}
             })
         })
         window.addEventListener("gesturechange", (e: any) => {
             e.preventDefault();
+            this.setState({
+                scrolling: true,
+            })
             this.props.setScale(this.state.pinchStart!.scale * e.scale)
             e.stopPropagation()
         })
@@ -282,8 +313,11 @@ export class Canvas extends Component<Props, State> {
             backgroundPosition: `${-this.props.offset.x * scaling}px ${-this.props.offset.y * scaling}px`,
             backgroundSize: `${3 * scaling}rem ${3 * scaling}rem`
         }
+        const animate = this.state.userDragActive || this.state.mapDragActive || this.state.scrolling
         return (
-            <div id="Playground" style={style} className="Playground"
+            <div id="PlaygroundCanvas" style={style} className={"PlaygroundCanvas " +
+                ((animate) ? "" : "animate")
+            }
                  onMouseMove={this.moveMouse.bind(this)}
                  onMouseLeave={this.dragEnd.bind(this)}
                  onMouseUp={this.onMouseUp.bind(this)}
@@ -294,28 +328,42 @@ export class Canvas extends Component<Props, State> {
                  onTouchMove={this.moveTouch.bind(this)}
                  onTouchEnd={this.dragEnd.bind(this)}
                  tabIndex={0}>
-                {this.props.spaceUsers.map(user => {
-                    if (!user.online)
-                        return null
-                    return <RangeComponent key={user.id} isActiveUser={false}
-                                           selected={false} user={user}/>
-                })}
+                <TransitionGroup>
+                    {this.props.spaceUsers.map(user => (
+                        <Fade in={user.online} unmountOnExit key={"range" + user.id}>
+                            <div>
+                                <RangeComponent key={user.id}
+                                                className={(animate) ? "" : "animate"}
+                                                user={user}/>
+                            </div>
+                        </Fade>
+                    ))}
+                </TransitionGroup>
                 <RangeComponent user={this.props.activeUser}
+                                className={(animate) ? "" : "animate"}
                                 selected={this.state.mapDragActive || this.state.userDragActive}
-                                isActiveUser={true}/>
-                {this.props.spaceUsers.map(user => {
-                    if (!user.online)
-                        return null
-                    return <UserComponent key={user.id} isActiveUser={false} selected={false} user={user}/>
-                })}
-                <UserComponent user={this.props.activeUser}
-                               selected={
-                                   //this.state.mapDragActive ||
-                                   this.state.userDragActive}
-                               isActiveUser={true}
-                />
+                                isActiveUser/>
+                <TransitionGroup>
+                    {this.props.spaceUsers.map(user =>
+                        <Fade in={user.online} unmountOnExit key={user.id}>
+                            <div>
+                                <UserComponent key={user.id}
+                                               className={(animate) ? "" : "animate"}
+                                               user={user}/>
+                            </div>
+                        </Fade>
+                    )}
+                </TransitionGroup>
+                <UserComponent
+                    className={(animate) ? "" : "animate"}
+                    user={this.props.activeUser}
+                    selected={
+                        //this.state.mapDragActive ||
+                        this.state.userDragActive
+                    }/>
                 {this.state.focusUser &&
-                <FocusUser userID={this.state.focusUser} onClose={() => this.handleClose("focusUser")}/>
+                    <FocusUser focus={this.focus.bind(this)} userID={this.state.focusUser} spaceID={this.props.spaceID}
+                               onClose={() => this.handleClose()}/>
                 }
             </div>
         )
@@ -323,11 +371,10 @@ export class Canvas extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    activeUser: state.userState.activeUser,
-    spaceUsers: getUsers(state),
+    activeUser: new UserWrapper(getUser(state)),
+    spaceUsers: getOnlineUsersWrapped(state),
     offset: state.playground.offset,
-    video: state.rtc.video,
-    muted: state.rtc.muted
+    inBackground: state.playground.inBackground,
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -336,7 +383,7 @@ const mapDispatchToProps = (dispatch: any) => ({
     movePlayground: (offset: PlaygroundOffset) => dispatch(movePlayground(offset)),
     handleZoom: (z: number, x?: number, y?: number) => dispatch(handleZoom(z, x, y)),
     setScale: (z: number, x?: number, y?: number) => dispatch(setScale(z, x, y)),
-    toggleAudio: () => dispatch(mute()),
+    toggleAudio: () => dispatch(toggleUserAudio()),
     toggleVideo: () => dispatch(toggleUserVideo())
 })
 

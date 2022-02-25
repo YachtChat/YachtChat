@@ -1,0 +1,81 @@
+@import "src/variables.module";
+
+.itemWrapper {
+  display: block;
+  padding: 0.7rem 1rem;
+  overflow-y: auto;
+
+  .buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    padding-right: 1rem;
+  }
+
+  .item {
+    position: relative;
+    padding: 1rem 1rem;
+    border-radius: $border_radius;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+
+    .iconButton.profilePic {
+      margin-left: 0;
+      margin-right: 10px;
+    }
+
+    .menuIcon {
+      margin-right: 10px;
+      padding: 0;
+      font-size: 1rem;
+      border: none;
+      width: auto;
+      height: auto;
+      margin-bottom: auto;
+      background: transparent;
+      color: $accent_dark;
+
+      &:hover {
+        opacity: 0.5;
+        background: transparent;
+      }
+
+
+      @media (prefers-color-scheme: dark) {
+        color: $accent_light;
+      }
+    }
+
+    .tag {
+      margin-left: 10px;
+      font-size: 0.6rem;
+      color: $accent_dark;
+      padding: 0.2rem 0.6rem;
+      background: $background_2_light;
+      border-radius: $border_radius;
+      font-weight: bold;
+
+      &.online {
+        color: $online_color;
+      }
+    }
+
+    &:hover {
+      background: $background_2_light;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          background: $background_2_dark;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,413 @@
+@import "src/variables.module";
+
+#navigation {
+  z-index: 10000;
+  position: relative;
+  backdrop-filter: blur(2rem);
+  top: 0;
+  width: 100%;
+  left: 0;
+  right: 0;
+  display: block;
+  transition: background 0.3s;
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  .contentWrapper {
+    //background: $accent_dark;
+    background: $foreground_light;
+    box-shadow: $shadow
+  }
+
+  .logo {
+    flex-grow: 0;
+    transition: transform 0.3s;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-start;
+    float: left;
+
+    .logo-pic {
+      padding: 0.5rem 1rem 0.5rem 2rem;
+      width: 40px;
+      height: 40px;
+      filter: drop-shadow(0 0 0.4rem rgba(0, 0, 0, .9));
+      float: left;
+    }
+
+    .logo-text {
+      height: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1rem;
+      color: black;
+      margin-right: 1rem;
+    }
+
+    .invite {
+      font-size: 0.7rem;
+      background-color: $accent_light;
+      padding: 0.25rem 0.5rem;
+      height: auto;
+      margin: 0;
+    }
+
+  }
+
+  .authentification {
+    justify-self: right;
+    float: right;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+
+    span, .icon, .iconButton {
+      transition: opacity 0.2s;
+    }
+
+    padding-right: 2rem;
+    flex-grow: 0;
+
+    .buttons {
+      right: 0;
+      margin-right: 0;
+      float: right;
+    }
+
+    .icon {
+      color: black;
+      padding-left: 0.5rem;
+    }
+
+    span {
+      color: black;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 0.7rem;
+    }
+
+    &:hover {
+      span, .icon, .iconButton {
+        opacity: 0.5;
+      }
+    }
+
+    .iconButton:hover {
+      opacity: 1;
+    }
+  }
+
+  #nav-content-desktop {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: stretch;
+    justify-content: stretch;
+    left: 0;
+    right: 0;
+    margin: auto;
+    height: 100%;
+
+    .nav-items {
+      flex-grow: 0;
+      padding: 0;
+      margin: auto;
+      display: flex;
+      flex-flow: row;
+      height: 100%;
+
+      button {
+        margin: 0 1rem;
+        //padding: 0.5rem 0.5rem;
+        font-size: 0.7rem;
+        list-style: none;
+        color: black;
+        background: none;
+        border-radius: 0;
+        border: none;
+        height: 100%;
+        border-top: 5px solid transparent;
+
+        text-transform: uppercase;
+        width: unset;
+
+        font-weight: bold;
+
+        transition: opacity 0.3s, color 0.3s, border-top-color 0.3s;
+
+        &:hover {
+          opacity: 0.5;
+          background: none;
+        }
+
+        &.active {
+          color: $accent_light;
+          border-top-color: $accent_dark;
+
+          @media (prefers-color-scheme: dark) {
+            & {
+              color: $accent_light;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .contentWrapper {
+      background: $foreground_dark;
+
+      .logo {
+        h1 {
+          color: white;
+        }
+      }
+
+      #nav-content-desktop {
+        .nav-items {
+          button {
+            color: white;
+          }
+        }
+
+        .authentification {
+          .icon {
+            color: white;
+          }
+
+          span {
+            color: white;
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+
+  }
+
+  #nav-content-mobile {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: stretch;
+    justify-content: stretch;
+    left: 0;
+    right: 0;
+    margin: auto;
+
+    .logo {
+      flex-grow: 1;
+    }
+
+    .menu-button {
+      flex-grow: 1;
+      transition: transform 0.3s;
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      padding-right: 3rem;
+
+      color: $headline_2_light;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          color: $headline_2_dark;
+        }
+      }
+
+      svg {
+        transition: transform 0.3s;
+      }
+
+      svg:hover {
+        transform: scale(1.5);
+      }
+
+      &.closed {
+        transform: translateY(50%) translateX(200%);
+      }
+    }
+
+    .nav-menu {
+      position: absolute;
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+
+      justify-content: center;
+      align-items: center;
+
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      width: 100vw;
+      height: 100vh;
+      transition: transform 0.4s, background 0.4s;
+
+      .closeButton {
+        color: black;
+        padding: 2rem;
+        font-size: 2rem;
+
+        @media (prefers-color-scheme: dark) {
+          color: white;
+        }
+
+        &:hover {
+          color: red;
+          cursor: pointer;
+        }
+      }
+
+      h1 {
+        font-size: 3rem;
+      }
+
+      .nav-items {
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 2rem;
+        box-sizing: border-box;
+        background: $foreground_light;
+        box-shadow: $shadow;
+        border-radius: $border_radius;
+        z-index: 100;
+        width: 100%;
+        max-width: 600px;
+
+        @media (prefers-color-scheme: dark) {
+          background: $foreground_dark;
+        }
+
+        button {
+          position: relative;
+          width: 100%;
+          padding: 1rem;
+          font-size: 1rem;
+          font-weight: bold;
+          transition: opacity 0.5s, transform 0.3s, background 0.3s;
+          text-align: center;
+          border-radius: $border_radius;
+
+          color: black;
+          background: transparent;
+          //text-decoration-width: 5px;
+
+          &:hover {
+            background: $focus_light;
+            cursor: pointer;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            & {
+              color: $headline_dark;
+            }
+
+            &:hover {
+              background: $focus_dark;
+            }
+          }
+
+
+          &:active {
+            transform: scale(1.1);
+            opacity: 0.1;
+          }
+
+          &.close-button {
+            text-align: right;
+          }
+        }
+      }
+
+      &.closed {
+        transform: translateY(-100%);
+
+        .nav-items {
+          a {
+            transform: translate(-30%);
+            opacity: 0;
+          }
+        }
+
+      }
+
+      &.open {
+        background: $foreground_light;
+
+        @media (prefers-color-scheme: dark) {
+          background: $foreground_dark;
+
+          .authentification {
+            .icon, span {
+              color: white;
+            }
+          }
+        }
+      }
+    }
+
+
+    .authentification {
+      position: relative;
+      margin: 0 auto;
+      padding: 2rem;
+      overflow-y: auto;
+
+      .buttons {
+        margin: auto;
+        display: flex;
+        flex-direction: row;
+        justify-items: center;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+
+        .button {
+          padding: 1rem 2rem;
+          font-size: 1vh;
+          color: $headline_light;
+        }
+      }
+    }
+
+  }
+
+  @media only screen and (max-width: 1000px) {
+    #nav-content-desktop {
+      display: none;
+    }
+  }
+
+  @media only screen and (min-width: 1000px) {
+    #nav-content-mobile {
+      display: none;
+    }
+  }
+}
+
+.menuItem {
+  label {
+    color: white;
+  }
+}

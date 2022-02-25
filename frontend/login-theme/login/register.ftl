@@ -1,9 +1,9 @@
 <#import "template.ftl" as layout>
 <@layout.registrationLayout displayMessage=!messagesPerField.existsError('firstName','lastName','email','username','password','password-confirm'); section>
     <#if section = "header">
-        <div id="kc-form-options" class="${properties.kcFormOptionsClass!} buttons">
+        <div id="kc-form-options" class="${properties.kcFormOptionsClass!}">
             <a href="${url.loginUrl}">
-                <button class="${properties.kcFormOptionsWrapperClass!} iconButton"><i class="fa fa-chevron-left"></i>
+                <button class="${properties.kcFormOptionsWrapperClass!} outlined"><i class="fa fa-chevron-left"></i> back to login
                 </button>
             </a>
         </div>
@@ -155,6 +155,7 @@
 
             <div class="${properties.kcFormGroupClass!}">
                 <div id="kc-form-buttons" class="${properties.kcFormButtonsClass!}">
+                    <label >By clicking on "${msg("doRegister")}" you accept our <a href="https://www.yacht.chat/terms">terms of service</a> and our <a href="https://www.yacht.chat/privacy">privacy policy</a>. </label>
                     <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}"
                            type="submit" value="${msg("doRegister")}"/>
                 </div>

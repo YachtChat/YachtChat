@@ -1,9 +1,12 @@
 package com.alphabibber.websocketservice.service;
 
+import com.alphabibber.websocketservice.handler.MediaHandler;
 import com.alphabibber.websocketservice.model.User;
+import com.alphabibber.websocketservice.model.answer.MediaAnswer;
 import com.posthog.java.PostHog;
 import lombok.Getter;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,10 +16,8 @@ public class PosthogService {
     private static final PostHog posthog = new PostHog.Builder(POSTHOG_API_KEY).host(POSTHOG_HOST).build();
     private static PosthogService instance;
 
-    private String video = "video";
-    private String screen = "screen";
-    private String onString = "On";
-    private String offString = "Off";
+    private final String onString = "On";
+    private final String offString = "Off";
 
     @Getter
     private static final String spaceJoinedString = "spaceJoined";
@@ -24,6 +25,8 @@ public class PosthogService {
     private static final String spaceLeftString = "spaceLeft";
     @Getter
     private static final String spaceIdString = "spaceId";
+    @Getter
+    private static final String doNotDisturb = "doNotDisturb";
     @Getter
     private static final String spaceWithOtherUserString = "spaceWithOtherUser";
     @Getter
@@ -53,50 +56,42 @@ public class PosthogService {
 
     /**
      * Send all necessay events to posthog when user loggs into space
-     * @param id: user id
+     * @param user: user object
      * @param spaceId: space id
-     * @param room: room that represents space
+     * @param space: space that represents space
      */
-    public void handleLogin(String id, String spaceId, Map<String, User> room) {
+    public void handleLogin(User user, String spaceId, Collection<User> space) {
         // tell posthog that the user logged into that space
-        sendEvent(id, spaceJoinedString, new HashMap<String, Object>(){{put(spaceIdString, spaceId);}});
+        sendEvent(user.getId(), spaceJoinedString, new HashMap<String, Object>(){{put(spaceIdString, spaceId);}});
         // init camera to on
-        startTracking(id, video, true);
+        for (Map.Entry<String, Boolean> set: user.getMedia().entrySet()){
+            startTracking(user.getId(), set.getKey(), set.getValue());
+        }
+        // startTracking the DND
+        startTracking(user.getId(), doNotDisturb, false);
 
         // track room size
-        if (room.size() > 1) {
-            for (User u : room.values()) {
+        if (space.size() > 1) {
+            for (User u : space) {
                 sendEvent(u.getId(), spaceWithOtherUserString, new HashMap<String, Object>() {{
-                    put(roomSizeString, room.size());
+                    put(roomSizeString, space.size());
                 }});
             }
         }
     }
 
     public void handleLeave(User user, String spaceId){
-        stopTracking(user.getId(), video, user.getVideo());
-        if(user.getScreen()){
-            sendEvent(user.getId(), screen + offString, null);
+        for (Map.Entry<String, Boolean> set: user.getMedia().entrySet()){
+            stopTracking(user.getId(), set.getKey(), set.getValue());
         }
+        // stop tracking the DND mode
+        stopTracking(user.getId(), doNotDisturb, user.getDoNotDisturb());
         // tell posthog that the user logged out of that space
         sendEvent(user.getId(), spaceLeftString, new HashMap<String, Object>(){{put(spaceIdString, spaceId);}});
     }
 
-    public void trackVideo(String id, boolean on){
-        // start tracking what is turned on (ends with on)
-        startTracking(id, video, on);
-        // stop tracking what is turned off (ends with off)
-        stopTracking(id, video, !on);
-    }
-
-    public void trackScreen(String id, boolean on, boolean videoOn, Boolean changeToVideo) {
-        if(on){
-            // if screen was activated if is now off
-            if(videoOn) trackVideo(id, false);
-            sendEvent(id, screen + onString, null);
-        } else{
-            if(changeToVideo) trackVideo(id, true);
-            sendEvent(id, screen + offString, null);
-        }
+    public void trackMedia(String id, String media, boolean on){
+        startTracking(id, media, on);
+        stopTracking(id, media, !on);
     }
 }

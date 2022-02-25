@@ -1,11 +1,11 @@
 import React, {Component} from "react";
 import './style.scss';
 import {connect} from "react-redux";
-import {RootState} from "../../store/store";
+import {RootState} from "../../store/utils/store";
 import googleButton from "../../rsc/google_button.svg";
 import appleLogo from "../../rsc/apple.svg";
 import github from "../../rsc/github.svg";
-import {applicationName, AUTH_SERVICE} from "../../store/config";
+import {AUTH_SERVICE} from "../../store/utils/config";
 import Wrapper from "../Wrapper";
 import {setLogin} from "../../store/authSlice";
 
@@ -47,8 +47,8 @@ export class Login extends Component<Props, State> {
         const auth = "https://".concat((AUTH_SERVICE) ? AUTH_SERVICE : "")
         return (
             <Wrapper className="login-box">
-                <header className={"signin"}>
-                    <h1 id={"loginHeadline"}>{applicationName}</h1>
+                <header className={"headlineBox"}>
+                    <h1 id={"loginHeadline"}>Login</h1>
                     <label>Sign in</label>
                     <div className="login-buttons">
 
@@ -88,7 +88,7 @@ export class Login extends Component<Props, State> {
                                    onChange={this.handleChange.bind(this)} autoFocus/>
                         </div>
 
-                        <button onClick={this.handleSubmit.bind(this)}>
+                        <button className={"submit"} onClick={this.handleSubmit.bind(this)}>
                             Join
                         </button>
                     </form>

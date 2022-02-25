@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:            
+    steps:
       - name: pull from git
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
@@ -31,7 +31,7 @@ jobs:
         uses: tarunjangra/ssh-remote-cmd@v1
         with:
           command: |
-          
+            
             sudo sed -i 's/yacht.chat/alphabibber.com/g' .env
             
             sudo docker network create -d bridge application
@@ -41,7 +41,7 @@ jobs:
             sudo docker volume create keycloak_postgres_data
             sudo docker volume create spaces_postgres_data
             sudo docker volume create prometheus
-            
+
             cd /home/git_environment/NotZoom/
             sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD}} KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD}} docker-compose -f docker-compose-init.yml -f docker-compose-statistics.yml up -d
             sudo mvn clean -f ./spaces-service/pom.xml package -DskipTests

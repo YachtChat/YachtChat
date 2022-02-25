@@ -11,6 +11,11 @@ import {Usp} from "./components/usp";
 import {Contact} from "./components/contact";
 import {ParallaxProvider} from "react-scroll-parallax";
 import posthog from 'posthog-js';
+import {Routes, Route} from "react-router-dom"
+import {Privacy} from "./components/imprint/Privacy";
+import {Terms} from "./components/imprint/Terms";
+import {Imprint} from "./components/imprint/Imprint";
+import {Footer} from "./components/Footer";
 
 function App() {
     if (!window.location.href.includes('localhost')) {
@@ -23,15 +28,24 @@ function App() {
             silentCheckSsoRedirectUri: window.location.origin
         }}>
             <ParallaxProvider>
-
-                <div className="App">
+                <div className="App" id="App">
                     <Navigation/>
-                    <Landing/>
-                    <About/>
-                    <Usp/>
-                    <Tutorial/>
-                    <Scenarios/>
-                    <Contact/>
+                    <Routes>
+                        <Route path={"/privacy"} element={<Privacy/>} />
+                        <Route path={"/terms"} element={<Terms/>} />
+                        <Route path={"/imprint"} element={<Imprint />} />
+                        <Route path={"/"} element={
+                            <div>
+                                <Landing/>
+                                <About/>
+                                <Usp/>
+                                <Tutorial/>
+                                <Scenarios/>
+                                <Contact/>
+                            </div>
+                        }/>
+                    </Routes>
+                    <Footer />
                 </div>
             </ParallaxProvider>
         </ReactKeycloakProvider>

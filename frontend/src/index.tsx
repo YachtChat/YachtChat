@@ -2,18 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import App from './App';
-import {history, store} from './store/store';
+import {history, store} from './store/utils/store';
 import {Provider} from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import "webrtc-adapter";
-import {ConnectedRouter} from "connected-react-router";
+import { HistoryRouter as Router } from "redux-first-history/rr6";
 
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <ConnectedRouter history={history}>
+            <Router history={history}>
                 <App/>
-            </ConnectedRouter>
+            </Router>
         </Provider>
     </React.StrictMode>,
     document.getElementById('root')

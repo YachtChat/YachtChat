@@ -1,15 +1,21 @@
 import React, {Component} from "react";
-import {PlaygroundOffset, User} from "../../store/models";
-import {RootState} from "../../store/store";
+import {PlaygroundOffset} from "../../store/model/model";
+import {RootState} from "../../store/utils/store";
 import {connect} from "react-redux";
-import {maxRange, userProportion} from "../../store/userSlice";
+import {getUserWrapped, maxRange, userProportion} from "../../store/userSlice";
+import {getStream} from "../../store/mediaSlice";
+import VolumeIndicator from "../Settings/VolumeIndicator";
+import {UserWrapper} from "../../store/model/UserWrapper";
 
 interface Props {
-    user: User
-    selected: boolean
-    isActiveUser: boolean
+    user: UserWrapper
+    selected?: boolean
+    isActiveUser?: boolean
     playgroundOffset: PlaygroundOffset
-    muted: boolean
+    audio: boolean
+    getStream: (id: string) => MediaStream | undefined,
+    className?: string
+    showVolumeIndicators: boolean
 }
 
 export class RangeComponent extends Component<Props> {
@@ -33,13 +39,27 @@ export class RangeComponent extends Component<Props> {
             height: rangeInPx,
             left: x - rangeInPx / 2 - offsetX,
             top: y - rangeInPx / 2 - offsetY,
-            opacity: (!!user.inProximity && !this.props.muted) ? 1 : 0.5,
+            opacity: (user.inProximity && this.props.audio) ? 1 : 0.5,
             borderColor: (this.props.isActiveUser) ? "red" : "green",
         }
 
         return (
-            <div className={(this.props.isActiveUser) ? "activeUser" : ""}>
-                <div className={"userRange"} style={rangeStyle}/>
+            <div className={((this.props.isActiveUser) ? "activeUser" : "")}>
+                <div className={"userRange " + this.props.className} style={rangeStyle}>
+                    {this.props.showVolumeIndicators &&
+                    <VolumeIndicator
+                        className={"speakingIndicator " + (!user.audio ? "mute" : "")}
+                        animateHeight
+                        proximityWarning
+                        audio={this.props.getStream(this.props.user.id)}
+                        minWidth={!user.inProximity && user.audio ? userSize * 0.8 : userSize * 0.99}
+                        minHeight={!user.inProximity && user.audio ? userSize * 0.8 : userSize * 0.99}
+                        maxWidth={userSize * 2}
+                        maxHeight={userSize * 2}
+                        unit={"px"}
+                    />
+                    }
+                </div>
             </div>
         )
     }
@@ -47,7 +67,9 @@ export class RangeComponent extends Component<Props> {
 
 const mapStateToProps = (state: RootState) => ({
     playgroundOffset: state.playground.offset,
-    muted: state.rtc.muted
+    showVolumeIndicators: state.playground.showVolumeIndicators,
+    audio: getUserWrapped(state).audio,
+    getStream: (id: string): MediaStream | undefined => getStream(state, id),
 })
 
 export default connect(mapStateToProps)(RangeComponent)

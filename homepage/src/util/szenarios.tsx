@@ -1,4 +1,4 @@
-import {IoCafeOutline, IoEaselOutline, IoLaptopOutline, IoManOutline, IoPeopleOutline} from "react-icons/all";
+import {IoCafeOutline, IoEaselOutline, IoLaptopOutline, IoManOutline, IoPeopleOutline} from "react-icons/io5";
 import {ReactElement} from "react";
 import collaboration from "../rsc/collaboration.jpg"
 import virtualhq from "../rsc/virtualhq.jpg"

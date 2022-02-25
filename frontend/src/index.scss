@@ -25,32 +25,63 @@ a:link, a:visited {
   }
 }
 
-button, input[type=submit] {
+button, input[type=submit], .button {
   position: relative;
   display: inline-block;
-  padding: 1rem 1rem;
-  width: 100%;
+  padding: 0.75rem 1rem;
   margin-bottom: 1rem;
   font-size: 0.8rem;
+  font-weight: bold;
   text-decoration: none;
   text-transform: uppercase;
   overflow: hidden;
   transition: .2s;
-  background-color: transparent;
-  border: 1px solid $accent_light;
-  color: $button_font_light;
-  border-radius: $border_radius;
+  border: none; //1px solid $accent_light;
+  color: white;
+  border-radius: 3rem;
   outline: none;
+  background-color: $accent_dark;
+  cursor: pointer;
+
+  &.spaceRight {
+    margin-right: 0.5rem;
+  }
+
+  &.spaceTop {
+    margin-top: 0.5rem;
+  }
+
+  &.submit {
+    width: 100%;
+  }
+
+  &.outlined {
+    background-color: transparent;
+    color: $accent_dark;
+    border: 1px solid $accent_light;
+  }
 
   &:hover {
     background: rgba(125, 125, 125, 0.5);
+    opacity: 0.5;
   }
 
   @media (prefers-color-scheme: dark) {
     & {
-      color: $button_font_dark;
+      background-color: $accent_light;
+      color: black;
+    }
+    &.outlined {
+      background-color: transparent;
+      color: $accent_light;
       border: 1px solid $accent_dark;
     }
+  }
+
+  &.nostyle {
+    background-color: transparent;
+    border: none;
+    padding: 0;
   }
 }
 
@@ -116,20 +147,25 @@ label, .required {
   margin: 0;
   width: 100%;
   padding: 4rem 2rem 2rem 2rem;
-  background: $accent_light;
   box-sizing: border-box;
-  color: $headline_light;
+  color: $accent_dark;
   position: relative;
 
   @media (prefers-color-scheme: dark) {
     & {
-      background: $accent_dark;
-      color: $headline_dark;
+      color: $accent_light;
     }
   }
 
+  button {
+    width: auto;
+  }
+
   h1 {
-    margin-top: 0;
+    margin: 0;
+    font-size: 4rem;
+    text-transform: uppercase;
+    font-weight: bolder;
   }
 
   .buttons {
@@ -148,4 +184,12 @@ label, .required {
 
 .content {
   padding: 2rem;
+  background: $foreground_light;
+  border-radius: $border_radius;
+  box-shadow: $shadow;
+  overflow-y: auto;
+
+  @media (prefers-color-scheme: dark) {
+    background: $foreground_dark;
+  }
 }

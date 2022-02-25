@@ -1,8 +1,9 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppThunk, RootState} from './store';
-import {handleLoginUser} from './userSlice';
-import keycloak from "./keycloak";
+import {AppThunk, RootState} from './utils/store';
+import {handleLoginUser, setUserId} from './userSlice';
+import keycloak from "./utils/keycloak";
 import {AxiosRequestConfig} from "axios";
+import {UserWrapper} from "./model/UserWrapper";
 
 interface AuthState {
     loggedIn: boolean
@@ -39,11 +40,13 @@ export const {
     authFlowReady
 } = authSlice.actions;
 
-export const initAuth = (error: string): AppThunk => (dispatch, getState) => {
+export const initAuth = (error: string): AppThunk => () => {
 
 }
 
 export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) => {
+    UserWrapper.dispatch = dispatch
+    UserWrapper.getState = getState
 
     keycloak.init({
         onLoad: 'login-required',
@@ -55,11 +58,9 @@ export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) =
                 const existingToken = getState().auth.token
                 if (existingToken && existingToken !== "") {
                     dispatch(setLogin(auth)) // TODO: to be set to keycloak.authenticated
+                    dispatch(setUserId(keycloak.idTokenParsed?.sub ?? "-1"))
 
-                    // @ts-ignore
-                    const tokenParsed: string = keycloak.tokenParsed!.sub
-
-                    dispatch(handleLoginUser({id: tokenParsed}))
+                    dispatch(handleLoginUser())
                 } else {
                     dispatch(authFlowReady())
                     keycloak.login()
@@ -76,7 +77,7 @@ export const checkAuth = (id_token?: string): AppThunk => (dispatch, getState) =
 
 }
 
-export const logout = (): AppThunk => (dispatch, getState) => {
+export const logout = (): AppThunk => (dispatch) => {
     dispatch(setToken(""))
     localStorage.clear()
     dispatch(setLogin(false))
@@ -87,9 +88,10 @@ export const getToken = (state: RootState): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
         keycloak.updateToken(30).then(() =>
             resolve(keycloak.token!)
-        ).catch(() =>
+        ).catch(() => {
             keycloak.login()
-        )
+            reject()
+        })
     })
 }
 

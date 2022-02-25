@@ -1,16 +1,11 @@
 import './style.scss'
 import {Logo} from "./Logo";
-import {IoMenu} from "react-icons/all";
+import {IoMenu} from "react-icons/io5";
 import {useState} from "react";
 import {AuthButtons} from "./AuthButtons";
 import {NavButtons} from "./NavButtons";
 
-interface Props {
-
-}
-
-
-export const Navigation = (props: Props) => {
+export const Navigation = () => {
 
     const [open, setOpen] = useState(false)
     const [scroll, setScroll] = useState(false)
@@ -27,7 +22,6 @@ export const Navigation = (props: Props) => {
     return (
         <header id={"navigation"} className={((!scroll) ? "notscroll" : "")}>
             <div className={"contentWrapper"}>
-
                 <div id={"nav-content-desktop"}>
                     <Logo/>
                     <NavButtons/>

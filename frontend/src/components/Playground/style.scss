@@ -55,22 +55,6 @@
   }
 }
 
-.contentWrapper {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  background-color: $background_2_light;
-
-  @media (prefers-color-scheme: dark) {
-    & {
-      background-color: $background_2_dark;
-    }
-  }
-}
-
 .roomgrid {
   min-height: 100%;
   display: flex;
@@ -78,15 +62,29 @@
   flex-direction: row;
 }
 
-
-.Playground {
-  flex-grow: 1;
+#PlaygroundWrapper {
   height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#Playground {
+  position: relative;
+}
+
+#PlaygroundCanvas {
+  flex-grow: 1;
+  height: 100%;
   position: relative;
   overflow: hidden;
   user-select: none;
   cursor: move;
   background: url("../../rsc/background.png") repeat 0 0;
+
+  &.animate {
+    transition: background-position 0.3s, background-size 0.3s, background 0.3s;
+  }
 
   .playgroundPinch {
     width: 100%;
@@ -99,31 +97,85 @@
   }
 
   .userRange {
+
+    &.animate {
+      transition: 0.2s opacity, height 0.3s, width 0.3s, left 0.3s, top 0.3s;
+
+      .speakingIndicator {
+        .volumeIndicator {
+          .volume {
+            transition: width 0.2s, height 0.2s;
+
+          }
+        }
+      }
+    }
+
     position: absolute;
     background: $focus_light;
     border-radius: 50%;
     background: radial-gradient(circle, $accent_light 0%, $accent_light_alpha 70%);
     //border: solid 1px rgba(255, 0, 0, .4);
-    transition: 0.2s opacity;
 
     @media (prefers-color-scheme: dark) {
       & {
         background: radial-gradient(circle, $accent_dark 0%, $accent_dark_alpha 70%);
       }
     }
+
+    .speakingIndicator {
+      .volumeIndicator {
+        .volume {
+          position: absolute;
+          background: $online_color;
+          top: 50%;
+          right: 50%;
+          border-radius: 50%;
+          transform: rotateY(180deg) translate(-50%, -50%);
+        }
+      }
+
+      &.mute {
+        .volumeIndicator {
+          .volume {
+            background: rgba(126, 47, 47, 0.5);
+          }
+        }
+      }
+    }
   }
 
   .userName {
     position: absolute;
-    background: $background_light;
     opacity: 0.7;
     border-radius: $border_radius;
     padding: 0.3rem 0.5rem;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     transition: 0.2s width,
     0.2s height,
+    0.2s background,
+    0.2s color,
     0.2s transition;
+    background: $background_light;
     color: $button_font_light;
+    border-color: $background_light;
+
+    &.inRange {
+      color: $online_color;
+      font-size: 1rem;
+    }
+
+    &.animate {
+      transition: 0.2s width,
+      0.2s height,
+      0.2s transition,
+      0.3s left,
+      0.3s top;
+    }
+
+    svg {
+      color: red;
+    }
 
     @media (prefers-color-scheme: dark) {
       & {
@@ -185,6 +237,10 @@
     overflow: hidden;
     transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s;
 
+    &.animate {
+      transition: 0.2s opacity, 0.2s transform, box-shadow 0.2s, left 0.3s, top 0.3s;
+    }
+
     //background-color: $foreground_light;
 
     @media (prefers-color-scheme: dark) {
@@ -216,6 +272,19 @@
         opacity: 0.7;
       }
     }
+
+    .loader {
+      color: white;
+      position: absolute;
+      padding: 40%;
+      background: rgba(0, 0, 0, 0.5);
+      filter: drop-shadow(0 0 10px rgba(0, 0, 0, .7));
+      width: 50%;
+      height: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 
   .focusUser {
@@ -238,6 +307,47 @@
     color: white;
     padding: 1rem;
     font-size: 2rem;
+    transition: transform 0.5s, color 0.2s;
+
+    &:hover {
+      fill: red;
+    }
+  }
+
+  .otherUserWrapper {
+    display: block;
+    position: relative;
+
+    .otherUser {
+      margin-top: 1rem;
+      overflow: hidden;
+      border-radius: 50%;
+      box-shadow: $shadow;
+
+      .video {
+        border-radius: 50%;
+        transition: opacity 0.3s;
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  .name {
+    position: absolute;
+    bottom: 1rem;
+    background: rgba(255,255,255,0.8);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.25rem 0.5rem;
+    border-radius: $border_radius;
+    transition: transform 0.5s;
+
+    &.idle {
+      transform: translate(-50%, 200%);
+    }
   }
 
   .panel-content {
@@ -261,23 +371,109 @@
   }
 
   &.fullscreen {
+    background-color: black;
     position: fixed;
     display: block;
     top: 0;
     right: 0;
     left: 0;
     bottom: 0;
-    z-index: 100;
     margin: 0;
     width: 100%;
     height: 100vh;
 
-    .closeButton {
-      display: none;
+    .idle.closeButton {
+      transform: translateX(400%);
+    }
+
+    .navwrapper {
+
+      #sidebar {
+        transition: transform 0.5s;
+
+        &.idle {
+          transform: translateX(-200%);
+        }
+      }
     }
   }
 }
 
 .profile-picture {
   display: none;
+}
+
+.messages {
+  padding: 1rem;
+  background: $foreground_light;
+  border-radius: $border-radius;
+  overflow-x: hidden;
+  box-shadow: $shadow;
+
+  .messagesWrapper {
+    max-height: 30vh;
+    overflow-y: auto;
+  }
+
+  label {
+    color: $accent_dark;
+    padding: 1rem;
+    margin: 0;
+  }
+
+  table, th, tr, td {
+    margin: 0;
+    padding: 0;
+    border-collapse: separate;
+    vertical-align: center;
+  }
+
+  td {
+    display: table-cell;
+  }
+
+
+  .message {
+    display: table-row;
+    border-radius: $border-radius;
+    transition: background 0.3s;
+
+    &:hover {
+      background: $focus_light;
+    }
+
+    label {
+      color: $accent_light;
+    }
+
+    span {
+      display: block;
+      width: 200px;
+      font-size: 0.8rem;
+    }
+
+    span, label, .icon {
+      padding: 1rem;
+      transition: opacity 0.2s;
+    }
+
+    .icon:hover {
+      opacity: 0.5;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: $foreground_dark;
+    label {
+      color: $accent_light;
+    }
+
+    span, .icon {
+      color: white;
+    }
+
+    .message:hover {
+      background: $focus_dark;
+    }
+  }
 }

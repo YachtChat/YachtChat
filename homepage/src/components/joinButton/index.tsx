@@ -1,5 +1,5 @@
 import {FRONTEND_URL} from "../../util/config";
-import {IoArrowForward} from "react-icons/all";
+import {IoArrowForward} from "react-icons/io5";
 import {auth} from "../../util/keycloak";
 import "./style.scss";
 

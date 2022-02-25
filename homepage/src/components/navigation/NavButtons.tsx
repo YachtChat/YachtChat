@@ -1,5 +1,7 @@
 import {IoClose} from "react-icons/all";
 import {useEffect, useState} from "react";
+import {SUPPORT_URL} from "../../util/config";
+import {useLocation, useNavigate} from "react-router-dom";
 
 interface Props {
     closeButton?: boolean
@@ -7,17 +9,30 @@ interface Props {
 
 export function NavButtons(props: Props) {
 
-    const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({behavior: 'smooth'})
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    const scrollTo = (id: string) => {
+        if (location.pathname !== "/") {
+            navigate("/")
+            window.scrollTo(0,0)
+        }
+        document.getElementById(id)?.scrollIntoView({behavior: 'smooth'})
+    }
 
     const [curEl, setCurEl] = useState<string>("")
 
-    const elids = ["landing", "about", "usp", "tutorial", "scenarios", "contact"]
-    const names = ["Home", "About", "Features", "How To", "Use cases", "Contact"]
+    const elids = (location.pathname === "/") ? ["landing", "about", "usp", "tutorial", "contact"] : ["landing"]
+    const names = (location.pathname === "/") ? ["Home", "About", "Features", "How To", "Contact"] : ["Home"]
 
     const updateActiveElement = () => {
-        const els = elids.map(el => Math.abs(getPosition(document.getElementById(el)).y))
-        const index = els.indexOf(Math.min(...els));
-        setCurEl(elids[index])
+        if (location.pathname === "/") {
+            const els = elids.map(el => Math.abs(getPosition(document.getElementById(el)).y))
+            const index = els.indexOf(Math.min(...els));
+            setCurEl(elids[index])
+        } else {
+            setCurEl("null")
+        }
     }
 
     useEffect(updateActiveElement, [])
@@ -27,13 +42,14 @@ export function NavButtons(props: Props) {
     return (
         <nav className={"nav-items"}>
             {!!props.closeButton &&
-            <button className={"close-button"}><IoClose/></button>
+                <button className={"close-button"}><IoClose/></button>
             }
             {elids.map((el, i) => {
                     return <button key={i} className={(curEl === el ? "active" : "")}
                                    onClick={() => scrollTo(el)}>{names[i]}</button>
                 }
             )}
+            <a className={""} href={SUPPORT_URL}>Help</a>
 
         </nav>
     )

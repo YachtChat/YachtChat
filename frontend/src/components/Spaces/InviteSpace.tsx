@@ -2,30 +2,33 @@ import React, {Component} from "react";
 import Wrapper from "../Wrapper";
 import {Link} from "react-router-dom";
 import {FaChevronLeft} from "react-icons/fa";
-import {IoPeopleOutline} from "react-icons/all";
+import {IoArrowForward, IoCopyOutline} from "react-icons/io5";
 import {connect} from "react-redux";
-import {getInvitationToken} from "../../store/spaceSlice";
-import {RootState} from "../../store/store";
-import {CircularProgress} from "@material-ui/core";
-import {FRONTEND_URL} from "../../store/config";
-import {push} from "connected-react-router";
-import {Space} from "../../store/models";
-import {handleSuccess} from "../../store/statusSlice";
+import {RootState} from "../../store/utils/store";
+import {CircularProgress, Tooltip} from "@mui/material";
+import {applicationName, FRONTEND_URL} from "../../store/utils/config";
+import {Space} from "../../store/model/model";
+import {Steps} from "./Steps";
+import {copyInviteLink} from "../../store/utils/utils";
+import {getToken, requestSpaces} from "../../store/spaceSlice";
 
-interface Props {
-    getToken: (spaceID: string) => Promise<string>
-    match?: {
-        params: {
-            spaceID: string
-        }
+interface OwnProps {
+    params: {
+        spaceID: string
     }
-    goBack: () => void
-    spaces: Space[]
-    success: (s: string) => void
 }
 
+interface OtherProps {
+    copy: () => Promise<string>
+    token: string | undefined
+    spaces: Space[]
+    requestSpaces: () => void
+}
+
+type Props = OwnProps & OtherProps
+
 interface State {
-    token?: string
+    invite: boolean
 }
 
 export class CreateSpace extends Component<Props, State> {
@@ -34,84 +37,73 @@ export class CreateSpace extends Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {}
+        this.state = {invite: false}
         this.copyText = React.createRef()
     }
 
     componentDidMount() {
-        if (!this.props.match)
-            return
-        this.props.getToken(this.props.match.params.spaceID).then(token => {
-                console.log(token)
-                this.setState({
-                    token
-                })
-            }
-        ).catch(() => this.props.goBack())
+        if (this.props.spaces.length === 0)
+            this.props.requestSpaces()
     }
 
     render() {
         return (
             <Wrapper className={"create spaces"}>
                 <div className={"headlineBox"}>
-                    <div className={"buttons"}>
-                        <Link to={"/spaces"}>
-                            <button className={"iconButton"}><FaChevronLeft/></button>
-                        </Link>
-                    </div>
+                    <Link to={"/spaces"}>
+                        <button className={"outlined"}><FaChevronLeft/> back to spaces</button>
+                    </Link>
 
                     <h1>
-                        <IoPeopleOutline/><br/>
-                        Invite people
-                        to <i>{this.props.spaces.find(s => s.id === this.props.match?.params.spaceID)?.name}</i>
+                        Share your space.
                     </h1>
-                    Let people join your private Space with an invitation link.
+                    Share this link to let people join
+                    "{this.props.spaces.find(s => s.id === this.props.params.spaceID)?.name}".<br/>
+                    After sharing this link your team just has to open this link in their browser to join your
+                    Space.<br/>
+                    A joy that's shared is a joy made double.
                 </div>
                 <form className={"spacesWrapper"}>
-                    {(!!this.state.token) ?
+                    <Steps active={(this.state.invite) ? 2 : 1}/>
+                    {(!!this.props.token) ?
                         <input ref={this.copyText}
-                               value={"https://" + FRONTEND_URL + "/join/" + this.state.token}
-                               type={"text"}/> :
+                               value={"https://" + FRONTEND_URL + "/join/" + this.props.token}
+                               type={"text"} readOnly /> :
                         <CircularProgress className={"loadingAnimation"} color={"inherit"}/>
                     }
                     <button onClick={e => {
                         e.preventDefault()
+                        this.setState({invite: true})
 
-                        if (this.copyText.current) {
-                            this.copyText.current.select();
-                            this.copyText.current.setSelectionRange(0, 99999); /* For mobile devices */
-
-                            /* Copy the text inside the text field */
-                            document.execCommand("copy");
-                            this.props.success("Invite link copied")
-                        }
+                        this.props.copy()
                     }}>
-                        Copy Link
+                        <IoCopyOutline/> Copy invite Link
                     </button>
-                    <Link to={"/spaces/" + this.props.match?.params.spaceID}>
-                        <button>
-                            Join space
-                        </button>
-                    </Link>
-                    <Link to={"/spaces"}>
-                        <button>
-                            Go back to spaces
-                        </button>
-                    </Link>
+                    <Tooltip title={(this.state.invite) ? "" :
+                        <h2 style={{textAlign: "center"}}>
+                            Invite friends & colleagues first to make the most out of {applicationName}
+                        </h2>} arrow placement={"bottom"}>
+
+                        <Link to={"/spaces/" + this.props.params.spaceID}>
+                            <button className={"outlined submit"}>
+                                Join space {this.state.invite ? "" : "alone"} <IoArrowForward/>
+                            </button>
+                        </Link>
+                    </Tooltip>
                 </form>
             </Wrapper>
         );
     }
 }
 
-const mapStateToProps = (state: RootState) => ({
-    getToken: (spaceID: string) => getInvitationToken(state, spaceID),
+const mapStateToProps = (state: RootState, ownProps: OwnProps) => ({
+    token: getToken(state, ownProps.params.spaceID),
     spaces: state.space.spaces
 })
 
-const mapDispatchToProps = (dispatch: any) => ({
-    goBack: () => dispatch(push("/spaces")),
-    success: (s: string) => dispatch(handleSuccess(s))
+const mapDispatchToProps = (dispatch: any, ownProps: OwnProps) => ({
+    copy: () => dispatch(copyInviteLink(ownProps.params.spaceID)),
+    requestSpaces: () => dispatch(requestSpaces()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateSpace)

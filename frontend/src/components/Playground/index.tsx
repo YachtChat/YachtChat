@@ -1,61 +1,77 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import './style.scss';
-import NavigationBar from "./NavigationBar";
+import Sidebar from "./Sidebar";
 import {handleZoom, initPlayground} from "../../store/playgroundSlice";
 import Canvas from "./Canvas";
 import Wrapper, {Loading} from "../Wrapper";
-import {Space, User} from "../../store/models";
-import {RootState} from "../../store/store";
+import {Space} from "../../store/model/model";
+import {RootState} from "../../store/utils/store";
 import {requestSpaces} from "../../store/spaceSlice";
-import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/rtcSlice";
+import {loadAllMediaDevices, requestUserMediaAndJoin} from "../../store/mediaSlice";
 import {Link} from "react-router-dom";
-import {IoCamera, IoHome, IoMic} from "react-icons/all";
-import {applicationName} from "../../store/config";
+import {IoCamera, IoChevronBack, IoMic} from "react-icons/io5";
+import {applicationName} from "../../store/utils/config";
 import {sendLogout} from "../../store/webSocketSlice";
+import Navigation from "../Navigation";
+import DoNotDisturb from "./DoNotDisturb";
+import {UserWrapper} from "../../store/model/UserWrapper";
+import {getUserWrapped} from "../../store/userSlice";
+import TurnOffCamera from "../Settings/TurnOffCamera";
+import {isWindows} from "../../store/utils/utils";
 
 interface Props {
-    activeUser: User
+    activeUser: UserWrapper
     handleZoom: (zoom: number) => void
-    match?: {
-        params: {
-            spaceID: string
-        }
+    params: {
+        spaceID: string
     }
-    requestUserMedia: (spaceID: string) => void
+    requestUserMedia: (spaceID: string, video: boolean, audio: boolean) => void
     initPlayground: () => void
     loadMediaDevices: (callback?: () => void) => void
+    requestSpaces: () => void
     userMedia: boolean
     cameras: string[]
     spaces: Space[]
     microphones: string[]
     joinedSpace: boolean,
     sendLogout: () => void,
+    dnd: boolean
 }
 
-export class Playground extends Component<Props> {
+interface State {
+    spaceName: string
+}
+
+export class Playground extends Component<Props, State> {
+
+    constructor(props: Props) {
+        super(props);
+
+        const spaceName = this.props.spaces.find(space => space.id === this.props.params.spaceID)?.name
+        this.state = {spaceName: spaceName ?? ""}
+        if (!spaceName)
+            this.props.requestSpaces()
+    }
 
     componentDidMount() {
         this.props.initPlayground()
         this.props.loadMediaDevices(() => {
-            console.log(this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
             if (this.props.cameras.length !== 0 || this.props.microphones.length !== 0)
-                this.props.requestUserMedia(this.props.match!.params.spaceID)
+                this.props.requestUserMedia(this.props.params.spaceID, true, true)
         })
-        window.onpopstate = (event) => {
+
+        window.onpopstate = () => {
             this.props.sendLogout();
         };
-
-        const spaceName = this.props.spaces.find(space => space.id === this.props.match!.params.spaceID)?.name
-        document.title = (spaceName) ? spaceName + " - " + applicationName : applicationName
     }
 
     componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<{}>, snapshot?: any) {
-        // console.log("TESTTSTST", this.props.joinedSpace)
-        // if (!this.props.joinedSpace) {
-        //         console.log("WAS IST DAS DENN HIER", (!this.props.joinedSpace && prevProps.joinedSpace !== !this.props.joinedSpace))
-        //      this.props.requestUserMedia(this.props.match!.params.spaceID)
-        // }
+        if (prevProps.spaces !== this.props.spaces) {
+            const spaceName = this.props.spaces.find(space => space.id === this.props.params.spaceID)?.name
+            this.setState({spaceName: spaceName ?? ""})
+            document.title = (spaceName) ? spaceName + " - " + applicationName : applicationName
+        }
     }
 
     // function handleZoomIn increases the sizeMultiplier
@@ -75,39 +91,64 @@ export class Playground extends Component<Props> {
             return (
                 <Wrapper className={"mediaPermission"}>
                     <div className={"headlineBox"}>
-                        <div className={"buttons"}>
-                            <Link to={"/"}>
-                                <button className={"iconButton"}><IoHome/></button>
-                            </Link>
-                        </div>
+                        <Link to={"/"}>
+                            <button className={"outlined"}><IoChevronBack/> back to spaces</button>
+                        </Link>
                         <h1><IoCamera/> <IoMic/></h1>
                         <h1>Hey, {this.props.activeUser.firstName}</h1>
                         <p>
                             {applicationName} is a video chatting app.<br/>So please click and confirm video to
-                            continue.
+                            continue with the best experience.
                         </p>
                     </div>
                     <div className={"content"}>
-                        <button onClick={() => {
-                            this.props.requestUserMedia(this.props.match!.params.spaceID)
-                        }}>Request media
+                        <button className={"submit"} onClick={() => {
+                            this.props.requestUserMedia(this.props.params.spaceID, true, true)
+                        }}>Request camera & microphone
+                        </button>
+                        <button className={"submit"} onClick={() => {
+                            this.props.requestUserMedia(this.props.params.spaceID, false, true)
+                        }}>Request only Microphone
+                        </button>
+                        {isWindows() &&
+
+                            <TurnOffCamera/>
+                        }
+                    </div>
+                    <div className={"headlineBox"}>
+                        <label>
+                            If you are having trouble with joining a space we are happy to help you.
+                        </label>
+                        <button style={{
+                            display: "block",
+                            margin: "auto"
+                        }} className={"outlined"}>
+                            Get help
                         </button>
                     </div>
                 </Wrapper>
             )
 
+        if (!this.props.joinedSpace)
+            return (
+                <Loading/>
+            )
+
+        if (this.props.dnd)
+            return (
+                <DoNotDisturb/>
+            )
+
         return (
-            <div className={"contentWrapper"}>
-                <div className={"navwrapper"}>
-                    <NavigationBar spaceID={this.props.match!.params.spaceID}/>
-                </div>
-                {this.props.joinedSpace ?
-                    <Canvas/>
-                    : <Loading/>
-                }
-                <div className="btn">
-                    <button onClick={this.handleZoomIn.bind(this)}>+</button>
-                    <button onClick={this.handleZoomOut.bind(this)}>-</button>
+            <div id={"PlaygroundWrapper"}>
+                <Navigation title={this.state.spaceName} spaceID={this.props.params.spaceID}/>
+                <div id={"Playground"} className={"contentWrapper"}>
+                    <Sidebar spaceID={this.props.params.spaceID}/>
+                    <Canvas spaceID={this.props.params.spaceID ?? ""}/>
+                    <div className="btn">
+                        <button onClick={this.handleZoomIn.bind(this)}>+</button>
+                        <button onClick={this.handleZoomOut.bind(this)}>-</button>
+                    </div>
                 </div>
             </div>
         )
@@ -116,20 +157,24 @@ export class Playground extends Component<Props> {
 
 
 const mapStateToProps = (state: RootState) => ({
-    activeUser: state.userState.activeUser,
+    activeUser: getUserWrapped(state),
     spaces: state.space.spaces,
-    microphones: state.rtc.microphones,
-    cameras: state.rtc.cameras,
-    userMedia: state.rtc.userMedia,
-    joinedSpace: state.webSocket.joinedRoom,
+    microphones: state.media.microphones,
+    cameras: state.media.cameras,
+    userMedia: state.media.userMedia,
+    joinedSpace: !!state.space.joinedSpace,
+    dnd: getUserWrapped(state).doNotDisturb,
 })
 
 const mapDispatchToProps = (dispatch: any) => ({
-    sendLogout: () => dispatch(sendLogout()),
+    sendLogout: () => {
+        document.title = applicationName
+        dispatch(sendLogout())
+    },
     handleZoom: (z: number) => dispatch(handleZoom(z)),
     requestSpaces: () => dispatch(requestSpaces()),
     initPlayground: () => dispatch(initPlayground()),
-    requestUserMedia: (spaceID: string) => dispatch(requestUserMediaAndJoin(spaceID)),
+    requestUserMedia: (spaceID: string, video: boolean, audio: boolean) => dispatch(requestUserMediaAndJoin(spaceID, video, audio)),
     loadMediaDevices: (callback?: () => void) => dispatch(loadAllMediaDevices(callback)),
 })
 

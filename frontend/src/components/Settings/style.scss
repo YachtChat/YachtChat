@@ -1,47 +1,128 @@
 @import "../../variables.module";
 
-#form-dialog-title {
-  background-color: $accent_light;
-  color: $headline_light;
+.settingsPanel {
+  background: transparent;
+  border-radius: $border_radius;
+  overflow-y: auto;
+  overflow-x: hidden;
 
-  & h2 {
-    font-weight: bold;
+  .buttons {
+    color: black;
+    padding: 0;
+    margin: 0;
+
+    .iconButton.nostyle {
+      color: black;
+      font-size: 2rem;
+
+      @media (prefers-color-scheme: dark) {
+        color: white;
+      }
+    }
   }
 
-  @media (prefers-color-scheme: dark) {
-    & {
-      background-color: $accent_dark;
-      color: $headline_light;
+  .MuiPaper-root, .MuiDialog-paper {
+    border-radius: $border_radius;
+    background: $foreground_light;
+    color: $button_font_light;
+    overflow: hidden;
+    width: 800px;
+    max-width: 100%;
+
+    @media (prefers-color-scheme: dark) {
+      & {
+        color: $button_font_dark;
+        background: $foreground_dark;
+      }
     }
   }
 }
 
-.settingsPanel {
+#settingsMenu {
   background: transparent;
-  border-radius: $border_radius;
-  overflow: hidden;
-}
 
-.settingsPanel .MuiPaper-root, .MuiDialog-paper {
-  border-radius: $border_radius;
-  background: $foreground_light;
-  color: $button_font_light;
-  overflow: hidden;
+  .tabbar {
+    margin: 1rem 0 0 0;
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    align-content: stretch;
+    justify-items: stretch;
+    justify-content: stretch;
 
-  @media (prefers-color-scheme: dark) {
-    & {
-      color: $button_font_dark;
-      background: $foreground_dark;
+    .button {
+      flex: 1;
+      text-align: center;
+    }
+
+    .active {
+      color: white;
+
+      @media (prefers-color-scheme: dark) {
+        color: white;
+      }
+    }
+
+    .first {
+      border-radius: 2rem 0 0 2rem;
+    }
+
+    .middle {
+      border-radius: 0;
+    }
+
+    .last {
+      border-radius: 0 2rem 2rem 0;
     }
   }
 }
 
 .settings {
-  padding: 1.5rem 2.5rem;
-  background: $foreground_light;
-  color: $button_font_light;
-  overflow-x: hidden;
+  box-sizing: border-box;
   overflow-y: auto;
+  #width: 800px;
+  width: 100%;
+  max-width: 100%;
+  text-align: left;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+
+  .headlineBox {
+    width: 800px;
+    max-width: 100%;
+    margin: auto;
+  }
+
+  .content {
+    width: 800px;
+    max-width: 100%;
+    margin: auto;
+  }
+
+  .mediaSettings {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: border-box;
+
+    .preview {
+      margin-right: 2rem;
+      min-width: 250px;
+      height: auto;
+      flex: 1;
+    }
+
+    .toggles {
+      flex: 1;
+      min-width: 250px;
+    }
+  }
 
   @media (prefers-color-scheme: dark) {
     & {
@@ -89,7 +170,6 @@
     width: 100%;
 
     video {
-      transform: rotateY(180deg);
       display: block;
       border-radius: 50%;
       margin: 2rem auto;
@@ -99,9 +179,18 @@
     }
   }
 
+  .userImage {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+  }
 
   .settings-item {
     margin-bottom: 1rem;
+
+    .logout {
+      border-color: red;
+    }
 
     > .dialog-content-text {
       color: black;
