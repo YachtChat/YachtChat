@@ -7,4 +7,3 @@ COPY ${JAR_FILE} app.jar
 EXPOSE ${VIRTUAL_PORT}
 
 ENTRYPOINT ["java","-jar","/app.jar"]
-
