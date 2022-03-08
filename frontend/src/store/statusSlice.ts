@@ -41,7 +41,11 @@ export const {
 export const handleError = (error: string, e?: any): AppThunk => (dispatch, getState) => {
     console.error(error, e)
     const id = getState().status.counter
-    dispatch(addStatusMessage({ type: StatusType.error, id: 0, message: error}))
+    if (e.toString() === "NotReadableError: Could not start video source") {
+        dispatch(addStatusMessage({ type: StatusType.error, id: 0, message: "Cannot get media. It seems like your media is used by another program."}))
+    } else {
+        dispatch(addStatusMessage({type: StatusType.error, id: 0, message: error}))
+    }
     setTimeout(() => dispatch(removeStatusMessage(id)), 6000)
     posthog.capture("error", { message: error, error: e.toString() })
 }

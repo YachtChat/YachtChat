@@ -594,9 +594,9 @@ export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (
         dispatch(exchangeTracks(stream, video, audio))
 
         dispatch(setUserMedia(true))
-    }).catch(() => {
+    }).catch((e) => {
         dispatch(setUserMedia(false))
-        dispatch(handleError("Cannot get user media"))
+        dispatch(handleError("Cannot get user media", e))
     })
 
 }
