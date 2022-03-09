@@ -9,7 +9,7 @@ export function Partner() {
     return (
         <div className={"partners"}>
             <h1>Customers & partners</h1>
-            <h2 className={"subtitle"}>See some those who use and support {applicationName}</h2>
+            <h2 className={"subtitle"}>See some of those who use and support {applicationName}</h2>
             <div className={"partnerWrapper"}>
                 <div className={"partner"}>
                     <a href={"https://hessen-ideen.de/ideen/alumni/detailansicht/279/Yacht/show/Projekte/1/0/?cHash=7296b454ac4e3698c7c3355f27d96110"}>
