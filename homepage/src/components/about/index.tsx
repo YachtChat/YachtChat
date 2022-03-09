@@ -7,6 +7,7 @@ import YachtChatDark from "../../rsc/mock_dark.png";
 import {useState} from "react";
 import {IoArrowDown, IoChatbubblesOutline, IoPeopleOutline, IoWalkOutline} from "react-icons/io5";
 import {Separator} from "../separator";
+import {Partner} from "./Partner";
 
 export function About() {
     const [scrolled, setScrolled] = useState(false);
@@ -98,6 +99,7 @@ export function About() {
                         </div>
                     </div>
                 </div>
+                <Partner />
                 <Fade bottom>
 
                     <div className={"youtubeWrapper"}>

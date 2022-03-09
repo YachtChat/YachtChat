@@ -249,6 +249,54 @@
     }
   }
 
+  .partners {
+    h1 {
+      color: $headline_light;
+    }
+
+    h2 {
+      color: $accent_light;
+    }
+
+    .partnerWrapper {
+      padding: 2rem;
+
+      .partner {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        align-content: center;
+        justify-items: center;
+        justify-content: center;
+        margin: auto;
+        padding: 1rem;
+        border-radius: $border_radius;
+        box-shadow: $shadow;
+
+        background: white;
+
+
+        a {
+          width: 15%;
+          padding: 1rem;
+
+          img {
+            width: 100%;
+          }
+        }
+      }
+
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .partnerWrapper .partner {
+        background: $background_dark;
+        box-shadow: $shadow_dark;
+      }
+    }
+  }
+
 }
 
 @keyframes arrowDown {
