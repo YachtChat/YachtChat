@@ -1,0 +1,31 @@
+{
+  "name": "selective-forwarding-unit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.ts",
+    "build": "tsc --project ./",
+    "watch": "watchify test/index.js -o test/bundle.js -v"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.3",
+    "mediasoup": "^3.9.9",
+    "mediasoup-client": "^3.6.50",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1",
+    "watchify": "^4.0.0",
+    "winston": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.21",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.2"
+  }
+}
