@@ -9,7 +9,7 @@ import ReactPlayer from 'react-player'
 - If you are next to a user you can hover the user and see a small window with the messages he sends to you, in case you missed a message.
 
 
-<ReactPlayer playing controls url='/video/demo_light.mp4' playing={true} loop={true} controls={false} />
+<ReactPlayer playing controls url='/video/demo_light2.mp4' playing={true} loop={true} controls={false} />
 
 
 If you have urgent questions, please feel free to contact us by e-mail at [contact@yacht.chat](mailto:contact@yacht.chat).
