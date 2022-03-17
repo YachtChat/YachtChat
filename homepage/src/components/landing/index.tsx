@@ -3,8 +3,8 @@ import YachtScreenshot from "../../rsc/demo_thumb_light.png"
 import YachtScreenshotDark from "../../rsc/demo_thumb_dark.png"
 import {JoinButton} from "../joinButton";
 import {Links} from "../joinButton/links";
-import Yacht from "../../rsc/demo_light.mp4"
-import YachtDark from "../../rsc/demo_dark.mp4"
+import Yacht from "../../rsc/demo_light2.mp4"
+import YachtDark from "../../rsc/demo_dark2.mp4"
 import {Parallax} from "react-scroll-parallax";
 import {Separator} from "../separator";
 
