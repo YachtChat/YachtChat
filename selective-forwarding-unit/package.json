@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.ts",
+    "start": "nodemon src/server.ts",
     "build": "tsc --project ./",
     "watch": "watchify test/index.js -o test/bundle.js -v"
   },
@@ -13,9 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.26.1",
     "express": "^4.17.3",
     "mediasoup": "^3.9.9",
-    "mediasoup-client": "^3.6.50",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
     "watchify": "^4.0.0",

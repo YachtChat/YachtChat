@@ -24,7 +24,7 @@ createAndConfigureWorker().then(worker => {
     WORKER = worker;
 });
 
-export async function addUserToSpace(spaceName: string, socketId: string, globalUserId: string, socket: Socket){
+export async function addUserToSpace(spaceName: string, socketId: string, globalId: string, socket: Socket){
     let space
     if (SPACE_MAP.has(spaceName)) {
       space = SPACE_MAP.get(spaceName)
@@ -33,7 +33,7 @@ export async function addUserToSpace(spaceName: string, socketId: string, global
       await space.createRouter()
       SPACE_MAP.set(spaceName, space)
     }
-    const user = new User(socketId, spaceName, socket)
+    const user = new User(socketId, globalId, spaceName, socket)
     space!.addUser(user)
     logger.info(`User ${socketId} added to space ${spaceName}`)
 }
@@ -99,26 +99,30 @@ export const connectDtlsParameterToConsumer = (spaceName: string, socketId: stri
 export const createProducer = async (spaceName: string, socketId: string, producerOptions: any) => {
   const space : Space = SPACE_MAP.get(spaceName)!
   const user : User = space.users.get(socketId)!
+  const producerTransport : Transport | undefined = user.producerTransport
+  if(!space || !user || !producerTransport){
+    throw new Error(`Space ${space}, user ${user} and producerTransport ${producerTransport} should be defined`)
+  } else{
+    const producer = await producerTransport.produce({
+      kind: producerOptions.kind,
+      rtpParameters: producerOptions.rtpParameters,
+    })
+    // close  the producer when the transport is closed
+    producer.on('transportclose', () => {
+      logger.info(`Producer ${producer.id} closed for user ${socketId} with type ${producer.kind}`)
+      producer.close()
+    })
+    // add the producer to the respective user
+    user.addProducer(producer)
 
-  const producer = await user.producerTransport!.produce({
-    kind: producerOptions.kind,
-    rtpParameters: producerOptions.rtpParameters,
-  })
-  // close  the producer when the transport is closed
-  producer.on('transportclose', () => {
-    logger.info(`Producer ${producer.id} closed for user ${socketId} with type ${producer.kind}`)
-    producer.close()
-  })
-  // add the producer to the respective user
-  user.addProducer(producer)
-
-  // inform other users in the space that a new producer was created
-  logger.info(`Producer created for user ${socketId}`)
-  space.informUsersAboutNewProducer(socketId, producer.id)
+    // inform other users in the space that a new producer was created
+    logger.info(`Producer created for user ${socketId}`)
+    space.informUsersAboutNewProducer(socketId, producer.id, user.globalId)
 
 
-  // return the params of the producer
-  return [producer.id, space.hasMoreThanOneUser()]
+    // return the params of the producer
+    return [producer.id, space.hasMoreThanOneUser()]
+  }
 }
 
 export const createConsumer = async (spaceName: string, socketId: string, {rtpCapabilities, producerId, consumerTransportId, senderSocketId}: any) => {
@@ -154,15 +158,19 @@ export const createConsumer = async (spaceName: string, socketId: string, {rtpCa
   return consumer
 }
 
-export const resumeConsume = async (spaceName: string, socketId: string, consumerId: string) => {
+export const resumeConsume = async (spaceName: string, socketId: string, consumerId: string, senderSocketId: string) => {
   const space: Space = SPACE_MAP.get(spaceName)!
   const user: User = space.users.get(socketId)!
   const consumer = user.getConsumerWithId(consumerId)!
-  if (!space || !user || !consumer) {
-    throw new Error(`Space ${space}, user ${user} and consumer ${consumer} should be defined`)
+  const sender: User = space.users.get(senderSocketId)!
+  if (!space || !user || !consumer || !sender) {
+    throw new Error(`Space ${space}, user ${user}, sender ${sender} and consumer ${consumer} should be defined`)
   } else {
-    await consumer.resume()
-    logger.info(`Consumer ${consumerId} resumed for user ${socketId} with type ${consumer.kind}`)
+    // based on the internal state the consumer should now be resumed or kept paused
+    // the globalId should be used here
+    sender.getMediaState(user.globalId, consumer.kind) ? await consumer.resume() : await consumer.pause()
+    logger.info(`Consumer: ${consumer.id} with type ${consumer.kind} resumed?: ${sender.getMediaState(user.globalId, consumer.kind)}
+     for user ${user.globalId}. Consuming from user: ${sender.globalId}`)
   }
 }
 
@@ -176,13 +184,54 @@ export const getPeerProducerList = (spaceName: string, socketId: string) => {
   }
 }
 
-export function toggleMediaForUser(spaceName: string, socketId: string, targetId: string, video: boolean, audio: boolean) {
+// update media for a user when either video or audio is not undefined
+export function updateMediaForUser(spaceName: string, socketId: string, globalTargetId: string, video: boolean, audio: boolean) {
   const space: Space = SPACE_MAP.get(spaceName)!
   const sender: User = space.users.get(socketId)!
-  const target: User = space.users.get(targetId)!
-  if(!space || !sender || !target) {
-    throw new Error(`Space ${space} and user ${sender} and user ${target} should be defined`)
+  // because of race conditions the target might not be defined yet
+  const target: User = space.getUserByGlobalId(globalTargetId)!
+
+  if(!space || !sender) {
+    logger.warn(`Space ${space} or sender ${sender} are not yet defined`)
   }else{
-    target.toggleMedia(socketId, video, audio)
+    // first we change the internal state
+    if(video != undefined){
+      sender.updateMediaState(globalTargetId, "video", video)
+    }
+    if(audio != undefined){
+      sender.updateMediaState(globalTargetId, "audio", audio)
+    }
+    // if the target is already defined we change the actual state
+    if(target){
+      target.updateMedia(socketId, video, audio)
+    } else{
+      logger.warn(`Target ${globalTargetId} is not yet defined but the state will be updated anyway`)
+    }
   }
 }
+
+export function getGlobalUserIdWithSocketId(spaceName: string, socketId: string): string {
+  const space: Space |undefined = SPACE_MAP.get(spaceName)
+  const user: User | undefined = space!.users.get(socketId)
+  if(!space || !user) {
+    throw new Error(`Space ${space} and user ${user} should be defined`)
+  }else{
+    return user.globalId
+  }
+}
+
+
+export function isSendingMedia(spaceName: string, id: string, globalTargetId: string, media: string) {
+  const space: Space = SPACE_MAP.get(spaceName)!
+  const sender: User = space.users.get(id)!
+  const target: User = space.getUserByGlobalId(globalTargetId)!
+  if(!(media === 'video') && !(media === 'audio')) {
+    throw new Error(`media ${media} is not supported`)
+  }
+  if(!space || !sender || !target) {
+    logger.warn(`Space ${space}, sender ${sender} or target ${target} are not yet defined`)
+  }else{
+    return target.isGettingMediaFrom(sender.id, media)
+  }
+}
+

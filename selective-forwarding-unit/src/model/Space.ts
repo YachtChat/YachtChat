@@ -2,7 +2,7 @@
 import {User} from "./User";
 import {Producer, Router} from "mediasoup/node/lib/types";
 import {mediaCodecs} from "../config";
-import {WORKER} from "../SpaceuserService";
+import {WORKER} from "../spaceuserService";
 import {logger} from "../logger";
 
 export class Space {
@@ -29,13 +29,13 @@ export class Space {
         this.router!.close();
     }
 
-    informUsersAboutNewProducer(senderId: string, producerId: string){
+    informUsersAboutNewProducer(senderId: string, producerId: string, globalProducerId: string){
         logger.info(this.users.size)
         logger.info(senderId)
         this.users.forEach((value: User, key: string) => {
             if(key !== senderId){
                 logger.info('New producer send to ' + key)
-                value.socket!.emit('new-producer', { producerId, senderId})
+                value.socket!.emit('new-producer', { producerId, senderId, globalSenderId: globalProducerId });
             }
         });
     }
@@ -76,10 +76,20 @@ export class Space {
                 this.users.get(userId)!.producers.forEach((producer: Producer) => {
                     producerList.push(producer.id)
                 })
-                peerProducerList.push({userId, producerList})
+                peerProducerList.push({userId, globalSenderId: user.globalId, producerList})
             }
         })
         return peerProducerList
+    }
+
+    getUserByGlobalId(globalId: string){
+        let serachedUser: User | undefined
+        this.users.forEach((user: User, userId: string) => {
+            if(user.globalId === globalId){
+                serachedUser = user
+            }
+        })
+        return serachedUser
     }
 
     handleDisconnectConnection(disconnectedUser: User) {

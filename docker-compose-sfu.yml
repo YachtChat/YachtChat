@@ -1,0 +1,20 @@
+version: "2"
+services:
+  # is expected to not be part of the network and to not be behind the proxy
+  selective-forwarding-unit:
+    container_name: selective-forwarding-unit
+    build:
+      context: ./selective-forwarding-unit
+      dockerfile: ./Dockerfile
+    environment:
+      - SPACES_URL=${SPACES_URL}
+      - SPACES_SSL=https://
+      - PORT=${SFU_PORT}
+      - MEDIASOUP_MIN_PORT=10000
+      - MEDIASOUP_MAX_PORT=11000
+      - MEDIASOUP_LISTEN_IP=172.17.0.2
+      - MEDIASOUP_ANNOUNCED_IP=127.0.0.1
+    ports:
+      - "8888:8888"
+      - ${SFU_PORT}:${SFU_PORT}
+      - 10000-11000:10000-11000

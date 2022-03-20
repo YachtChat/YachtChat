@@ -1,17 +1,19 @@
-import express, {Express} from 'express';
 import http from 'http';
 import { Server } from 'socket.io'
 import { logger } from './logger';
-import path from "path";
 import * as spaceuserService from './spaceuserService';
-import {Consumer} from "mediasoup-client/lib/Consumer";
+import * as spacesService from './spacesService';
+
+import express, {Express} from 'express';
+
+const PORT:number = Number(process.env.PORT)
 
 // create the http server
 const httpServer = http.createServer();
 const io = new Server(httpServer, {
     cors: { origin: '*' }
 });
-httpServer.listen(4000)
+httpServer.listen(PORT)
 
 // dynamically load the url of the space that is being connected to.
 const connections = io.of(/.*/);
@@ -19,15 +21,13 @@ const connections = io.of(/.*/);
 // middleware that checks if the clients is allowed to connect to the space
 connections.use(async (socket, next) => {
     const spaceName = socket.nsp.name.slice(1, -1)
-    const token = socket.handshake.query.token;
-    // TODO make call against spacesserver
-    logger.info(`It should be checked whether the token ${token} is allowed to connect to the space` +
-        ` ${spaceName}. If it is allowed, the next middleware is called.`)
-    if (token === "true") {
-        // TODO remember clientId and socketId together??
-        await spaceuserService.addUserToSpace(spaceName, socket.id, "thisWillBeTheClientId", socket)
+    const token = <string>socket.handshake.query.token;
+    const globalId: string = <string>socket.handshake.query.id;
+    if(await spacesService.isUserAllowedToJoinSpace(spaceName, token)){
+        await spaceuserService.addUserToSpace(spaceName, socket.id, globalId, socket)
         next()
-    } else next(new Error('Authentication error'));
+    }
+    else next(new Error('Authentication error'));
 })
 
 // set up the websocket listeners
@@ -91,13 +91,14 @@ connections.on('connection', async socket => {
                 producerId,
                 rtpParameters: consumer.rtpParameters,
                 kind: consumer.kind,
+                globalSenderId: spaceuserService.getGlobalUserIdWithSocketId(spaceName, senderSocketId)
             }
             callback({params})
         }
     })
     // handle client consume-resume
-    socket.on('consumer-resume', async ({ consumerId }) => {
-        await spaceuserService.resumeConsume(spaceName, socket.id, consumerId)
+    socket.on('consumer-resume', async ({ consumerId, senderSocketId }) => {
+        await spaceuserService.resumeConsume(spaceName, socket.id, consumerId, senderSocketId)
         spaceuserService.logInfo()
     })
     // endpoint for the client to ask for other peers
@@ -108,21 +109,24 @@ connections.on('connection', async socket => {
     })
 
     // handle media updates for the clients
-    socket.on('media', async ({video, audio, targetId}) => {
-        spaceuserService.toggleMediaForUser(spaceName, socket.id, targetId, video, audio)
+    socket.on('media', async ({video, audio, globalTargetId}) => {
+        spaceuserService.updateMediaForUser(spaceName, socket.id, globalTargetId, video, audio)
+    })
+
+    socket.on('isSendingMedia', async ({globalTargetId, media}, callback) => {
+        callback({
+           "isSendingMedia": spaceuserService.isSendingMedia(spaceName, socket.id, globalTargetId, media)
+        })
     })
 })
 
-
-
-
-
-
 const app: Express = express();
-const PORT: number = 8000;
+const port: number = 8888;
 // app.get('/test', (req,res) => res.send('Express + TypeScript Server -> SFU'));
-app.listen(PORT, () => {
+app.listen(port, () => {
     console.log(`⚡️[server]: Server (SFU) is running at https://localhost:${PORT}`);
 });
 
-app.use('/test/', express.static(path.join(__dirname, 'test')))
+app.use('/', (req, res) => {
+    res.send('SFU found')
+})
