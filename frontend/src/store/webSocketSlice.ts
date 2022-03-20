@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppThunk} from './utils/store';
 import {UserCoordinates, UserPayload} from "./model/model";
+import * as RTC from './rtc/rtc'
 import {
     getOnlineUsersWrapped,
     getUserById,
@@ -17,7 +18,6 @@ import {SOCKET_PORT, SOCKET_URL} from "./utils/config";
 import {getToken} from "./authSlice";
 import {requestSpaces} from "./spaceSlice";
 import {destroySession} from "./destroySession";
-import {disconnectUser, handleCandidate, handleSdp} from "./rtc";
 import {sendNotification} from "./utils/notifications";
 import {isOnline} from "./utils/utils";
 import posthog from "posthog-js";
@@ -110,7 +110,8 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 break;
             case "leave":
                 if (joinedSpace)
-                    dispatch(disconnectUser(data.id))
+                    // dispatch(disconnectUser(data.id))
+                    dispatch(RTC.disconnectUser(data.id))
                 break;
             case "position":
                 if (joinedSpace && data.id !== getUserID(getState()))
@@ -149,7 +150,8 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                 } else {
                     const user = getUserById(getState(), data.id)
                     dispatch(handleSuccess(`Successfully kicked ${user.firstName} ${user.lastName}`))
-                    dispatch(disconnectUser(data.id))
+                    // dispatch(disconnectUser(data.id))
+                    dispatch(RTC.disconnectUser(data.id))
                     dispatch(removeUser(data.id))
                 }
                 break;
@@ -162,11 +164,13 @@ export const connectToServer = (spaceID: string): AppThunk => (dispatch, getStat
                     const signal_content = data.content
                     switch (signal_content.signal_type) {
                         case "candidate":
-                            dispatch(handleCandidate(signal_content.candidate, fromId))
+                            dispatch(RTC.forwardCandidate(signal_content.candidate, fromId))
+                            // dispatch(handleCandidate(signal_content.candidate, fromId))
                             break;
                         case "sdp":
                             // TODO timeout here is not good, because a candidate would already be send form the caller
-                            dispatch(handleSdp(signal_content.description, fromId))
+                            dispatch(RTC.forwardSdp(signal_content.description, fromId))
+                            // dispatch(handleSdp(signal_content.description, fromId))
                             break;
                         default:
                             dispatch(handleError("Unknown signaling type."))

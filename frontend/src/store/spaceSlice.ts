@@ -6,8 +6,8 @@ import {handleError, handleSuccess} from "./statusSlice";
 import {complete_socket_url_http, complete_spaces_url, SPACES_URL} from "./utils/config";
 import {getHeaders} from "./authSlice";
 import {getUser, getUserID, submitMovement} from "./userSlice";
-import {handleRTCEvents} from "./rtc";
 import {push} from "redux-first-history";
+import * as RTC from "./rtc/rtc";
 
 // either the spaces server is run locally or on the server
 
@@ -144,7 +144,8 @@ export const deleteSpaceForUser = (spaceId: string): AppThunk => (dispatch, getS
 
 export const spaceSetupReady = (spaceID: string): AppThunk => (dispatch, getState) => {
     const user = getUser(getState())
-    dispatch(handleRTCEvents(getUserID(getState())));
+    dispatch(RTC.join(getUserID(getState())))
+    // dispatch(handleRTCEvents(getUserID(getState())));
     dispatch(submitMovement(user.position!, false))
     dispatch(joined(spaceID))
 }
