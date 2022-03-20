@@ -36,16 +36,18 @@ RUN \
 WORKDIR /home/node/app
 COPY package.json ./
 COPY package-lock.json ./
+COPY tsconfig.json ./
 #COPY yarn.lock ./
 RUN npm install
 #RUN yarn
 
-COPY ./build .
+COPY ./src ./src
+RUN npm run build
 
 EXPOSE 4000
 EXPOSE 8888
 
-CMD ["node", "./src/server.js"]
+CMD ["node", "./build/src/server.js"]
 
 #FROM stage-one
 #
