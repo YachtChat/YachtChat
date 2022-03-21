@@ -112,6 +112,21 @@ jobs:
         env:
           TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
 
+      - name: build selective-forwarding-unit when changed
+        if: contains(env.TEST_STATEMENT, 'selective-forwarding-unit/')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo docker-compose -f docker-compose-sfu.yml build selective-forwarding-unit
+            sudo docker-compose -f docker-compose-sfu.yml down selective-forwarding-unit
+            sudo docker-compose -f docker-compose-sfu.yml up --no-deps -d selective-forwarding-unit
+          host: ${{ secrets.HOST_DEV}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
+
       - name: build websocket-service when changed
         if: contains(env.TEST_STATEMENT, 'websocket-service/')
         uses: tarunjangra/ssh-remote-cmd@v1
