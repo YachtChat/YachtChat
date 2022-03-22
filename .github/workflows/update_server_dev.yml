@@ -6,7 +6,7 @@ name: update_server_dev
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ Yacht.Chat_2.0 ]
+    branches: [ feature/sfu ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -106,6 +106,21 @@ jobs:
             sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} JWT_SECRET=${{ secrets.SPACES_JWT_SECRET}} docker-compose build spaces-service
             sudo docker-compose down spaces-service
             sudo SPACES_DB_PASSWORD=${{ secrets.SPACES_DB_PASSWORD}} KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET}} JWT_SECRET=${{ secrets.SPACES_JWT_SECRET}} docker-compose up --no-deps -d spaces-service
+          host: ${{ secrets.HOST_DEV}}
+          user: ${{ secrets.USERNAME}}
+          key: ${{ secrets.KEY}}
+        env:
+          TEST_STATEMENT: ${{ steps.files.outputs.added_modified }}
+
+      - name: build selective-forwarding-unit when changed
+        if: contains(env.TEST_STATEMENT, 'selective-forwarding-unit/')
+        uses: tarunjangra/ssh-remote-cmd@v1
+        with:
+          command: |
+            cd /home/git_environment/NotZoom/
+            sudo docker-compose -f docker-compose-sfu.yml build selective-forwarding-unit
+            sudo docker-compose -f docker-compose-sfu.yml down selective-forwarding-unit
+            sudo docker-compose -f docker-compose-sfu.yml up --no-deps -d selective-forwarding-unit
           host: ${{ secrets.HOST_DEV}}
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
