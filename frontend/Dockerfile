@@ -17,6 +17,7 @@ RUN yarn
 RUN yarn build .
 # Second stage - start webserver
 
+
 FROM nginx:alpine
 
 WORKDIR /src
