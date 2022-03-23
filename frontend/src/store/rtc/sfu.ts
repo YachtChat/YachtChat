@@ -194,7 +194,7 @@ export const handleSpaceJoin = (joinedUserString: string, isCaller: boolean|unde
         ...paramsVideo
     }
     getToken(getState()).then(token => {
-        socket = io(`ws://${SFU_IP}:${SFU_PORT}/${spaceId}/`, { query: {token: token, id: getUserID(getState())}})
+        socket = io(`wss://www.alphabibber.com:${SFU_PORT}/${spaceId}/`, { query: {token: token, id: getUserID(getState())}})
         // socket = io(`ws://localhost:4000/${spaceId}/`, { query: {token: token, id: getUserID(getState())}})
         socket.on("connection-success", (data) => {
             console.log(`Connected to server with socket id ${data.socketid}`);
