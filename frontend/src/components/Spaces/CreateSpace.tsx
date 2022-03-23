@@ -8,12 +8,13 @@ import {handleError} from "../../store/statusSlice";
 import {Steps} from "./Steps";
 
 interface Props {
-    createSpace: (name: string) => void
+    createSpace: (name: string, isLargeSpace: boolean) => void
     error: (s: string) => void
 }
 
 interface State {
     spaceName: string
+    largeSpace: boolean
     tooLong: boolean
 }
 
@@ -23,7 +24,8 @@ export class CreateSpace extends Component<Props, State> {
         super(props);
         this.state = {
             spaceName: "",
-            tooLong: false
+            tooLong: false,
+            largeSpace: false
         }
     }
 
@@ -60,12 +62,22 @@ export class CreateSpace extends Component<Props, State> {
                             return
                         }
 
-                        this.props.createSpace(this.state.spaceName.trim())
+                        this.props.createSpace(this.state.spaceName.trim(), this.state.largeSpace)
                 }}>
                     <Steps active={0} />
                     <input value={this.state.spaceName}
                            placeholder={"space name"}
                            onChange={({target: {value}}) => this.setState({spaceName: value})} type={"text"}/>
+                    <label>
+                        <input
+
+                            onChange={({target: {checked}}) => this.setState({largeSpace: checked})}
+                            type={"checkbox"}
+                            value={"largeSpace"}
+                        />
+                        Large Space
+                    </label>
+
                     <input type={"submit"} value={"Create Space"} />
                 </form>
             </Wrapper>
@@ -76,7 +88,7 @@ export class CreateSpace extends Component<Props, State> {
 const mapStateToProps = () => ({})
 
 const mapDispatchToProps = (dispatch: any) => ({
-    createSpace: (name: string) => dispatch(createSpace(name)),
+    createSpace: (name: string, isLargeSpace: boolean) => dispatch(createSpace(name, isLargeSpace)),
     error: (s: string) => dispatch(handleError(s))
 })
 

@@ -23,6 +23,9 @@ public class Space {
     @Column(name = "public_access", nullable = false)
     private Boolean publicAccess;
 
+    @Column(name="large_space", nullable = false)
+    private Boolean largeSpace;
+
     @OneToMany(
             mappedBy = "space",
             cascade = {
@@ -52,11 +55,12 @@ public class Space {
         this.publicAccess = false;
     }
 
-    public Space(String name, Boolean publicAccess) {
+    public Space(String name, boolean isLarge) {
         this.name = name;
         this.spaceHosts = new HashSet<>();
         this.spaceMembers = new HashSet<>();
-        this.publicAccess = publicAccess;
+        this.publicAccess = false;
+        this.largeSpace = isLarge;
     }
 
     public String getId() {
@@ -66,6 +70,8 @@ public class Space {
     public Boolean isPublic() {
         return publicAccess;
     }
+
+    public Boolean isLargeSpace() { return this.largeSpace; }
 
     public void setPublicAccess(Boolean publicAccess) {
         this.publicAccess = publicAccess;
@@ -120,4 +126,7 @@ public class Space {
 
         return result;
     }
+
+    public void setLargeSpace(boolean largeSpace) { this.largeSpace = largeSpace; }
+
 }

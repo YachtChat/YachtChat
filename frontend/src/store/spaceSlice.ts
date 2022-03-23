@@ -15,12 +15,14 @@ interface SpaceState {
     spaces: Space[]
     joinedSpace: string | undefined
     inviteToken: { [spaceid: string]: string | undefined }
+    largeSpace: string | undefined
 }
 
 const initialState: SpaceState = {
     spaces: [],
     joinedSpace: undefined,
-    inviteToken: {}
+    inviteToken: {},
+    largeSpace: undefined
 }
 
 export const spaceSlice = createSlice({
@@ -108,9 +110,9 @@ export const joinSpace = (token: string): AppThunk => (dispatch, getState) => {
     )
 }
 
-export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
+export const createSpace = (name: string, largeSpace: boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
-        axios.post(complete_spaces_url + "/api/v1/spaces/", {name}, header).then(response => {
+        axios.post(complete_spaces_url + "/api/v1/spaces/", {name, largeSpace}, header).then(response => {
             dispatch(handleSuccess("Space successfully created"))
             dispatch(addSpace(response.data))
             dispatch(push("/invite/" + response.data.id))

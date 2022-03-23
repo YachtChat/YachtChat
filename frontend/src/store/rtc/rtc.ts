@@ -6,12 +6,14 @@ import {MediaType} from "../model/model";
 import {getUser, handlePositionUpdate, setUserOffline} from "../userSlice";
 import {resetMedia} from "../mediaSlice";
 
-let IS_STATE_SFU: boolean = true
+let IS_STATE_SFU: boolean | undefined = undefined
 
 // is either called if the local user joins the space or a new user joins the space
 // should send its own stream to the users of the space. When other users joins the space, their tracks will be forwarded
 // to setStream(.
 export const join = (joinedUserId: string, isCaller?: boolean): AppThunk =>(dispatch, getState) => {
+    let spaceId = window.location.pathname.replace("/spaces/", "")
+    IS_STATE_SFU = getState().space.spaces.filter(space => space.id === spaceId)[0].largeSpace;
     if(IS_STATE_SFU){
         if(isCaller == undefined){
             dispatch(SFU.handleSpaceJoin(joinedUserId, undefined, window.location.pathname.replace("/spaces/", "")))

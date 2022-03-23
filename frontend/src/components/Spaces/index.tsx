@@ -134,6 +134,9 @@ export class Spaces extends Component<Props, State> {
                                             <Fade in={!!s.online && s.online !== 0} key={s.online} unmountOnExit>
                                                 <span className={"tag"}>{s.online} online</span>
                                             </Fade>
+                                            <div>
+                                                {s.largeSpace ? "----> large" : "---> small"}
+                                            </div>
                                             <div className={"buttons"}>
                                                 <button onClick={e => this.handleContext(e, s)}
                                                         className={"nostyle outlined"}>
