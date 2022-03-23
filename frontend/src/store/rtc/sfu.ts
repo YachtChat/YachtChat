@@ -74,39 +74,51 @@ export function disconnect(){
 }
 
 export function addTrackToStream(track: MediaStreamTrack){
-    let updatedParams: any
     if(track.kind == "video"){
-        updatedParams = {
-            track: track,
-            ...paramsVideo
-        }
+        paramsVideo.track = track
+        producerTransport!.produce(paramsVideo).then(producer => {
+            producer.on('trackended', () => {
+                console.log('track ended')
+
+                // close video track
+            })
+            producer.on('transportclose', () => {
+                console.log('transport ended')
+
+                // close video track
+            })
+
+            // add track to the local variables
+            if(track.kind === 'video'){
+                producerVideo = producer
+            }
+            else if(track.kind === 'audio'){
+                producerAudio = producer
+            }
+        })
     } else{
-        updatedParams = {
-            track: track,
-            ...paramsAudio
-        }
+        paramsAudio.track = track
+        producerTransport!.produce(paramsAudio).then(producer => {
+            producer.on('trackended', () => {
+                console.log('track ended')
+
+                // close audio track
+            })
+            producer.on('transportclose', () => {
+                console.log('transport ended')
+
+                // close audio track
+            })
+
+            // add track to the local variables
+            if(track.kind === 'video'){
+                producerVideo = producer
+            }
+            else if(track.kind === 'audio'){
+                producerAudio = producer
+            }
+        })
     }
-
-    producerTransport!.produce(updatedParams).then(producer => {
-        producer.on('trackended', () => {
-            console.log('track ended')
-
-            // close video track
-        })
-        producer.on('transportclose', () => {
-            console.log('transport ended')
-
-            // close video track
-        })
-
-        // add track to the local variables
-        if(track.kind === 'video'){
-            producerVideo = producer
-        }
-        else if(track.kind === 'audio'){
-            producerAudio = producer
-        }
-    })
 }
 
 export const exchangeTracks = (stream: MediaStream, video: boolean, audio: boolean): AppThunk => (dispatch, getState) => {
@@ -183,18 +195,8 @@ export function disconnectUser(id: string) {
 
 
 export const handleSpaceJoin = (joinedUserString: string, isCaller: boolean|undefined, spaceId: string): AppThunk => (dispatch, getState) => {
-    // initialize the local stream
-    mediaStream = getStream(getState(), getUserID(getState()))
-    paramsAudio = {
-        track: mediaStream!.getAudioTracks()[0],
-        ...paramsAudio
-    }
-    paramsVideo = {
-        track: mediaStream!.getVideoTracks()[0],
-        ...paramsVideo
-    }
     getToken(getState()).then(token => {
-        socket = io(`wss://${SFU_URL}:${SFU_PORT}/${spaceId}/`, { query: {token: token, id: getUserID(getState())}})
+        socket = io(`ws://${SFU_URL}:${SFU_PORT}/${spaceId}/`, { query: {token: token, id: getUserID(getState())}})
         // socket = io(`ws://localhost:4000/${spaceId}/`, { query: {token: token, id: getUserID(getState())}})
         socket.on("connection-success", (data) => {
             console.log(`Connected to server with socket id ${data.socketid}`);
@@ -300,7 +302,7 @@ const createSendTransport = (): AppThunk => (dispatch, getState) => {
             }
         })
 
-        connectSendTransport()
+        connectSendTransport(dispatch, getState())
     })
 }
 
@@ -308,11 +310,27 @@ function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const connectSendTransport = async () => {
+const connectSendTransport = async (dispatch: Dispatch<any>, state: RootState) => {
     // we now call produce() to instruct the producer transport
     // to send media to the Router
     // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
     // this action will trigger the 'connect' and 'produce' events above
+    // initialize the local stream
+    paramsAudio.track = undefined
+    paramsVideo.track = undefined
+    mediaStream = getStream(state, getUserID(state))
+    let audioTrack = mediaStream!.getAudioTracks()[0]
+    let videoTrack = mediaStream!.getVideoTracks()[0]
+    paramsAudio = {
+        track: audioTrack,
+        ...paramsAudio
+    }
+    paramsVideo = {
+        track: videoTrack,
+        ...paramsVideo
+    }
+
+
     if(paramsVideo.track){
         producerVideo = await producerTransport!.produce(paramsVideo)
 
