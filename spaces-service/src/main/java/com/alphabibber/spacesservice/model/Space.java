@@ -23,7 +23,7 @@ public class Space {
     @Column(name = "public_access", nullable = false)
     private Boolean publicAccess;
 
-    @Column(name="large_space", nullable = false)
+    @Column(name="large_space", nullable = true)
     private Boolean largeSpace;
 
     @OneToMany(
