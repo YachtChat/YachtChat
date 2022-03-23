@@ -8,6 +8,11 @@ import * as spacesService from './spacesService';
 
 import express, {Express} from 'express';
 
+process.on('uncaughtException', function (err) {
+    console.log('Caught exception: ', err.stack);
+});
+
+
 const PORT:number = Number(process.env.PORT)
 
 // // https confiugations
