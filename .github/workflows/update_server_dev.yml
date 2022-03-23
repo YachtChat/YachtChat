@@ -38,15 +38,7 @@ jobs:
           user: ${{ secrets.USERNAME}}
           key: ${{ secrets.KEY}}
 
-      - name: change domain
-        uses: tarunjangra/ssh-remote-cmd@v1
-        with:
-          command: |
-            cd /home/git_environment/NotZoom/
-            sudo sed -i 's/yacht.chat/alphabibber.com/g' .env
-          host: ${{ secrets.HOST_DEV}}
-          user: ${{ secrets.USERNAME}}
-          key: ${{ secrets.KEY}}
+
 
       - name: print all changed files
         run: |
