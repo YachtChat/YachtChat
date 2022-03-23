@@ -15,6 +15,10 @@ services:
       - MEDIASOUP_LISTEN_IP=${MEDIASOUP_LISTEN_IP}
 #      this should be the ip of GCP
       - MEDIASOUP_ANNOUNCED_IP=${MEDIASOUP_ANNOUNCED_IP}
+    volumes:
+      - /etc/letsencrypt/live/www.alphabibber.com.key:/etc/letsencrypt/live/www.alphabibber.com.key
+      - /etc/letsencrypt/live/www.alphabibber.com.crt:/etc/letsencrypt/live/www.alphabibber.com.crt
+      - /etc/letsencrypt/live/www.alphabibber.com.chain.pem:/etc/letsencrypt/live/www.alphabibber.com.chain.pem
     ports:
       - ${SFU_PORT}:${SFU_PORT}
       - ${MEDIASOUP_MIN_PORT}-${MEDIASOUP_MAX_PORT}:${MEDIASOUP_MIN_PORT}-${MEDIASOUP_MAX_PORT}
