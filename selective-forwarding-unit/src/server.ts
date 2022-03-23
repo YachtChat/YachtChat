@@ -11,23 +11,24 @@ import express, {Express} from 'express';
 const PORT:number = Number(process.env.PORT)
 
 // // https confiugations
-// const privateKey = fs.readFileSync('/etc/letsencrypt/live/www.alphabibber.com.key', 'utf8');
-// const certificate = fs.readFileSync('/etc/letsencrypt/live/www.alphabibber.com.crt', 'utf8');
-// const ca = fs.readFileSync('/etc/letsencrypt/live/www.alphabibber.com.chain.pem', 'utf8');
-//
-// const credentials = {
-//     key: privateKey,
-//     cert: certificate,
-//     ca: ca
-// }
+
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/www.alphabibber.com/key.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/www.alphabibber.com/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/www.alphabibber.com/chain.pem', 'utf8');
+
+const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca
+}
 
 // create the http server
-// const httpsServer = https.createServer(credentials);
-const httpServer = http.createServer();
-const io = new Server(httpServer, {
+const httpsServer = https.createServer(credentials);
+// const httpServer = http.createServer();
+const io = new Server(httpsServer, {
     cors: { origin: '*' }
 });
-httpServer.listen(PORT)
+httpsServer.listen(PORT)
 // httpsServer.listen(PORT)
 
 // dynamically load the url of the space that is being connected to.

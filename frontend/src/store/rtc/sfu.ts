@@ -7,7 +7,7 @@ import {getStream, setStream} from "../mediaSlice";
 import {getOnlineUsers, getUser, getUserID, getUserWrapped, handlePositionUpdate} from "../userSlice";
 import {getToken} from "../authSlice";
 import {Dispatch} from "react";
-import {SFU_IP, SFU_PORT} from "../utils/config";
+import {SFU_PORT, SFU_URL} from "../utils/config";
 
 let device: Device
 let rtpCapabilities: any
@@ -194,7 +194,7 @@ export const handleSpaceJoin = (joinedUserString: string, isCaller: boolean|unde
         ...paramsVideo
     }
     getToken(getState()).then(token => {
-        socket = io(`wss://www.alphabibber.com:${SFU_PORT}/${spaceId}/`, { query: {token: token, id: getUserID(getState())}})
+        socket = io(`wss://${SFU_URL}:${SFU_PORT}/${spaceId}/`, { query: {token: token, id: getUserID(getState())}})
         // socket = io(`ws://localhost:4000/${spaceId}/`, { query: {token: token, id: getUserID(getState())}})
         socket.on("connection-success", (data) => {
             console.log(`Connected to server with socket id ${data.socketid}`);
