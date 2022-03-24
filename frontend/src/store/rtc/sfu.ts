@@ -4,7 +4,14 @@ import {AppThunk, RootState} from "../utils/store";
 import {Transport, TransportOptions} from "mediasoup-client/lib/Transport";
 import {Producer} from "mediasoup-client/lib/Producer";
 import {getStream, setStream} from "../mediaSlice";
-import {getOnlineUsers, getUser, getUserID, getUserWrapped, handlePositionUpdate} from "../userSlice";
+import {
+    getOnlineUsers,
+    getOnlineUsersWrapped,
+    getUser,
+    getUserID,
+    getUserWrapped,
+    handlePositionUpdate
+} from "../userSlice";
 import {getToken} from "../authSlice";
 import {Dispatch} from "react";
 import {SFU_PORT, SFU_URL} from "../utils/config";
@@ -26,7 +33,8 @@ let mediaState: Map<string, Map<string, boolean>> = new Map<string, Map<string, 
 
 let mediaStream
 
-let paramsAudio: any = {
+// Settings for medisoup-client
+let PARAMS_AUDIO: any = {
     encodings: [
         {
             rid: 'r0',
@@ -36,21 +44,13 @@ let paramsAudio: any = {
         videoGoogleStartBitrate: 1000
     }
 }
-let paramsVideo: any = {
+let PARAMS_VIDEO: any = {
     // mediasoup params
     encodings: [
         {
             rid: 'r0',
             maxBitrate: 2500000,
         },
-        // {
-        //     rid: 'r1',
-        //     maxBitrate: 1000000,
-        // },
-        // {
-        //     rid: 'r2',
-        //     maxBitrate: 5000000,
-        // },
     ],
     // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerCodecOptions
     codecOptions: {
@@ -58,13 +58,14 @@ let paramsVideo: any = {
     }
 }
 
+/**
+ * This function is called when the user leaves the space
+ */
 export function disconnect(){
-    console.log("Socket will be closed and all connection reseted")
     if(socket) socket.close()
     if(producerAudio) producerAudio.close()
     if(producerVideo) producerVideo.close()
     if(producerTransport) producerTransport.close()
-
     socket = undefined
     producerAudio = undefined
     producerVideo = undefined
@@ -73,54 +74,39 @@ export function disconnect(){
     mediaState = new Map<string, Map<string, boolean>>()
 }
 
+/**
+ * This function is called when the user joined the space only with his microphone and now wants to enable his camera
+ * @param track MediaStreamTrack that contains the camera (or microphone) stream
+ */
 export function addTrackToStream(track: MediaStreamTrack){
+    // add the new track either to the video or audio params
+    let updatedParams = undefined
     if(track.kind == "video"){
-        paramsVideo.track = track
-        producerTransport!.produce(paramsVideo).then(producer => {
-            producer.on('trackended', () => {
-                console.log('track ended')
-
-                // close video track
-            })
-            producer.on('transportclose', () => {
-                console.log('transport ended')
-
-                // close video track
-            })
-
-            // add track to the local variables
-            if(track.kind === 'video'){
-                producerVideo = producer
-            }
-            else if(track.kind === 'audio'){
-                producerAudio = producer
-            }
-        })
+        PARAMS_VIDEO.track = track
+        updatedParams = PARAMS_VIDEO
     } else{
-        paramsAudio.track = track
-        producerTransport!.produce(paramsAudio).then(producer => {
-            producer.on('trackended', () => {
-                console.log('track ended')
-
-                // close audio track
-            })
-            producer.on('transportclose', () => {
-                console.log('transport ended')
-
-                // close audio track
-            })
-
-            // add track to the local variables
-            if(track.kind === 'video'){
-                producerVideo = producer
-            }
-            else if(track.kind === 'audio'){
-                producerAudio = producer
-            }
-        })
+        PARAMS_AUDIO.track = track
+        updatedParams = PARAMS_AUDIO
     }
+
+    // create a new producer and add it to the local variable
+    producerTransport!.produce(updatedParams).then(producer => {
+        // add track to the local variables
+        if(track.kind === 'video'){
+            producerVideo = producer
+        }
+        else if(track.kind === 'audio'){
+            producerAudio = producer
+        }
+    })
 }
 
+/**
+ * This function is called when the user wants to update a track
+ * @param stream MediaStream that contains the new track
+ * @param video boolean that indicates if the track that needs to be changed is a video track
+ * @param audio boolean that indicates if the track that needs to be changed is a audio track
+ */
 export const exchangeTracks = (stream: MediaStream, video: boolean, audio: boolean): AppThunk => (dispatch, getState) => {
     // we don not only need to exchange the tracks here but might also need to start or stop the consumers to specific
     // peers
@@ -137,7 +123,7 @@ export const exchangeTracks = (stream: MediaStream, video: boolean, audio: boole
         // if we are currently not sharing our screen we need to start all consumers consuming our video
         if(!user.screen){
             getOnlineUsers(getState()).forEach(user => {
-                updateMediaToId(user.id, true, false)
+                updateMediaToId(user.id, true, undefined)
             })
         }
     }
@@ -146,6 +132,10 @@ export const exchangeTracks = (stream: MediaStream, video: boolean, audio: boole
             producerAudio!.track.stop()
         }
         producerAudio!.replaceTrack({track: stream.getAudioTracks()[0]})
+
+        getOnlineUsers(getState()).forEach(user => {
+            updateMediaToId(user.id, undefined, true)
+        })
     }
 }
 
@@ -316,16 +306,16 @@ const connectSendTransport = async (dispatch: Dispatch<any>, state: RootState) =
     // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
     // this action will trigger the 'connect' and 'produce' events above
     // initialize the local stream
-    paramsAudio.track = undefined
-    paramsVideo.track = undefined
+    PARAMS_AUDIO.track = undefined
+    PARAMS_VIDEO.track = undefined
     mediaStream = getStream(state, getUserID(state))
     let audioTrack = mediaStream!.getAudioTracks()[0]
     let videoTrack = mediaStream!.getVideoTracks()[0]
-    paramsAudio.track = audioTrack
-    paramsVideo.track = videoTrack
+    PARAMS_AUDIO.track = audioTrack
+    PARAMS_VIDEO.track = videoTrack
 
-    if(paramsVideo.track){
-        producerVideo = await producerTransport!.produce(paramsVideo)
+    if(PARAMS_VIDEO.track){
+        producerVideo = await producerTransport!.produce(PARAMS_VIDEO)
 
         producerVideo.on('transportclose', () => {
             console.log('transport ended')
@@ -339,9 +329,9 @@ const connectSendTransport = async (dispatch: Dispatch<any>, state: RootState) =
             // close video track
         })
     }
-    if(paramsAudio.track){
+    if(PARAMS_AUDIO.track){
         await sleep(100)
-        producerAudio = await producerTransport!.produce(paramsAudio)
+        producerAudio = await producerTransport!.produce(PARAMS_AUDIO)
         producerAudio.on('trackended', () => {
             console.log('track ended')
 

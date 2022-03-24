@@ -1,18 +1,17 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './utils/store';
-import {connectToServer, send} from "./webSocketSlice";
+import {connectToServer, send, sendPosition} from "./webSocketSlice";
 import {
     getOnlineUsers,
     getUser,
     getUserID,
-    getUserWrapped, setInProximity,
+    getUserWrapped, handlePositionUpdate, setInProximity,
 } from "./userSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./model/model";
 import {applyVirtualBackground, stopAllVideoEffects} from "./utils/utils";
 import CameraProcessor from "camera-processor";
 import {UserWrapper} from "./model/UserWrapper";
-import {stopTracks} from "./rtc/rtc";
 import posthog from "posthog-js";
 import * as RTC from "./rtc/rtc"
 
@@ -344,7 +343,7 @@ export const stopVideo = (): AppThunk => (dispatch, getState) => {
     // only kill remote streams if no screen is beeing shared
     if (!getUserWrapped(state).screen) {
         // Disable streams for every one (if nothing is shared)
-        stopTracks(state, MediaType.VIDEO)
+        RTC.stopTracks(state, MediaType.VIDEO)
     }
 }
 

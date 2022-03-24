@@ -122,20 +122,11 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
 
 // Function that will enable spatial audio to a given user
 export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
-    if (!getUserWrapped(getState()).audio)
-        return
     const rtp = rtpSender[id]["audio"]
     //console.log("Trying to enable audio to ", id)
     if (rtp.track && rtp.track.kind === 'audio') {
         //console.log("Enabled audio")
         rtp.track.enabled = true
-        const user = getUserById(getState(), id)
-        if (getState().playground.inBackground)
-            if (getState().media.screen[getUserID(getState())])
-                sendNotification(getState(), `${user.firstName} can hear you and see your screen`, user.profile_image,)
-            else
-                sendNotification(getState(), `${user.firstName} can hear you`, user.profile_image,
-                )
     }
 }
 

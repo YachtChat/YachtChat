@@ -3,8 +3,9 @@ import * as P2P from "./p2p";
 import * as SFU from "./sfu"
 import {AppThunk, RootState} from "../utils/store";
 import {MediaType} from "../model/model";
-import {getUser, handlePositionUpdate, setUserOffline} from "../userSlice";
+import {getUser, getUserById, getUserID, getUserWrapped, handlePositionUpdate, setUserOffline} from "../userSlice";
 import {resetMedia} from "../mediaSlice";
+import {sendNotification} from "../utils/notifications";
 
 let IS_STATE_SFU: boolean | undefined = undefined
 
@@ -28,10 +29,22 @@ export const join = (joinedUserId: string, isCaller?: boolean): AppThunk =>(disp
 }
 
 export const activateAudioTo = (id: string): AppThunk => (dispatch, getState) => {
+    if (!getUserWrapped(getState()).audio)
+        return
+
     if(IS_STATE_SFU){
         SFU.updateMediaToId(id, undefined, true)
     }else{
         dispatch(P2P.sendAudio(id))
+    }
+    // this shouldn't be here
+    const user = getUserById(getState(), id)
+    if (getState().playground.inBackground){
+        if (getState().media.screen[getUserID(getState())])
+            sendNotification(getState(), `${user.firstName} can hear you and see your screen`, user.profile_image,)
+        else
+            sendNotification(getState(), `${user.firstName} can hear you`, user.profile_image,
+            )
     }
 }
 
@@ -125,5 +138,3 @@ export const stopTracks = (state: RootState, media: MediaType) => {
         P2P.stopTracks(state, media)
     }
 }
-
-
