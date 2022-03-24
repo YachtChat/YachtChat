@@ -321,15 +321,8 @@ const connectSendTransport = async (dispatch: Dispatch<any>, state: RootState) =
     mediaStream = getStream(state, getUserID(state))
     let audioTrack = mediaStream!.getAudioTracks()[0]
     let videoTrack = mediaStream!.getVideoTracks()[0]
-    paramsAudio = {
-        track: audioTrack,
-        ...paramsAudio
-    }
-    paramsVideo = {
-        track: videoTrack,
-        ...paramsVideo
-    }
-
+    paramsAudio.track = audioTrack
+    paramsVideo.track = videoTrack
 
     if(paramsVideo.track){
         producerVideo = await producerTransport!.produce(paramsVideo)
