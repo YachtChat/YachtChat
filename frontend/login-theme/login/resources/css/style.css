@@ -658,8 +658,7 @@ label, .required {
 .login-box .user-box button {
     margin-top: 0.5rem;
 }
-.login-box .user-box #input-error, .login-box .user-box .alert-error,
-.login-box .user-box #input-warning, .login-box .user-box .alert-warning {
+.login-box .user-box #input-error, .login-box .user-box .alert-error {
     border-radius: 0.5rem;
     background: #ff6d6d;
     margin: 2rem 2rem 0rem;
@@ -667,7 +666,7 @@ label, .required {
     text-align: center;
     color: white;
 }
-
+.login-box .user-box #input-warning, .login-box .user-box .alert-warning,
 .login-box .user-box #input-success, .login-box .user-box .alert-success {
     border-radius: 0.5rem;
     background: #a4cd4c;
