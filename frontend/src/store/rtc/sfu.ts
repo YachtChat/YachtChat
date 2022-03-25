@@ -133,8 +133,11 @@ export const exchangeTracks = (stream: MediaStream, video: boolean, audio: boole
         }
         producerAudio!.replaceTrack({track: stream.getAudioTracks()[0]})
 
+        // update audio to all users in proximity
         getOnlineUsers(getState()).forEach(user => {
-            updateMediaToId(user.id, undefined, true)
+            if(getState().userState.inProximity[user.id]){
+                updateMediaToId(user.id, undefined, true)
+            }
         })
     }
 }
