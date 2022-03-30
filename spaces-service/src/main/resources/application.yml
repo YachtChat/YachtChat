@@ -8,6 +8,13 @@ spring:
     active: ${PROFILE}
   application:
     name: spaces-service
+  datasource:
+    hikari:
+      minimumIdle: 2
+      maximumPoolSize: 10
+      idleTimeout: 120000
+      connectionTimeout: 300000
+      leakDetectionThreshold: 300000
 
 keycloak:
   realm: Application
