@@ -6,6 +6,7 @@ import {connect} from "react-redux";
 import {createSpace} from "../../store/spaceSlice";
 import {handleError} from "../../store/statusSlice";
 import {Steps} from "./Steps";
+import {LARGE_SPACE_LIMIT} from "../../store/utils/config";
 
 interface Props {
     createSpace: (name: string, isLargeSpace: boolean) => void
@@ -75,7 +76,7 @@ export class CreateSpace extends Component<Props, State> {
                             type={"checkbox"}
                             value={"largeSpace"}
                         />
-                        Large Space
+                        Large Space ({LARGE_SPACE_LIMIT} people)
                     </label>
 
                     <input type={"submit"} value={"Create Space"} />

@@ -13,9 +13,9 @@ import {
 } from "react-icons/io5";
 import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
-import {SUPPORT_URL} from "../../store/utils/config";
+import {LARGE_SPACE_LIMIT, SUPPORT_URL} from "../../store/utils/config";
 import {copyInviteLink} from "../../store/utils/utils";
-import {CircularProgress, Collapse, Fade, Menu, MenuItem, Tooltip} from "@mui/material";
+import {CircularProgress, Collapse, Menu, MenuItem, Tooltip} from "@mui/material";
 import {TransitionGroup} from "react-transition-group";
 import {destroySession} from "../../store/destroySession";
 
@@ -118,12 +118,11 @@ export class Spaces extends Component<Props, State> {
 
                     <div className={"itemWrapper"}>
                         {this.props.spaces.length === 0 &&
-                        <CircularProgress className={"loadingAnimation"} color={"inherit"}/>}
+                            <CircularProgress className={"loadingAnimation"} color={"inherit"}/>}
                         <TransitionGroup>
 
                             {this.props.spaces.map((s, idx) => (
                                 <Collapse key={s.id}>
-
                                     <Link to={`/spaces/${s.id}`} key={idx}>
                                         <div
                                             onContextMenu={e =>
@@ -131,12 +130,7 @@ export class Spaces extends Component<Props, State> {
                                             }
                                             className={"item " + ((idx > 0) ? "separator" : "")}>
                                             {s.name}
-                                            <Fade in={!!s.online && s.online !== 0} key={s.online} unmountOnExit>
-                                                <span className={"tag"}>{s.online} online</span>
-                                            </Fade>
-                                            <div>
-                                                {s.largeSpace ? "----> large" : "---> small"}
-                                            </div>
+                                            <span className={"tag " + ((!!s.online && s.online !== 0) ? "online" : "")}>{s.online} / {s.largeSpace ? LARGE_SPACE_LIMIT : "7"}</span>
                                             <div className={"buttons"}>
                                                 <button onClick={e => this.handleContext(e, s)}
                                                         className={"nostyle outlined"}>
