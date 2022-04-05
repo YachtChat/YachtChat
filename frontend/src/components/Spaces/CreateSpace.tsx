@@ -7,6 +7,7 @@ import {createSpace} from "../../store/spaceSlice";
 import {handleError} from "../../store/statusSlice";
 import {Steps} from "./Steps";
 import {LARGE_SPACE_LIMIT} from "../../store/utils/config";
+import {Switch} from "@mui/material";
 
 interface Props {
     createSpace: (name: string, isLargeSpace: boolean) => void
@@ -70,15 +71,13 @@ export class CreateSpace extends Component<Props, State> {
                            placeholder={"space name"}
                            onChange={({target: {value}}) => this.setState({spaceName: value})} type={"text"}/>
                     <label>
-                        <input
-
-                            onChange={({target: {checked}}) => this.setState({largeSpace: checked})}
-                            type={"checkbox"}
-                            value={"largeSpace"}
+                        <Switch checked={this.state.largeSpace}
+                                onChange={e => this.setState({ largeSpace: e.target.checked})}
                         />
                         Large Space ({LARGE_SPACE_LIMIT} people)
+                        <br />
+                        <br />
                     </label>
-
                     <input type={"submit"} value={"Create Space"} />
                 </form>
             </Wrapper>
