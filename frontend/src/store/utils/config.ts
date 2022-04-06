@@ -12,7 +12,7 @@ export const CLIENT_ID: string | undefined = process.env.REACT_APP_KEYCLOAK_CLIE
 export const SFU_URL: string | undefined = process.env.REACT_APP_SFU_URL
 export const SFU_PORT: string | undefined = process.env.REACT_APP_SFU_PORT
 
-export const LARGE_SPACE_LIMIT: number = 30
+export const LARGE_SPACE_LIMIT: number = 20
 export const SMALL_SPACE_LIMIT: number = 7
 
 export const applicationName: string = "Yacht.Chat"
