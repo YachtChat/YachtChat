@@ -13,11 +13,13 @@ import {
 } from "react-icons/io5";
 import {Link} from "react-router-dom";
 import {logout} from "../../store/authSlice";
-import {SUPPORT_URL} from "../../store/utils/config";
+import {LARGE_SPACE_LIMIT, SMALL_SPACE_LIMIT, SUPPORT_URL} from "../../store/utils/config";
 import {copyInviteLink} from "../../store/utils/utils";
-import {CircularProgress, Collapse, Fade, Menu, MenuItem, Tooltip} from "@mui/material";
+import {CircularProgress, Collapse, Menu, MenuItem, Tooltip} from "@mui/material";
 import {TransitionGroup} from "react-transition-group";
 import {destroySession} from "../../store/destroySession";
+import {push} from "redux-first-history";
+import {handleError} from "../../store/statusSlice";
 
 interface Props {
     spaces: Space[]
@@ -26,6 +28,8 @@ interface Props {
     destroySession: () => void
     invite: (s: string) => void
     deleteSpaceForUser: (id: string) => void
+    goToSpace: (id: string) => void
+    handleError: (error: string) => void
 }
 
 interface State {
@@ -118,42 +122,45 @@ export class Spaces extends Component<Props, State> {
 
                     <div className={"itemWrapper"}>
                         {this.props.spaces.length === 0 &&
-                        <CircularProgress className={"loadingAnimation"} color={"inherit"}/>}
+                            <CircularProgress className={"loadingAnimation"} color={"inherit"}/>}
                         <TransitionGroup>
 
                             {this.props.spaces.map((s, idx) => (
                                 <Collapse key={s.id}>
-
-                                    <Link to={`/spaces/${s.id}`} key={idx}>
-                                        <div
-                                            onContextMenu={e =>
-                                                this.handleContext(e, s)
+                                    <div onClick={() => {
+                                            if ((s.online ?? 0) < (s.largeSpace ? LARGE_SPACE_LIMIT : SMALL_SPACE_LIMIT)) {
+                                                this.props.goToSpace(s.id)
+                                            } else {
+                                                this.props.handleError("Space is at capacity")
                                             }
-                                            className={"item " + ((idx > 0) ? "separator" : "")}>
-                                            {s.name}
-                                            <Fade in={!!s.online && s.online !== 0} key={s.online} unmountOnExit>
-                                                <span className={"tag"}>{s.online} online</span>
-                                            </Fade>
-                                            <div className={"buttons"}>
-                                                <button onClick={e => this.handleContext(e, s)}
-                                                        className={"nostyle outlined"}>
-                                                    <IoEllipsisHorizontal/>
+                                        }}
+                                         onContextMenu={e =>
+                                             this.handleContext(e, s)
+                                         }
+                                         className={"item " + ((idx > 0) ? "separator" : "")}>
+                                        {s.name}
+                                        <span className={"tag " + ((!!s.online && s.online !== 0) ? "online" : "")}>
+                                                {s.online} / {s.largeSpace ? LARGE_SPACE_LIMIT : SMALL_SPACE_LIMIT}
+                                            </span>
+                                        <div className={"buttons"}>
+                                            <button onClick={e => this.handleContext(e, s)}
+                                                    className={"nostyle outlined"}>
+                                                <IoEllipsisHorizontal/>
+                                            </button>
+                                            <Tooltip title={"Copy invite link"} arrow placement={"top"}>
+                                                <button
+                                                    onClick={e => this.invite(e, s.id)}
+                                                    className={"outlined spaceRight"}>
+                                                    Invite
                                                 </button>
-                                                <Tooltip title={"Copy invite link"} arrow placement={"top"}>
-                                                    <button
-                                                        onClick={e => this.invite(e, s.id)}
-                                                        className={"outlined spaceRight"}>
-                                                        Invite
-                                                    </button>
-                                                </Tooltip>
-                                                <button>
-                                                    Join
-                                                </button>
-                                            </div>
+                                            </Tooltip>
+                                            <button>
+                                                Join
+                                            </button>
                                         </div>
-                                    </Link>
+                                    </div>
                                 </Collapse>
-                            ))}
+                                ))}
                         </TransitionGroup>
                     </div>
                     <Link to={"/create-space"}>
@@ -213,6 +220,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     logout: () => dispatch(logout()),
     deleteSpaceForUser: (id: string) => dispatch(deleteSpaceForUser(id)),
     invite: (s: string) => dispatch(copyInviteLink(s)),
+    goToSpace: (s: string) => dispatch(push(`/spaces/${s}`)),
+    handleError: (error: string) => dispatch(handleError(error)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Spaces)

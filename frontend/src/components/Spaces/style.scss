@@ -138,11 +138,15 @@
       .tag {
         margin-left: 10px;
         font-size: 0.6rem;
-        color: $online_color;
+        color: $button_font_light;
         padding: 0.2rem 0.6rem;
         background: $background_2_light;
         border-radius: $border_radius;
         font-weight: bold;
+
+        .online {
+          color: $online_color;
+        }
 
         &:hover {
           background: $background_2_light;

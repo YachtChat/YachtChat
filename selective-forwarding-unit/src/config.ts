@@ -23,7 +23,6 @@ export const webRtcTransportOption: WebRtcTransportOptions = {
             // my ip?
             // ip: '192.168.178.64', // replace with relevant IP address
             // ip: '127.0.0.1',
-            // TODO this here should not be hard coded
             // ip: '172.17.0.2',
             ip: <string>process.env.MEDIASOUP_LISTEN_IP,
             announcedIp: <string>process.env.MEDIASOUP_ANNOUNCED_IP,

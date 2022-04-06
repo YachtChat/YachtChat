@@ -38,7 +38,7 @@ export const {
     removeStatusMessage
 } = statusSlice.actions;
 
-export const handleError = (error: string, e?: any): AppThunk => (dispatch, getState) => {
+export const handleError = (error: string, e: any = ""): AppThunk => (dispatch, getState) => {
     console.error(error, e)
     const id = getState().status.counter
     if (e.toString() === "NotReadableError: Could not start video source") {

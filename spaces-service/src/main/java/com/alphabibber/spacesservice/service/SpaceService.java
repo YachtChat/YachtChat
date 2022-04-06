@@ -66,6 +66,13 @@ public class SpaceService {
             );
             result.addAll(spaceRepository.findAllByPublicAccessIsTrue());
 
+            // after data migration we need to have this code here checking for null in the largeSpace attribute
+            for(Space space : result) {
+                if(space.isLargeSpace() == null) {
+                    space.setLargeSpace(false);
+                }
+            }
+
             // check if the user has at least one space if not create his "<Username's> First Space"
             if (result.isEmpty()) {
                 AccessToken accessToken = ((KeycloakAuthenticationToken) principal).getAccount()
@@ -82,10 +89,11 @@ public class SpaceService {
 
     public Space createSpace(Space spaceDTO) {
         String spaceName = spaceDTO.getName();
+        boolean isLarge = spaceDTO.isLargeSpace();
         // Boolean publicAccess = spaceDTO.isPublic() != null ? spaceDTO.isPublic() : false;
         // initial save to set id
         // publicAccess should always be set to false
-        var space = spaceRepository.save(new Space(spaceName, false));
+        var space = spaceRepository.save(new Space(spaceName, isLarge));
 
         // assumption: Space does not contain spaceHosts or spaceMembers after init
         var user = userService.getContextUserIfExistsElseCreate();

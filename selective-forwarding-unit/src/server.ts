@@ -1,4 +1,6 @@
+import fs from "fs";
 import http from 'http';
+import https from 'https';
 import { Server } from 'socket.io'
 import { logger } from './logger';
 import * as spaceuserService from './spaceuserService';
@@ -6,14 +8,33 @@ import * as spacesService from './spacesService';
 
 import express, {Express} from 'express';
 
+process.on('uncaughtException', function (err) {
+    console.log('Caught exception: ', err.stack);
+});
+
+
 const PORT:number = Number(process.env.PORT)
 
+// // https confiugations
+
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/www.yacht.chat/key.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/www.yacht.chat/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/www.yacht.chat/chain.pem', 'utf8');
+
+const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca
+}
+
 // create the http server
-const httpServer = http.createServer();
-const io = new Server(httpServer, {
+const httpsServer = https.createServer(credentials);
+// const httpServer = http.createServer();
+const io = new Server(httpsServer, {
     cors: { origin: '*' }
 });
-httpServer.listen(PORT)
+httpsServer.listen(PORT)
+// httpsServer.listen(PORT)
 
 // dynamically load the url of the space that is being connected to.
 const connections = io.of(/.*/);

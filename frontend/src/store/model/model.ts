@@ -50,6 +50,7 @@ export interface Space {
     public: boolean
     online?: number // number of users online
     hosts: string[]
+    largeSpace: boolean
 }
 
 export interface Point {

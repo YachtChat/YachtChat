@@ -6,8 +6,8 @@ import {handleError, handleSuccess} from "./statusSlice";
 import {complete_socket_url_http, complete_spaces_url, SPACES_URL} from "./utils/config";
 import {getHeaders} from "./authSlice";
 import {getUser, getUserID, submitMovement} from "./userSlice";
-import {handleRTCEvents} from "./rtc";
 import {push} from "redux-first-history";
+import * as RTC from "./rtc/rtc";
 
 // either the spaces server is run locally or on the server
 
@@ -15,12 +15,14 @@ interface SpaceState {
     spaces: Space[]
     joinedSpace: string | undefined
     inviteToken: { [spaceid: string]: string | undefined }
+    largeSpace: string | undefined
 }
 
 const initialState: SpaceState = {
     spaces: [],
     joinedSpace: undefined,
-    inviteToken: {}
+    inviteToken: {},
+    largeSpace: undefined
 }
 
 export const spaceSlice = createSlice({
@@ -108,9 +110,9 @@ export const joinSpace = (token: string): AppThunk => (dispatch, getState) => {
     )
 }
 
-export const createSpace = (name: string): AppThunk => (dispatch, getState) => {
+export const createSpace = (name: string, largeSpace: boolean): AppThunk => (dispatch, getState) => {
     getHeaders(getState()).then(header =>
-        axios.post(complete_spaces_url + "/api/v1/spaces/", {name}, header).then(response => {
+        axios.post(complete_spaces_url + "/api/v1/spaces/", {name, largeSpace}, header).then(response => {
             dispatch(handleSuccess("Space successfully created"))
             dispatch(addSpace(response.data))
             dispatch(push("/invite/" + response.data.id))
@@ -144,7 +146,8 @@ export const deleteSpaceForUser = (spaceId: string): AppThunk => (dispatch, getS
 
 export const spaceSetupReady = (spaceID: string): AppThunk => (dispatch, getState) => {
     const user = getUser(getState())
-    dispatch(handleRTCEvents(getUserID(getState())));
+    dispatch(RTC.join(getUserID(getState())))
+    // dispatch(handleRTCEvents(getUserID(getState())));
     dispatch(submitMovement(user.position!, false))
     dispatch(joined(spaceID))
 }

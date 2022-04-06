@@ -1,4 +1,4 @@
-import {AppThunk, RootState} from "./utils/store";
+import {AppThunk, RootState} from "../utils/store";
 import {
     getOnlineUsers, getOnlineUsersWrapped,
     getUser,
@@ -7,14 +7,14 @@ import {
     getUserWrapped,
     handlePositionUpdate,
     setUserOffline
-} from "./userSlice";
-import {rtcConfiguration} from "./utils/config";
-import {send, triggerReconnection} from "./webSocketSlice";
-import {MediaType} from "./model/model";
-import {handleError} from "./statusSlice";
-import {getScreenStream, getStream, resetMedia, setStream} from "./mediaSlice";
-import {sendNotification} from "./utils/notifications";
-import {UserWrapper} from "./model/UserWrapper";
+} from "../userSlice";
+import {rtcConfiguration} from "../utils/config";
+import {send, triggerReconnection} from "../webSocketSlice";
+import {MediaType} from "../model/model";
+import {handleError} from "../statusSlice";
+import {getScreenStream, getStream, resetMedia, setStream} from "../mediaSlice";
+import {sendNotification} from "../utils/notifications";
+import {UserWrapper} from "../model/UserWrapper";
 
 let rtcConnections: { [key: string]: RTCPeerConnection } = {}; // the connection to handle the connection to the other peer
 let rtpSender: { [key: string]: { [key: string]: RTCRtpSender } } = {}; // rtc object that handles stream transmission
@@ -63,7 +63,7 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
 
                 rtcConnections[userId].ontrack = (event: RTCTrackEvent) => {
                     if (!isUserInSpace(getState(), userId)) return
-                    dispatch(setStream(getState(), userId, event.streams[0]))
+                    dispatch(setStream(getState(), userId, event.streams[0].getTracks()))
                 }
 
                 rtcConnections[userId].onicegatheringstatechange = () => {
@@ -109,7 +109,6 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
                     ])
                 }
 
-                // todo maybe do not send the stream until the connection is established
                 mediaStream.getTracks().forEach(track => {
                     rtpSender[userId][track.kind] = rtcConnections[userId].addTrack(track.clone(), getStream(getState(), localClient)!)
                 })
@@ -123,20 +122,11 @@ export const handleRTCEvents = (joinedUserId: string, isCaller?: boolean): AppTh
 
 // Function that will enable spatial audio to a given user
 export const sendAudio = (id: string): AppThunk => (dispatch, getState) => {
-    if (!getUserWrapped(getState()).audio)
-        return
     const rtp = rtpSender[id]["audio"]
     //console.log("Trying to enable audio to ", id)
     if (rtp.track && rtp.track.kind === 'audio') {
         //console.log("Enabled audio")
         rtp.track.enabled = true
-        const user = getUserById(getState(), id)
-        if (getState().playground.inBackground)
-            if (getState().media.screen[getUserID(getState())])
-                sendNotification(getState(), `${user.firstName} can hear you and see your screen`, user.profile_image,)
-            else
-                sendNotification(getState(), `${user.firstName} can hear you`, user.profile_image,
-            )
     }
 }
 
@@ -220,7 +210,7 @@ export const setupReconnectionLoop = (userId: string, isCaller: boolean): AppThu
                         return
                     }
 
-                    
+
 
                     // If user is not connected to websocket do not try to reconnect, since it would be hopeless
                     if (!getState().webSocket.connected)
@@ -373,8 +363,6 @@ export const disconnectUser = (id: string): AppThunk => (dispatch, getState) => 
     if (!isUserInSpace(getState(), id)) return
     rtcConnections[id].close()
     delete rtcConnections[id]
-    dispatch(setUserOffline(id))
-    dispatch(resetMedia(id))
     // clear potential timer which was set up for the user that just left
     if (connectionTimer[id]) {
         clearTimeout(connectionTimer[id]);
@@ -412,6 +400,3 @@ export const stopTracks = (state: RootState, media: MediaType) => {
         })
     })
 }
-
-export const getRtcConnection = (id: string) => rtcConnections[id];
-export const getRtpSender = (id: string) => rtpSender[id];

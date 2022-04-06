@@ -11,7 +11,7 @@ import {handleError, handleSuccess} from "./statusSlice";
 import {identifyUser} from "./utils/posthog";
 import {getNextValidPostion, isPostionValid} from "./utils/positionUtils";
 import {UserWrapper} from "./model/UserWrapper";
-import {handleRTCEvents, localUserIsSendingAudioTo, sendAudio, sendVideo, unsendAudio, unsendVideo} from "./rtc";
+import * as RTC from "./rtc/rtc"
 import {sendNotification} from "./utils/notifications";
 import {spaceSetupReady} from "./spaceSlice";
 
@@ -224,7 +224,8 @@ export const handleSpaceUser = (userId: string, position: UserCoordinates, video
             if (getUserID(getState()) !== userId) {
                 // isCaller is true if this is a reconncetion and the local user was the previous caller
                 // if isCaller is undefined it can be treated as false
-                dispatch(handleRTCEvents(userId, !!isCaller))
+                dispatch(RTC.join(userId, !!isCaller))
+                // dispatch(handleRTCEvents(userId, !!isCaller))
                 dispatch(handlePositionUpdate({id: userId, position: position}, true))
             }
         })
@@ -328,15 +329,17 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
         // If the user is not marked as in proximity, but actually is, set flag and send audio
         // Else: If the user is marked as in proximity, but actually is not, reset flag and unsend audio
             if (dist <= (currentRange + userProportion / 2) &&
-            (!u.inProximity || !localUserIsSendingAudioTo(u.id) || isNewUser))
+            (!u.inProximity || !RTC.isSendingAudioTo(u.id) || isNewUser))
         {
             // console.log(user.id, "in Range - sending audio to", u.id)
             dispatch(setInProximity({ id: u.id, event: true }))
             if (user.id !== u.id) {
                 if (getUserWrapped(getState()).screen) {
-                    dispatch(sendVideo(u.id))
+                    dispatch(RTC.activateVideoTo(u.id))
+                    //dispatch(sendVideo(u.id))
                 }
-                dispatch(sendAudio(u.id))
+                dispatch(RTC.activateAudioTo(u.id))
+                // dispatch(sendAudio(u.id))
                 if (isNewUser) {
                     // we cannot send this event immediately, because if we do the receriver will not have initialized
                     // the space user yet, and therefore he will not be able to handle the event properly.
@@ -359,7 +362,7 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
                 }
             }
             } else if (dist > (currentRange + userProportion / 2) &&
-            (u.inProximity || u.inProximity === undefined || localUserIsSendingAudioTo(u.id) || isNewUser )) {
+            (u.inProximity || u.inProximity === undefined || RTC.isSendingAudioTo(u.id) || isNewUser )) {
             // console.log(user.id, "not in Range - dont send audio", u.id)
             dispatch(setInProximity({ id: u.id, event: false }))
             if (user.id !== u.id) {
@@ -368,9 +371,11 @@ export const handlePositionUpdate = (object: { id: string, position: UserCoordin
                     target_id: u.id,
                     event: false
                 }))
-                dispatch(unsendAudio(u.id))
+                dispatch(RTC.deactivateAudioTo(u.id))
+                // dispatch(unsendAudio(u.id))
                 if (new UserWrapper(user).screen)
-                    dispatch(unsendVideo(u.id))
+                    dispatch(RTC.deactivateVideoTo(u.id))
+                    // dispatch(unsendVideo(u.id))
             }
         }
     })

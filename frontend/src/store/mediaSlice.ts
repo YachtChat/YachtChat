@@ -1,19 +1,19 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './utils/store';
-import {connectToServer, send} from "./webSocketSlice";
+import {connectToServer, send, sendPosition} from "./webSocketSlice";
 import {
     getOnlineUsers,
     getUser,
     getUserID,
-    getUserWrapped, setInProximity,
+    getUserWrapped, handlePositionUpdate, setInProximity,
 } from "./userSlice";
 import {handleError} from "./statusSlice";
 import {MediaType} from "./model/model";
 import {applyVirtualBackground, stopAllVideoEffects} from "./utils/utils";
 import CameraProcessor from "camera-processor";
 import {UserWrapper} from "./model/UserWrapper";
-import {addTracks, exchangeTracks, getRtpSender, resetRTC, stopTracks} from "./rtc";
 import posthog from "posthog-js";
+import * as RTC from "./rtc/rtc"
 
 interface MediaState {
     audio: { [user: string]: boolean }
@@ -225,7 +225,7 @@ export const requestUserMediaAndJoin = (spaceID: string, video: boolean, audio: 
         const [ls, cp] = applyVirtualBackground(e, getState().media.selected.virtualBackground, camera_processor)
         camera_processor = cp
         dispatch(loadAllMediaDevices(() => {
-            dispatch(setStream(getState(), localClient, ls))
+            dispatch(setStream(getState(), localClient, ls.getTracks()))
             dispatch(setUserMedia(true))
             dispatch(setInProximity({id: localClient, event: true}))
 
@@ -285,14 +285,7 @@ export const toggleUserAudio = (): AppThunk => (dispatch, getState) => {
                 event: false
             }));
         }
-        getOnlineUsers(state).forEach(u => {
-            Object.keys(getRtpSender(u.id)).forEach(k => {
-                const rtp = getRtpSender(u.id)[k]
-                if (rtp.track && rtp.track.kind === 'audio') {
-                    rtp.track.stop()
-                }
-            })
-        })
+        RTC.stopTracks(getState(), MediaType.AUDIO)
     }
 }
 
@@ -350,7 +343,7 @@ export const stopVideo = (): AppThunk => (dispatch, getState) => {
     // only kill remote streams if no screen is beeing shared
     if (!getUserWrapped(state).screen) {
         // Disable streams for every one (if nothing is shared)
-        stopTracks(state, MediaType.VIDEO)
+        RTC.stopTracks(state, MediaType.VIDEO)
     }
 }
 
@@ -393,7 +386,8 @@ export const shareScreen = (): AppThunk => (dispatch, getState) => {
         })
 
         // iterate over all user and replace my video stream with the stream of my screen
-        dispatch(exchangeTracks(getScreenStream(getState(), user.id), true, false))
+        dispatch(RTC.exchangeStreamTracks(getScreenStream(getState(), user.id), true, false))
+        // dispatch(exchangeTracks(getScreenStream(getState(), user.id), true, false))
 
         // tell the websocket that the screen is now shared
         dispatch(send({
@@ -499,34 +493,54 @@ export const resetMediaSlice = (): AppThunk => (dispatch, getState) => {
 
     streams = {}
 
-    resetRTC(getState())
+    // resetRTC(getState())
+    RTC.resetRTC(getState())
     dispatch(resetMedia())
     dispatch(turnOnVideo(getUserID(getState())))
     dispatch(turnOnAudio(getUserID(getState())))
 }
 
-export const setStream = (state: RootState, id: string, stream: MediaStream): AppThunk => dispatch => {
+export const setStream = (state: RootState, id: string, tracks: MediaStreamTrack[]): AppThunk => dispatch => {
+    // get the old stream that needs to be udpated
+    let oldStream: MediaStream | undefined
     if (getUser(state).id === id) {
-        localStream = stream
+        oldStream = localStream
     } else {
-        streams[id] = stream
+        oldStream = streams[id]
     }
 
-    if (stream.getAudioTracks().length > 0) {
-        dispatch(setStreamID({
-            user_id: id,
-            type: MediaType.AUDIO,
-            stream_id: stream.getAudioTracks()[0].id
-        }));
+    // create a newStream based on the oldStream and the new tracks
+    let newStream: MediaStream | undefined
+    if(!oldStream){
+        newStream = new MediaStream(tracks)
+    }else{
+        tracks.forEach(track => {
+            // if there is already a track with the same type stop it and remove it
+            let trackToRemove = oldStream!.getTracks().find(t => t.kind === track.kind)
+            if(trackToRemove){
+                // trackToRemove!.stop()
+                oldStream!.removeTrack(trackToRemove)
+            }
+            oldStream!.addTrack(track)
+        })
+        newStream = oldStream
     }
 
-    if (stream.getVideoTracks().length > 0) {
+    // update the localStream or the stream of the respective user with the newStream
+    if (getUser(state).id === id) {
+        localStream = newStream
+    } else {
+        streams[id] = newStream
+    }
+
+    // update the streamId
+    tracks.forEach(track => {
         dispatch(setStreamID({
             user_id: id,
-            type: MediaType.VIDEO,
-            stream_id: stream.getVideoTracks()[0].id
-        }));
-    }
+            type: track.kind == 'audio' ? MediaType.AUDIO : MediaType.VIDEO,
+            stream_id: track.id,
+        }))
+    })
 }
 
 export const changeVideoInput = (camera: string): AppThunk => dispatch => {
@@ -574,7 +588,8 @@ export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (
             // either add a new stream
             if (oldMediaStreamTracks?.length === 0) {
                 stream?.addTrack(newUserMediaTrack)
-                dispatch(addTracks(newUserMediaTrack))
+                dispatch(RTC.addTrackToStream(newUserMediaTrack))
+                // dispatch(addTracks(newUserMediaTrack))
 
                 // if we added the track here we don't want to exchange it later
                 video = (isVideo) ? false : video
@@ -589,9 +604,10 @@ export const handleInputChange = (video: boolean, audio: boolean): AppThunk => (
             }
         })
         // update the local stream variable
-        dispatch(setStream(state, localClient, stream))
+        dispatch(setStream(state, localClient, stream.getTracks()))
         // Also tell the other users in the space about the changes
-        dispatch(exchangeTracks(stream, video, audio))
+        dispatch(RTC.exchangeStreamTracks(stream, video, audio))
+        // dispatch(exchangeTracks(stream, video, audio))
 
         dispatch(setUserMedia(true))
     }).catch((e) => {
