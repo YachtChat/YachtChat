@@ -17,9 +17,9 @@ const PORT:number = Number(process.env.PORT)
 
 // // https confiugations
 
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/www.alphabibber.com/key.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/www.alphabibber.com/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/www.alphabibber.com/chain.pem', 'utf8');
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/www.yacht.chat/key.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/www.yacht.chat/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/www.yacht.chat/chain.pem', 'utf8');
 
 const credentials = {
     key: privateKey,
