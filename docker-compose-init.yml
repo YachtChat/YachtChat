@@ -35,7 +35,7 @@ services:
 
   keycloak-postgres:
     container_name: keycloak-postgres
-    image: postgres
+    image: postgres:13
     volumes:
       - keycloak_postgres_data:/var/lib/postgresql/data
     environment:
@@ -71,7 +71,7 @@ services:
 
   spaces-postgres:
     container_name: spaces-postgres
-    image: postgres
+    image: postgres:13
     restart: always
     environment:
       - POSTGRES_PASSWORD=${SPACES_DB_PASSWORD}
