@@ -41,7 +41,7 @@ public class SpaceController extends SpringBootServletInitializer {
     }
 
 //    A delete from the outside should not be possible. Rather a space should be deleted when there is no host user left
-//    for this space
+//    for this space.
 //    @DeleteMapping("/{spaceId}/")
 //    public void deleteSpace(@PathVariable String spaceId) {
 //        spaceService.deleteSpaceById(spaceId);
