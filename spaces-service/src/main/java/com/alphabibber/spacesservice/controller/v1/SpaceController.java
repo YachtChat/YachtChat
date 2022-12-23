@@ -46,6 +46,7 @@ public class SpaceController extends SpringBootServletInitializer {
 //    public void deleteSpace(@PathVariable String spaceId) {
 //        spaceService.deleteSpaceById(spaceId);
 //    }
+// This is a message for future readers: This message should only make the spaces server be rebuild.
 
     @GetMapping(path = "/{spaceId}/allUsers/")
     public Set<User> getSpaceUsers(@PathVariable String spaceId) {
