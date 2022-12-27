@@ -62,7 +62,7 @@ public class WsServerEndpoint {
     // https://www.baeldung.com/java-concurrent-map
     // Keep in mind the load factor and the concurrency level
     // Concurrent Hashmap probably works good for a Space, it is unclear whether it works good for the roomMap that stores
-    // all Spaces.
+    // all Spaces!
     private final SpaceUserService spaceUserService = new SpaceUserService();
 
     @OnOpen
