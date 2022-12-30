@@ -1,4 +1,4 @@
-import {IoHelpBuoyOutline, IoLogoInstagram, IoLogoLinkedin, IoMail} from "react-icons/all";
+import {IoHelpBuoyOutline, IoLogoInstagram, IoLogoLinkedin, IoMail} from "react-icons/io5";
 import React from "react";
 import "./style.scss"
 import classNames from "classnames";

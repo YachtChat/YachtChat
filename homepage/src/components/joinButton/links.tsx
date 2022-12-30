@@ -1,5 +1,5 @@
 import {EMAIL, INSTA, LINKEDIN} from "../../util/config";
-import {IoLogoInstagram, IoLogoLinkedin, IoMailOutline} from "react-icons/all";
+import {IoLogoInstagram, IoLogoLinkedin, IoMailOutline} from "react-icons/io5";
 
 
 export function Links() {

@@ -1,5 +1,5 @@
 import {Link, NavLink} from "react-router-dom";
-import {IoArrowBack} from "react-icons/all";
+import {IoArrowBack} from "react-icons/io5";
 
 export function ImprintButtons() {
     // https://www.termsofservicegenerator.net/download.php?lang=en&token=62I9LDi0smDCglshk2xgfLSqJG7b3qjH

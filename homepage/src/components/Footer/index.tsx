@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 import React from "react";
 import {EMAIL, INSTA, LINKEDIN, SUPPORT_URL} from "../../util/config";
-import {IoHelpBuoyOutline, IoLogoInstagram, IoLogoLinkedin, IoMail, IoPencil} from "react-icons/all";
+import {IoHelpBuoyOutline, IoLogoInstagram, IoLogoLinkedin, IoMail, IoPencil} from "react-icons/io5";
 import "./style.scss"
 
 export function Footer() {

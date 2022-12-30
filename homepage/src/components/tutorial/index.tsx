@@ -4,7 +4,7 @@ import "./style.scss"
 import {applicationName, SUPPORT_URL} from "../../util/config";
 import {JoinButton} from "../joinButton";
 import {Separator} from "../separator";
-import {BiMouse} from "react-icons/all";
+import {BiMouse} from "react-icons/bi";
 
 export function Tutorial() {
     return (
