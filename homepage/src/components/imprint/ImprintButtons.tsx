@@ -6,9 +6,12 @@ export function ImprintButtons() {
     return (
         <div className={"buttons"}>
             <Link className={"button outlined"} to={"/"}><IoArrowBack /> back home</Link>
-            <NavLink className={({isActive}) => isActive ? "button" : "button outlined"} to={"/imprint"}>Imprint</NavLink>
-            <NavLink className={({isActive}) => isActive ? "button" : "button outlined"} to={"/privacy"}>Privacy policy</NavLink>
-            <NavLink className={({isActive}) => isActive ? "button" : "button outlined"} to={"/terms"}>Terms & Conditions</NavLink>
+            {/*<NavLink className={({isActive}) => isActive ? "button" : "button outlined"} to={"/imprint"}>Imprint</NavLink>*/}
+            <NavLink className={"button"} to={"/imprint"}>Imprint</NavLink>
+            {/*<NavLink className={({isActive}) => isActive ? "button" : "button outlined"} to={"/privacy"}>Privacy policy</NavLink>*/}
+            <NavLink className={"button"} to={"/privacy"}>Privacy policy</NavLink>
+            {/*<NavLink className={({isActive}) => isActive ? "button" : "button outlined"} to={"/terms"}>Terms & Conditions</NavLink>*/}
+            <NavLink className={"button"} to={"/terms"}>Terms & Conditions</NavLink>
         </div>
     )
 }
