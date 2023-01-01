@@ -1,3 +1,4 @@
+import React from "react";
 import './style.scss'
 import {Logo} from "./Logo";
 import {IoMenu} from "react-icons/io5";

@@ -1,3 +1,4 @@
+import React from "react";
 import {FRONTEND_URL} from "../../util/config";
 import {IoArrowForward} from "react-icons/io5";
 import {auth} from "../../util/keycloak";

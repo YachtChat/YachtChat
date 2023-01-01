@@ -1,3 +1,6 @@
+import React from "react";
+
+
 export function Impressum() {
     // https://www.termsofservicegenerator.net/download.php?lang=en&token=62I9LDi0smDCglshk2xgfLSqJG7b3qjH
     return (

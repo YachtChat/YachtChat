@@ -1,3 +1,4 @@
+import React from "react";
 import {applicationName} from "../../util/config";
 import "./style.scss";
 import {ImprintButtons} from "./ImprintButtons";

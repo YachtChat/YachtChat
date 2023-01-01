@@ -1,3 +1,4 @@
+import React from "react";
 import {ImprintButtons} from "./ImprintButtons";
 
 export function Imprint() {

@@ -1,3 +1,4 @@
+import React from "react";
 import Yacht from "../../rsc/yacht_font.png";
 import Yacht_Dark from "../../rsc/yacht_font_white.png";
 import {Link} from "react-router-dom";

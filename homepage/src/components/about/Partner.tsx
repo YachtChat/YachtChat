@@ -1,3 +1,4 @@
+import React from "react";
 import HI from "../../rsc/partner/Hessen_Ideen_Logo_blanko.png"
 import UI from "../../rsc/partner/UI_Logo_RGB.png"
 import VL_dark from "../../rsc/partner/Logo circle.png"

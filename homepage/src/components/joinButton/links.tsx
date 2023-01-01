@@ -1,3 +1,4 @@
+import React from "react";
 import {EMAIL, INSTA, LINKEDIN} from "../../util/config";
 import {IoLogoInstagram, IoLogoLinkedin, IoMailOutline} from "react-icons/io5";
 

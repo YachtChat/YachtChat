@@ -1,3 +1,4 @@
+import React from "react";
 import {IoLockClosed} from "react-icons/io5";
 import "./style.scss"
 import {applicationName} from "../../util/config";

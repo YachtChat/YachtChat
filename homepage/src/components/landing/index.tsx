@@ -1,3 +1,4 @@
+import React from "react";
 import "./style.scss"
 import YachtScreenshot from "../../rsc/demo_thumb_light.png"
 import YachtScreenshotDark from "../../rsc/demo_thumb_dark.png"

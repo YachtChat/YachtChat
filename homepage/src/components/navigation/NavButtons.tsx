@@ -1,3 +1,4 @@
+import React from "react";
 import {IoClose} from "react-icons/io5";
 import {useEffect, useState} from "react";
 import {SUPPORT_URL} from "../../util/config";
