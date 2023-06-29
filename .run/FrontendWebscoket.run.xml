@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="FrontendWebsocketSpaces" type="CompoundRunConfigurationType">
-    <toRun name="SpacesServiceWithKeycloakOnServer" type="SpringBootApplicationConfigurationType" />
-    <toRun name="Frontend_Websocket_Spaces_local" type="js.build_tools.npm" />
-    <toRun name="Websocket_Spaces_local" type="SpringBootApplicationConfigurationType" />
-    <method v="2" />
-  </configuration>
-</component>
