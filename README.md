@@ -1,6 +1,6 @@
 # Yacht.Chat Technological Architecture
 
-[Yacht.Chat](https://yacht.chat) is built on a robust and modern technological architecture, focusing on scalability, security, and low-latency communication. Here's a detailed breakdown of the technology stack:
+[Yacht.Chat](https://www.yacht.chat) is built on a robust and modern technological architecture, focusing on scalability, security, and low-latency communication. Here's a detailed breakdown of the technology stack:
 
 ## Backend: Spring
 The backend of Yacht.Chat is crafted on the Spring Framework. Spring is a renowned, open-source application framework. Its flexibility and scalability make it a perfect choice.
