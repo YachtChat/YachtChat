@@ -1,4 +1,6 @@
-# Yacht.Chat Technological Architecture
+# Yacht.Chat
+
+![Yacht.Chat](YachtChat.png)
 
 [Yacht.Chat](https://www.yacht.chat) is built on a robust and modern technological architecture, focusing on scalability, security, and low-latency communication. Here's a detailed breakdown of the technology stack:
 
