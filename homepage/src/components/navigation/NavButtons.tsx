@@ -23,8 +23,8 @@ export function NavButtons(props: Props) {
 
     const [curEl, setCurEl] = useState<string>("")
 
-    const elids = (location.pathname === "/") ? ["landing", "about", "usp", "tutorial", "contact"] : ["landing"]
-    const names = (location.pathname === "/") ? ["Home", "About", "Features", "How To", "Contact"] : ["Home"]
+    const elids = (location.pathname === "/") ? ["landing", "about", "usp", "tutorial"] : ["landing"]
+    const names = (location.pathname === "/") ? ["Home", "About", "Features", "How To"] : ["Home"]
 
     const updateActiveElement = () => {
         if (location.pathname === "/") {
@@ -50,8 +50,6 @@ export function NavButtons(props: Props) {
                                    onClick={() => scrollTo(el)}>{names[i]}</button>
                 }
             )}
-            <a className={""} href={SUPPORT_URL}>Help</a>
-
         </nav>
     )
 }

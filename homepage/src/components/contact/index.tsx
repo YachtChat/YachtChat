@@ -1,9 +1,9 @@
-import {IoHelpBuoyOutline, IoLogoInstagram, IoLogoLinkedin, IoMail} from "react-icons/io5";
+import {IoHelpBuoyOutline, IoLogoGithub, IoLogoInstagram, IoLogoLinkedin} from "react-icons/io5";
 import React from "react";
 import "./style.scss"
 import classNames from "classnames";
 import {Card} from "../card";
-import {EMAIL, INSTA, LINKEDIN, SUPPORT_URL} from "../../util/config";
+import {GITHUB, INSTA, LINKEDIN} from "../../util/config";
 
 export function Contact() {
 
@@ -33,16 +33,10 @@ export function Contact() {
                             <label>Instagram</label>
                         </Card>
                     </a>
-                    <a className={"card"} href={EMAIL}>
+                    <a className={"card"} href={GITHUB}>
                         <Card>
-                            <IoMail className={"mail"}/>
-                            <label>Mail</label>
-                        </Card>
-                    </a>
-                    <a className={"card"} href={SUPPORT_URL}>
-                        <Card>
-                            <IoHelpBuoyOutline className={"insta"}/>
-                            <label>Support</label>
+                            <IoLogoGithub className={"mail"}/>
+                            <label>GitHub</label>
                         </Card>
                     </a>
                 </div>

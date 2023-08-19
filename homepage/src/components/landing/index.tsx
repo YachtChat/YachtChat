@@ -36,8 +36,10 @@ export function Landing() {
                             <div className={"headings"}>
                                 <h1>Bring your team home.</h1>
                                 <h2 className={"subheading"}>
-                                    Experience a new and private way of spontaneous remote
-                                    communication that follows your team’s workflow.</h2>
+                                    {/* Experience a new and private way of spontaneous remote */}
+                                    {/* communication that follows your team’s workflow. */}
+                                    The leading open-source solution for a private and personal communication that follows your workflow like in the office.
+                                </h2>
                             </div>
 
                             <JoinButton/>

@@ -17,7 +17,7 @@
     justify-items: center;
   }
 
-  label, a {
+  label, a, span {
     text-transform: uppercase;
     font-weight: bold;
     font-size: 0.8rem;
@@ -25,11 +25,12 @@
     margin: 0.5rem auto;
   }
 
-  a {
+  a, span {
     color: white;
+    transition: opacity 0.2s;
   }
 
-  a:hover {
+  a:hover, span:hover {
     opacity: 0.5;
   }
 

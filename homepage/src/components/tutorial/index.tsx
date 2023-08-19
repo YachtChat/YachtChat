@@ -52,10 +52,10 @@ export function Tutorial() {
                     </div>
                 </div>
                 <JoinButton className={"join"}/>
-                <a className={"join joinButton outlined"}
+                {/* <a className={"join joinButton outlined"}
                      href={SUPPORT_URL}>
                     <IoHelpBuoyOutline/> Get help
-                </a>
+                </a> */}
             </div>
         </div>
     )

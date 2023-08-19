@@ -1,6 +1,6 @@
 import React from "react";
-import {EMAIL, INSTA, LINKEDIN} from "../../util/config";
-import {IoLogoInstagram, IoLogoLinkedin, IoMailOutline} from "react-icons/io5";
+import {EMAIL, GITHUB, INSTA, LINKEDIN} from "../../util/config";
+import {IoLogoGithub, IoLogoInstagram, IoLogoLinkedin, IoMailOutline} from "react-icons/io5";
 
 
 export function Links() {
@@ -8,7 +8,7 @@ export function Links() {
         <div className={"links"}>
             <a href={INSTA}><IoLogoInstagram/></a>
             <a href={LINKEDIN}><IoLogoLinkedin/></a>
-            <a href={EMAIL}><IoMailOutline/></a>
+            <a href={GITHUB}><IoLogoGithub/></a>
         </div>
 
     )

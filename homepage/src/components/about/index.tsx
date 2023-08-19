@@ -5,7 +5,7 @@ import {JoinButton} from "../joinButton";
 import YachtChat from "../../rsc/mock_light.png";
 import YachtChatDark from "../../rsc/mock_dark.png";
 import {useState} from "react";
-import {IoArrowDown, IoChatbubblesOutline, IoPeopleOutline, IoWalkOutline} from "react-icons/io5";
+import {IoArrowDown, IoChatbubblesOutline, IoColorWandOutline, IoPeopleOutline, IoWalkOutline} from "react-icons/io5";
 import {Separator} from "../separator";
 import {Partner} from "./Partner";
 
@@ -51,7 +51,7 @@ export function About() {
 
                                         <p>
                                             {applicationName} allows you to move around
-                                            in a virtual space, collaboration can dynamically emerge.
+                                            in an virtual office. Collaboration can emerge dynamically.
                                             Conversations will arise spontaneously in a way that fits your
                                             your team’s workflow.
                                         </p>
@@ -65,19 +65,13 @@ export function About() {
                                         </h2>
 
                                         <p>
-                                            {applicationName} is a great addition to Zoom and MS-Teams, since it is
-                                            something different.<br/>
-                                            <br/>
-                                            Those tools lead to coworkers not seeing anyone for the majority of their
-                                            working time, which decreases team spirit.
-                                            In contrast, we created {applicationName} for you and your team to stay the
-                                            whole
-                                            working day - to collaborate, to ask a quick question, or from time to time
+                                            Other tools can sometimes lead to a feeling of disconnection between you and your team. {" "}
+                                            {applicationName} helps you to stay connected the whole working day - to collaborate, to ask a quick question, or from time to time
                                             just work together in silence.
                                         </p>
                                     </div>
                                 </div>
-                                <div className={"card"}>
+                                {/* <div className={"card"}>
                                     <IoChatbubblesOutline className={'bubbles'}/>
                                     <div className={"paragraph"}>
                                         <h2 className={"title"}>
@@ -92,6 +86,19 @@ export function About() {
                                             the
                                             advantages of remote work and encourages you and your team to connect
                                             again.{" "}
+                                        </p>
+                                    </div>
+                                </div> */}
+                                <div className={"card"}>
+                                    <IoColorWandOutline className={'bubbles'}/>
+                                    <div className={"paragraph"}>
+                                        <h2 className={"title"}>
+                                            Easy to deploy. <br/>Free & open-source.{" "}
+                                        </h2>
+                                        <p>
+                                            {applicationName} is easy to deploy. Follow the instructions on our GitHub and deploy it for free.{" "}
+                                            Join the growing community around the leading tool for private and flexible communiction.{" "}
+                                            If you need some support just get in touch with us.
                                         </p>
                                     </div>
                                 </div>

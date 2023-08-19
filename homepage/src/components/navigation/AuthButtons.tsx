@@ -1,29 +1,27 @@
 import React from "react";
-import {FRONTEND_URL} from "../../util/config";
-import {IoArrowForward} from "react-icons/io5";
-import {useKeycloak} from "@react-keycloak/web";
+import { FRONTEND_URL, GITHUB } from "../../util/config";
+import {useLocation, useNavigate} from "react-router-dom";
+import { IoArrowForward, IoLogoGithub } from "react-icons/io5";
 
 export function AuthButtons() {
 
-    const {keycloak} = useKeycloak()
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    const scrollTo = (id: string) => {
+        
+        if (location.pathname !== "/") {
+            navigate("/")
+            window.scrollTo(0,0)
+        }
+        document.getElementById(id)?.scrollIntoView({behavior: 'smooth'})
+    }
 
     return (
         <div className={"authentification"}>
-            {keycloak.authenticated ? (
-                <div className={"buttons"}>
-                    <a className={"button"} href={"https://" + FRONTEND_URL}>Go to Spaces <IoArrowForward/></a>
+            <div className={"buttons"}>
+                    <span className="button" onClick={() => scrollTo('contact')}>Get in touch</span>
                 </div>
-            ) : (
-                <div className={"buttons"}>
-                    <button className={"button"}
-                            onClick={() => keycloak.login({redirectUri: 'https://' + FRONTEND_URL})}>Login
-                    </button>
-                    <button className={"button solid"}
-                            onClick={() => keycloak.register({redirectUri: 'https://' + FRONTEND_URL})}>Sign
-                        Up
-                    </button>
-                </div>
-            )}
         </div>
     )
 }

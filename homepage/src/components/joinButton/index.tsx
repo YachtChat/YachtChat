@@ -1,7 +1,5 @@
 import React from "react";
-import {FRONTEND_URL} from "../../util/config";
 import {IoArrowForward} from "react-icons/io5";
-import {auth} from "../../util/keycloak";
 import "./style.scss";
 
 interface Props {
@@ -9,11 +7,9 @@ interface Props {
 }
 
 export function JoinButton(props: Props) {
-    const keycloak = auth
     return (
-        <div className={props.className + " joinButton"}
-             onClick={() => keycloak.login({redirectUri: "https://" + FRONTEND_URL})}>
-            Get started for free <IoArrowForward/>
+        <div onClick={() =>  document.getElementById('contact')?.scrollIntoView({behavior: 'smooth'})} className={props.className + " joinButton"}>
+            Get free demo <IoArrowForward/>
         </div>
     )
 }

@@ -1,10 +1,21 @@
-import {Link} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import React from "react";
-import {EMAIL, INSTA, LINKEDIN, SUPPORT_URL} from "../../util/config";
-import {IoHelpBuoyOutline, IoLogoInstagram, IoLogoLinkedin, IoMail, IoPencil} from "react-icons/io5";
+import {GITHUB, INSTA, LINKEDIN} from "../../util/config";
+import {IoCall, IoLogoGithub, IoLogoInstagram, IoLogoLinkedin, IoMail} from "react-icons/io5";
 import "./style.scss"
 
 export function Footer() {
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    const scrollTo = (id: string) => {
+        if (location.pathname !== "/") {
+            navigate("/")
+            window.scrollTo(0,0)
+        }
+        document.getElementById(id)?.scrollIntoView({behavior: 'smooth'})
+    }
+
     return (
         <footer id={"footer"}>
             <div className={"contentWrapper"}>
@@ -13,12 +24,12 @@ export function Footer() {
                     <a href={LINKEDIN}><IoLogoLinkedin className={"linkedin"}/> Linkedin </a>
                     <a href={INSTA}> <IoLogoInstagram className={"insta"}/> Instagram</a>
 
-                    <a href={EMAIL}><IoMail className={"mail"}/> Mail</a>
+                    <a href={"tel:+4961513929500"}><IoCall className={"mail"}/> Phone</a>
                 </div>
                 <div className={"footer_item"} id={"misc"}>
                     <label>Support</label>
-                    <a href={SUPPORT_URL + "/blog"}><IoPencil/> Blog</a>
-                    <a href={SUPPORT_URL + "/"}><IoHelpBuoyOutline/> Support</a>
+                    <a href={GITHUB}><IoLogoGithub/> GitHub</a>
+                    <span onClick={() => scrollTo('contact')}><IoMail/> Get in touch</span>
                 </div>
                 <div className={"footer_item"} id={"legal"}>
                     <label>Legal</label>
@@ -27,7 +38,7 @@ export function Footer() {
                     <Link to={"/imprint"}>Imprint</Link>
                 </div>
             </div>
-            <label>copyright 2021-2022 by yacht.chat</label>
+            <label>copyright 2021-{new Date().getFullYear()} by yacht.chat</label>
         </footer>
     )
 }
