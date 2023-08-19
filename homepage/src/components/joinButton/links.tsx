@@ -1,6 +1,6 @@
 import React from "react";
-import {EMAIL, GITHUB, INSTA, LINKEDIN} from "../../util/config";
-import {IoLogoGithub, IoLogoInstagram, IoLogoLinkedin, IoMailOutline} from "react-icons/io5";
+import {GITHUB, INSTA, LINKEDIN} from "../../util/config";
+import {IoLogoGithub, IoLogoInstagram, IoLogoLinkedin} from "react-icons/io5";
 
 
 export function Links() {

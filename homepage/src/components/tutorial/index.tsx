@@ -1,7 +1,7 @@
-import {IoHelpBuoyOutline, IoVolumeHigh} from "react-icons/io5";
+import {IoVolumeHigh} from "react-icons/io5";
 import React from "react";
 import "./style.scss"
-import {applicationName, SUPPORT_URL} from "../../util/config";
+import {applicationName} from "../../util/config";
 import {JoinButton} from "../joinButton";
 import {Separator} from "../separator";
 import {BiMouse} from "react-icons/bi";

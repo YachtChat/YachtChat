@@ -1,7 +1,5 @@
 import React from "react";
-import { FRONTEND_URL, GITHUB } from "../../util/config";
 import {useLocation, useNavigate} from "react-router-dom";
-import { IoArrowForward, IoLogoGithub } from "react-icons/io5";
 
 export function AuthButtons() {
 

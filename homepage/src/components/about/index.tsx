@@ -5,7 +5,7 @@ import {JoinButton} from "../joinButton";
 import YachtChat from "../../rsc/mock_light.png";
 import YachtChatDark from "../../rsc/mock_dark.png";
 import {useState} from "react";
-import {IoArrowDown, IoChatbubblesOutline, IoColorWandOutline, IoPeopleOutline, IoWalkOutline} from "react-icons/io5";
+import {IoArrowDown, IoColorWandOutline, IoPeopleOutline, IoWalkOutline} from "react-icons/io5";
 import {Separator} from "../separator";
 import {Partner} from "./Partner";
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import Navigation from "./components/navigation";
 import { Landing } from "./components/landing";
@@ -14,11 +14,18 @@ import { Privacy } from "./components/imprint/Privacy";
 import { Terms } from "./components/imprint/Terms";
 import { Imprint } from "./components/imprint/Imprint";
 import { Footer } from "./components/Footer";
+import ReactGA from 'react-ga4';
+
+ReactGA.initialize('G-PPGBPL23GC');
 
 function App() {
     if (!window.location.href.includes('localhost')) {
         posthog.init("phc_8McKDIRFPbkreZyJSh8A4MtoL4dUHaB7eICFmoPFKsC", { api_host: 'https://posthog.yacht.chat' });
     }
+
+    useEffect(() => {   
+        ReactGA.send({ hitType: "pageview", page: window.location.pathname + window.location.search, title: "Yacht.Chat" });
+    }, []) 
 
     return (
         <ParallaxProvider>
