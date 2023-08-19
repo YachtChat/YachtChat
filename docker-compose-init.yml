@@ -24,7 +24,7 @@ services:
     volumes_from:
       - nginx-proxy
     environment:
-      - DEFAULT_EMAIL=ole.sen@gmx.de
+      - DEFAULT_EMAIL={PUT IN YOUR EMAIL}
     volumes:
       - certs:/etc/nginx/certs:rw
       - vhost:/etc/nginx/vhost.d
