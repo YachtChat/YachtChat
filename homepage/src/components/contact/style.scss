@@ -113,4 +113,87 @@
     }
   }
 
+  form {
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: .5rem;
+    gap: 1rem;
+    margin-bottom: 5rem;
+
+    input[type=text], input[type=email], select, textarea {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: $border_radius;
+      box-sizing: border-box;
+      margin-top: 6px;
+      resize: vertical;
+      font-size: 1rem;
+    }
+
+    .message {
+      grid-column: 1 / span 2;
+
+      textarea {
+        height: 10rem;
+      }
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .buttons {
+      grid-column: span 2;
+
+      .button {
+        transition: transform 0.2s, opacity 0.2s;
+        color: $button_font_dark;
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+        border-radius: 2rem;
+        width: 50%;
+        cursor: pointer;
+  
+        text-align: center;
+        margin: 1rem auto;
+        box-sizing: border-box;
+        background: $foreground_light;
+        color: $accent_dark;
+        box-shadow: $shadow;
+  
+        @media (prefers-color-scheme: dark) {
+          & {
+            color: $foreground_dark;
+            background: $accent_light;
+          }
+        }
+      
+        &:hover {
+          transform: translateX(5px);
+          opacity: 0.5;
+        }
+      }
+    }
+    
+
+    p {
+      padding: 0;
+      margin: 0;
+    }
+
+    label {
+      text-transform: uppercase;
+        font-size: 0.8rem;
+        font-weight: bolder;
+        color: $headline_light;
+    }
+    
+    .container {
+      border-radius: 5px;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+  }
+    
 }
