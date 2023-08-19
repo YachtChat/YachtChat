@@ -21,9 +21,6 @@ export function Contact() {
 
                 <form name="contact" data-netlify="true" netlify-honeypot="bot-field">
                     <input type="hidden" name="form-name" value="contact" />
-                    <p style={{display: "hidden"}}>
-                        <label>Name <input type="text" name="bot-field" /></label>
-                    </p>
                     <p className="span-2">
                         <label>Name <input type="text" name="name" required /></label>
                     </p>
