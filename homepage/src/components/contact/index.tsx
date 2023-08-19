@@ -19,7 +19,7 @@ export function Contact() {
                     </h2>
                 </div>
 
-                <form name="contact" data-netlify="true" netlify-honeypot="bot-field">
+                <form name="contact" method="post" data-netlify="true">
                     <input type="hidden" name="form-name" value="contact" />
                     <p className="span-2">
                         <label>Name <input type="text" name="name" required /></label>
