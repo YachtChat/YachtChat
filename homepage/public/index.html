@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="aa3f30d9-da6c-48c6-aeda-76b0c98841f9" type="text/javascript" async></script>
-    <meta charset="utf-8"/>
-    <link rel="icon" href="%PUBLIC_URL%/yacht.ico"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <meta name="theme-color" content="#FFFFFF"/>
-    <meta
-            name="description"
-            content="Bring your team home and work like in the office. Join now."
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/yacht192.png"/>
-    <!--
+  <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="aa3f30d9-da6c-48c6-aeda-76b0c98841f9"
+    type="text/javascript" async></script>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/yacht.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="description" content="Bring your team home and work like in the office. Join now." />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/yacht192.png" />
+  <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json"/>
-    <!--
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -25,14 +24,36 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Yacht.Chat – Work like in the office. But from home.</title>
-    <meta name="description" content="The leading open-source solution for a private and personal communication that follows your workflow like in the office." />
-    <meta name="title" content="Yacht.Chat – Work like in the office. But from home." />
+  <title>Yacht.Chat – Work like in the office. But from home.</title>
+  <meta name="description"
+    content="The leading open-source solution for a private and personal communication that follows your workflow like in the office." />
+  <meta name="title" content="Yacht.Chat – Work like in the office. But from home." />
 </head>
+
 <body>
-<noscript>You need to enable JavaScript to run this app.</noscript>
-<div id="root"></div>
-<!--
+  <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <p style="display: hidden">
+      <label>Name <input type="text" name="bot-field" /></label>
+    </p>
+    <p className="span-2">
+      <label>Name <input type="text" name="name" required /></label>
+    </p>
+    <p>
+      <label>Email <input type="email" name="email" required /></label>
+    </p>
+    <p>
+      <label>Telephone (optional) <input type="telephone" name="telephone" /></label>
+    </p>
+    <p className="message">
+      <label>Message <textarea name="message" required></textarea></label>
+    </p>
+    <p className="buttons">
+      <button className="button" type="submit">Send</button>
+    </p>
+  </form>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <!--
   This HTML file is a template.
   If you open it directly in the browser, you will see an empty page.
 
@@ -42,25 +63,6 @@
   To begin the development, run `npm start` or `yarn start`.
   To create a production bundle, use `npm run build` or `yarn build`.
 -->
-<form name="contact" data-netlify="true" netlify-honeypot="bot-field">
-  <p style="display: hidden">
-      <label>Name <input type="text" name="bot-field" /></label>
-  </p>
-  <p className="span-2">
-      <label>Name <input type="text" name="name" required /></label>
-  </p>
-  <p>
-      <label>Email <input type="email" name="email" required /></label>
-  </p>
-  <p>
-      <label>Telephone (optional) <input type="telephone" name="telephone" /></label>
-  </p>
-  <p className="message">
-      <label>Message <textarea name="message" required></textarea></label>
-  </p>
-  <p className="buttons">
-      <button className="button" type="submit">Send</button>
-  </p>
-</form>
 </body>
+
 </html>
