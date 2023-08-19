@@ -17,3 +17,23 @@ For real-time video conferencing, Yacht.Chat uses peer-to-peer technology. This 
 In the domain of user authentication, Yacht.Chat integrates Keycloak, an open-source Identity and Access Management solution. Keycloak provides advanced security features such as Single-Sign On, Identity Brokering and Social Login, User Federation, and Client Adapters.
 
 Furthermore, Yacht.Chat allows users to log in using their Google or LinkedIn accounts. This feature not only makes the login process convenient and user-friendly but also maintains high security and privacy standards.
+
+## Easy to Deploy Yacht.Chat on your Server
+You can just follow the XX steps to deploy Yacht.Chat on-premise on your server.
+
+1. Fork the project
+2. Set up a server (minimal requirements 8GB RAM)
+3. Set your domain in the .env file (replace yacht.chat with your domain)
+4. Set up the following GitHub secrets.
+  - HOST -> Server domain where you want to host Yacht.Chat
+  - USERNAME -> User name of a user who has access to the Server
+  - KEY -> ssh key for the USERNAME
+  - SPACES_DB_PASSWORD -> Password for spaces database
+  - KEYCLOAK_PASSWORD -> Password for Keycloak
+  - KEYCLOAK_DB_PASSWORD -> Password for Keycloak database
+  - KEYCLOAK_ACCOUNTSERVICE_PASSWORD -> Password for Keycloak Account service 
+  - KEYCLOAK_CLIENT_SECRET_ACCOUNT_SERVICE -> Client Secret for Keycloak Account service
+  - KEYCLOAK_PASSWORD -> Password for Keycloak
+  - KEYCLOAK_CLIENT_SECRET -> Client Secret for Keycloak
+  - SPACES_JWT_SECRET -> Spaces JWT Secret
+5. Go to Actions and run the GitHub workflow 'init_server'
