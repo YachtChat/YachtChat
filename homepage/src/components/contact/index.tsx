@@ -19,7 +19,11 @@ export function Contact() {
                     </h2>
                 </div>
 
-                <form name="contact" data-netlify="true">
+                <form name="contact" data-netlify="true" netlify-honeypot="bot-field">
+                    <input type="hidden" name="form-name" value="contact" />
+                    <p style={{display: "hidden"}}>
+                        <label>Name <input type="text" name="bot-field" /></label>
+                    </p>
                     <p className="span-2">
                         <label>Name <input type="text" name="name" required /></label>
                     </p>
@@ -27,7 +31,7 @@ export function Contact() {
                         <label>Email <input type="email" name="email" required /></label>
                     </p>
                     <p>
-                        <label>Telephone (optional) <input type="email" name="email" /></label>
+                        <label>Telephone (optional) <input type="telephone" name="telephone" /></label>
                     </p>
                     <p className="message">
                         <label>Message <textarea name="message" required></textarea></label>
