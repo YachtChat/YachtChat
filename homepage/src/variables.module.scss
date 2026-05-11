@@ -1,0 +1,58 @@
+$background_light: white;
+$background_dark: rgba(10, 10, 10, 1);
+$background_2_light: #f6f6f6;
+$background_2_dark: rgba(20, 20, 20, 1);
+$foreground_light: white;
+$foreground_dark: #171717;
+$focus_light: #eee;
+$focus_dark: #090909;
+$accent_light: rgba(185, 194, 208, 1); // #b9c2d0;
+$accent_light_alpha: rgba(185, 194, 208, .2); // #b9c2d0;
+$accent_light_alpha_0-5: rgba(185, 194, 208, .8); // #b9c2d0;
+$accent_dark: rgba(32, 67, 89, 1); // #326789 #204359;
+$accent_dark_alpha: rgba(32, 67, 89, .2); // #204359;
+$accent_dark_alpha_0-5: rgba(32, 67, 89, .5); // #204359;
+$font_dark: #ccc;
+$font_light: #ccc;
+$input_font_dark: #4e4e4e;
+$input_font_light: gray;
+$headline_light: white;
+$headline_dark: white;
+$headline_2_light: gray;
+$headline_2_dark: white;
+$button_font_light: black;
+$button_font_hover: gray;
+$button_font_dark: white;
+$border_radius: 0.5rem;
+$shadow: 0 15px 40px rgba(0, 0, 0, .2);
+$shadow_dark: 0 15px 40px rgba(255, 255, 255, .2);
+$text_size: 0.8rem;
+$input_font_size: 0.8rem;
+$button_font_size: 0.8rem;
+$label_font_size: 0.7rem;
+$online_color: rgb(104, 152, 104);
+$logout_button_color: #F08080;
+
+:export {
+  background_light: $background_light;
+  background_dark: $background_dark;
+  background_2_light: $background_2_light;
+  background_2_dark: $background_2_dark;
+  foreground_light: $foreground_light;
+  foreground_dark: $foreground_dark;
+  focus_light: $focus_light;
+  focus_dark: $focus_dark;
+  accent_light: $accent_light;
+  accent_dark: $accent_dark;
+  font_dark: $font_dark;
+  font_light: $font_light;
+  headline_light: $headline_light;
+  headline_dark: $headline_dark;
+  headline_2_light: $headline_2_light;
+  headline_2_dark: $headline_2_dark;
+  button_font_light: $button_font_light;
+  button_font_hover: $button_font_hover;
+  button_font_dark: $button_font_dark;
+  border_radius: $border_radius;
+  logout_button_color: $logout_button_color
+}
